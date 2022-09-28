@@ -1,4 +1,4 @@
-package com.kuba.flashscorecompose.data
+package com.kuba.flashscorecompose.api
 
 import com.kuba.flashscorecompose.BuildConfig
 import com.kuba.flashscorecompose.data.country.model.Country

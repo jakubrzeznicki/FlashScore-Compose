@@ -1,33 +1,50 @@
 package com.kuba.flashscorecompose.di
 
-import com.kuba.flashscorecompose.data.FlashScoreApi
-import com.kuba.flashscorecompose.data.FlashScoreApi.Companion.BASE_URL
+import com.kuba.flashscorecompose.countries.viewmodel.CountriesViewModel
+import com.kuba.flashscorecompose.data.LocalRoomStorage
+import com.kuba.flashscorecompose.data.RoomStorage
+import com.kuba.flashscorecompose.data.country.CountryDataSource
+import com.kuba.flashscorecompose.data.country.CountryRepository
+import com.kuba.flashscorecompose.data.country.local.CountryLocal
+import com.kuba.flashscorecompose.data.country.remote.CountryRemote
 import com.kuba.flashscorecompose.network.uuidsource.UuidData
 import com.kuba.flashscorecompose.network.uuidsource.UuidSource
-import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidApplication
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 /**
  * Created by jrzeznicki on 9/5/2022
  */
 class KoinModules {
 
+    private val viewModelsModule = module {
+        viewModel { CountriesViewModel(get()) }
+    }
+
     private val componentsModule = module {
         single<UuidSource> { UuidData() }
     }
-    private val networkModule = module {
-        single<FlashScoreApi> {
-            Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(BASE_URL)
-                .build()
-                .create(FlashScoreApi::class.java)
+
+    private val repositoryModule = module {
+        single<CountryDataSource> {
+            val local = CountryLocal(get())
+            val remote = CountryRemote(get())
+            CountryRepository(local, remote)
+        }
+    }
+
+    private val storageModule = module {
+        single<RoomStorage> {
+            LocalRoomStorage(androidApplication())
         }
     }
 
     fun getAllModules() = listOf(
-        componentsModule, networkModule
+        componentsModule,
+        storageModule,
+        networkModule,
+        repositoryModule,
+        viewModelsModule
     )
 }

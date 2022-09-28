@@ -1,33 +1,14 @@
 package com.kuba.flashscorecompose.data
 
-import android.content.Context
-import androidx.room.Room
+import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.kuba.flashscorecompose.data.country.local.CountryDao
+import com.kuba.flashscorecompose.data.country.model.Country
 
 /**
  * Created by jrzeznicki on 9/5/2022
  */
+@Database(entities = [Country::class], version = 1)
 abstract class FlashScoreDatabase : RoomDatabase() {
-
-    companion object {
-        private const val DATABASE_NAME = "flash_score.db"
-        private var INSTANCE: FlashScoreDatabase? = null
-
-        fun getInstance(context: Context): FlashScoreDatabase {
-            synchronized(this) {
-                var instance = INSTANCE
-                if (instance == null) {
-                    instance = Room.databaseBuilder(
-                        context.applicationContext,
-                        FlashScoreDatabase::class.java,
-                        DATABASE_NAME
-                    )
-                        .fallbackToDestructiveMigration()
-                        .build()
-                    INSTANCE = instance
-                }
-                return instance
-            }
-        }
-    }
+    abstract fun countryDao(): CountryDao
 }

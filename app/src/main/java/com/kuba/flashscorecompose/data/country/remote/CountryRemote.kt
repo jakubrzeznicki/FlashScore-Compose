@@ -1,22 +1,25 @@
 package com.kuba.flashscorecompose.data.country.remote
 
-import com.kuba.flashscorecompose.data.FlashScoreApi
-import com.kuba.flashscorecompose.data.country.CountryDataSource
+import com.kuba.flashscorecompose.api.FlashScoreApi
 import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import com.kuba.flashscorecompose.utils.ResponseStatus
+import retrofit2.HttpException
 
 /**
  * Created by jrzeznicki on 9/7/2022
  */
-class CountryRemote(private val flashScoreApi: FlashScoreApi) : CountryDataSource {
+class CountryRemote(private val flashScoreApi: FlashScoreApi) : CountryRemoteDataSource {
 
     override suspend fun loadCountries(): RepositoryResult<List<Country>> {
-        val result =  flashScoreApi.getCountries()
-       return if (result.isSuccessful) {
+        val result = flashScoreApi.getCountries()
+        return try {
             RepositoryResult.Success(result.body().orEmpty())
-        } else {
-            RepositoryResult.Error(ResponseStatus())
-       }
+        } catch (e: HttpException) {
+            RepositoryResult.Error(ResponseStatus().apply {
+                this.statusMessage = e.message()
+                this.internalStatus = e.code()
+            })
+        }
     }
 }
