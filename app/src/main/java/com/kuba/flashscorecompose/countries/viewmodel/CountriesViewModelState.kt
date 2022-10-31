@@ -11,7 +11,6 @@ data class CountriesViewModelState(
     val isLoading: Boolean = false,
     val error: CountriesError = CountriesError.NoError,
     val countryItems: List<Country> = emptyList()
-
 ) {
     fun toUiState(): CountriesUiState = if (countryItems.isEmpty()) {
         CountriesUiState.NoCountries(isLoading, error)
