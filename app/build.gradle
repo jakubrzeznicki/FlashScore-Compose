@@ -4,6 +4,18 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
+    id 'com.google.devtools.ksp' version '1.6.21-1.0.6'
+}
+
+kotlin {
+    sourceSets {
+        debug {
+            kotlin.srcDir("build/generated/ksp/debug/kotlin")
+        }
+        release {
+            kotlin.srcDir("build/generated/ksp/release/kotlin")
+        }
+    }
 }
 
 android {
@@ -80,6 +92,10 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$navVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$navVersion"
     implementation "androidx.navigation:navigation-common-ktx:$navVersion"
+
+    //Navigation Compose
+    implementation 'io.github.raamcosta.compose-destinations:core:1.5.22-beta'
+    ksp 'io.github.raamcosta.compose-destinations:ksp:1.5.22-beta'
 
     //Compose
     implementation 'androidx.activity:activity-compose:1.5.0'

@@ -24,9 +24,9 @@ class CountriesViewModel(private val countryRepository: CountryDataSource) : Vie
         observeCountries()
     }
 
-    fun observeCountries() {
+    private fun observeCountries() {
         viewModelScope.launch {
-            countryRepository.observeCountries().collect() { countries ->
+            countryRepository.observeCountries().collect { countries ->
                 viewModelState.update { it.copy(countryItems = countries) }
             }
         }

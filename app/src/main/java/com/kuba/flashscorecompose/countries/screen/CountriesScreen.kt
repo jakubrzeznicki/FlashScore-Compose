@@ -33,23 +33,28 @@ import com.kuba.flashscorecompose.countries.model.CountriesUiState
 import com.kuba.flashscorecompose.countries.viewmodel.CountriesViewModel
 import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.ui.component.AppTopBar
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
 
 /**
  * Created by jrzeznicki on 9/9/2022
  */
+private const val SETUP_COUNTRIES_KEY = "SETUP_COUNTRIES_KEY"
+
+@Destination(start = true)
 @Composable
 fun CountryListScreen(
-    navController: NavController,
+    navigator: DestinationsNavigator,
     viewModel: CountriesViewModel = getViewModel(),
     scaffoldState: ScaffoldState = rememberScaffoldState()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    LaunchedEffect(Unit) { viewModel.setup() }
+    LaunchedEffect(key1 = SETUP_COUNTRIES_KEY) { viewModel.setup() }
     CountriesScreen(
         uiState = uiState,
         onRefreshClick = { viewModel.refreshCountries() },
-        onCountryClick = { navController.navigate("country/${it.id}") },
+        onCountryClick = { navigator.navigate(League)},
         onErrorClear = { viewModel.cleanError() },
         scaffoldState = scaffoldState
     )
