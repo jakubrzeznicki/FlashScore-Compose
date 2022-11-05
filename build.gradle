@@ -1,6 +1,8 @@
 buildscript {
-    ext.kotlin_version = "1.7.0"
-    ext.compose_version = "1.1.1"
+    ext {
+        compose_version = '1.1.0-rc01'
+        kotlin_version = "1.7.0"
+    }
     repositories {
         google()
         mavenCentral()
@@ -10,11 +12,14 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'io.realm:realm-gradle-plugin:10.8.1'
         classpath 'androidx.navigation:navigation-safe-args-gradle-plugin:2.5.0'
+        classpath "com.google.relay:relay-gradle-plugin:0.3.00"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
 }
-
+plugins {
+    id 'com.google.relay' version '0.3.00'
+}
 task clean(type: Delete) {
     delete rootProject.buildDir
 }

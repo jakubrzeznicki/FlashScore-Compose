@@ -3,16 +3,11 @@ package com.kuba.flashscorecompose.main.view
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.Composable
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import com.kuba.flashscorecompose.countries.screen.CountryListScreen
-import com.kuba.flashscorecompose.leagues.screen.LeaguesListScreen
+import com.kuba.flashscorecompose.NavGraphs
 import com.kuba.flashscorecompose.ui.theme.FlashScoreComposeTheme
+import com.microsoft.appcenter.AppCenter
+import com.microsoft.appcenter.analytics.Analytics
+import com.microsoft.appcenter.crashes.Crashes
 import com.ramcosta.composedestinations.DestinationsNavHost
 
 class MainActivity : ComponentActivity() {
@@ -20,8 +15,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             FlashScoreComposeTheme {
-            //    DestinationsNavHost= )
+                DestinationsNavHost(navGraph = NavGraphs.root)
             }
         }
+        AppCenter.start(
+            application, "7743e143-e356-4f08-9cb0-c04575a40543",
+            Analytics::class.java, Crashes::class.java
+        )
     }
 }
