@@ -4,7 +4,8 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
-    id 'com.google.devtools.ksp' version '1.6.21-1.0.6'
+    id 'com.google.devtools.ksp' version '1.7.0-1.0.6'
+    id 'com.google.relay'
 }
 
 kotlin {
@@ -61,6 +62,13 @@ android {
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+    sourceSets {
+        main {
+            assets {
+                srcDir('src/main/ui-packages')
+            }
         }
     }
 }
@@ -130,6 +138,11 @@ dependencies {
     def accompanistVersion = '0.24.13-rc'
     implementation "com.google.accompanist:accompanist-swiperefresh:$accompanistVersion"
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion"
+
+    //App Center
+    def appCenterSdkVersion = '4.4.5'
+    implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
+    implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

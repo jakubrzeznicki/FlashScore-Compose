@@ -32,6 +32,7 @@ import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.countries.model.CountriesUiState
 import com.kuba.flashscorecompose.countries.viewmodel.CountriesViewModel
 import com.kuba.flashscorecompose.data.country.model.Country
+import com.kuba.flashscorecompose.destinations.LeaguesListScreenDestination
 import com.kuba.flashscorecompose.ui.component.AppTopBar
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -54,7 +55,7 @@ fun CountryListScreen(
     CountriesScreen(
         uiState = uiState,
         onRefreshClick = { viewModel.refreshCountries() },
-        onCountryClick = { navigator.navigate(League)},
+        onCountryClick = { navigator.navigate(LeaguesListScreenDestination(countryId = "countryId")) },
         onErrorClear = { viewModel.cleanError() },
         scaffoldState = scaffoldState
     )
