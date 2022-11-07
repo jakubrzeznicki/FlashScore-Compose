@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.countries.model.CountriesError
 import com.kuba.flashscorecompose.data.country.CountryDataSource
 import com.kuba.flashscorecompose.utils.RepositoryResult
+import com.microsoft.appcenter.analytics.Analytics
+import com.microsoft.appcenter.crashes.Crashes
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -38,9 +40,14 @@ class CountriesViewModel(private val countryRepository: CountryDataSource) : Vie
             val result = countryRepository.loadCountries()
             viewModelState.update {
                 when (result) {
-                    is RepositoryResult.Success -> it.copy(isLoading = false)
-                    is RepositoryResult.Error ->
+                    is RepositoryResult.Success -> {
+                        //  Crashes.generateTestCrash()
+                        it.copy(isLoading = false)
+                    }
+                    is RepositoryResult.Error -> {
+                        Analytics.trackEvent("unable_to_load_countries")
                         it.copy(isLoading = false, error = CountriesError.RemoteError(result.error))
+                    }
                 }
             }
         }

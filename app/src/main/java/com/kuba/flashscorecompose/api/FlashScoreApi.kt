@@ -18,10 +18,10 @@ interface FlashScoreApi {
         @Query(API_KEY) APIkey: String = BuildConfig.API_KEY
     ): Response<CountryResponse>
 
-    @GET("$BASE_URL?$ACTION=$GET_LEAGUES&")
+    @GET("$BASE_URL?$ACTION=$GET_LEAGUES")
     suspend fun getLeagues(
-        @Query(API_KEY) APIkey: String = BuildConfig.API_KEY,
-        @Path(COUNTRY_ID) countryId: String
+        @Query(COUNTRY_ID) countryId: String,
+        @Query(API_KEY) APIkey: String = BuildConfig.API_KEY
     ): Response<LeagueResponse>
 
     class CountryResponse : ArrayList<Country>()
