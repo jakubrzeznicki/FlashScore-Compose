@@ -2,7 +2,7 @@ package com.kuba.flashscorecompose.leagues.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kuba.flashscorecompose.data.league.LeagueRepository
+import com.kuba.flashscorecompose.data.league.LeagueDataSource
 import com.kuba.flashscorecompose.leagues.model.LeaguesError
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
  */
 class LeaguesViewModel(
     private val countryId: String,
-    private val leagueRepository: LeagueRepository
+    private val leagueRepository: LeagueDataSource
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(LeaguesViewModelState())
