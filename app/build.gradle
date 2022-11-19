@@ -71,6 +71,10 @@ dependencies {
     implementation "io.insert-koin:koin-android:$koinVersion"
     implementation "io.insert-koin:koin-androidx-compose:$koinVersion"
 
+    def appCenterSdkVersion = '4.4.5'
+    implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
+    implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
+
     // Room
     implementation 'androidx.room:room-runtime:2.4.2'
     implementation 'androidx.room:room-ktx:2.4.2'
