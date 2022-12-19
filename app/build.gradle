@@ -38,6 +38,7 @@ android {
         properties.load(project.rootProject.file("local.properties").newDataInputStream())
 
         buildConfigField "String", "API_KEY", "\"${properties.getProperty("API_KEY")}\""
+        signingConfig signingConfigs.debug
     }
 
     buildTypes {
@@ -71,6 +72,7 @@ android {
             }
         }
     }
+    namespace 'com.kuba.flashscorecompose'
 }
 
 dependencies {

@@ -53,7 +53,7 @@ fun LeaguesScreen(
     onErrorClear: () -> Unit,
     scaffoldState: ScaffoldState
 ) {
-    Scaffold(topBar = { TopBar() }) {
-
-    }
+//    Scaffold(topBar = { TopBar() }) {
+//
+//    }
 }
