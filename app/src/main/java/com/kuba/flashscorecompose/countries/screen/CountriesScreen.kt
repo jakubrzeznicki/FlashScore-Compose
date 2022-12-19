@@ -1,5 +1,7 @@
 package com.kuba.flashscorecompose.countries.screen
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -8,6 +10,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -51,13 +54,15 @@ fun CountryListScreen(
     scaffoldState: ScaffoldState = rememberScaffoldState()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
     LaunchedEffect(key1 = SETUP_COUNTRIES_KEY) { viewModel.setup() }
     CountriesScreen(
         uiState = uiState,
         onRefreshClick = { viewModel.refreshCountries() },
         onCountryClick = { navigator.navigate(LeaguesListScreenDestination(countryId = "countryId")) },
         onErrorClear = { viewModel.cleanError() },
-        scaffoldState = scaffoldState
+        scaffoldState = scaffoldState,
+        context = context
     )
 }
 
@@ -68,9 +73,10 @@ fun CountriesScreen(
     onRefreshClick: () -> Unit,
     onCountryClick: (Country) -> Unit,
     onErrorClear: () -> Unit,
-    scaffoldState: ScaffoldState
+    scaffoldState: ScaffoldState,
+    context: Context
 ) {
-    Scaffold(topBar = { TopBar() }) {
+    Scaffold(topBar = { TopBar(context) }, scaffoldState = scaffoldState) {
         LoadingContent(
             empty = when (uiState) {
                 is CountriesUiState.HasCountries -> false
@@ -169,11 +175,20 @@ fun CountryCard(countryItem: Country, onCountryClick: (Country) -> Unit) {
 }
 
 @Composable
-fun TopBar() {
+fun TopBar(context: Context) {
     AppTopBar(
         shape = RoundedCornerShape(0, 0, 24, 24),
         title = {
-            Text(text = stringResource(id = R.string.app_name))
+            Text(text = stringResource(id = R.string.countries))
+        },
+        actions = {
+            IconButton(
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+                    .size(24.dp),
+                onClick = { Toast.makeText(context, "settings", Toast.LENGTH_SHORT) }) {
+                Icon(imageVector = Icons.Filled.Settings, contentDescription = "settings")
+            }
         }
     )
 }
@@ -203,7 +218,7 @@ fun EmptyScreen(onRefreshClick: () -> Unit) {
             modifier = Modifier.size(128.dp),
             contentDescription = ""
         )
-        Text(text = "No streams", modifier = Modifier.padding(8.dp))
+        Text(text = "No countries", modifier = Modifier.padding(8.dp))
         Button(
             modifier = Modifier
                 .fillMaxWidth()
