@@ -1,0 +1,10 @@
+package com.kuba.flashscorecompose.data.league.remote.model
+
+import com.google.gson.annotations.SerializedName
+
+data class LeagueDto(
+    @SerializedName("id") val id: Int?,
+    @SerializedName("logo") val logo: String?,
+    @SerializedName("name") val name: String?,
+    @SerializedName("type") val type: String?
+)

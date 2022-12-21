@@ -17,6 +17,8 @@ import com.kuba.flashscorecompose.network.uuidsource.UuidSource
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
+import java.time.LocalDate
+import java.util.Calendar
 
 /**
  * Created by jrzeznicki on 9/5/2022
@@ -25,11 +27,12 @@ class KoinModules {
 
     private val viewModelsModule = module {
         viewModel { CountriesViewModel(get()) }
-        viewModel { (countryId: String) -> LeaguesViewModel(countryId, get()) }
+        viewModel { (countryCode: String) -> LeaguesViewModel(countryCode, get(), get()) }
     }
 
     private val componentsModule = module {
         single<UuidSource> { UuidData() }
+        single<LocalDate> { LocalDate.now() }
     }
 
     private val repositoryModule = module {

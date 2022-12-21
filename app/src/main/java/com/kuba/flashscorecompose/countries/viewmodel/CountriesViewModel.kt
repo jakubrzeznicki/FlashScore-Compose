@@ -1,5 +1,6 @@
 package com.kuba.flashscorecompose.countries.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.countries.model.CountriesError
@@ -27,6 +28,7 @@ class CountriesViewModel(private val countryRepository: CountryDataSource) : Vie
     private fun observeCountries() {
         viewModelScope.launch {
             countryRepository.observeCountries().collect { countries ->
+                Log.d("TEST_LOG", "observe countries ${countries.size}")
                 viewModelState.update { it.copy(countryItems = countries) }
             }
         }

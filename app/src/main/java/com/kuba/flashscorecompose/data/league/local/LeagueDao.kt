@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.kuba.flashscorecompose.data.league.model.League
+import com.kuba.flashscorecompose.data.league.local.model.LeagueEntity
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -12,12 +12,12 @@ import kotlinx.coroutines.flow.Flow
  */
 @Dao
 interface LeagueDao {
-    @Query("SELECT * FROM leagues WHERE countryId = :countryId")
-    fun observeLeagues(countryId: String): Flow<List<League>>
+    @Query("SELECT * FROM leagues")
+    fun observeLeagues(): Flow<List<LeagueEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun saveLeagues(leagues: List<League>)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun saveLeagues(leagues: List<LeagueEntity>)
 
-    @Query("DELETE from leagues WHERE countryId = :countryId")
-    fun deleteLeagues(countryId: String)
+    @Query("DELETE from leagues WHERE countryCode = :countryCode")
+    fun deleteLeagues(countryCode: String)
 }
