@@ -8,13 +8,19 @@ import com.kuba.flashscorecompose.data.league.model.League
 sealed interface LeaguesUiState {
     val isLoading: Boolean
     val error: LeaguesError
+    val dayItems: List<DayItem>
 
-    data class NoLeagues(override val isLoading: Boolean, override val error: LeaguesError) :
-        LeaguesUiState
+    data class NoLeagues(
+        override val isLoading: Boolean,
+        override val error: LeaguesError,
+        override val dayItems: List<DayItem>
+    ) : LeaguesUiState
 
     data class HasLeagues(
         override val isLoading: Boolean,
         override val error: LeaguesError,
-        val countryItems: List<League>
+        override val dayItems: List<DayItem>,
+        val leagueItems: List<League>,
+        val favoriteLeagueItems: List<League>
     ) : LeaguesUiState
 }

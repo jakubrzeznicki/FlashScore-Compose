@@ -1,24 +1,14 @@
 package com.kuba.flashscorecompose.data.league.remote
 
-import com.kuba.flashscorecompose.api.FlashScoreApi
-import com.kuba.flashscorecompose.data.league.model.League
-import com.kuba.flashscorecompose.utils.RepositoryResult
-import com.kuba.flashscorecompose.utils.ResponseStatus
-import retrofit2.HttpException
+import com.kuba.flashscorecompose.api.FootballApi
+import com.kuba.flashscorecompose.data.league.remote.model.LeagueDataDto
+import retrofit2.Response
 
 /**
  * Created by jrzeznicki on 10/1/2022
  */
-class LeagueRemote(private val flashScoreApi: FlashScoreApi) : LeagueRemoteDataSource {
-    override suspend fun loadLeagues(countryId: String): RepositoryResult<List<League>> {
-        val result = flashScoreApi.getLeagues(countryId = countryId)
-        return try {
-            RepositoryResult.Success(result.body().orEmpty())
-        } catch (e: HttpException) {
-            RepositoryResult.Error(ResponseStatus().apply {
-                this.statusMessage = e.message()
-                this.internalStatus = e.code()
-            })
-        }
-    }
+class LeagueRemote(private val footballApi: FootballApi) : LeagueRemoteDataSource {
+    override suspend fun loadLeagues(countryCode: String): Response<LeagueDataDto> =
+        footballApi.getLeagues(countryCode = countryCode)
+
 }

@@ -12,9 +12,7 @@ class LocalRoomStorage(private val context: Context) : RoomStorage {
         .fallbackToDestructiveMigration()
         .build()
 
-
     override fun getDatabase(): FlashScoreDatabase = room
-
 
     private companion object {
         const val DATABASE_NAME = "flashscore_database.db"

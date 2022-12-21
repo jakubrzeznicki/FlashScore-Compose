@@ -1,7 +1,7 @@
 package com.kuba.flashscorecompose.data.country.local
 
 import androidx.room.*
-import com.kuba.flashscorecompose.data.country.model.Country
+import com.kuba.flashscorecompose.data.country.local.model.CountryEntity
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface CountryDao {
     @Query("SELECT * FROM countries")
-    fun observeCountries(): Flow<List<Country>>
+    fun observeCountries(): Flow<List<CountryEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun saveCountries(countries: List<Country>)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun saveCountries(countries: List<CountryEntity>)
 
     @Query("DELETE from countries")
     fun deleteCountries()

@@ -26,9 +26,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import coil.decode.SvgDecoder
 import coil.request.ImageRequest
+import coil.size.Size
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.kuba.flashscorecompose.R
@@ -37,6 +38,7 @@ import com.kuba.flashscorecompose.countries.viewmodel.CountriesViewModel
 import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.destinations.LeaguesListScreenDestination
 import com.kuba.flashscorecompose.ui.component.AppTopBar
+import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
@@ -59,7 +61,7 @@ fun CountryListScreen(
     CountriesScreen(
         uiState = uiState,
         onRefreshClick = { viewModel.refreshCountries() },
-        onCountryClick = { navigator.navigate(LeaguesListScreenDestination(countryId = "countryId")) },
+        navigator = navigator,
         onErrorClear = { viewModel.cleanError() },
         scaffoldState = scaffoldState,
         context = context
@@ -71,7 +73,7 @@ fun CountriesScreen(
     modifier: Modifier = Modifier,
     uiState: CountriesUiState,
     onRefreshClick: () -> Unit,
-    onCountryClick: (Country) -> Unit,
+    navigator: DestinationsNavigator,
     onErrorClear: () -> Unit,
     scaffoldState: ScaffoldState,
     context: Context
@@ -89,7 +91,7 @@ fun CountriesScreen(
             when (uiState) {
                 is CountriesUiState.HasCountries -> CountryList(
                     countries = uiState.countryItems,
-                    onCountryClick = onCountryClick,
+                    navigator = navigator,
                     modifier = modifier
                 )
                 is CountriesUiState.NoCountries -> EmptyScreen(onRefreshClick)
@@ -120,7 +122,7 @@ fun LoadingContent(
 @Composable
 fun CountryList(
     countries: List<Country>,
-    onCountryClick: (Country) -> Unit,
+    navigator: DestinationsNavigator,
     modifier: Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     state: LazyListState = rememberLazyListState()
@@ -133,7 +135,7 @@ fun CountryList(
         item {
             Column {
                 countries.forEach {
-                    CountryCard(countryItem = it, onCountryClick = onCountryClick)
+                    CountryCard(countryItem = it, navigator = navigator)
                 }
             }
         }
@@ -142,12 +144,12 @@ fun CountryList(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CountryCard(countryItem: Country, onCountryClick: (Country) -> Unit) {
+fun CountryCard(countryItem: Country, navigator: DestinationsNavigator) {
     Card(
-        onClick = { onCountryClick(countryItem) },
+        onClick = { navigator.navigate(LeaguesListScreenDestination(countryCode = countryItem.code)) },
         elevation = 4.dp,
-        shape = RoundedCornerShape(8.dp),
-        backgroundColor = MaterialTheme.colors.surface
+        backgroundColor = MaterialTheme.colors.surface,
+        modifier = Modifier.padding(PaddingValues(vertical = 2.dp))
     ) {
         Row(
             modifier = Modifier
@@ -161,7 +163,9 @@ fun CountryCard(countryItem: Country, onCountryClick: (Country) -> Unit) {
                     .clip(CircleShape)
                     .size(40.dp),
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(countryItem.logo)
+                    .decoderFactory(SvgDecoder.Factory())
+                    .data(countryItem.flag)
+                    .size(Size.ORIGINAL)
                     .crossfade(true)
                     .build(),
                 placeholder = painterResource(id = R.drawable.ic_launcher_background),
@@ -169,7 +173,11 @@ fun CountryCard(countryItem: Country, onCountryClick: (Country) -> Unit) {
                 contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.size(8.dp))
-            Text(text = countryItem.name.orEmpty(), style = MaterialTheme.typography.h6)
+            Text(
+                text = countryItem.name.orEmpty(),
+                style = FlashScoreTypography.h6,
+                color = MaterialTheme.colors.secondary
+            )
         }
     }
 }

@@ -2,7 +2,8 @@ package com.kuba.flashscorecompose.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
+val Black500 = Color(0xff010a0f)
+val MarineBlue500 = Color(0xff00141D)
+val Red800 = Color(0xffa13229)
+val Grey500 = Color(0xFFC8CECE)
+val Yellow500 = Color(0xFFFDCD07)

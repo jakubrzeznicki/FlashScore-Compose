@@ -1,12 +1,19 @@
 package com.kuba.flashscorecompose.data.league
 
+import android.util.Log
 import com.kuba.flashscorecompose.data.league.local.LeagueLocalDataSource
+import com.kuba.flashscorecompose.data.league.mapper.toLeague
+import com.kuba.flashscorecompose.data.league.mapper.toLeagueEntity
+import com.kuba.flashscorecompose.data.league.mapper.toLeagues
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.data.league.remote.LeagueRemoteDataSource
 import com.kuba.flashscorecompose.utils.RepositoryResult
+import com.kuba.flashscorecompose.utils.ResponseStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import retrofit2.HttpException
 
 /**
  * Created by jrzeznicki on 10/3/2022
@@ -15,21 +22,35 @@ class LeagueRepository(
     private val local: LeagueLocalDataSource,
     private val remote: LeagueRemoteDataSource
 ) : LeagueDataSource {
-    override fun observeLeagues(countryId: String): Flow<List<League>> =
-        local.observeLeagues(countryId)
+    override fun observeLeagues(countryCode: String): Flow<List<League>> =
+        local.observeLeagues(countryCode)
+            .map { leagueEntity -> leagueEntity.map { it.toLeagues() } }
 
     override fun saveLeagues(leagues: List<League>) {
-        local.saveLeagues(leagues)
+        local.saveLeagues(leagues.map { it.toLeagueEntity() })
     }
 
-    override suspend fun loadLeagues(countryId: String): RepositoryResult<List<League>> {
-        return remote.loadLeagues(countryId).also {
+    override suspend fun loadLeagues(countryCode: String): RepositoryResult<List<League>> {
+        val result = remote.loadLeagues(countryCode)
+        return try {
+            val leagues = result.body()?.response?.mapNotNull { it.league?.toLeague() }.orEmpty()
+            Log.d("TEST_LOG", "loadLeagues success ${result.body()}")
+            Log.d("TEST_LOG", "loadLeagues success ${result.message()}")
+            Log.d("TEST_LOG", "loadLeagues success ${result.errorBody()}")
+            Log.d("TEST_LOG", "loadLeagues success ${result.headers()}")
+            Log.d("TEST_LOG", "loadLeagues success ${result.raw()}")
+            Log.d("TEST_LOG", "loadLeagues success ${result.code()}")
             withContext(Dispatchers.IO) {
-                if (it is RepositoryResult.Success) {
-                    local.deleteLeagues(countryId)
-                    local.saveLeagues(it.data)
-                }
+                local.deleteLeagues(countryCode)
+                local.saveLeagues(leagues.map { it.toLeagueEntity() })
             }
+            RepositoryResult.Success(leagues)
+        } catch (e: HttpException) {
+            Log.d("TEST_LOG", "loadLeagues error ${result.code()}")
+            RepositoryResult.Error(ResponseStatus().apply {
+                this.statusMessage = e.message()
+                this.internalStatus = e.code()
+            })
         }
     }
 }
