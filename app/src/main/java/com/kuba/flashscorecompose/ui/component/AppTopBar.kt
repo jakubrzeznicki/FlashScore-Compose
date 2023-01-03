@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 fun AppTopBar(
     title: @Composable () -> Unit,
     modifier: Modifier = Modifier,
-    shape: Shape,
     navigationIcon: @Composable (() -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
     backgroundColor: Color = MaterialTheme.colors.primarySurface,
@@ -30,8 +29,7 @@ fun AppTopBar(
         backgroundColor,
         contentColor,
         elevation = elavation,
-        ContentPadding,
-        shape = shape,
+        PaddingValues(8.dp),
         modifier = modifier
     ) {
         if (navigationIcon == null) {
@@ -86,7 +84,6 @@ fun AppBar(
     contentColor: Color,
     elevation: Dp,
     contentPadding: PaddingValues,
-    shape: Shape,
     modifier: Modifier,
     content: @Composable RowScope.() -> Unit
 ) {
@@ -94,7 +91,6 @@ fun AppBar(
         color = backgroundColor,
         contentColor = contentColor,
         elevation = elevation,
-        shape = shape,
         modifier = modifier
     ) {
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {

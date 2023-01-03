@@ -21,7 +21,7 @@ class CountriesViewModel(private val countryRepository: CountryDataSource) : Vie
         .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
 
     fun setup() {
-        refreshCountries()
+        //refreshCountries()
         observeCountries()
     }
 

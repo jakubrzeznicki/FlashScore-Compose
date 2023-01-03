@@ -10,4 +10,3 @@ data class CountryDto(
     @SerializedName("name") val name: String?,
     @SerializedName("flag") val flag: String?
 )
-
