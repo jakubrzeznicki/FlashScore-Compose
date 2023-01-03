@@ -49,7 +49,7 @@ import org.koin.core.parameter.parametersOf
  */
 private const val SETUP_LEAGUES_KEY = "SETUP_LEAGUES_KEY"
 
-@Destination
+@Destination(route = "leagues")
 @Composable
 fun LeaguesListScreen(
     countryCode: String,
@@ -264,7 +264,6 @@ fun LeagueItem(leagueItem: League, onLeagueClick: (League) -> Unit) {
 @Composable
 fun TopBar(context: Context) {
     AppTopBar(
-        shape = RoundedCornerShape(0, 0, 24, 24),
         title = {
             Text(text = stringResource(id = R.string.leagues))
         },
@@ -277,6 +276,7 @@ fun TopBar(context: Context) {
                 Icon(imageVector = Icons.Filled.Settings, contentDescription = "settings")
             }
         }
+
     )
 }
 

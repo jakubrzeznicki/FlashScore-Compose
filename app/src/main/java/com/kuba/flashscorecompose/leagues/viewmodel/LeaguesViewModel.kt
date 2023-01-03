@@ -29,7 +29,7 @@ class LeaguesViewModel(
         .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
 
     fun setup() {
-        refreshLeagues()
+        //refreshLeagues()
         observeLeagues()
         getDays()
     }

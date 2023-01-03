@@ -36,6 +36,7 @@ import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.countries.model.CountriesUiState
 import com.kuba.flashscorecompose.countries.viewmodel.CountriesViewModel
 import com.kuba.flashscorecompose.data.country.model.Country
+import com.kuba.flashscorecompose.destinations.HomeScreenDestination
 import com.kuba.flashscorecompose.destinations.LeaguesListScreenDestination
 import com.kuba.flashscorecompose.ui.component.AppTopBar
 import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
@@ -48,7 +49,7 @@ import org.koin.androidx.compose.getViewModel
  */
 private const val SETUP_COUNTRIES_KEY = "SETUP_COUNTRIES_KEY"
 
-@Destination(start = true)
+@Destination(route = "home/countries")
 @Composable
 fun CountryListScreen(
     navigator: DestinationsNavigator,
@@ -78,7 +79,7 @@ fun CountriesScreen(
     scaffoldState: ScaffoldState,
     context: Context
 ) {
-    Scaffold(topBar = { TopBar(context) }, scaffoldState = scaffoldState) {
+    Scaffold(topBar = { TopBar(context, navigator) }, scaffoldState = scaffoldState) {
         LoadingContent(
             empty = when (uiState) {
                 is CountriesUiState.HasCountries -> false
@@ -183,9 +184,8 @@ fun CountryCard(countryItem: Country, navigator: DestinationsNavigator) {
 }
 
 @Composable
-fun TopBar(context: Context) {
+fun TopBar(context: Context, navigator: DestinationsNavigator) {
     AppTopBar(
-        shape = RoundedCornerShape(0, 0, 24, 24),
         title = {
             Text(text = stringResource(id = R.string.countries))
         },
@@ -194,7 +194,7 @@ fun TopBar(context: Context) {
                 modifier = Modifier
                     .padding(horizontal = 8.dp)
                     .size(24.dp),
-                onClick = { Toast.makeText(context, "settings", Toast.LENGTH_SHORT) }) {
+                onClick = {  }) {
                 Icon(imageVector = Icons.Filled.Settings, contentDescription = "settings")
             }
         }

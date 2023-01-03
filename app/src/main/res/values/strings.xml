@@ -2,4 +2,8 @@
     <string name="app_name">FlashScoreCompose</string>
     <string name="countries">Countries</string>
     <string name="leagues">Leagues</string>
+    <string name="live_score">Live Score</string>
+    <string name="football">Football</string>
+    <string name="text_banner">Liverpool UEFA Champion League Celebration</string>
+    <string name="text_second_banner">Yesterday, 06.30 PM</string>
 </resources>
