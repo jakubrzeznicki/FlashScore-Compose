@@ -13,12 +13,12 @@ import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.VenueEntity
 @Dao
 interface VenueDao {
 
-    @Query("SELECT * FROM team WHERE l = :venueId")
-    fun getVenue(leagueId: Int): List<TeamEntity>
+//    @Query("SELECT * FROM venue WHERE  id= :id")
+//    fun getVenue(leagueId: Int): List<TeamEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveVenue(venues: List<VenueEntity>)
 
-    @Query("DELETE FROM venue WHERE venue_id = :venueId")
-    fun deleteByRound(venueId: Int)
+//    @Query("DELETE FROM venue WHERE venue_id = :venueId")
+//    fun deleteByRound(venueId: Int)
 }

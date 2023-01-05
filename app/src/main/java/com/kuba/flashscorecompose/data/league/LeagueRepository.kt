@@ -4,7 +4,6 @@ import android.util.Log
 import com.kuba.flashscorecompose.data.league.local.LeagueLocalDataSource
 import com.kuba.flashscorecompose.data.league.mapper.toLeague
 import com.kuba.flashscorecompose.data.league.mapper.toLeagueEntity
-import com.kuba.flashscorecompose.data.league.mapper.toLeagues
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.data.league.remote.LeagueRemoteDataSource
 import com.kuba.flashscorecompose.utils.RepositoryResult
@@ -24,7 +23,7 @@ class LeagueRepository(
 ) : LeagueDataSource {
     override fun observeLeagues(countryCode: String): Flow<List<League>> =
         local.observeLeagues(countryCode)
-            .map { leagueEntity -> leagueEntity.map { it.toLeagues() } }
+            .map { leagueEntity -> leagueEntity.map { it.toLeague() } }
 
     override fun saveLeagues(leagues: List<League>) {
         local.saveLeagues(leagues.map { it.toLeagueEntity() })

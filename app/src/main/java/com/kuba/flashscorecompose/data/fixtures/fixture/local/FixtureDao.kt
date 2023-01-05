@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface FixtureDao {
 
-    @Query("SELECT * FROM fixture WHERE leagueId = :leagueId AND season = :season AND round = :round")
+    @Query("SELECT * FROM fixture WHERE current_round_league_id = :leagueId AND current_round_season = :season AND current_round_round = :round")
     fun observeFixturesFilteredByRound(
         leagueId: Int,
         season: Int,
@@ -26,7 +26,7 @@ interface FixtureDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveFixtures(fixtures: List<FixtureEntity>)
 
-    @Query("DELETE FROM fixture WHERE leagueId = :leagueId AND season = :season AND round = :round")
+    @Query("DELETE FROM fixture WHERE league_id = :leagueId AND current_round_season = :season AND current_round_round = :round")
     fun deleteByRound(leagueId: Int, season: Int, round: String)
 
     @Query("DELETE FROM fixture WHERE h2h = :h2h")

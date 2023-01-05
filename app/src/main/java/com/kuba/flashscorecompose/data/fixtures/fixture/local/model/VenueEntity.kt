@@ -7,6 +7,10 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "venue")
 data class VenueEntity(
     @ColumnInfo(name = "city") val city: String,
-    @PrimaryKey @ColumnInfo(name = "venue_id") val id: Int,
-    @ColumnInfo(name = "name") val name: String
+    @PrimaryKey @ColumnInfo(name = "id") val id: Int,
+    @ColumnInfo(name = "name") val name: String,
+    @ColumnInfo(name = "address") val address: String,
+    @ColumnInfo(name = "capacity") val capacity: Int,
+    @ColumnInfo(name = "surface") val surface: String,
+    @ColumnInfo(name = "image") val image: String,
 )

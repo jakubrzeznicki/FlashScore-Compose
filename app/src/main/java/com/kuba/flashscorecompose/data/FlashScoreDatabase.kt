@@ -10,8 +10,8 @@ import com.kuba.flashscorecompose.data.fixtures.currentround.local.model.Current
 import com.kuba.flashscorecompose.data.fixtures.fixture.local.FixtureDao
 import com.kuba.flashscorecompose.data.fixtures.fixture.local.TeamDao
 import com.kuba.flashscorecompose.data.fixtures.fixture.local.VenueDao
+import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.FixtureEntity
 import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.FixtureInfoEntity
-import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.LeagueFixtureEntity
 import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.TeamEntity
 import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.VenueEntity
 import com.kuba.flashscorecompose.data.fixtures.lineups.converter.LineupsDataConverter
@@ -30,8 +30,8 @@ import com.kuba.flashscorecompose.data.league.local.model.LeagueEntity
  */
 @Database(
     entities = [CountryEntity::class, LeagueEntity::class, CurrentRoundEntity::class,
-        FixtureInfoEntity::class, LeagueFixtureEntity::class, TeamEntity::class, VenueEntity::class,
-        CoachEntity::class, PlayerEntity::class, StatisticsEntity::class, LineupEntity::class],
+        FixtureInfoEntity::class, TeamEntity::class, VenueEntity::class,
+        CoachEntity::class, PlayerEntity::class, StatisticsEntity::class, LineupEntity::class, FixtureEntity::class],
     version = 7
 )
 @TypeConverters(StatisticsDataConverter::class, LineupsDataConverter::class)

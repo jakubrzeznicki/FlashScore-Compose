@@ -11,12 +11,12 @@ import com.kuba.flashscorecompose.data.fixtures.currentround.local.model.Current
  */
 @Dao
 interface CurrentRoundDao {
-    @Query("SELECT * FROM current_rounds WHERE leagueId = :leagueId")
+    @Query("SELECT * FROM current_rounds WHERE league_id = :leagueId")
     fun getCurrentRound(leagueId: Int): CurrentRoundEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveCurrentRound(currentRound: CurrentRoundEntity)
 
-    @Query("DELETE FROM current_rounds WHERE leagueId = :leagueId")
+    @Query("DELETE FROM current_rounds WHERE league_id = :leagueId")
     fun deleteCurrentRound(leagueId: Int)
 }
