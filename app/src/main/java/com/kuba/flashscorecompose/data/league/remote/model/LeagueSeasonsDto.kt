@@ -6,5 +6,5 @@ import com.kuba.flashscorecompose.data.country.remote.model.CountryDto
 data class LeagueSeasonsDto(
     @SerializedName("league") val league: LeagueDto?,
     @SerializedName("country") val country: CountryDto?,
-    @SerializedName("seasons") val seasons: List<Season>?
+    @SerializedName("seasons") val seasons: List<SeasonDto>?
 )
