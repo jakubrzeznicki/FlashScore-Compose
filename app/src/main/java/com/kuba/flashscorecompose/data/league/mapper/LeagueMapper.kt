@@ -7,7 +7,7 @@ import com.kuba.flashscorecompose.data.league.remote.model.LeagueDto
 /**
  * Created by jrzeznicki on 21/12/2022.
  */
-fun LeagueEntity.toLeagues(): League {
+fun LeagueEntity.toLeague(): League {
     return League(id = id, name = name, type = type, logo = logo, countryCode = countryCode)
 }
 

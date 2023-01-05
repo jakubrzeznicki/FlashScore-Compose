@@ -9,7 +9,8 @@ import androidx.room.PrimaryKey
  */
 @Entity(tableName = "current_rounds")
 data class CurrentRoundEntity(
-    @PrimaryKey @ColumnInfo(name = "league_id") val leagueId: Int,
+    @PrimaryKey @ColumnInfo(name = "id") val id: Int,
+    @ColumnInfo(name = "league_id") val leagueId: Int,
     @ColumnInfo(name = "season") val season: Int,
     @ColumnInfo(name = "round") val round: String
 )

@@ -2,6 +2,9 @@ package com.kuba.flashscorecompose.data.fixtures.fixture.mapper
 
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.*
 import com.kuba.flashscorecompose.data.fixtures.fixture.remote.model.*
+import com.kuba.flashscorecompose.data.league.mapper.toLeague
+import com.kuba.flashscorecompose.data.league.model.League
+import com.kuba.flashscorecompose.data.league.remote.model.LeagueDto
 
 /**
  * Created by jrzeznicki on 03/01/2023.
@@ -13,10 +16,6 @@ fun TeamDto.toTeam(): Team {
         name = name.orEmpty(),
         winner = winner ?: false
     )
-}
-
-fun TeamsDto.toTeams(): Teams {
-    return Teams(away = away?.toTeam() ?: Team.EMPTY_TEAM, home = home?.toTeam() ?: Team.EMPTY_TEAM)
 }
 
 fun VenueDto.toVenue(): Venue {
@@ -40,15 +39,13 @@ fun GoalsDto.toGoals(): Goals {
     return Goals(home = home ?: 0, away = away ?: 0)
 }
 
-fun LeagueFixtureDto.toLeagueFixture(): LeagueFixture {
-    return LeagueFixture(
-        country = country.orEmpty(),
-        flag = flag.orEmpty(),
+fun LeagueDto.toLeague(): League {
+    return League(
         id = id ?: 0,
         logo = logo.orEmpty(),
         name = name.orEmpty(),
-        round = round.orEmpty(),
-        season = season ?: 0
+        type = type.orEmpty(),
+        countryCode = ""
     )
 }
 
@@ -73,9 +70,10 @@ fun FixtureDto.toFixtureItem(leagueId: Int, season: Int, round: String): Fixture
         h2h = "",
         fixture = fixture?.toFixtureInfo() ?: FixtureInfo.EMPTY_FIXTURE_INFO,
         goals = goals?.toGoals() ?: Goals.EMPTY_GOALS,
-        league = league?.toLeagueFixture() ?: LeagueFixture.EMPTY_LEAGUE_FIXTURE,
+        league = league?.toLeague() ?: League.EMPTY_LEAGUE,
         score = score?.toScore() ?: Score.EMPTY_SCORE,
-        teams = teams?.toTeams() ?: Teams.EMPTY_TEAMS
+        homeTeam = teams?.home?.toTeam() ?: Team.EMPTY_TEAM,
+        awayTeam = teams?.away?.toTeam() ?: Team.EMPTY_TEAM
     )
 }
 
@@ -88,8 +86,9 @@ fun FixtureDto.toFixtureItem(h2h: String): FixtureItem {
         h2h = h2h,
         fixture = fixture?.toFixtureInfo() ?: FixtureInfo.EMPTY_FIXTURE_INFO,
         goals = goals?.toGoals() ?: Goals.EMPTY_GOALS,
-        league = league?.toLeagueFixture() ?: LeagueFixture.EMPTY_LEAGUE_FIXTURE,
+        league = league?.toLeague() ?: League.EMPTY_LEAGUE,
         score = score?.toScore() ?: Score.EMPTY_SCORE,
-        teams = teams?.toTeams() ?: Teams.EMPTY_TEAMS
+        homeTeam = teams?.home?.toTeam() ?: Team.EMPTY_TEAM,
+        awayTeam = teams?.away?.toTeam() ?: Team.EMPTY_TEAM
     )
 }

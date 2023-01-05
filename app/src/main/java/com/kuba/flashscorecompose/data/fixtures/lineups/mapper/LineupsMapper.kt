@@ -54,7 +54,15 @@ fun Lineup.toLineupEntity(): LineupEntity {
 }
 
 fun Coach.toCoachEntity(): CoachEntity {
-    return CoachEntity(id = id ?: 0, name = name.orEmpty(), photo = photo.orEmpty())
+    return CoachEntity(
+        id = id ?: 0,
+        name = name.orEmpty(),
+        photo = photo.orEmpty(),
+        "",
+        "",
+        9,
+        ""
+    )
 }
 
 fun Player.toPlayerEntity(): PlayerEntity {

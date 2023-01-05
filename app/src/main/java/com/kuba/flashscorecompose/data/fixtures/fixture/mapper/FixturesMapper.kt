@@ -1,25 +1,38 @@
 package com.kuba.flashscorecompose.data.fixtures.fixture.mapper
 
+import com.kuba.flashscorecompose.data.fixtures.currentround.local.model.CurrentRoundEntity
 import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.*
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.*
+import com.kuba.flashscorecompose.data.league.mapper.toLeagueEntity
 
 /**
  * Created by jrzeznicki on 03/01/2023.
  */
 fun Team.toTeamEntity(): TeamEntity {
-    return TeamEntity(id = id, logo = logo, name = name, winner = winner, isHome = false)
-}
-
-fun Teams.toTeamsEntity(): TeamsEntity {
-    return TeamsEntity(away = away.toTeamEntity(), home = home.toTeamEntity())
+    return TeamEntity(
+        id = id,
+        logo = logo,
+        name = name,
+        isWinner = winner,
+        isHome = false,
+        code = "",
+        founded = 0,
+        isNational = false,
+        colors = "",
+        leagueId = 0
+    )
 }
 
 fun Venue.toVenueEntity(): VenueEntity {
-    return VenueEntity(city = city.orEmpty(), id = id ?: 0, name = name.orEmpty())
+    return VenueEntity(city = city.orEmpty(), id = id ?: 0, name = name.orEmpty(), "", 0, "", "")
 }
 
 fun Status.toStatusEntity(): StatusEntity {
-    return StatusEntity(elapsed = elapsed ?: 0, long = long.orEmpty(), short = short.orEmpty())
+    return StatusEntity(
+        elapsed = elapsed ?: 0,
+        longValue = long.orEmpty(),
+        shortValue = short.orEmpty()
+    )
 }
 
 fun Score.toScoreEntity(): ScoreEntity {
@@ -33,18 +46,6 @@ fun Score.toScoreEntity(): ScoreEntity {
 
 fun Goals.toGoalsEntity(): GoalsEntity {
     return GoalsEntity(home = home ?: 0, away = away ?: 0)
-}
-
-fun LeagueFixture.toLeagueFixtureEntity(): LeagueFixtureEntity {
-    return LeagueFixtureEntity(
-        country = country.orEmpty(),
-        flag = flag.orEmpty(),
-        id = id ?: 0,
-        logo = logo.orEmpty(),
-        name = name.orEmpty(),
-        round = round.orEmpty(),
-        season = season ?: 0
-    )
 }
 
 fun FixtureInfo.toFixtureInfoEntity(): FixtureInfoEntity {
@@ -62,14 +63,13 @@ fun FixtureInfo.toFixtureInfoEntity(): FixtureInfoEntity {
 fun FixtureItem.toFixtureEntity(): FixtureEntity {
     return FixtureEntity(
         id = id,
-        leagueId = leagueId,
-        season = season,
-        round = round,
+        currentRound = CurrentRoundEntity(0, leagueId, season, round),
         h2h = h2h,
         fixture = fixture.toFixtureInfoEntity(),
         goals = goals.toGoalsEntity(),
-        league = league.toLeagueFixtureEntity(),
+        league = league.toLeagueEntity(),
         score = score.toScoreEntity(),
-        teams = teams.toTeamsEntity()
+        homeTeam = homeTeam.toTeamEntity(),
+        awayTeam = awayTeam.toTeamEntity()
     )
 }

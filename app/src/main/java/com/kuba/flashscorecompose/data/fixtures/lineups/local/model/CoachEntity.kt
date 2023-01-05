@@ -9,7 +9,11 @@ import androidx.room.PrimaryKey
  */
 @Entity(tableName = "coach")
 data class CoachEntity(
-    @PrimaryKey @ColumnInfo(name = "coach_id") val id: Int,
-    @ColumnInfo(name = "coach_name") val name: String,
+    @PrimaryKey @ColumnInfo(name = "id") val id: Int,
+    @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "photo") val photo: String,
+    @ColumnInfo(name = "first_name") val firstName: String,
+    @ColumnInfo(name = "last_name") val lastName: String,
+    @ColumnInfo(name = "age") val age: Int,
+    @ColumnInfo(name = "nationality") val nationality: String
 )

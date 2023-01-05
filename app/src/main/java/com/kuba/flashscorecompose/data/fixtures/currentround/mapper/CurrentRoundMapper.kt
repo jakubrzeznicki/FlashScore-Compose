@@ -8,15 +8,16 @@ import com.kuba.flashscorecompose.data.fixtures.currentround.remote.model.Curren
  * Created by jrzeznicki on 03/01/2023.
  */
 fun CurrentRoundEntity.toCurrentRound(): CurrentRound {
-    return CurrentRound(leagueId = leagueId, season = season, round = round)
+    return CurrentRound(id = id, leagueId = leagueId, season = season, round = round)
 }
 
 fun CurrentRound.toCurrentRoundEntity(): CurrentRoundEntity {
-    return CurrentRoundEntity(leagueId = leagueId, season = season, round = round)
+    return CurrentRoundEntity(id = id, leagueId = leagueId, season = season, round = round)
 }
 
 fun CurrentRoundDataDto.toCurrentRound(): CurrentRound {
     return CurrentRound(
+        id = 0,
         leagueId = parameters?.league ?: 0,
         season = parameters?.season ?: 0,
         round = response?.first()?.round.orEmpty()

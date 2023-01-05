@@ -17,7 +17,7 @@ interface TeamDao {
     @Query("SELECT * FROM team WHERE league_id = :leagueId")
     fun getTeamsByLeague(leagueId: Int): Flow<List<TeamEntity>>
 
-    @Query("SELECT * FROM team WHERE team_id = :teamId")
+    @Query("SELECT * FROM team WHERE id = :teamId")
     fun getTeam(teamId: Int): TeamEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

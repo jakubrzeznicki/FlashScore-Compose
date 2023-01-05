@@ -1,5 +1,7 @@
 package com.kuba.flashscorecompose.data.fixtures.fixture.model
 
+import com.kuba.flashscorecompose.data.league.model.League
+
 data class FixtureItem(
     val id: Int,
     val leagueId: Int,
@@ -8,7 +10,8 @@ data class FixtureItem(
     val h2h: String,
     val fixture: FixtureInfo,
     val goals: Goals,
-    val league: LeagueFixture,
+    val league: League,
     val score: Score,
-    val teams: Teams
+    val homeTeam: Team,
+    val awayTeam: Team
 )
