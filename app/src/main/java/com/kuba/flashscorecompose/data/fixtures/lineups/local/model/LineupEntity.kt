@@ -9,7 +9,7 @@ import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.TeamEntity
 @SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
 @Entity(tableName = "lineup")
 data class LineupEntity(
-    @PrimaryKey @ColumnInfo(name = "id") val id: Int,
+    @PrimaryKey @ColumnInfo(name = "uuid") val uuid: String,
     @ColumnInfo(name = "fixture_id") val fixtureId: Int,
     @Embedded(prefix = "coach_") val coach: CoachEntity,
     @ColumnInfo(name = "formation") val formation: String,

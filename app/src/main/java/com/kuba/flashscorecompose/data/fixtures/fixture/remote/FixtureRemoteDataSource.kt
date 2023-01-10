@@ -14,4 +14,6 @@ interface FixtureRemoteDataSource {
     ): Response<FixtureDataDto>
 
     suspend fun loadFixturesHeadToHead(h2h: String): Response<FixtureDataDto>
+    suspend fun loadFixturesByDate(date: String): Response<FixtureDataDto>
+    suspend fun loadLastXFixtures(count: Int): Response<FixtureDataDto>
 }

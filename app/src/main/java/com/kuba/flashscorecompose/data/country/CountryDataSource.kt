@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
  * Created by jrzeznicki on 9/7/2022
  */
 interface CountryDataSource {
-    fun observeCountries(): Flow<List<Country>>
+    fun observeCountries(countryCodes: List<String>): Flow<List<Country>>
     fun saveCountries(countries: List<Country>)
     suspend fun loadCountries(): RepositoryResult<List<Country>>
 }

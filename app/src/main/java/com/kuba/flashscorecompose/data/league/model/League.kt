@@ -8,9 +8,11 @@ data class League(
     val name: String,
     val type: String,
     val logo: String,
-    val countryCode: String
+    val countryCode: String,
+    val countryName: String,
+    val countryFlag: String
 ) {
     companion object {
-        val EMPTY_LEAGUE = League(0, "", "", "", "")
+        val EMPTY_LEAGUE = League(0, "", "", "", "", "", "")
     }
 }

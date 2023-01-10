@@ -8,6 +8,7 @@ data class FixtureItem(
     val season: Int,
     val round: String,
     val h2h: String,
+    val date: String,
     val fixture: FixtureInfo,
     val goals: Goals,
     val league: League,

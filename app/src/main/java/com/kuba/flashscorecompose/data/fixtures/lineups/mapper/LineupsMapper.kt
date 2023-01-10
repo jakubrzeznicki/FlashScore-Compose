@@ -11,13 +11,14 @@ import com.kuba.flashscorecompose.data.fixtures.lineups.model.Player
 import com.kuba.flashscorecompose.data.fixtures.lineups.remote.model.CoachDto
 import com.kuba.flashscorecompose.data.fixtures.lineups.remote.model.LineupDto
 import com.kuba.flashscorecompose.data.fixtures.lineups.remote.model.PlayerDto
+import java.util.*
 
 /**
  * Created by jrzeznicki on 03/01/2023.
  */
 fun LineupEntity.toLineup(): Lineup {
     return Lineup(
-        id = id,
+        uuid = uuid,
         fixtureId = fixtureId,
         coach = coach.toCoach(),
         formation = formation,
@@ -43,7 +44,7 @@ fun PlayerEntity.toPlayer(): Player {
 
 fun Lineup.toLineupEntity(): LineupEntity {
     return LineupEntity(
-        id = id,
+        uuid = uuid,
         fixtureId = fixtureId,
         coach = coach.toCoachEntity(),
         formation = formation,
@@ -77,7 +78,7 @@ fun Player.toPlayerEntity(): PlayerEntity {
 
 fun LineupDto.toLineup(fixtureId: Int): Lineup {
     return Lineup(
-        id = 0, // tworzenie randoma
+        uuid = UUID.randomUUID().toString(),
         fixtureId = fixtureId,
         coach = coach.toCoach(),
         formation = formation,

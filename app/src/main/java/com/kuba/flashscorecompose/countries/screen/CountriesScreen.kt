@@ -36,7 +36,6 @@ import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.countries.model.CountriesUiState
 import com.kuba.flashscorecompose.countries.viewmodel.CountriesViewModel
 import com.kuba.flashscorecompose.data.country.model.Country
-import com.kuba.flashscorecompose.destinations.HomeScreenDestination
 import com.kuba.flashscorecompose.destinations.LeaguesListScreenDestination
 import com.kuba.flashscorecompose.ui.component.AppTopBar
 import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography

@@ -15,9 +15,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.relay.compose.BoxScopeInstanceImpl.matchParentSize
-import com.kuba.flashscorecompose.home.FixtureData
-import com.kuba.flashscorecompose.home.FixtureWidgetCard
-import com.kuba.flashscorecompose.home.Team
+import com.kuba.flashscorecompose.home.screen.FixtureData
+import com.kuba.flashscorecompose.home.screen.FixtureWidgetCard
+import com.kuba.flashscorecompose.home.screen.Team
 import com.kuba.flashscorecompose.ui.theme.TextGreyLight
 
 /**
@@ -122,7 +122,7 @@ fun provideFixtureDataList(): List<FixtureData> {
 fun FixtureWidgets(fixtureWidgetsList: List<FixtureData>) {
     Column {
         fixtureWidgetsList.forEach {
-            FixtureWidgetCard(fixtureData = it)
+            //FixtureWidgetCard(fixtureData = it)
             Spacer(modifier = Modifier.size(16.dp))
         }
     }

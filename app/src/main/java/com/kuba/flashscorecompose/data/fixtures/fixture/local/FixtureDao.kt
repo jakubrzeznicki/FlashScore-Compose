@@ -23,6 +23,12 @@ interface FixtureDao {
     @Query("SELECT * FROM fixture WHERE h2h = :h2h")
     fun observeFixturesHeadToHead(h2h: String): Flow<List<FixtureEntity>>
 
+    @Query("SELECT * FROM fixture WHERE date = :date")
+    fun observeFixturesByDate(date: String): Flow<List<FixtureEntity>>
+
+    @Query("SELECT * FROM fixture WHERE league_countryName IN(:countryNames) ORDER BY fixture_info_timestamp LIMIT :count")
+    fun observeXLastFixtures(count: Int, countryNames: List<String>): Flow<List<FixtureEntity>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveFixtures(fixtures: List<FixtureEntity>)
 

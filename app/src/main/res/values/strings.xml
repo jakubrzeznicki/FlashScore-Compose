@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FlashScoreCompose</string>
+    <string name="flashscore_app_name">FlashScoreCompose</string>
     <string name="countries">Countries</string>
     <string name="leagues">Leagues</string>
     <string name="live_score">Live Score</string>

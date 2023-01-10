@@ -25,7 +25,7 @@ import coil.request.ImageRequest
 import coil.size.Size
 import com.google.relay.compose.BoxScopeInstanceImpl.matchParentSize
 import com.kuba.flashscorecompose.R
-import com.kuba.flashscorecompose.home.FixtureData
+import com.kuba.flashscorecompose.home.screen.FixtureData
 import com.kuba.flashscorecompose.ui.theme.GreenLight
 import com.kuba.flashscorecompose.ui.theme.GreyDark
 
