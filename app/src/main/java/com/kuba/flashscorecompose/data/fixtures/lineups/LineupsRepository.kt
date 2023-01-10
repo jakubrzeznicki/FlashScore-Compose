@@ -14,7 +14,7 @@ import retrofit2.HttpException
 /**
  * Created by jrzeznicki on 03/01/2023.
  */
-class CurrentRoundRepository(
+class LineupsRepository(
     private val local: LineupLocalDataSource,
     private val remote: LineupsRemoteDataSource
 ) : LineupsDataSource {

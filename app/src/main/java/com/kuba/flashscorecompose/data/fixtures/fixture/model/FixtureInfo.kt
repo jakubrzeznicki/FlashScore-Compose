@@ -7,10 +7,20 @@ data class FixtureInfo(
     val status: Status,
     val timestamp: Int,
     val timezone: String,
-    val venue: Venue
+    val venue: Venue,
+    val periods: Periods
 ) {
     companion object {
         val EMPTY_FIXTURE_INFO =
-            FixtureInfo("", 0, "", Status.EMPTY_STATUS, 0, "", Venue.EMPTY_VENUE)
+            FixtureInfo(
+                "",
+                0,
+                "",
+                Status.EMPTY_STATUS,
+                0,
+                "",
+                Venue.EMPTY_VENUE,
+                Periods.EMPTY_PERIODS
+            )
     }
 }

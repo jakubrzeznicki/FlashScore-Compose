@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.Flow
  */
 @Dao
 interface CountryDao {
-    @Query("SELECT * FROM countries")
-    fun observeCountries(): Flow<List<CountryEntity>>
+    @Query("SELECT * FROM countries WHERE code IN(:countryCodes)")
+    fun observeCountries(countryCodes: List<String>): Flow<List<CountryEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveCountries(countries: List<CountryEntity>)

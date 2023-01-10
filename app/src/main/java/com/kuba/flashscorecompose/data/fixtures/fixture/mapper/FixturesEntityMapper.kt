@@ -16,6 +16,10 @@ fun VenueEntity.toVenue(): Venue {
     return Venue(city = city.orEmpty(), id = id ?: 0, name = name.orEmpty())
 }
 
+fun PeriodsEntity.toPeriods(): Periods {
+    return Periods(first ?: 0, second ?: 0)
+}
+
 fun StatusEntity.toStatus(): Status {
     return Status(elapsed = elapsed ?: 0, long = longValue.orEmpty(), short = shortValue.orEmpty())
 }
@@ -41,7 +45,8 @@ fun FixtureInfoEntity.toFixtureInfo(): FixtureInfo {
         status = status?.toStatus() ?: Status.EMPTY_STATUS,
         timestamp = timestamp ?: 0,
         timezone = timezone.orEmpty(),
-        venue = venue?.toVenue() ?: Venue.EMPTY_VENUE
+        venue = venue?.toVenue() ?: Venue.EMPTY_VENUE,
+        periods = periods?.toPeriods() ?: Periods.EMPTY_PERIODS
     )
 }
 
@@ -52,6 +57,7 @@ fun FixtureEntity.toFixtureItem(): FixtureItem {
         season = currentRound.season,
         round = currentRound.round,
         h2h = h2h.orEmpty(),
+        date = date.orEmpty(),
         fixture = fixture?.toFixtureInfo() ?: FixtureInfo.EMPTY_FIXTURE_INFO,
         goals = goals?.toGoals() ?: Goals.EMPTY_GOALS,
         league = league?.toLeague() ?: League.EMPTY_LEAGUE,

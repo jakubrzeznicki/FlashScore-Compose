@@ -11,5 +11,6 @@ data class FixtureInfoEntity(
     @Embedded(prefix = "status_") val status: StatusEntity,
     @ColumnInfo(name = "timestamp") val timestamp: Int,
     @ColumnInfo(name = "timezone") val timezone: String,
-    @Embedded(prefix = "venue_") val venue: VenueEntity
+    @Embedded(prefix = "venue_") val venue: VenueEntity,
+    @Embedded(prefix = "periods_") val periods: PeriodsEntity
 )

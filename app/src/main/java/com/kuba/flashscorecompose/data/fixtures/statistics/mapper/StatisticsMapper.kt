@@ -9,6 +9,7 @@ import com.kuba.flashscorecompose.data.fixtures.statistics.model.Statistic
 import com.kuba.flashscorecompose.data.fixtures.statistics.model.Statistics
 import com.kuba.flashscorecompose.data.fixtures.statistics.remote.model.StatisticDto
 import com.kuba.flashscorecompose.data.fixtures.statistics.remote.model.StatisticsTeamDto
+import java.util.*
 
 /**
  * Created by jrzeznicki on 03/01/2023.
@@ -16,7 +17,7 @@ import com.kuba.flashscorecompose.data.fixtures.statistics.remote.model.Statisti
 
 fun Statistics.toStatisticsEntity(): StatisticsEntity {
     return StatisticsEntity(
-        id = id,
+        uuid = uuid,
         fixtureId = fixtureId,
         statistics = statistics.map { it.toStatisticRowEntity() },
         team = team.toTeamEntity()
@@ -29,7 +30,7 @@ fun Statistic.toStatisticRowEntity(): StatisticRowEntity {
 
 fun StatisticsEntity.toStatistics(): Statistics {
     return Statistics(
-        id = id,
+        uuid = uuid,
         fixtureId = fixtureId,
         statistics = statistics.map { it.toStatistic() },
         team = team.toTeam()
@@ -42,7 +43,7 @@ fun StatisticRowEntity.toStatistic(): Statistic {
 
 fun StatisticsTeamDto.toStatistics(fixtureId: Int): Statistics {
     return Statistics(
-        id = 0, //random,
+        uuid = UUID.randomUUID().toString(),
         fixtureId = fixtureId,
         statistics = statistics?.map { it.toStatistic() }.orEmpty(),
         team = team?.toTeam() ?: Team.EMPTY_TEAM

@@ -21,8 +21,13 @@ class LeagueRepository(
     private val local: LeagueLocalDataSource,
     private val remote: LeagueRemoteDataSource
 ) : LeagueDataSource {
+
     override fun observeLeagues(countryCode: String): Flow<List<League>> =
         local.observeLeagues(countryCode)
+            .map { leagueEntity -> leagueEntity.map { it.toLeague() } }
+
+    override fun observeLeagues(countryCodes: List<String>): Flow<List<League>> =
+        local.observeLeagues(countryCodes)
             .map { leagueEntity -> leagueEntity.map { it.toLeague() } }
 
     override fun saveLeagues(leagues: List<League>) {

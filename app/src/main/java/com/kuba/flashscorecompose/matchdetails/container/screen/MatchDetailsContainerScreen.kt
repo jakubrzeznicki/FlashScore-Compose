@@ -29,8 +29,8 @@ import coil.request.ImageRequest
 import coil.size.Size
 import com.google.accompanist.pager.*
 import com.kuba.flashscorecompose.R
-import com.kuba.flashscorecompose.home.FixtureData
-import com.kuba.flashscorecompose.home.Team
+import com.kuba.flashscorecompose.home.screen.FixtureData
+import com.kuba.flashscorecompose.home.screen.Team
 import com.kuba.flashscorecompose.matchdetails.tabs.TabItem
 import com.kuba.flashscorecompose.ui.component.AppTopBar
 import com.kuba.flashscorecompose.ui.theme.*
@@ -44,6 +44,7 @@ import kotlinx.coroutines.launch
 @Destination(route = "home/matchdetailscontainer")
 @Composable
 fun MatchDetailsContainerScreen(
+    fixtureId: Int,
     navigator: DestinationsNavigator,
     scaffoldState: ScaffoldState = rememberScaffoldState()
 ) {

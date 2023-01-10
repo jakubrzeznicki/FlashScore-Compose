@@ -31,8 +31,14 @@ interface FootballApi {
         @Query(LEAGUE) leagueId: Int, @Query(SEASON) season: Int, @Query(ROUND) round: String
     ): Response<FixtureDataDto>
 
+    @GET("$API_VERSION/$FIXTURES")
+    suspend fun getFixturesByDate(@Query(DATE) date: String): Response<FixtureDataDto>
+
     @GET("$API_VERSION/$FIXTURES/$HEAD_TO_HEAD")
     suspend fun getFixturesHeadToHead(@Query(H2H) h2h: String): Response<FixtureDataDto>
+
+    @GET("$API_VERSION/$FIXTURES")
+    suspend fun getLastXFixtures(@Query(LAST) count: Int): Response<FixtureDataDto>
 
     @GET("$API_VERSION/$FIXTURES/$STATISTICS")
     suspend fun getFixturesStatistics(@Query(FIXTURE) fixtureId: Int): Response<StatisticsDataDto>
@@ -56,5 +62,7 @@ interface FootballApi {
         const val LINEUPS = "lineups"
         const val HEAD_TO_HEAD = "headtohead"
         const val H2H = "h2h"
+        const val DATE = "date"
+        const val LAST = "last"
     }
 }

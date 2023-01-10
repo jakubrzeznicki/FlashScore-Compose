@@ -9,5 +9,6 @@ data class FixtureInfoDto(
     @SerializedName("status") val status: StatusDto?,
     @SerializedName("timestamp") val timestamp: Int?,
     @SerializedName("timezone") val timezone: String?,
-    @SerializedName("venue") val venue: VenueDto?
+    @SerializedName("venue") val venue: VenueDto?,
+    @SerializedName("periods") val periods: PeriodsDto?
 )

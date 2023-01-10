@@ -21,8 +21,8 @@ class CountryRepository(
     private val local: CountryLocalDataSource,
     private val remote: CountryRemoteDataSource
 ) : CountryDataSource {
-    override fun observeCountries(): Flow<List<Country>> =
-        local.observeCountries().map { countryEntity -> countryEntity.map { it.toCountry() } }
+    override fun observeCountries(countryCodes: List<String>): Flow<List<Country>> =
+        local.observeCountries(countryCodes).map { countryEntity -> countryEntity.map { it.toCountry() } }
 
 
     override fun saveCountries(countries: List<Country>) {
@@ -30,7 +30,9 @@ class CountryRepository(
     }
 
     override suspend fun loadCountries(): RepositoryResult<List<Country>> {
+        Log.d("TEST_LOG", "loadCountries repositiry")
         val result = remote.loadCountries()
+        Log.d("TEST_LOG", "loadCountries repositiry code ${result.code()}")
         return try {
             Log.d("TEST_LOG", "loadCountries success ${result.body()}")
             Log.d("TEST_LOG", "loadCountries success ${result.message()}")

@@ -3,7 +3,7 @@ package com.kuba.flashscorecompose.data.fixtures.lineups.model
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.Team
 
 data class Lineup(
-    val id: Int,
+    val uuid: String,
     val fixtureId: Int,
     val coach: Coach,
     val formation: String,

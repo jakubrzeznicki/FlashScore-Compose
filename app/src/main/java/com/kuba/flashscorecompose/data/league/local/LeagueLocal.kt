@@ -9,7 +9,11 @@ import kotlinx.coroutines.flow.Flow
  */
 class LeagueLocal(private val roomStorage: RoomStorage) : LeagueLocalDataSource {
     override fun observeLeagues(countryCode: String): Flow<List<LeagueEntity>> {
-        return roomStorage.getDatabase().leagueDao().observeLeagues()
+        return roomStorage.getDatabase().leagueDao().observeLeagues(countryCode)
+    }
+
+    override fun observeLeagues(countryCodes: List<String>): Flow<List<LeagueEntity>> {
+        return roomStorage.getDatabase().leagueDao().observeLeagues(countryCodes)
     }
 
     override fun saveLeagues(leagues: List<LeagueEntity>) {

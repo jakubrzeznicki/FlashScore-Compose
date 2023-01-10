@@ -8,11 +8,27 @@ import com.kuba.flashscorecompose.data.league.remote.model.LeagueDto
  * Created by jrzeznicki on 21/12/2022.
  */
 fun LeagueEntity.toLeague(): League {
-    return League(id = id, name = name, type = type, logo = logo, countryCode = countryCode)
+    return League(
+        id = id,
+        name = name,
+        type = type,
+        logo = logo,
+        countryCode = countryCode,
+        countryName = countryName,
+        countryFlag = countryFlag
+    )
 }
 
 fun League.toLeagueEntity(): LeagueEntity {
-    return LeagueEntity(id = id, name = name, type = type, logo = logo, countryCode = countryCode)
+    return LeagueEntity(
+        id = id,
+        name = name,
+        type = type,
+        logo = logo,
+        countryCode = countryCode,
+        countryName = countryName,
+        countryFlag = countryFlag
+    )
 }
 
 fun LeagueDto.toLeague(): League {
@@ -21,6 +37,8 @@ fun LeagueDto.toLeague(): League {
         name = name.orEmpty(),
         type = type.orEmpty(),
         logo = logo.orEmpty(),
-        countryCode = ""
+        countryCode = "",
+        countryName = countryName.orEmpty(),
+        countryFlag = flag.orEmpty()
     )
 }
