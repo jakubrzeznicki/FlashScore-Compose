@@ -17,7 +17,7 @@ interface StatisticsDao {
     fun observeStatistics(fixtureId: Int): Flow<List<StatisticsEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveStatistics(statistics: List<StatisticsEntity>)
+    suspend fun saveStatistics(statistics: List<StatisticsEntity>)
 
     @Query("DELETE FROM statistics WHERE fixture_id = :fixtureId")
     fun deleteStatistics(fixtureId: Int)

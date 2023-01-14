@@ -39,16 +39,32 @@ class FixturesRepository(
         }
     }
 
-    override fun observeFixturesByDate(date: String): Flow<List<FixtureItem>> {
-        return local.observeFixturesByDate(date).map { fixtureEntities ->
+    override fun observeFixturesByTeam(teamId: Int, season: Int): Flow<List<FixtureItem>> {
+        return local.observeFixturesByTeam(teamId, season).map { fixtureEntities ->
             fixtureEntities.map { it.toFixtureItem() }
         }
     }
 
-    override fun observeXLastFixtures(count: Int, countryNames: List<String>): Flow<List<FixtureItem>> {
+    override fun observeFixturesByDate(
+        date: String,
+        countryNames: List<String>
+    ): Flow<List<FixtureItem>> {
+        return local.observeFixturesByDate(date, countryNames).map { fixtureEntities ->
+            fixtureEntities.map { it.toFixtureItem() }
+        }
+    }
+
+    override fun observeXLastFixtures(
+        count: Int,
+        countryNames: List<String>
+    ): Flow<List<FixtureItem>> {
         return local.observeXLastFixtures(count, countryNames).map { fixtureEntities ->
             fixtureEntities.map { it.toFixtureItem() }
         }
+    }
+
+    override suspend fun getFixture(fixtureId: Int): FixtureItem {
+        return local.getFixture(fixtureId).toFixtureItem()
     }
 
     override fun saveFixtureItem(fixtureItems: List<FixtureItem>) {
@@ -84,8 +100,11 @@ class FixturesRepository(
         }
     }
 
-    override suspend fun loadFixturesHeadToHead(h2h: String): RepositoryResult<List<FixtureItem>> {
-        val result = remote.loadFixturesHeadToHead(h2h = h2h)
+    override suspend fun loadFixturesHeadToHead(
+        h2h: String,
+        count: Int
+    ): RepositoryResult<List<FixtureItem>> {
+        val result = remote.loadFixturesHeadToHead(h2h = h2h, count = count)
         return try {
             val fixtureItems = result.body()?.response?.map { it.toFixtureItem(h2h) }
             withContext(Dispatchers.IO) {
@@ -134,6 +153,33 @@ class FixturesRepository(
         Log.d("TEST_LOG", "Result body T= ${result.body()?.response}")
         return try {
             val fixtureItems = result.body()?.response?.map { it.toFixtureItemWithDate("") }
+            withContext(Dispatchers.IO) {
+                local.saveFixtures(fixtureItems?.map { it.toFixtureEntity() }.orEmpty())
+                local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
+                local.saveTeams(fixtureItems?.map { it.homeTeam.toTeamEntity() }.orEmpty())
+                local.saveTeams(fixtureItems?.map { it.awayTeam.toTeamEntity() }.orEmpty())
+                // local.saveVenues(fixtureItems?.map { it.fixture.venue?.toVenueEntity() }.orEmpty())
+            }
+            RepositoryResult.Success(fixtureItems)
+        } catch (e: HttpException) {
+            RepositoryResult.Error(ResponseStatus().apply {
+                this.statusMessage = e.message()
+                this.internalStatus = e.code()
+            })
+        }
+    }
+
+    override suspend fun loadFixturesByTeam(
+        teamId: Int,
+        season: Int,
+        count: Int
+    ): RepositoryResult<List<FixtureItem>> {
+        val result = remote.loadFixturesByTeam(teamId, season, count)
+        Log.d("TEST_LOG", "Result message = ${result.message()}")
+        Log.d("TEST_LOG", "Result code = ${result.code()}")
+        Log.d("TEST_LOG", "Result body T= ${result.body()?.response}")
+        return try {
+            val fixtureItems = result.body()?.response?.map { it.toFixtureItem(season) }
             withContext(Dispatchers.IO) {
                 local.saveFixtures(fixtureItems?.map { it.toFixtureEntity() }.orEmpty())
                 local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())

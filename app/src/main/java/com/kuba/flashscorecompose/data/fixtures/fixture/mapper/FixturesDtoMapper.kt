@@ -63,8 +63,25 @@ fun FixtureDto.toFixtureItem(leagueId: Int, season: Int, round: String): Fixture
         leagueId = leagueId,
         season = season,
         round = round,
-        h2h = "",
-        date = "",
+        h2h = "${teams?.home?.id ?: 0}-${teams?.away?.id ?: 0}",
+        date = fixture?.date.orEmpty(),
+        fixture = fixture?.toFixtureInfo() ?: FixtureInfo.EMPTY_FIXTURE_INFO,
+        goals = goals?.toGoals() ?: Goals.EMPTY_GOALS,
+        league = league?.toLeague() ?: League.EMPTY_LEAGUE,
+        score = score?.toScore() ?: Score.EMPTY_SCORE,
+        homeTeam = teams?.home?.toTeam() ?: Team.EMPTY_TEAM,
+        awayTeam = teams?.away?.toTeam() ?: Team.EMPTY_TEAM
+    )
+}
+
+fun FixtureDto.toFixtureItem(season: Int): FixtureItem {
+    return FixtureItem(
+        id = fixture?.id ?: 0,
+        leagueId = league?.id ?: 0,
+        season = season,
+        round = league?.round.orEmpty(),
+        h2h = "${teams?.home?.id ?: 0}-${teams?.away?.id ?: 0}",
+        date = fixture?.date.orEmpty(),
         fixture = fixture?.toFixtureInfo() ?: FixtureInfo.EMPTY_FIXTURE_INFO,
         goals = goals?.toGoals() ?: Goals.EMPTY_GOALS,
         league = league?.toLeague() ?: League.EMPTY_LEAGUE,
@@ -77,11 +94,11 @@ fun FixtureDto.toFixtureItem(leagueId: Int, season: Int, round: String): Fixture
 fun FixtureDto.toFixtureItem(h2h: String): FixtureItem {
     return FixtureItem(
         id = fixture?.id ?: 0,
-        leagueId = 0,
-        season = 0,
-        round = "",
+        leagueId = league?.id ?: 0,
+        season = league?.season ?: 0,
+        round = league?.round.orEmpty(),
         h2h = h2h,
-        date = "",
+        date = fixture?.date.orEmpty(),
         fixture = fixture?.toFixtureInfo() ?: FixtureInfo.EMPTY_FIXTURE_INFO,
         goals = goals?.toGoals() ?: Goals.EMPTY_GOALS,
         league = league?.toLeague() ?: League.EMPTY_LEAGUE,
@@ -94,10 +111,10 @@ fun FixtureDto.toFixtureItem(h2h: String): FixtureItem {
 fun FixtureDto.toFixtureItemWithDate(date: String): FixtureItem {
     return FixtureItem(
         id = fixture?.id ?: 0,
-        leagueId = 0,
-        season = 0,
-        round = "",
-        h2h = "",
+        leagueId = league?.id ?: 0,
+        season = league?.season ?: 0,
+        round = league?.round.orEmpty(),
+        h2h = "${teams?.home?.id ?: 0}-${teams?.away?.id ?: 0}",
         date = date,
         fixture = fixture?.toFixtureInfo() ?: FixtureInfo.EMPTY_FIXTURE_INFO,
         goals = goals?.toGoals() ?: Goals.EMPTY_GOALS,

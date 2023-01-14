@@ -1,5 +1,6 @@
 package com.kuba.flashscorecompose.leagues.screen
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -82,8 +83,9 @@ fun LeaguesScreen(
     scaffoldState: ScaffoldState,
     context: Context
 ) {
-    Scaffold(topBar = { TopBar(context) }, scaffoldState = scaffoldState) {
+    Scaffold(topBar = { TopBar(context) }, scaffoldState = scaffoldState) { paddingValues ->
         LoadingContent(
+            modifier = Modifier.padding(paddingValues),
             empty = when (uiState) {
                 is LeaguesUiState.HasLeagues -> false
                 is LeaguesUiState.NoLeagues -> uiState.isLoading
@@ -109,6 +111,7 @@ fun LeaguesScreen(
     }
 }
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun DaysList(
     days: List<DayItem>,

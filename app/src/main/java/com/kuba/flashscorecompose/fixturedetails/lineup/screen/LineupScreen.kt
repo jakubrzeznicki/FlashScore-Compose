@@ -1,12 +1,15 @@
-package com.kuba.flashscorecompose.matchdetails.screen
+package com.kuba.flashscorecompose.fixturedetails.lineup.screen
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,33 +25,85 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.relay.compose.BoxScopeInstanceImpl.matchParentSize
 import com.kuba.flashscorecompose.R
+import com.kuba.flashscorecompose.countries.screen.FullScreenLoading
+import com.kuba.flashscorecompose.countries.screen.LoadingContent
+import com.kuba.flashscorecompose.data.fixtures.lineups.model.Lineup
+import com.kuba.flashscorecompose.data.fixtures.lineups.model.Player
+import com.kuba.flashscorecompose.fixturedetails.lineup.model.LineupUiState
+import com.kuba.flashscorecompose.fixturedetails.lineup.viewmodel.LineupViewModel
+import com.kuba.flashscorecompose.fixturedetails.statistics.model.StatisticsUiState
 import com.kuba.flashscorecompose.ui.theme.*
+import org.koin.androidx.compose.getViewModel
+import org.koin.core.parameter.parametersOf
 
 /**
  * Created by jrzeznicki on 23/12/2022.
  */
+private const val LINEUP_KEYS = "LINEUP_KEY"
+
 @Composable
-fun LineUpScreen(lineUp: LineUp) {
+fun LineupScreen(
+    fixtureId: Int,
+    viewModel: LineupViewModel = getViewModel { parametersOf(fixtureId) }
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    LaunchedEffect(key1 = LINEUP_KEYS) { viewModel.setup() }
+    LineupList(uiState) { viewModel.refresh() }
+}
+
+@Composable
+fun LineupList(uiState: LineupUiState, onRefreshClick: () -> Unit) {
     val scrollState = rememberScrollState()
-    Column(
-        modifier = Modifier
-            .matchParentSize()
-            .verticalScroll(scrollState)
-            .background(MaterialTheme.colors.background)
-            .padding(PaddingValues(vertical = 16.dp)),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
+    LoadingContent(
+        empty = when (uiState) {
+            is LineupUiState.HasData -> false
+            else -> uiState.isLoading
+        }, emptyContent = { FullScreenLoading() },
+        loading = uiState.isLoading,
+        onRefresh = onRefreshClick
     ) {
-        FormationInfoRow(lineUp = lineUp)
-        Spacer(modifier = Modifier.size(16.dp))
-        TeamFormationButtons()
-        Spacer(modifier = Modifier.size(16.dp))
-        FormationImage(lineUp)
+        Column(
+            modifier = Modifier
+                .matchParentSize()
+                .verticalScroll(scrollState)
+                .background(MaterialTheme.colors.background)
+                .padding(vertical = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            when (uiState) {
+                is LineupUiState.HasData -> LineupsContent(uiState.lineups)
+                else -> EmptyLineups()
+            }
+        }
     }
 }
 
 @Composable
-fun FormationInfoRow(lineUp: LineUp) {
+fun LineupsContent(lineups: List<Lineup>) {
+    val whichTeamSelected = remember { mutableStateOf<TeamTab>(TeamTab.Home) }
+    FormationInfoRow(
+        formation = when (whichTeamSelected.value) {
+            is TeamTab.Home -> lineups.firstOrNull()?.formation.orEmpty()
+            is TeamTab.Away -> lineups.lastOrNull()?.formation.orEmpty()
+        }
+    )
+    Spacer(modifier = Modifier.size(16.dp))
+    val teamNames = lineups.map { it.team.name }
+    TeamFormationButtons(teamNames, whichTeamSelected.value) {
+        when (whichTeamSelected.value) {
+            is TeamTab.Home -> whichTeamSelected.value = TeamTab.Away
+            is TeamTab.Away -> whichTeamSelected.value = TeamTab.Home
+        }
+    }
+    Spacer(modifier = Modifier.size(16.dp))
+    when (whichTeamSelected.value) {
+        is TeamTab.Home -> FormationImage(lineups.first())
+        is TeamTab.Away -> FormationImage(lineups.last())
+    }
+}
+
+@Composable
+fun FormationInfoRow(formation: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -65,7 +120,7 @@ fun FormationInfoRow(lineUp: LineUp) {
         )
         Spacer(modifier = Modifier.size(8.dp))
         Text(
-            text = "(${lineUp.formation})",
+            text = "($formation)",
             fontSize = 14.sp,
             color = TextGreyLight,
             textAlign = TextAlign.Center
@@ -74,17 +129,21 @@ fun FormationInfoRow(lineUp: LineUp) {
 }
 
 @Composable
-fun TeamFormationButtons() {
+fun TeamFormationButtons(names: List<String>, teamTab: TeamTab, onTabChanged: () -> Unit) {
+    val isHomeActive = when (teamTab) {
+        is TeamTab.Home -> true
+        is TeamTab.Away -> false
+    }
     Row(modifier = Modifier.fillMaxWidth()) {
-        TextButtonTab(text = "Arsenal", isActive = true)
-        TextButtonTab(text = "Chelsea", isActive = false)
+        TextButtonTab(text = names.firstOrNull().orEmpty(), isHomeActive, onTabChanged)
+        TextButtonTab(text = names.lastOrNull().orEmpty(), !isHomeActive, onTabChanged)
     }
 }
 
 @Composable
-fun TextButtonTab(text: String, isActive: Boolean) {
+fun TextButtonTab(text: String, isActive: Boolean, onTabChanged: () -> Unit) {
     TextButton(
-        onClick = { },
+        onClick = onTabChanged,
         modifier = if (isActive) {
             Modifier
                 .clip(RoundedCornerShape(50))
@@ -108,7 +167,7 @@ fun TextButtonTab(text: String, isActive: Boolean) {
 }
 
 @Composable
-fun FormationImage(lineUp: LineUp) {
+fun FormationImage(lineup: Lineup) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
         Image(
             painter = painterResource(id = R.drawable.football_pitch),
@@ -122,7 +181,7 @@ fun FormationImage(lineUp: LineUp) {
                 .clip(RoundedCornerShape(8.dp)),
             contentScale = ContentScale.Fit
         )
-        PlayersGrid(players = lineUp.players, formation = lineUp.formation)
+        PlayersGrid(players = lineup.startXI, formation = lineup.formation)
     }
 }
 
@@ -169,7 +228,7 @@ fun PlayerLineUpItem(player: Player) {
 @Composable
 fun PlayersGrid(players: List<Player>, formation: String) {
     val gridMap = players.groupBy { player ->
-        player.grid.first().toString().toInt()
+        if (player.grid.isNotBlank()) player.grid.firstOrNull().toString().toInt() else 0
     }
     Column(
         modifier = Modifier
@@ -193,4 +252,23 @@ fun PlayersGrid(players: List<Player>, formation: String) {
             }
         }
     }
+}
+
+@Composable
+fun EmptyLineups() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Icon(
+            imageVector = Icons.Rounded.Close,
+            modifier = Modifier.size(40.dp),
+            contentDescription = ""
+        )
+        Text("No Lineups", modifier = Modifier.padding(16.dp))
+    }
+}
+
+sealed interface TeamTab {
+    object Home : TeamTab
+    object Away : TeamTab
 }

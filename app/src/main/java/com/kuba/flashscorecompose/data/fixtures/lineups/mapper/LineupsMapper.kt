@@ -2,6 +2,7 @@ package com.kuba.flashscorecompose.data.fixtures.lineups.mapper
 
 import com.kuba.flashscorecompose.data.fixtures.fixture.mapper.toTeam
 import com.kuba.flashscorecompose.data.fixtures.fixture.mapper.toTeamEntity
+import com.kuba.flashscorecompose.data.fixtures.fixture.model.Team
 import com.kuba.flashscorecompose.data.fixtures.lineups.local.model.CoachEntity
 import com.kuba.flashscorecompose.data.fixtures.lineups.local.model.LineupEntity
 import com.kuba.flashscorecompose.data.fixtures.lineups.local.model.PlayerEntity
@@ -18,7 +19,7 @@ import java.util.*
  */
 fun LineupEntity.toLineup(): Lineup {
     return Lineup(
-        uuid = uuid,
+        teamId = teamId,
         fixtureId = fixtureId,
         coach = coach.toCoach(),
         formation = formation,
@@ -29,13 +30,14 @@ fun LineupEntity.toLineup(): Lineup {
 }
 
 fun CoachEntity.toCoach(): Coach {
-    return Coach(id = id ?: 0, name = name.orEmpty(), photo = photo.orEmpty())
+    return Coach(id = id ?: 0, teamId = teamId, name = name.orEmpty(), photo = photo.orEmpty())
 }
 
 fun PlayerEntity.toPlayer(): Player {
     return Player(
         grid = grid.orEmpty(),
         id = id ?: 0,
+        teamId = teamId,
         name = name.orEmpty(),
         number = number ?: 0,
         pos = pos.orEmpty()
@@ -44,7 +46,7 @@ fun PlayerEntity.toPlayer(): Player {
 
 fun Lineup.toLineupEntity(): LineupEntity {
     return LineupEntity(
-        uuid = uuid,
+        teamId = teamId,
         fixtureId = fixtureId,
         coach = coach.toCoachEntity(),
         formation = formation,
@@ -57,6 +59,7 @@ fun Lineup.toLineupEntity(): LineupEntity {
 fun Coach.toCoachEntity(): CoachEntity {
     return CoachEntity(
         id = id ?: 0,
+        teamId = teamId,
         name = name.orEmpty(),
         photo = photo.orEmpty(),
         "",
@@ -69,6 +72,7 @@ fun Coach.toCoachEntity(): CoachEntity {
 fun Player.toPlayerEntity(): PlayerEntity {
     return PlayerEntity(
         grid = grid.orEmpty(),
+        teamId = teamId,
         id = id ?: 0,
         name = name.orEmpty(),
         number = number ?: 0,
@@ -78,23 +82,24 @@ fun Player.toPlayerEntity(): PlayerEntity {
 
 fun LineupDto.toLineup(fixtureId: Int): Lineup {
     return Lineup(
-        uuid = UUID.randomUUID().toString(),
+        teamId = team?.id ?: 0,
         fixtureId = fixtureId,
-        coach = coach.toCoach(),
-        formation = formation,
-        startXI = startXI.map { it.toPlayer() },
-        substitutes = substitutes.map { it.toPlayer() },
-        team = team.toTeam()
+        coach = coach?.toCoach(team?.id ?: 0) ?: Coach.EMPTY_COACH,
+        formation = formation.orEmpty(),
+        startXI = startXI?.map { it.player.toPlayer(team?.id ?: 0) }.orEmpty(),
+        substitutes = substitutes?.map { it.player.toPlayer(team?.id ?: 0) }.orEmpty(),
+        team = team?.toTeam() ?: Team.EMPTY_TEAM
     )
 }
 
-fun CoachDto.toCoach(): Coach {
-    return Coach(id = id ?: 0, name = name.orEmpty(), photo = photo.orEmpty())
+fun CoachDto.toCoach(teamId: Int): Coach {
+    return Coach(id = id ?: 0, teamId = teamId, name = name.orEmpty(), photo = photo.orEmpty())
 }
 
-fun PlayerDto.toPlayer(): Player {
+fun PlayerDto.toPlayer(teamId: Int): Player {
     return Player(
         grid = grid.orEmpty(),
+        teamId = teamId,
         id = id ?: 0,
         name = name.orEmpty(),
         number = number ?: 0,

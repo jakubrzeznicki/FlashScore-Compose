@@ -10,9 +10,7 @@ import com.kuba.flashscorecompose.data.country.remote.CountryRemote
 import com.kuba.flashscorecompose.data.fixtures.currentround.CurrentRoundDataSource
 import com.kuba.flashscorecompose.data.fixtures.currentround.CurrentRoundRepository
 import com.kuba.flashscorecompose.data.fixtures.currentround.local.CurrentRoundLocal
-import com.kuba.flashscorecompose.data.fixtures.currentround.local.CurrentRoundLocalDataSource
 import com.kuba.flashscorecompose.data.fixtures.currentround.remote.CurrentRoundRemote
-import com.kuba.flashscorecompose.data.fixtures.currentround.remote.CurrentRoundRemoteDataSource
 import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesDataSource
 import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesRepository
 import com.kuba.flashscorecompose.data.fixtures.fixture.local.FixtureLocal
@@ -31,13 +29,16 @@ import com.kuba.flashscorecompose.data.league.local.LeagueLocal
 import com.kuba.flashscorecompose.data.league.remote.LeagueRemote
 import com.kuba.flashscorecompose.home.viewmodel.HomeViewModel
 import com.kuba.flashscorecompose.leagues.viewmodel.LeaguesViewModel
+import com.kuba.flashscorecompose.fixturedetails.container.viewmodel.FixtureDetailsViewModel
+import com.kuba.flashscorecompose.fixturedetails.headtohead.viewmodel.HeadToHeadViewModel
+import com.kuba.flashscorecompose.fixturedetails.lineup.viewmodel.LineupViewModel
+import com.kuba.flashscorecompose.fixturedetails.statistics.viewmodel.StatisticsViewModel
 import com.kuba.flashscorecompose.network.uuidsource.UuidData
 import com.kuba.flashscorecompose.network.uuidsource.UuidSource
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import java.time.LocalDate
-import java.util.Calendar
 
 /**
  * Created by jrzeznicki on 9/5/2022
@@ -48,6 +49,19 @@ class KoinModules {
         viewModel { HomeViewModel(get(), get(), get()) }
         viewModel { CountriesViewModel(get()) }
         viewModel { (countryCode: String) -> LeaguesViewModel(countryCode, get(), get()) }
+        viewModel { (fixtureId: Int) -> FixtureDetailsViewModel(fixtureId, get()) }
+        viewModel { (fixtureId: Int, leagueId: Int, round: String) ->
+            StatisticsViewModel(fixtureId, leagueId, round, get(), get())
+        }
+        viewModel { (fixtureId: Int) -> LineupViewModel(fixtureId, get()) }
+        viewModel { (homeTeamId: Int, awayTeamId: Int, season: Int) ->
+            HeadToHeadViewModel(
+                homeTeamId,
+                awayTeamId,
+                season,
+                get()
+            )
+        }
     }
 
     private val componentsModule = module {

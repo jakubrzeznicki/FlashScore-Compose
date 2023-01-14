@@ -15,7 +15,9 @@ fun LeagueEntity.toLeague(): League {
         logo = logo,
         countryCode = countryCode,
         countryName = countryName,
-        countryFlag = countryFlag
+        countryFlag = countryFlag,
+        season = season,
+        round = round
     )
 }
 
@@ -27,7 +29,9 @@ fun League.toLeagueEntity(): LeagueEntity {
         logo = logo,
         countryCode = countryCode,
         countryName = countryName,
-        countryFlag = countryFlag
+        countryFlag = countryFlag,
+        season = season,
+        round = round
     )
 }
 
@@ -39,6 +43,8 @@ fun LeagueDto.toLeague(): League {
         logo = logo.orEmpty(),
         countryCode = "",
         countryName = countryName.orEmpty(),
-        countryFlag = flag.orEmpty()
+        countryFlag = flag.orEmpty(),
+        round = round.orEmpty(),
+        season = season ?: 2023
     )
 }

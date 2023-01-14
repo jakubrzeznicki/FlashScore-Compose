@@ -78,8 +78,12 @@ fun CountriesScreen(
     scaffoldState: ScaffoldState,
     context: Context
 ) {
-    Scaffold(topBar = { TopBar(context, navigator) }, scaffoldState = scaffoldState) {
+    Scaffold(
+        topBar = { TopBar(context, navigator) },
+        scaffoldState = scaffoldState
+    ) { paddingValues ->
         LoadingContent(
+            modifier = modifier.padding(paddingValues),
             empty = when (uiState) {
                 is CountriesUiState.HasCountries -> false
                 is CountriesUiState.NoCountries -> uiState.isLoading
@@ -102,6 +106,7 @@ fun CountriesScreen(
 
 @Composable
 fun LoadingContent(
+    modifier: Modifier = Modifier,
     empty: Boolean,
     emptyContent: @Composable () -> Unit,
     loading: Boolean,
@@ -112,6 +117,7 @@ fun LoadingContent(
         emptyContent()
     } else {
         SwipeRefresh(
+            modifier = modifier,
             state = rememberSwipeRefreshState(isRefreshing = loading),
             onRefresh = onRefresh,
             content = content
@@ -193,7 +199,7 @@ fun TopBar(context: Context, navigator: DestinationsNavigator) {
                 modifier = Modifier
                     .padding(horizontal = 8.dp)
                     .size(24.dp),
-                onClick = {  }) {
+                onClick = { }) {
                 Icon(imageVector = Icons.Filled.Settings, contentDescription = "settings")
             }
         }

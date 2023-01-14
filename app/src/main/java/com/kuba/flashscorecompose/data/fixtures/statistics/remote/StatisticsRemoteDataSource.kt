@@ -1,4 +1,4 @@
-package com.kuba.flashscorecompose.data.fixtures.fixture.remote
+package com.kuba.flashscorecompose.data.fixtures.statistics.remote
 
 import com.kuba.flashscorecompose.data.fixtures.statistics.remote.model.StatisticsDataDto
 import retrofit2.Response

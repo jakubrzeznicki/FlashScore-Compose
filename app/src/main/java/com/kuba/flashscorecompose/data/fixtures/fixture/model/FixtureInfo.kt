@@ -1,5 +1,9 @@
 package com.kuba.flashscorecompose.data.fixtures.fixture.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class FixtureInfo(
     val date: String,
     val id: Int,
@@ -9,7 +13,7 @@ data class FixtureInfo(
     val timezone: String,
     val venue: Venue,
     val periods: Periods
-) {
+) : Parcelable{
     companion object {
         val EMPTY_FIXTURE_INFO =
             FixtureInfo(

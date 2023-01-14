@@ -16,7 +16,7 @@ interface LineupDao {
     fun observeLineups(fixtureId: Int): Flow<List<LineupEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveLineups(lineups: List<LineupEntity>)
+    suspend fun saveLineups(lineups: List<LineupEntity>)
 
     @Query("DELETE FROM lineup WHERE fixture_id = :fixtureId")
     fun deleteLineups(fixtureId: Int)

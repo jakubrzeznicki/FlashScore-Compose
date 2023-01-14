@@ -17,7 +17,7 @@ import java.util.*
 
 fun Statistics.toStatisticsEntity(): StatisticsEntity {
     return StatisticsEntity(
-        uuid = uuid,
+        teamId = teamId,
         fixtureId = fixtureId,
         statistics = statistics.map { it.toStatisticRowEntity() },
         team = team.toTeamEntity()
@@ -25,12 +25,12 @@ fun Statistics.toStatisticsEntity(): StatisticsEntity {
 }
 
 fun Statistic.toStatisticRowEntity(): StatisticRowEntity {
-    return StatisticRowEntity(type = type.orEmpty(), value = value ?: 0)
+    return StatisticRowEntity(type = type.orEmpty(), value = value.toString())
 }
 
 fun StatisticsEntity.toStatistics(): Statistics {
     return Statistics(
-        uuid = uuid,
+        teamId = teamId,
         fixtureId = fixtureId,
         statistics = statistics.map { it.toStatistic() },
         team = team.toTeam()
@@ -38,12 +38,12 @@ fun StatisticsEntity.toStatistics(): Statistics {
 }
 
 fun StatisticRowEntity.toStatistic(): Statistic {
-    return Statistic(type = type.orEmpty(), value = value ?: 0)
+    return Statistic(type = type.orEmpty(), value = value.toString())
 }
 
 fun StatisticsTeamDto.toStatistics(fixtureId: Int): Statistics {
     return Statistics(
-        uuid = UUID.randomUUID().toString(),
+        teamId = team?.id ?: 0,
         fixtureId = fixtureId,
         statistics = statistics?.map { it.toStatistic() }.orEmpty(),
         team = team?.toTeam() ?: Team.EMPTY_TEAM
@@ -51,5 +51,5 @@ fun StatisticsTeamDto.toStatistics(fixtureId: Int): Statistics {
 }
 
 fun StatisticDto.toStatistic(): Statistic {
-    return Statistic(type = type.orEmpty(), value = value ?: 0)
+    return Statistic(type = type.orEmpty(), value = value.toString())
 }

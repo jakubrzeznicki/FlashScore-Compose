@@ -9,4 +9,6 @@ data class LeagueDto(
     @SerializedName("type") val type: String?,
     @SerializedName("country") val countryName: String?,
     @SerializedName("flag") val flag: String?,
+    @SerializedName("season") val season: Int?,
+    @SerializedName("round") val round: String?
 )
