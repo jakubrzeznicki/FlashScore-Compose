@@ -83,7 +83,7 @@ class HomeViewModel(
     private fun observeFixtures() {
         viewModelScope.launch {
             val formattedDate = localDate.format(DateTimeFormatter.ofPattern("yyy-MM-dd"))
-            fixturesRepository.observeFixturesByDate(formattedDate, COUNTRY_NAMES)
+            fixturesRepository.observeFixturesByDate("2021-04-07", COUNTRY_NAMES)
                 .collect { fixtures ->
                     Log.d("TEST_LOG", "observeFixtures size ${fixtures.size}")
                     viewModelState.update { it.copy(fixtureItems = fixtures) }
@@ -97,7 +97,7 @@ class HomeViewModel(
         viewModelScope.launch {
             val formattedDate = localDate.format(DateTimeFormatter.ofPattern("yyy-MM-dd"))
             Log.d("TEST_LOG", "refreshFixtures")
-            val result = fixturesRepository.loadFixturesByDate(formattedDate)
+            val result = fixturesRepository.loadFixturesByDate("2021-04-07")
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> {

@@ -64,7 +64,7 @@ fun LineupList(uiState: LineupUiState, onRefreshClick: () -> Unit) {
     ) {
         Column(
             modifier = Modifier
-                .matchParentSize()
+                .fillMaxSize()
                 .verticalScroll(scrollState)
                 .background(MaterialTheme.colors.background)
                 .padding(vertical = 16.dp),
