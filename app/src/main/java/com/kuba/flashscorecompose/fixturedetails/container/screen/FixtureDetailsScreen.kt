@@ -1,14 +1,14 @@
-package com.kuba.flashscorecompose.matchdetails.screen
+package com.kuba.flashscorecompose.fixturedetails.container.screen
 
+import android.annotation.SuppressLint
 import android.content.Context
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,58 +29,100 @@ import coil.request.ImageRequest
 import coil.size.Size
 import com.google.accompanist.pager.*
 import com.kuba.flashscorecompose.R
-import com.kuba.flashscorecompose.home.screen.FixtureData
-import com.kuba.flashscorecompose.home.screen.Team
-import com.kuba.flashscorecompose.matchdetails.tabs.TabItem
+import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
+import com.kuba.flashscorecompose.data.fixtures.fixture.model.Goals
+import com.kuba.flashscorecompose.data.fixtures.fixture.model.Status
+import com.kuba.flashscorecompose.data.fixtures.fixture.model.Team
+import com.kuba.flashscorecompose.fixturedetails.container.model.FixtureDetaislUiState
+import com.kuba.flashscorecompose.fixturedetails.container.viewmodel.FixtureDetailsViewModel
+import com.kuba.flashscorecompose.fixturedetails.tabs.TabItem
 import com.kuba.flashscorecompose.ui.component.AppTopBar
 import com.kuba.flashscorecompose.ui.theme.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.getViewModel
+import org.koin.core.parameter.parametersOf
 
 /**
  * Created by jrzeznicki on 23/12/2022.
  */
-@Destination(route = "home/matchdetailscontainer")
+private const val SETUP_MATCH_DETAIL_CONTAINER_KEY = "SETUP_MATCH_DETAIL_CONTAINER_KEY"
+
+
+@Destination(route = "home/fixturedetails")
 @Composable
-fun MatchDetailsContainerScreen(
+fun FixtureDetailsRoute(
     fixtureId: Int,
+    viewModel: FixtureDetailsViewModel = getViewModel { parametersOf(fixtureId) },
     navigator: DestinationsNavigator,
     scaffoldState: ScaffoldState = rememberScaffoldState()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
-    val scrollState = rememberScrollState()
-    Scaffold(topBar = { TopBar(context = context, navigator) }, scaffoldState = scaffoldState) {
+    LaunchedEffect(key1 = SETUP_MATCH_DETAIL_CONTAINER_KEY) { viewModel.setup() }
+    FixtureDetailsScreen(
+        uiState = uiState,
+        navigator = navigator,
+        onTeamClick = {},
+        onErrorClear = { viewModel.cleanError() },
+        scaffoldState = scaffoldState,
+        context = context
+    )
+}
+
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@Composable
+fun FixtureDetailsScreen(
+    modifier: Modifier = Modifier,
+    uiState: FixtureDetaislUiState,
+    navigator: DestinationsNavigator,
+    onTeamClick: (Team) -> Unit,
+    onErrorClear: () -> Unit,
+    scaffoldState: ScaffoldState = rememberScaffoldState(),
+    context: Context
+) {
+    Scaffold(
+        topBar = { TopBar(context = context, navigator, uiState) },
+        scaffoldState = scaffoldState
+    ) {
         Column(
             Modifier
-                .fillMaxWidth()
-                // .verticalScroll(scrollState)
-                .padding(PaddingValues(16.dp)),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.Start
+                .fillMaxSize()
+                .padding(16.dp)
         ) {
-            HeaderMatchInfo(
-                fixtureData = FixtureData(
-                    homeTeam = Team(
-                        name = "Burnley",
-                        logo = "https://media.api-sports.io/football/teams/44.png"
-                    ),
-                    awayTeam = Team(
-                        name = "Manchester United",
-                        logo = "https://media.api-sports.io/football/teams/33.png"
-                    ),
-                    homeTeamScore = 0,
-                    awayTeamScore = 1
-                )
-            )
+            when (uiState) {
+                is FixtureDetaislUiState.HasData -> HeaderMatchInfo(uiState.fixtureItem)
+                is FixtureDetaislUiState.NoData -> EmptyFixtureInfoWidget()
+            }
             Spacer(modifier = Modifier.size(32.dp))
-            MatchDetailsTabs()
+            MatchDetailsTabs(uiState)
         }
     }
 }
 
 @Composable
-fun TopBar(context: Context, navigator: DestinationsNavigator) {
+fun EmptyFixtureInfoWidget() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = Icons.Rounded.Close,
+            modifier = Modifier.size(40.dp),
+            contentDescription = ""
+        )
+        Text("No Fixture Info", modifier = Modifier.padding(16.dp))
+    }
+}
+
+@Composable
+fun TopBar(context: Context, navigator: DestinationsNavigator, uiState: FixtureDetaislUiState) {
+    val titleText = when (uiState) {
+        is FixtureDetaislUiState.HasData -> uiState.fixtureItem.league.round
+        else -> ""
+    }
     AppTopBar(
         navigationIcon = {
             IconButton(
@@ -91,29 +133,27 @@ fun TopBar(context: Context, navigator: DestinationsNavigator) {
                 Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
             }
         },
-        title = {
-            Text(text = "UEFA Champions League")
-        }
+        title = { Text(text = titleText) }
     )
 }
 
 @Composable
-fun HeaderMatchInfo(fixtureData: FixtureData) {
+fun HeaderMatchInfo(fixtureItem: FixtureItem) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        TeamInfo(team = fixtureData.homeTeam)
-        TeamInfoScore(fixtureData = fixtureData)
-        TeamInfo(team = fixtureData.awayTeam)
+        TeamInfo(team = fixtureItem.homeTeam, Modifier.weight(2f))
+        TeamInfoScore(fixtureItem.goals, fixtureItem.fixture.status, Modifier.weight(4f))
+        TeamInfo(team = fixtureItem.awayTeam, Modifier.weight(2f))
     }
 }
 
 @Composable
-fun TeamInfo(team: Team) {
+fun TeamInfo(team: Team, modifier: Modifier) {
     Column(
-        modifier = Modifier.width(width = 100.dp),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -152,22 +192,32 @@ fun TeamInfo(team: Team) {
 }
 
 @Composable
-fun TeamInfoScore(fixtureData: FixtureData) {
+fun TeamInfoScore(goals: Goals, status: Status, modifier: Modifier) {
     Column(
+        modifier.padding(vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "${fixtureData.homeTeamScore} - ${fixtureData.awayTeamScore}",
+            text = "${goals.home} - ${goals.away}",
             fontWeight = FontWeight.SemiBold,
-            fontSize = 40.sp,
+            fontSize = 32.sp,
             color = Color.White,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
-        Spacer(modifier = Modifier.size(32.dp))
+        Spacer(modifier = Modifier.size(16.dp))
         Text(
-            text = "90:15",
+            text = status.long,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.sp,
+            color = Color.White,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        Spacer(modifier = Modifier.size(4.dp))
+        Text(
+            text = "${status.elapsed}\'}",
             fontWeight = FontWeight.SemiBold,
             fontSize = 14.sp,
             color = Color.White,
@@ -177,42 +227,33 @@ fun TeamInfoScore(fixtureData: FixtureData) {
     }
 }
 
-data class Statistics(
-    val shooting: Int,
-    val attacks: Int,
-    val possession: Int,
-    val cards: Int,
-    val corners: Int
-)
-
-data class Player(
-    val id: Int,
-    val name: String,
-    val number: Int,
-    val pos: String,
-    val grid: String
-)
-
-data class LineUp(
-    val formation: String,
-    val players: List<Player>
-)
-
-data class EventData(
-    val homeTeamStatistics: Statistics,
-    val awayTeamStatistics: Statistics,
-    val lineUp: LineUp
-)
-
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun MatchDetailsTabs() {
-    val eventData = prepareEventData()
-    val tabs = listOf(TabItem.MatchDetail(eventData), TabItem.LineUp(eventData), TabItem.H2H)
-    val pagerState = rememberPagerState()
-    Column() {
-        Tabs(tabs = tabs, pagerState = pagerState)
-        TabsContent(tabs = tabs, pagerState = pagerState)
+fun MatchDetailsTabs(uiState: FixtureDetaislUiState) {
+    Column {
+        when (uiState) {
+            is FixtureDetaislUiState.HasData -> {
+                val tabs = listOf(
+                    TabItem.MatchDetail(
+                        uiState.fixtureItem.id,
+                        uiState.fixtureItem.league.id,
+                        uiState.fixtureItem.league.round
+                    ),
+                    TabItem.LineUp(uiState.fixtureItem.id),
+                    TabItem.HeadToHead(
+                        uiState.fixtureItem.homeTeam,
+                        uiState.fixtureItem.awayTeam,
+                        uiState.fixtureItem.season
+                    )
+                )
+                val pagerState = rememberPagerState()
+                Column() {
+                    Tabs(tabs = tabs, pagerState = pagerState)
+                    TabsContent(tabs = tabs, pagerState = pagerState)
+                }
+            }
+            else -> EmptyTabs()
+        }
     }
 }
 
@@ -263,20 +304,21 @@ fun TabsContent(tabs: List<TabItem>, pagerState: PagerState) {
     }
 }
 
-fun prepareEventData(): EventData {
-
-    val lineUp = LineUp(formation = "4-3-3", players = getPlayers())
-    val homeTeamStatistics =
-        Statistics(shooting = 3, attacks = 12, possession = 42, cards = 3, corners = 5)
-    val awayTeamStatistics =
-        Statistics(shooting = 13, attacks = 25, possession = 58, cards = 1, corners = 9)
-    return EventData(
-        homeTeamStatistics = homeTeamStatistics,
-        awayTeamStatistics = awayTeamStatistics,
-        lineUp = lineUp
-    )
+@Composable
+fun EmptyTabs() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = Icons.Rounded.Close,
+            modifier = Modifier.size(40.dp),
+            contentDescription = ""
+        )
+        Text("No Tabs", modifier = Modifier.padding(16.dp))
+    }
 }
-
 //@Composable
 //fun TextButtonTab(text: String, isActive: Boolean) {
 //    val isActiveModifier = Modifier
@@ -293,97 +335,3 @@ fun prepareEventData(): EventData {
 //        Text(text = text)
 //    }
 //}
-
-
-fun getPlayers(): List<Player> {
-    val player1 = Player(
-        6258,
-        "L. Pocrnjic",
-        1,
-        "G",
-        "1:1"
-    )
-    val player2 = Player(
-        6258,
-        "L. Galeano",
-        19,
-        "D",
-        "2:4"
-    )
-    val player3 = Player(
-        6258,
-        "M. Miers",
-        6,
-        "D",
-        "2:3"
-    )
-    val player4 = Player(
-        6258,
-        "L. Villalba",
-        21,
-        "D",
-        "2:2"
-    )
-    val player5 = Player(
-        6258,
-        "E. Iñíguez",
-        5,
-        "D",
-        "2:1"
-    )
-    val player6 = Player(
-        6258,
-        "G. Gil",
-        5,
-        "M",
-        "3:3"
-    )
-    val player7 = Player(
-        6258,
-        "F. Acevedo",
-        8,
-        "M",
-        "3:2"
-    )
-    val player8 = Player(
-        6258,
-        "L. Maciel",
-        33,
-        "M",
-        "3:1"
-    )
-    val player9 = Player(
-        6258,
-        "G. Verón",
-        29,
-        "F",
-        "4:3"
-    )
-    val player10 = Player(
-        6258,
-        "F. Andrada",
-        10,
-        "F",
-        "4:2"
-    )
-    val player11 = Player(
-        6258,
-        "N. Solís",
-        7,
-        "F",
-        "4:1"
-    )
-    return listOf(
-        player1,
-        player2,
-        player3,
-        player4,
-        player5,
-        player6,
-        player7,
-        player8,
-        player9,
-        player10,
-        player11
-    )
-}

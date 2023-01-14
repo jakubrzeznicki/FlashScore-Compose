@@ -19,12 +19,18 @@ class FixtureRemote(private val footballApi: FootballApi) : FixtureRemoteDataSou
             round = round
         )
 
-    override suspend fun loadFixturesHeadToHead(h2h: String): Response<FixtureDataDto> =
-        footballApi.getFixturesHeadToHead(h2h = h2h)
+    override suspend fun loadFixturesHeadToHead(h2h: String, count: Int): Response<FixtureDataDto> =
+        footballApi.getFixturesHeadToHead(h2h = h2h, count = count)
 
     override suspend fun loadFixturesByDate(date: String): Response<FixtureDataDto> =
         footballApi.getFixturesByDate(date)
 
     override suspend fun loadLastXFixtures(count: Int): Response<FixtureDataDto> =
         footballApi.getLastXFixtures(count = count)
+
+    override suspend fun loadFixturesByTeam(
+        teamId: Int,
+        season: Int,
+        count: Int
+    ): Response<FixtureDataDto> = footballApi.getFixturesByTeam(teamId, season, count)
 }

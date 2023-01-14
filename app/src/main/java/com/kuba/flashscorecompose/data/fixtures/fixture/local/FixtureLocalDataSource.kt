@@ -17,12 +17,14 @@ interface FixtureLocalDataSource {
     ): Flow<List<FixtureEntity>>
 
     fun observeFixturesHeadToHead(h2h: String): Flow<List<FixtureEntity>>
-    fun observeFixturesByDate(date: String): Flow<List<FixtureEntity>>
+    fun observeFixturesByTeam(teamId: Int, season: Int): Flow<List<FixtureEntity>>
+    fun observeFixturesByDate(date: String, countryNames: List<String>): Flow<List<FixtureEntity>>
     fun observeXLastFixtures(count: Int, countryNames: List<String>): Flow<List<FixtureEntity>>
+    suspend fun getFixture(fixtureId: Int): FixtureEntity
     fun saveFixtures(fixtures: List<FixtureEntity>)
     fun saveVenues(venues: List<VenueEntity>)
     fun saveLeagues(leagues: List<LeagueEntity>)
-    fun saveTeams(teams: List<TeamEntity>)
+    suspend fun saveTeams(teams: List<TeamEntity>)
     fun deleteFixturesByRound(leagueId: Int, season: Int, round: String)
     fun deleteFixturesByH2H(h2h: String)
 }

@@ -1,8 +1,10 @@
 package com.kuba.flashscorecompose.home.screen
 
 import android.content.Context
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
@@ -24,23 +26,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import coil.size.Size
-import com.google.relay.compose.ColumnScopeInstanceImpl.weight
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.countries.screen.FullScreenLoading
 import com.kuba.flashscorecompose.countries.screen.LoadingContent
 import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.league.model.League
-import com.kuba.flashscorecompose.destinations.CountryListScreenDestination
+import com.kuba.flashscorecompose.destinations.FixtureDetailsRouteDestination
 import com.kuba.flashscorecompose.destinations.LeaguesListScreenDestination
-import com.kuba.flashscorecompose.destinations.MatchDetailsContainerScreenDestination
 import com.kuba.flashscorecompose.home.model.HomeUiState
 import com.kuba.flashscorecompose.home.viewmodel.HomeViewModel
 import com.kuba.flashscorecompose.ui.component.AppTopBar
@@ -55,6 +54,7 @@ import org.koin.androidx.compose.getViewModel
 
 private const val SETUP_HOME_KEY = "SETUP_HOME_KEY"
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Destination(route = "home", start = true)
 @Composable
 fun HomeScreenRoute(
@@ -70,14 +70,13 @@ fun HomeScreenRoute(
         navigator = navigator,
         onRefreshClick = { viewModel.refresh() },
         onCountryClick = { navigator.navigate(LeaguesListScreenDestination(it)) },
-        onFixtureClick = { navigator.navigate(MatchDetailsContainerScreenDestination(it.fixture.id)) },
+        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixture.id)) },
         onLeagueClick = { },
         onErrorClear = { viewModel.cleanError() },
         scaffoldState = scaffoldState,
         context = context
     )
 }
-
 
 @Composable
 fun HomeScreen(
@@ -93,8 +92,12 @@ fun HomeScreen(
     context: Context
 ) {
     val scrollState = rememberScrollState()
-    Scaffold(topBar = { TopBar(context = context) }, scaffoldState = scaffoldState) {
+    Scaffold(
+        topBar = { TopBar(context = context) },
+        scaffoldState = scaffoldState
+    ) { paddingValues ->
         LoadingContent(
+            modifier = Modifier.padding(paddingValues),
             empty = when (uiState) {
                 is HomeUiState.HasData -> false
                 is HomeUiState.NoData -> uiState.isLoading
@@ -107,9 +110,7 @@ fun HomeScreen(
                 Modifier
                     .fillMaxWidth()
                     .verticalScroll(scrollState)
-                    .padding(PaddingValues(16.dp)),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.Start
+                    .padding(16.dp)
             ) {
                 Banner()
                 Spacer(modifier = Modifier.size(16.dp))
@@ -365,11 +366,6 @@ fun HeaderWidgetLeagueCard(league: League, onLeagueClick: (Int) -> Unit) {
     }
 }
 
-data class Team(val name: String, val logo: String)
-data class FixtureData(
-    val homeTeam: Team, val awayTeam: Team, val homeTeamScore: Int, val awayTeamScore: Int
-)
-
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FixtureWidgetCard(fixtureItem: FixtureItem, onFixtureClick: (FixtureItem) -> Unit) {
@@ -432,7 +428,8 @@ fun FixtureWidgetCard(fixtureItem: FixtureItem, onFixtureClick: (FixtureItem) ->
             Row(
                 Modifier
                     .weight(7f)
-                    .padding(end = 4.dp)) {
+                    .padding(end = 4.dp)
+            ) {
                 Column(
                     Modifier.weight(6f),
                     horizontalAlignment = Alignment.CenterHorizontally,

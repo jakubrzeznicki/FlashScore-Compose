@@ -21,8 +21,8 @@ interface TeamDao {
     fun getTeam(teamId: Int): TeamEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveTeams(teams: List<TeamEntity>)
+    suspend fun saveTeams(teams: List<TeamEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveTeam(team: TeamEntity)
+    suspend fun saveTeam(team: TeamEntity)
 }

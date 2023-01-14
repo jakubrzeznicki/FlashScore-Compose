@@ -9,6 +9,6 @@ import kotlinx.coroutines.flow.Flow
  */
 interface StatisticsDataSource {
     fun observeStatistics(fixtureId: Int): Flow<List<Statistics>>
-    fun saveStatistics(statistics: List<Statistics>)
+    suspend fun saveStatistics(statistics: List<Statistics>)
     suspend fun loadStatistics(fixtureId: Int): RepositoryResult<List<Statistics>>
 }

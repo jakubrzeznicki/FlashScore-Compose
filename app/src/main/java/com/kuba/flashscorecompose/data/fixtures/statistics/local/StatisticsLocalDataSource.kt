@@ -8,6 +8,6 @@ import kotlinx.coroutines.flow.Flow
  */
 interface StatisticsLocalDataSource {
     fun observeStatistics(fixtureId: Int): Flow<List<StatisticsEntity>>
-    fun saveStatistics(statistics: List<StatisticsEntity>)
+    suspend fun saveStatistics(statistics: List<StatisticsEntity>)
     fun deleteStatistics(fixtureId: Int)
 }

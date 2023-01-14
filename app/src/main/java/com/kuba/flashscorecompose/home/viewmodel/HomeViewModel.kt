@@ -1,6 +1,8 @@
 package com.kuba.flashscorecompose.home.viewmodel
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.data.country.CountryDataSource
@@ -10,6 +12,7 @@ import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 /**
  * Created by jrzeznicki on 05/01/2023.
@@ -26,16 +29,18 @@ class HomeViewModel(
         .map { it.toUiState() }
         .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun setup() {
-     //   refreshCountries()
-     //   refreshFixtures()
+        //refreshCountries()
+        //refreshFixtures()
         observeCountries()
         observeFixtures()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun refresh() {
-       // refreshCountries()
-       // refreshFixtures()
+        // refreshCountries()
+        // refreshFixtures()
     }
 
     private fun observeCountries() {
@@ -74,9 +79,11 @@ class HomeViewModel(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun observeFixtures() {
         viewModelScope.launch {
-            fixturesRepository.observeXLastFixtures(LAST_X_FIXTURES, COUNTRY_NAMES)
+            val formattedDate = localDate.format(DateTimeFormatter.ofPattern("yyy-MM-dd"))
+            fixturesRepository.observeFixturesByDate(formattedDate, COUNTRY_NAMES)
                 .collect { fixtures ->
                     Log.d("TEST_LOG", "observeFixtures size ${fixtures.size}")
                     viewModelState.update { it.copy(fixtureItems = fixtures) }
@@ -84,11 +91,13 @@ class HomeViewModel(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun refreshFixtures() {
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
+            val formattedDate = localDate.format(DateTimeFormatter.ofPattern("yyy-MM-dd"))
             Log.d("TEST_LOG", "refreshFixtures")
-            val result = fixturesRepository.loadLastXFixtures(80)
+            val result = fixturesRepository.loadFixturesByDate(formattedDate)
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> {

@@ -24,12 +24,23 @@ class FixtureLocal(private val roomStorage: RoomStorage) : FixtureLocalDataSourc
         return roomStorage.getDatabase().fixtureDao().observeFixturesHeadToHead(h2h)
     }
 
-    override fun observeFixturesByDate(date: String): Flow<List<FixtureEntity>> {
-        return roomStorage.getDatabase().fixtureDao().observeFixturesByDate(date)
+    override fun observeFixturesByTeam(teamId: Int, season: Int): Flow<List<FixtureEntity>> {
+        return roomStorage.getDatabase().fixtureDao().observeFixturesByTeam(teamId, season)
     }
 
-    override fun observeXLastFixtures(count: Int, countryNames: List<String>): Flow<List<FixtureEntity>> {
+    override fun observeFixturesByDate(date: String, countryNames: List<String>): Flow<List<FixtureEntity>> {
+        return roomStorage.getDatabase().fixtureDao().observeFixturesByDate(date, countryNames)
+    }
+
+    override fun observeXLastFixtures(
+        count: Int,
+        countryNames: List<String>
+    ): Flow<List<FixtureEntity>> {
         return roomStorage.getDatabase().fixtureDao().observeXLastFixtures(count, countryNames)
+    }
+
+    override suspend fun getFixture(fixtureId: Int): FixtureEntity {
+        return roomStorage.getDatabase().fixtureDao().getFixture(fixtureId)
     }
 
     override fun saveFixtures(fixtures: List<FixtureEntity>) {
@@ -44,7 +55,7 @@ class FixtureLocal(private val roomStorage: RoomStorage) : FixtureLocalDataSourc
         roomStorage.getDatabase().leagueDao().saveLeagues(leagues)
     }
 
-    override fun saveTeams(teams: List<TeamEntity>) {
+    override suspend fun saveTeams(teams: List<TeamEntity>) {
         roomStorage.getDatabase().teamDao().saveTeams(teams)
     }
 

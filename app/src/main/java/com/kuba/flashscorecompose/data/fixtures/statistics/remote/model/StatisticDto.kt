@@ -4,5 +4,5 @@ import com.google.gson.annotations.SerializedName
 
 data class StatisticDto(
     @SerializedName("type") val type: String?,
-    @SerializedName("value") val value: Int?
+    @SerializedName("value") val value: Any?
 )

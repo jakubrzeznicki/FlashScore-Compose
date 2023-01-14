@@ -16,4 +16,6 @@ data class LeagueEntity(
     @ColumnInfo(name = "countryCode") val countryCode: String,
     @ColumnInfo(name = "countryName") val countryName: String,
     @ColumnInfo(name = "countryFlag") val countryFlag: String,
+    @ColumnInfo(name = "season") val season: Int,
+    @ColumnInfo(name = "round") val round: String
 )

@@ -1,7 +1,10 @@
 package com.kuba.flashscorecompose.data.fixtures.fixture.model
 
+import android.os.Parcelable
 import com.kuba.flashscorecompose.data.league.model.League
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class FixtureItem(
     val id: Int,
     val leagueId: Int,
@@ -15,4 +18,4 @@ data class FixtureItem(
     val score: Score,
     val homeTeam: Team,
     val awayTeam: Team
-)
+): Parcelable

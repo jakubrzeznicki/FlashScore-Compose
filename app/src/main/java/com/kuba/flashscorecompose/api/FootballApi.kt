@@ -34,11 +34,21 @@ interface FootballApi {
     @GET("$API_VERSION/$FIXTURES")
     suspend fun getFixturesByDate(@Query(DATE) date: String): Response<FixtureDataDto>
 
-    @GET("$API_VERSION/$FIXTURES/$HEAD_TO_HEAD")
-    suspend fun getFixturesHeadToHead(@Query(H2H) h2h: String): Response<FixtureDataDto>
-
     @GET("$API_VERSION/$FIXTURES")
     suspend fun getLastXFixtures(@Query(LAST) count: Int): Response<FixtureDataDto>
+
+    @GET("$API_VERSION/$FIXTURES")
+    suspend fun getFixturesByTeam(
+        @Query(TEAM) teamId: Int,
+        @Query(SEASON) season: Int,
+        @Query(LAST) count: Int
+    ): Response<FixtureDataDto>
+
+    @GET("$API_VERSION/$FIXTURES/$HEAD_TO_HEAD")
+    suspend fun getFixturesHeadToHead(
+        @Query(H2H) h2h: String,
+        @Query(LAST) count: Int
+    ): Response<FixtureDataDto>
 
     @GET("$API_VERSION/$FIXTURES/$STATISTICS")
     suspend fun getFixturesStatistics(@Query(FIXTURE) fixtureId: Int): Response<StatisticsDataDto>
@@ -64,5 +74,6 @@ interface FootballApi {
         const val H2H = "h2h"
         const val DATE = "date"
         const val LAST = "last"
+        const val TEAM = "team"
     }
 }
