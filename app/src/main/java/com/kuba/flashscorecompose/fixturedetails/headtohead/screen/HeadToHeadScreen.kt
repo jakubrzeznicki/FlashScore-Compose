@@ -1,5 +1,8 @@
 package com.kuba.flashscorecompose.fixturedetails.headtohead.screen
 
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -43,7 +46,8 @@ import com.kuba.flashscorecompose.ui.theme.*
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
-import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDateTime
 import java.util.*
 
 /**
@@ -51,6 +55,7 @@ import java.util.*
  */
 private const val HEAD_TO_HEAD = "HEAD_TO_HEAD"
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HeadToHeadScreen(
     homeTeam: Team,
@@ -71,6 +76,7 @@ fun HeadToHeadScreen(
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HeadToHeadList(
     homeTeam: Team,
@@ -147,6 +153,7 @@ fun HeadToHeadList(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun LastMatchesSection(
     fixtures: List<FixtureItem>,
@@ -173,10 +180,13 @@ fun LastMatchesSection(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HeadToHeadMatchItem(fixtureItem: FixtureItem, onFixtureClick: (FixtureItem) -> Unit) {
-    val date = Date(fixtureItem.fixture.timestamp.toLong())
-    val formattedYear = SimpleDateFormat("yyyy", Locale.GERMANY).format(date)
+    val formattedDate = LocalDateTime.ofInstant(
+        Instant.ofEpochMilli(fixtureItem.fixture.timestamp.toLong()),
+        TimeZone.getDefault().toZoneId()
+    )
     val fixtureItemStyle = fixtureItemStyling(fixtureItem = fixtureItem)
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -188,7 +198,7 @@ fun HeadToHeadMatchItem(fixtureItem: FixtureItem, onFixtureClick: (FixtureItem) 
             horizontalArrangement = Arrangement.Start
         ) {
             Text(
-                text = formattedYear,
+                text = formattedDate.year.toString(),
                 style = TextStyle(fontSize = 10.sp, fontWeight = FontWeight.SemiBold),
                 color = Color.White
             )

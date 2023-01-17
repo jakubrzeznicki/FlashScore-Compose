@@ -33,7 +33,7 @@ class HeadToHeadViewModel(
     }
 
     fun refresh() {
-//        loadHeadToHead()
+        loadHeadToHead()
 //        loadFixturesByTeam(homeTeamId)
 //        loadFixturesByTeam(awayTeamId)
     }
