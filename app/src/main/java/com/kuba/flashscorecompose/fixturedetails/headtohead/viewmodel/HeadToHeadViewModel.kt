@@ -1,6 +1,5 @@
 package com.kuba.flashscorecompose.fixturedetails.headtohead.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesDataSource
@@ -43,7 +42,6 @@ class HeadToHeadViewModel(
         viewModelScope.launch {
             fixturesRepository.observeFixturesHeadToHead(TEAM_TO_TEAM(homeTeamId, awayTeamId))
                 .collect { fixtures ->
-                    Log.d("TEST_LOG", "observeFixturesHeadToHead size ${fixtures.size}")
                     viewModelState.update { it.copy(h2hFixtures = fixtures) }
                 }
         }
@@ -53,7 +51,6 @@ class HeadToHeadViewModel(
         viewModelScope.launch {
             fixturesRepository.observeFixturesByTeam(homeTeamId, 2021)
                 .collect { fixtures ->
-                    Log.d("TEST_LOG", "observeHomeTeam size ${fixtures.size}")
                     viewModelState.update { it.copy(homeTeamFixtures = fixtures) }
                 }
         }
@@ -63,7 +60,6 @@ class HeadToHeadViewModel(
         viewModelScope.launch {
             fixturesRepository.observeFixturesByTeam(awayTeamId, 2021)
                 .collect { fixtures ->
-                    Log.d("TEST_LOG", "observeAwayTeam size ${fixtures.size}")
                     viewModelState.update { it.copy(awayTeamFixtures = fixtures) }
                 }
         }
@@ -72,7 +68,6 @@ class HeadToHeadViewModel(
     private fun loadHeadToHead() {
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            Log.d("TEST_LOG", "loadHeadToHead")
             val result =
                 fixturesRepository.loadFixturesHeadToHead(
                     TEAM_TO_TEAM(homeTeamId, awayTeamId),
@@ -80,20 +75,11 @@ class HeadToHeadViewModel(
                 )
             viewModelState.update {
                 when (result) {
-                    is RepositoryResult.Success -> {
-                        Log.d("TEST_LOG", "loadHeadToHead success size ${result.data?.size}")
-                        it.copy(isLoading = false)
-                    }
-                    is RepositoryResult.Error -> {
-                        Log.d(
-                            "TEST_LOG",
-                            "loadHeadToHead error size ${result.error.internalStatus}"
-                        )
-                        it.copy(
-                            isLoading = false,
-                            error = HeadToHeadError.RemoteError(result.error)
-                        )
-                    }
+                    is RepositoryResult.Success -> it.copy(isLoading = false)
+                    is RepositoryResult.Error -> it.copy(
+                        isLoading = false,
+                        error = HeadToHeadError.RemoteError(result.error)
+                    )
                 }
             }
         }
@@ -102,25 +88,14 @@ class HeadToHeadViewModel(
     private fun loadFixturesByTeam(teamId: Int) {
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            Log.d("TEST_LOG", "loadFixturesByTeam")
-            val result =
-                fixturesRepository.loadFixturesByTeam(teamId, 2021, COUNT)
+            val result = fixturesRepository.loadFixturesByTeam(teamId, 2021, COUNT)
             viewModelState.update {
                 when (result) {
-                    is RepositoryResult.Success -> {
-                        Log.d("TEST_LOG", "loadFixturesByTeam success size ${result.data?.size}")
-                        it.copy(isLoading = false)
-                    }
-                    is RepositoryResult.Error -> {
-                        Log.d(
-                            "TEST_LOG",
-                            "loadFixturesByTeam error size ${result.error.internalStatus}"
-                        )
-                        it.copy(
-                            isLoading = false,
-                            error = HeadToHeadError.RemoteError(result.error)
-                        )
-                    }
+                    is RepositoryResult.Success -> it.copy(isLoading = false)
+                    is RepositoryResult.Error -> it.copy(
+                        isLoading = false,
+                        error = HeadToHeadError.RemoteError(result.error)
+                    )
                 }
             }
         }

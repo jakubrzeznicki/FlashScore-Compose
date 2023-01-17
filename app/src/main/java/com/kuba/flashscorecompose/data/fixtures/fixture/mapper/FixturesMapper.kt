@@ -13,18 +13,26 @@ fun Team.toTeamEntity(): TeamEntity {
         id = id,
         logo = logo,
         name = name,
-        isWinner = winner,
+        isWinner = isWinner,
         isHome = false,
         code = "",
         founded = 0,
         isNational = false,
-        colors = "",
+        colors = colors.toColorsEntity(),
         leagueId = 0
     )
 }
 
 fun Venue.toVenueEntity(): VenueEntity {
-    return VenueEntity(city = city.orEmpty(), id = id ?: 0, name = name.orEmpty(), "", 0, "", "")
+    return VenueEntity(
+        city = city,
+        id = id,
+        name = name,
+        address = address,
+        capacity = capacity,
+        surface = surface,
+        image = image
+    )
 }
 
 fun Periods.toPeriodsEntity(): PeriodsEntity {
@@ -33,9 +41,9 @@ fun Periods.toPeriodsEntity(): PeriodsEntity {
 
 fun Status.toStatusEntity(): StatusEntity {
     return StatusEntity(
-        elapsed = elapsed ?: 0,
-        longValue = long.orEmpty(),
-        shortValue = short.orEmpty()
+        elapsed = elapsed,
+        longValue = long,
+        shortValue = short
     )
 }
 
@@ -49,17 +57,28 @@ fun Score.toScoreEntity(): ScoreEntity {
 }
 
 fun Goals.toGoalsEntity(): GoalsEntity {
-    return GoalsEntity(home = home ?: 0, away = away ?: 0)
+    return GoalsEntity(home = home, away = away)
+}
+
+fun PlayerColor.toPlayerColorEntity(): PlayerColorEntity {
+    return PlayerColorEntity(border = border, number, primary)
+}
+
+fun Colors.toColorsEntity(): ColorsEntity {
+    return ColorsEntity(
+        goalkeeper = goalkeeper.toPlayerColorEntity(),
+        player = player.toPlayerColorEntity()
+    )
 }
 
 fun FixtureInfo.toFixtureInfoEntity(): FixtureInfoEntity {
     return FixtureInfoEntity(
-        date = date.orEmpty(),
-        id = id ?: 0,
-        referee = referee.orEmpty(),
+        date = date,
+        id = id,
+        referee = referee,
         status = status.toStatusEntity(),
-        timestamp = timestamp ?: 0,
-        timezone = timezone.orEmpty(),
+        timestamp = timestamp,
+        timezone = timezone,
         venue = venue.toVenueEntity(),
         periods = periods.toPeriodsEntity()
     )
@@ -68,7 +87,12 @@ fun FixtureInfo.toFixtureInfoEntity(): FixtureInfoEntity {
 fun FixtureItem.toFixtureEntity(): FixtureEntity {
     return FixtureEntity(
         id = id,
-        currentRound = CurrentRoundEntity(0, leagueId, season, round),
+        currentRound = CurrentRoundEntity(
+            0,
+            league.id,
+            league.season,
+            league.round
+        ),
         h2h = h2h,
         date = date,
         fixture = fixture.toFixtureInfoEntity(),

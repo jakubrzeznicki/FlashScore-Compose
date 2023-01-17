@@ -11,5 +11,5 @@ import androidx.room.PrimaryKey
 data class CountryEntity(
     @PrimaryKey @ColumnInfo(name = "code") val code: String,
     @ColumnInfo(name = "name") val name: String,
-    @ColumnInfo(name = "flag") val flag: String,
+    @ColumnInfo(name = "flag") val flag: String
 )

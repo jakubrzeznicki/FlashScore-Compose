@@ -15,5 +15,5 @@ data class LineupEntity(
     @ColumnInfo(name = "formation") val formation: String,
     @ColumnInfo(name = "start_xi") val startXI: List<PlayerEntity>,
     @ColumnInfo(name = "substitutes") val substitutes: List<PlayerEntity>,
-    @Embedded(prefix = "team_") val team: TeamEntity,
+    @Embedded(prefix = "team_") val team: TeamEntity
 )

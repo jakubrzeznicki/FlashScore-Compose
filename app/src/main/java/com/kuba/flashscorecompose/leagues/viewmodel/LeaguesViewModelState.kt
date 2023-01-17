@@ -1,6 +1,5 @@
 package com.kuba.flashscorecompose.leagues.viewmodel
 
-import android.util.Log
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.leagues.model.DayItem
 import com.kuba.flashscorecompose.leagues.model.LeaguesError
@@ -17,10 +16,8 @@ data class LeaguesViewModelState(
     val dayItems: List<DayItem> = emptyList()
 ) {
     fun toUiState(): LeaguesUiState = if (leagueItems.isEmpty()) {
-        Log.d("TEST_LOG", "leagueItems are empty")
         LeaguesUiState.NoLeagues(isLoading, error, dayItems)
     } else {
-        Log.d("TEST_LOG", "leagueItems has ${leagueItems.size} items")
         LeaguesUiState.HasLeagues(isLoading, error, dayItems, leagueItems, favoriteItems)
     }
 }

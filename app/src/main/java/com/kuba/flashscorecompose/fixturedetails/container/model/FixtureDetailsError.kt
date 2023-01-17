@@ -7,5 +7,5 @@ import com.kuba.flashscorecompose.utils.ResponseStatus
  */
 sealed class FixtureDetailsError {
     object NoError : FixtureDetailsError()
-    data class RemoteError(val responseStatus: ResponseStatus) : FixtureDetailsError()
+    object EmptyDatabase : FixtureDetailsError()
 }

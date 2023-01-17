@@ -7,7 +7,6 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class FixtureItem(
     val id: Int,
-    val leagueId: Int,
     val season: Int,
     val round: String,
     val h2h: String,

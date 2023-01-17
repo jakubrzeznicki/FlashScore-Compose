@@ -11,11 +11,12 @@ import com.kuba.flashscorecompose.fixturedetails.statistics.model.StatisticsUiSt
 data class StatisticsViewModelState(
     val isLoading: Boolean = false,
     val error: StatisticsError = StatisticsError.NoError,
-    val statistics: List<Statistics> = emptyList(),
+    val homeStatistics: Statistics? = null,
+    val awayStatistics: Statistics? = null,
     val fixtures: List<FixtureItem> = emptyList()
 ) {
-    fun toUiState(): StatisticsUiState = if (statistics.isNotEmpty()) {
-        StatisticsUiState.HasData(isLoading, error, statistics, fixtures)
+    fun toUiState(): StatisticsUiState = if (homeStatistics != null && awayStatistics != null) {
+        StatisticsUiState.HasData(isLoading, error, homeStatistics, awayStatistics, fixtures)
     } else {
         StatisticsUiState.NoData(isLoading, error)
     }

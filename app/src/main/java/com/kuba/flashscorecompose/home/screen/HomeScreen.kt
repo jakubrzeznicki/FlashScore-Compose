@@ -2,7 +2,6 @@ package com.kuba.flashscorecompose.home.screen
 
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.*
@@ -14,7 +13,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.rounded.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,10 +37,13 @@ import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.destinations.FixtureDetailsRouteDestination
-import com.kuba.flashscorecompose.destinations.LeaguesListScreenDestination
+import com.kuba.flashscorecompose.home.model.HomeError
 import com.kuba.flashscorecompose.home.model.HomeUiState
 import com.kuba.flashscorecompose.home.viewmodel.HomeViewModel
 import com.kuba.flashscorecompose.ui.component.AppTopBar
+import com.kuba.flashscorecompose.ui.component.EmptyState
+import com.kuba.flashscorecompose.ui.component.FixtureCard
+import com.kuba.flashscorecompose.ui.component.FlashScoreSnackbarHost
 import com.kuba.flashscorecompose.ui.theme.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -69,7 +70,9 @@ fun HomeScreenRoute(
         uiState = uiState,
         navigator = navigator,
         onRefreshClick = { viewModel.refresh() },
-        onCountryClick = { navigator.navigate(LeaguesListScreenDestination(it)) },
+        onCountryClick = { countryName, isSelected ->
+            viewModel.getFixturesByCountry(countryName, isSelected)
+        },
         onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixture.id)) },
         onLeagueClick = { },
         onErrorClear = { viewModel.cleanError() },
@@ -84,7 +87,7 @@ fun HomeScreen(
     uiState: HomeUiState,
     navigator: DestinationsNavigator,
     onRefreshClick: () -> Unit,
-    onCountryClick: (String) -> Unit,
+    onCountryClick: (String, Boolean) -> Unit,
     onFixtureClick: (FixtureItem) -> Unit,
     onLeagueClick: (Int) -> Unit,
     onErrorClear: () -> Unit,
@@ -94,10 +97,11 @@ fun HomeScreen(
     val scrollState = rememberScrollState()
     Scaffold(
         topBar = { TopBar(context = context) },
-        scaffoldState = scaffoldState
+        scaffoldState = scaffoldState,
+        snackbarHost = { FlashScoreSnackbarHost(hostState = it) }
     ) { paddingValues ->
         LoadingContent(
-            modifier = Modifier.padding(paddingValues),
+            modifier = modifier.padding(paddingValues),
             empty = when (uiState) {
                 is HomeUiState.HasData -> false
                 is HomeUiState.NoData -> uiState.isLoading
@@ -115,49 +119,50 @@ fun HomeScreen(
                 Banner()
                 Spacer(modifier = Modifier.size(16.dp))
                 when (uiState) {
-                    is HomeUiState.HasData -> CountryWidgetsList(
-                        modifier = Modifier,
-                        uiState.countryItems,
-                        onCountryClick
+                    is HomeUiState.HasData -> {
+                        CountriesWidget(
+                            modifier = Modifier,
+                            uiState.countryItems,
+                            onCountryClick
+                        )
+                        Spacer(modifier = Modifier.size(16.dp))
+                        WidgetFixtures(
+                            modifier,
+                            uiState.leagueWithFixtures,
+                            onFixtureClick,
+                            onLeagueClick
+                        )
+                    }
+                    is HomeUiState.NoData -> EmptyState(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(),
+                        iconId = R.drawable.ic_close,
+                        contentDescriptionId = R.string.load_data_from_network,
+                        textId = R.string.no_fixtures_and_countries,
+                        onRefreshClick = onRefreshClick
                     )
-                    else -> EmptyCountryWidget()
-                }
-                Spacer(modifier = Modifier.size(16.dp))
-                when (uiState) {
-                    is HomeUiState.HasData -> WidgetFixtures(
-                        modifier,
-                        uiState.fixtureItems,
-                        onFixtureClick,
-                        onLeagueClick
-                    )
-                    else -> EmptyFixtureWidget()
                 }
             }
         }
     }
+    ErrorSnackbar(uiState, onRefreshClick, onErrorClear, scaffoldState)
 }
 
 @Composable
 fun WidgetFixtures(
     modifier: Modifier,
-    fixtureItems: List<FixtureItem>,
+    leagueWithFixtures: Map<League, List<FixtureItem>>,
     onFixtureClick: (FixtureItem) -> Unit,
     onLeagueClick: (Int) -> Unit
 ) {
-    val leagueWithFixtures = fixtureItems.groupBy { it.league }
-    leagueWithFixtures.forEach {
-        Log.d("TEST_LOG", "leaguieFixtuires league - ${it.key}")
-        it.value.forEach {
-            Log.d("TEST_LOG", "leaguieFixtuires fixurte- ${it}")
-        }
-    }
     Column(modifier = modifier) {
         leagueWithFixtures.forEach {
             Spacer(modifier = Modifier.size(24.dp))
-            HeaderWidgetLeagueCard(it.key, onLeagueClick)
+            HeaderLeague(it.key, onLeagueClick)
             Spacer(modifier = Modifier.size(16.dp))
             it.value.forEach { fixtureItem ->
-                FixtureWidgetCard(fixtureItem, onFixtureClick)
+                FixtureCard(fixtureItem, onFixtureClick)
                 Spacer(modifier = Modifier.size(8.dp))
             }
         }
@@ -166,26 +171,35 @@ fun WidgetFixtures(
 
 @Composable
 fun TopBar(context: Context) {
-    AppTopBar(title = {
-        Text(text = stringResource(id = R.string.live_score))
-    }, actions = {
-        IconButton(modifier = Modifier
-            .padding(horizontal = 12.dp)
-            .size(24.dp),
-            onClick = { Toast.makeText(context, "Search", Toast.LENGTH_SHORT) }) {
-            Icon(imageVector = Icons.Filled.Search, contentDescription = "search")
-        }
-        IconButton(modifier = Modifier
-            .padding(horizontal = 12.dp)
-            .size(24.dp),
-            onClick = { Toast.makeText(context, "Notifications", Toast.LENGTH_SHORT) }) {
-            Icon(
-                imageVector = Icons.Filled.Notifications, contentDescription = "notifications"
-            )
-        }
-    })
+    AppTopBar(
+        title = { Text(text = stringResource(id = R.string.live_score)) },
+        actions = {
+            IconButton(
+                modifier = Modifier
+                    .padding(horizontal = 12.dp)
+                    .size(24.dp),
+                onClick = {
+                    Toast.makeText(context, R.string.search, Toast.LENGTH_SHORT).show()
+                }) {
+                Icon(
+                    imageVector = Icons.Filled.Search,
+                    contentDescription = stringResource(id = R.string.search)
+                )
+            }
+            IconButton(
+                modifier = Modifier
+                    .padding(horizontal = 12.dp)
+                    .size(24.dp),
+                onClick = {
+                    Toast.makeText(context, R.string.notifications, Toast.LENGTH_SHORT).show()
+                }) {
+                Icon(
+                    imageVector = Icons.Filled.Notifications,
+                    contentDescription = stringResource(id = R.string.notifications)
+                )
+            }
+        })
 }
-
 
 @Composable
 fun Banner() {
@@ -194,22 +208,23 @@ fun Banner() {
             .fillMaxWidth()
             .background(
                 brush = Brush.horizontalGradient(
-                    colors = listOf(Blue500, Blue800),
-                ), shape = RoundedCornerShape(16.dp)
+                    colors = listOf(Blue500, Blue800)
+                ),
+                shape = RoundedCornerShape(16.dp)
             )
     ) {
         Column(
             Modifier
-                .padding(PaddingValues(start = 18.dp, top = 24.dp, bottom = 24.dp))
+                .padding(start = 18.dp, top = 24.dp, bottom = 24.dp)
                 .fillMaxWidth(0.5F)
         ) {
             Row(
                 Modifier
                     .background(
                         color = Color.White,
-                        shape = RoundedCornerShape(46.dp),
+                        shape = RoundedCornerShape(46.dp)
                     )
-                    .padding(PaddingValues(8.dp)),
+                    .padding(8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -248,20 +263,23 @@ fun Banner() {
 }
 
 @Composable
-fun CountryWidgetsList(
+fun CountriesWidget(
     modifier: Modifier,
     countries: List<Country>,
-    onCountryClick: (String) -> Unit,
+    onCountryClick: (String, Boolean) -> Unit,
     state: LazyListState = rememberLazyListState()
 ) {
-    val selected = remember { mutableStateOf(0) }
+    val selectedCountryName = remember { mutableStateOf("") }
     LazyRow(modifier = modifier, state = state) {
-        items(countries) {
+        items(countries) { country ->
             CountryWidgetCard(
-                country = it,
-                selectedIndex = selected,
-                onCountryClick = onCountryClick
-            )
+                country = country,
+                isSelected = selectedCountryName.value == country.name
+            ) {
+                val isSelected = selectedCountryName.value == it
+                selectedCountryName.value = if (isSelected) "" else it
+                onCountryClick(it, isSelected)
+            }
         }
     }
 }
@@ -270,22 +288,19 @@ fun CountryWidgetsList(
 @Composable
 fun CountryWidgetCard(
     country: Country,
-    selectedIndex: MutableState<Int>,
+    isSelected: Boolean,
     onCountryClick: (String) -> Unit
 ) {
     Card(
-        onClick = { onCountryClick(country.code) },
+        onClick = { onCountryClick(country.name) },
         backgroundColor = MaterialTheme.colors.background,
         modifier = Modifier.size(width = 115.dp, height = 130.dp),
     ) {
-        val isActiveModifier = Modifier
+        val isSelectedModifier = Modifier
             .padding(PaddingValues(7.dp))
             .background(
-                shape = RoundedCornerShape(16.dp), brush = Brush.horizontalGradient(
-                    colors = listOf(
-                        LightOrange, Orange
-                    )
-                )
+                shape = RoundedCornerShape(16.dp),
+                brush = Brush.horizontalGradient(colors = listOf(LightOrange, Orange))
             )
         val normalModifier = Modifier
             .padding(PaddingValues(7.dp))
@@ -293,16 +308,18 @@ fun CountryWidgetCard(
                 shape = RoundedCornerShape(16.dp), color = Dark500
             )
         Column(
-            //modifier = if (leagueWidgetItem.isActive) isActiveModifier else normalModifier,
-            modifier = normalModifier,
+            modifier = if (isSelected) isSelectedModifier else normalModifier,
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
             AsyncImage(
                 modifier = Modifier.size(40.dp),
                 model = ImageRequest.Builder(LocalContext.current)
-                    .decoderFactory(SvgDecoder.Factory()).data(country.flag)
-                    .size(Size.ORIGINAL).crossfade(true).build(),
+                    .decoderFactory(SvgDecoder.Factory())
+                    .data(country.flag)
+                    .size(Size.ORIGINAL)
+                    .crossfade(true)
+                    .build(),
                 placeholder = painterResource(id = R.drawable.ic_launcher_background),
                 contentDescription = null,
                 contentScale = ContentScale.Fit
@@ -320,9 +337,8 @@ fun CountryWidgetCard(
     }
 }
 
-
 @Composable
-fun HeaderWidgetLeagueCard(league: League, onLeagueClick: (Int) -> Unit) {
+fun HeaderLeague(league: League, onLeagueClick: (Int) -> Unit) {
     Row(
         modifier = Modifier
             .clickable { onLeagueClick(league.id) }
@@ -337,8 +353,11 @@ fun HeaderWidgetLeagueCard(league: League, onLeagueClick: (Int) -> Unit) {
             AsyncImage(
                 modifier = Modifier.size(24.dp),
                 model = ImageRequest.Builder(LocalContext.current)
-                    .decoderFactory(SvgDecoder.Factory()).data(league.logo)
-                    .size(Size.ORIGINAL).crossfade(true).build(),
+                    .decoderFactory(SvgDecoder.Factory())
+                    .data(league.countryFlag)
+                    .size(Size.ORIGINAL)
+                    .crossfade(true)
+                    .build(),
                 placeholder = painterResource(id = R.drawable.ic_launcher_background),
                 contentDescription = null,
                 contentScale = ContentScale.Fit
@@ -349,12 +368,12 @@ fun HeaderWidgetLeagueCard(league: League, onLeagueClick: (Int) -> Unit) {
                     text = league.name,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp,
-                    color = Color.White,
+                    color = Color.White
                 )
                 Text(
                     text = league.countryName,
                     fontSize = 12.sp,
-                    color = Grey,
+                    color = Grey
                 )
             }
         }
@@ -366,182 +385,31 @@ fun HeaderWidgetLeagueCard(league: League, onLeagueClick: (Int) -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun FixtureWidgetCard(fixtureItem: FixtureItem, onFixtureClick: (FixtureItem) -> Unit) {
-    Card(
-        onClick = { onFixtureClick(fixtureItem) },
-        backgroundColor = GreyLight,
-        shape = RoundedCornerShape(16.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(
-                Modifier
-                    .weight(3f)
-                    .padding(horizontal = 8.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .background(
-                            shape = RoundedCornerShape(30.dp), color = GreyDark
-                        )
-                        .size(36.dp)
-                ) {
-                    AsyncImage(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(paddingValues = PaddingValues(4.dp)),
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .decoderFactory(SvgDecoder.Factory())
-                            .data(fixtureItem.homeTeam.logo).size(Size.ORIGINAL)
-                            .crossfade(true)
-                            .build(),
-                        placeholder = painterResource(id = R.drawable.ic_launcher_background),
-                        contentDescription = null,
-                        contentScale = ContentScale.Fit
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .background(
-                            shape = RoundedCornerShape(30.dp), color = GreyDark
-                        )
-                        .size(36.dp)
-                ) {
-                    AsyncImage(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(paddingValues = PaddingValues(4.dp)),
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .decoderFactory(SvgDecoder.Factory())
-                            .data(fixtureItem.awayTeam.logo).size(Size.ORIGINAL)
-                            .crossfade(true)
-                            .build(),
-                        placeholder = painterResource(id = R.drawable.ic_launcher_background),
-                        contentDescription = null,
-                        contentScale = ContentScale.Fit
-                    )
-                }
-            }
-            Row(
-                Modifier
-                    .weight(7f)
-                    .padding(end = 4.dp)
-            ) {
-                Column(
-                    Modifier.weight(6f),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = fixtureItem.homeTeam.name,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 14.sp,
-                        color = Color.White,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1
-
-                    )
-                    Text(
-                        text = fixtureItem.goals.home.toString(),
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 14.sp,
-                        color = Color.White,
-                    )
-                }
-                Column(
-                    Modifier
-                        .weight(2f)
-                        .padding(horizontal = 1.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = "vs",
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 14.sp,
-                        color = Color.White
-                    )
-                    Text(
-                        text = "-",
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 14.sp,
-                        color = Color.White
-                    )
-                }
-                Column(
-                    Modifier.weight(6f),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = fixtureItem.awayTeam.name,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 14.sp,
-                        color = Color.White,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Text(
-                        text = fixtureItem.goals.away.toString(),
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 14.sp,
-                        color = Color.White,
-                    )
-                }
-            }
-            Row(
-                modifier = Modifier
-                    .weight(1f)
-                    .background(
-                        shape = RoundedCornerShape(topEnd = 16.dp, bottomEnd = 16.dp),
-                        color = GreyDark
-                    )
-                    .size(70.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = fixtureItem.fixture.status.short,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 14.sp,
-                    color = Color.White,
+private fun ErrorSnackbar(
+    uiState: HomeUiState,
+    onRefreshClick: () -> Unit,
+    onErrorClear: () -> Unit,
+    scaffoldState: ScaffoldState
+) {
+    when (val error = uiState.error) {
+        is HomeError.NoError -> {}
+        is HomeError.RemoteError -> {
+            val errorMessageText =
+                remember(uiState) { error.responseStatus.statusMessage.orEmpty() }
+            val retryMessageText = stringResource(id = R.string.retry)
+            val onRefreshPostStates by rememberUpdatedState(onRefreshClick)
+            val onErrorDismissState by rememberUpdatedState(onErrorClear)
+            LaunchedEffect(errorMessageText, retryMessageText, scaffoldState) {
+                val snackbarResult = scaffoldState.snackbarHostState.showSnackbar(
+                    message = errorMessageText,
+                    actionLabel = retryMessageText
                 )
+                if (snackbarResult == SnackbarResult.ActionPerformed) {
+                    onRefreshPostStates()
+                }
+                onErrorDismissState()
             }
         }
-    }
-}
-
-@Composable
-fun EmptyCountryWidget() {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Icon(
-            imageVector = Icons.Rounded.Close,
-            modifier = Modifier.size(40.dp),
-            contentDescription = ""
-        )
-        Text("No Countries", modifier = Modifier.padding(16.dp))
-    }
-}
-
-@Composable
-fun EmptyFixtureWidget() {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Icon(
-            imageVector = Icons.Rounded.Close,
-            modifier = Modifier.size(40.dp),
-            contentDescription = ""
-        )
-        Text("No Fixture", modifier = Modifier.padding(16.dp))
     }
 }

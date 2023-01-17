@@ -38,19 +38,12 @@ class LeagueRepository(
         val result = remote.loadLeagues(countryCode)
         return try {
             val leagues = result.body()?.response?.mapNotNull { it.league?.toLeague() }.orEmpty()
-            Log.d("TEST_LOG", "loadLeagues success ${result.body()}")
-            Log.d("TEST_LOG", "loadLeagues success ${result.message()}")
-            Log.d("TEST_LOG", "loadLeagues success ${result.errorBody()}")
-            Log.d("TEST_LOG", "loadLeagues success ${result.headers()}")
-            Log.d("TEST_LOG", "loadLeagues success ${result.raw()}")
-            Log.d("TEST_LOG", "loadLeagues success ${result.code()}")
             withContext(Dispatchers.IO) {
                 local.deleteLeagues(countryCode)
-                local.saveLeagues(leagues.map { it.toLeagueEntity() })
+                saveLeagues(leagues)
             }
             RepositoryResult.Success(leagues)
         } catch (e: HttpException) {
-            Log.d("TEST_LOG", "loadLeagues error ${result.code()}")
             RepositoryResult.Error(ResponseStatus().apply {
                 this.statusMessage = e.message()
                 this.internalStatus = e.code()

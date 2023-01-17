@@ -28,12 +28,12 @@ class FixtureDetailsViewModel(
         viewModelScope.launch {
             val fixtureItem = fixturesRepository.getFixture(fixtureId)
             viewModelState.update {
-                it.copy(fixtureItem = fixtureItem)
+                if (fixtureItem != null) {
+                    it.copy(fixtureItem = fixtureItem)
+                } else {
+                    it.copy(error = FixtureDetailsError.EmptyDatabase)
+                }
             }
         }
-    }
-
-    fun cleanError() {
-        viewModelState.update { it.copy(error = FixtureDetailsError.NoError) }
     }
 }

@@ -23,6 +23,7 @@ interface FixturesDataSource {
     fun observeFixturesByDate(date: String, countryNames: List<String>): Flow<List<FixtureItem>>
     fun observeXLastFixtures(count: Int, countryNames: List<String>): Flow<List<FixtureItem>>
     suspend fun getFixture(fixtureId: Int): FixtureItem
+    suspend fun getFixturesByCountry(countryNames: List<String>): List<FixtureItem>
     fun saveFixtureItem(fixtureItems: List<FixtureItem>)
     suspend fun loadFixturesFilteredByRound(
         leagueId: Int,

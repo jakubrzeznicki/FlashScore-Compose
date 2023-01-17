@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.TeamEntity
-import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.VenueEntity
 import kotlinx.coroutines.flow.Flow
 
 /**

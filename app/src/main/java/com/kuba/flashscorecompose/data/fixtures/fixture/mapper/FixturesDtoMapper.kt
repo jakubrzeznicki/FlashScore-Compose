@@ -4,8 +4,6 @@ import com.kuba.flashscorecompose.data.fixtures.fixture.model.*
 import com.kuba.flashscorecompose.data.fixtures.fixture.remote.model.*
 import com.kuba.flashscorecompose.data.league.mapper.toLeague
 import com.kuba.flashscorecompose.data.league.model.League
-import com.kuba.flashscorecompose.data.league.remote.model.LeagueDto
-import java.util.*
 
 /**
  * Created by jrzeznicki on 03/01/2023.
@@ -15,12 +13,24 @@ fun TeamDto.toTeam(): Team {
         id = id ?: 0,
         logo = logo.orEmpty(),
         name = name.orEmpty(),
-        winner = winner ?: false
+        isWinner = winner ?: false,
+        code = code.orEmpty(),
+        founded = founded ?: 0,
+        isNational = national ?: false,
+        colors = colors?.toColors() ?: Colors.EMPTY_COLORS
     )
 }
 
 fun VenueDto.toVenue(): Venue {
-    return Venue(city = city.orEmpty(), id = id ?: 0, name = name.orEmpty())
+    return Venue(
+        city = city.orEmpty(),
+        id = id ?: 0,
+        name = name.orEmpty(),
+        address = address.orEmpty(),
+        capacity = capacity ?: 0,
+        surface = surface.orEmpty(),
+        image = image.orEmpty()
+    )
 }
 
 fun PeriodsDto.toPeriods(): Periods {
@@ -44,6 +54,17 @@ fun GoalsDto.toGoals(): Goals {
     return Goals(home = home ?: 0, away = away ?: 0)
 }
 
+fun PlayerColorDto.toPlayerColor(): PlayerColor {
+    return PlayerColor(border = border.orEmpty(), number.orEmpty(), primary.orEmpty())
+}
+
+fun ColorsDto.toColors(): Colors {
+    return Colors(
+        goalkeeper = goalkeeper?.toPlayerColor() ?: PlayerColor.EMPTY_PLAYER_COLOR,
+        player = player?.toPlayerColor() ?: PlayerColor.EMPTY_PLAYER_COLOR
+    )
+}
+
 fun FixtureInfoDto.toFixtureInfo(): FixtureInfo {
     return FixtureInfo(
         date = date.orEmpty(),
@@ -57,65 +78,18 @@ fun FixtureInfoDto.toFixtureInfo(): FixtureInfo {
     )
 }
 
-fun FixtureDto.toFixtureItem(leagueId: Int, season: Int, round: String): FixtureItem {
+fun FixtureDto.toFixtureItem(
+    season: Int? = null,
+    round: String? = null,
+    h2h: String? = null,
+    date: String? = null
+): FixtureItem {
     return FixtureItem(
         id = fixture?.id ?: 0,
-        leagueId = leagueId,
-        season = season,
-        round = round,
-        h2h = "${teams?.home?.id ?: 0}-${teams?.away?.id ?: 0}",
-        date = fixture?.date.orEmpty(),
-        fixture = fixture?.toFixtureInfo() ?: FixtureInfo.EMPTY_FIXTURE_INFO,
-        goals = goals?.toGoals() ?: Goals.EMPTY_GOALS,
-        league = league?.toLeague() ?: League.EMPTY_LEAGUE,
-        score = score?.toScore() ?: Score.EMPTY_SCORE,
-        homeTeam = teams?.home?.toTeam() ?: Team.EMPTY_TEAM,
-        awayTeam = teams?.away?.toTeam() ?: Team.EMPTY_TEAM
-    )
-}
-
-fun FixtureDto.toFixtureItem(season: Int): FixtureItem {
-    return FixtureItem(
-        id = fixture?.id ?: 0,
-        leagueId = league?.id ?: 0,
-        season = season,
-        round = league?.round.orEmpty(),
-        h2h = "${teams?.home?.id ?: 0}-${teams?.away?.id ?: 0}",
-        date = fixture?.date.orEmpty(),
-        fixture = fixture?.toFixtureInfo() ?: FixtureInfo.EMPTY_FIXTURE_INFO,
-        goals = goals?.toGoals() ?: Goals.EMPTY_GOALS,
-        league = league?.toLeague() ?: League.EMPTY_LEAGUE,
-        score = score?.toScore() ?: Score.EMPTY_SCORE,
-        homeTeam = teams?.home?.toTeam() ?: Team.EMPTY_TEAM,
-        awayTeam = teams?.away?.toTeam() ?: Team.EMPTY_TEAM
-    )
-}
-
-fun FixtureDto.toFixtureItem(h2h: String): FixtureItem {
-    return FixtureItem(
-        id = fixture?.id ?: 0,
-        leagueId = league?.id ?: 0,
-        season = league?.season ?: 0,
-        round = league?.round.orEmpty(),
-        h2h = h2h,
-        date = fixture?.date.orEmpty(),
-        fixture = fixture?.toFixtureInfo() ?: FixtureInfo.EMPTY_FIXTURE_INFO,
-        goals = goals?.toGoals() ?: Goals.EMPTY_GOALS,
-        league = league?.toLeague() ?: League.EMPTY_LEAGUE,
-        score = score?.toScore() ?: Score.EMPTY_SCORE,
-        homeTeam = teams?.home?.toTeam() ?: Team.EMPTY_TEAM,
-        awayTeam = teams?.away?.toTeam() ?: Team.EMPTY_TEAM
-    )
-}
-
-fun FixtureDto.toFixtureItemWithDate(date: String): FixtureItem {
-    return FixtureItem(
-        id = fixture?.id ?: 0,
-        leagueId = league?.id ?: 0,
-        season = league?.season ?: 0,
-        round = league?.round.orEmpty(),
-        h2h = "${teams?.home?.id ?: 0}-${teams?.away?.id ?: 0}",
-        date = date,
+        season = season ?: league?.season ?: 0,
+        round = round ?: league?.round.orEmpty(),
+        h2h = h2h ?: "${teams?.home?.id ?: 0}-${teams?.away?.id ?: 0}",
+        date = date ?: fixture?.date.orEmpty(),
         fixture = fixture?.toFixtureInfo() ?: FixtureInfo.EMPTY_FIXTURE_INFO,
         goals = goals?.toGoals() ?: Goals.EMPTY_GOALS,
         league = league?.toLeague() ?: League.EMPTY_LEAGUE,

@@ -1,4 +1,4 @@
-package com.kuba.flashscorecompose.data.fixtures.fixture.remote
+package com.kuba.flashscorecompose.data.fixtures.lineups.remote
 
 import com.kuba.flashscorecompose.api.FootballApi
 import com.kuba.flashscorecompose.data.fixtures.lineups.remote.model.LineupDataDto
