@@ -37,7 +37,6 @@ class LeaguesViewModel(
     private fun observeLeagues() {
         viewModelScope.launch {
             leagueRepository.observeLeagues(countryCode).collect { leagues ->
-                Log.d("TEST_LOG", "observe leagues ${leagues.size}")
                 viewModelState.update { it.copy(leagueItems = leagues) }
             }
         }
@@ -49,14 +48,12 @@ class LeaguesViewModel(
             val result = leagueRepository.loadLeagues(countryCode)
             viewModelState.update {
                 when (result) {
-                    is RepositoryResult.Success -> {
-                        Log.d("TEST_LOG", "RepositoryResult.Success")
-                        it.copy(isLoading = false)
-                    }
-                    is RepositoryResult.Error -> {
-                        Log.d("TEST_LOG", "RepositoryResult.Error")
-                        it.copy(isLoading = false, error = LeaguesError.RemoteError(result.error))
-                    }
+                    is RepositoryResult.Success -> it.copy(isLoading = false)
+                    is RepositoryResult.Error -> it.copy(
+                        isLoading = false,
+                        error = LeaguesError.RemoteError(result.error)
+                    )
+
                 }
             }
         }

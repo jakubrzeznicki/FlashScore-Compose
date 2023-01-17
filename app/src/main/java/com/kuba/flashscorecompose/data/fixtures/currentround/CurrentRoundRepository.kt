@@ -35,7 +35,7 @@ class CurrentRoundRepository(
             withContext(Dispatchers.IO) {
                 currentRound?.let {
                     local.deleteCurrentRound(it.leagueId)
-                    local.saveCurrentRound(it.toCurrentRoundEntity())
+                    saveCurrentRound(currentRound)
                 }
             }
             RepositoryResult.Success(currentRound)

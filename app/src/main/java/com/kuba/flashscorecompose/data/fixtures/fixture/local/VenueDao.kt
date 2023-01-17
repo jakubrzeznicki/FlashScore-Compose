@@ -3,8 +3,6 @@ package com.kuba.flashscorecompose.data.fixtures.fixture.local
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.TeamEntity
 import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.VenueEntity
 
 /**

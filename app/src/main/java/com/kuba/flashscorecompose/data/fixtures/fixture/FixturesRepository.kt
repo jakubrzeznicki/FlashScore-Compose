@@ -67,6 +67,10 @@ class FixturesRepository(
         return local.getFixture(fixtureId).toFixtureItem()
     }
 
+    override suspend fun getFixturesByCountry(countryNames: List<String>): List<FixtureItem> {
+        return local.getFixturesByCountry(countryNames).map { it.toFixtureItem() }
+    }
+
     override fun saveFixtureItem(fixtureItems: List<FixtureItem>) {
         local.saveFixtures(fixtureItems.map { it.toFixtureEntity() })
     }
@@ -78,12 +82,10 @@ class FixturesRepository(
     ): RepositoryResult<List<FixtureItem>> {
         val result =
             remote.loadFixturesFilteredByRound(leagueId = leagueId, season = season, round = round)
-        Log.d("TEST_LOG", "Result message = ${result.message()}")
-        Log.d("TEST_LOG", "Result code = ${result.code()}")
-        Log.d("TEST_LOG", "Result body T= ${result.body()?.response}")
         return try {
-            val fixtureItems =
-                result.body()?.response?.map { it.toFixtureItem(leagueId, season, round) }
+            val fixtureItems = result.body()?.response?.map {
+                it.toFixtureItem(season = season, round = round)
+            }
             withContext(Dispatchers.IO) {
                 local.saveFixtures(fixtureItems?.map { it.toFixtureEntity() }.orEmpty())
                 local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
@@ -106,7 +108,7 @@ class FixturesRepository(
     ): RepositoryResult<List<FixtureItem>> {
         val result = remote.loadFixturesHeadToHead(h2h = h2h, count = count)
         return try {
-            val fixtureItems = result.body()?.response?.map { it.toFixtureItem(h2h) }
+            val fixtureItems = result.body()?.response?.map { it.toFixtureItem(h2h = h2h) }
             withContext(Dispatchers.IO) {
                 local.saveFixtures(fixtureItems?.map { it.toFixtureEntity() }.orEmpty())
                 local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
@@ -125,11 +127,8 @@ class FixturesRepository(
 
     override suspend fun loadFixturesByDate(date: String): RepositoryResult<List<FixtureItem>> {
         val result = remote.loadFixturesByDate(date = date)
-        Log.d("TEST_LOG", "Result message = ${result.message()}")
-        Log.d("TEST_LOG", "Result code = ${result.code()}")
-        Log.d("TEST_LOG", "Result body T= ${result.body()?.response}")
         return try {
-            val fixtureItems = result.body()?.response?.map { it.toFixtureItemWithDate(date) }
+            val fixtureItems = result.body()?.response?.map { it.toFixtureItem(date = date) }
             withContext(Dispatchers.IO) {
                 local.saveFixtures(fixtureItems?.map { it.toFixtureEntity() }.orEmpty())
                 local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
@@ -148,11 +147,8 @@ class FixturesRepository(
 
     override suspend fun loadLastXFixtures(count: Int): RepositoryResult<List<FixtureItem>> {
         val result = remote.loadLastXFixtures(count = count)
-        Log.d("TEST_LOG", "Result message = ${result.message()}")
-        Log.d("TEST_LOG", "Result code = ${result.code()}")
-        Log.d("TEST_LOG", "Result body T= ${result.body()?.response}")
         return try {
-            val fixtureItems = result.body()?.response?.map { it.toFixtureItemWithDate("") }
+            val fixtureItems = result.body()?.response?.map { it.toFixtureItem() }
             withContext(Dispatchers.IO) {
                 local.saveFixtures(fixtureItems?.map { it.toFixtureEntity() }.orEmpty())
                 local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
@@ -175,11 +171,8 @@ class FixturesRepository(
         count: Int
     ): RepositoryResult<List<FixtureItem>> {
         val result = remote.loadFixturesByTeam(teamId, season, count)
-        Log.d("TEST_LOG", "Result message = ${result.message()}")
-        Log.d("TEST_LOG", "Result code = ${result.code()}")
-        Log.d("TEST_LOG", "Result body T= ${result.body()?.response}")
         return try {
-            val fixtureItems = result.body()?.response?.map { it.toFixtureItem(season) }
+            val fixtureItems = result.body()?.response?.map { it.toFixtureItem(season = season) }
             withContext(Dispatchers.IO) {
                 local.saveFixtures(fixtureItems?.map { it.toFixtureEntity() }.orEmpty())
                 local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())

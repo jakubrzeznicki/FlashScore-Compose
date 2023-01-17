@@ -1,7 +1,6 @@
-package com.kuba.flashscorecompose.data.fixtures.fixture.remote
+package com.kuba.flashscorecompose.data.fixtures.statistics.remote
 
 import com.kuba.flashscorecompose.api.FootballApi
-import com.kuba.flashscorecompose.data.fixtures.statistics.remote.StatisticsRemoteDataSource
 import com.kuba.flashscorecompose.data.fixtures.statistics.remote.model.StatisticsDataDto
 import retrofit2.Response
 

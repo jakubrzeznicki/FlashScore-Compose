@@ -30,8 +30,8 @@ fun League.toLeagueEntity(): LeagueEntity {
         countryCode = countryCode,
         countryName = countryName,
         countryFlag = countryFlag,
-        season = season,
-        round = round
+        round = round,
+        season = season
     )
 }
 

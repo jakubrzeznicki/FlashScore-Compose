@@ -15,8 +15,8 @@ import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesDataSource
 import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesRepository
 import com.kuba.flashscorecompose.data.fixtures.fixture.local.FixtureLocal
 import com.kuba.flashscorecompose.data.fixtures.fixture.remote.FixtureRemote
-import com.kuba.flashscorecompose.data.fixtures.fixture.remote.LineupsRemote
-import com.kuba.flashscorecompose.data.fixtures.fixture.remote.StatisticsRemote
+import com.kuba.flashscorecompose.data.fixtures.lineups.remote.LineupsRemote
+import com.kuba.flashscorecompose.data.fixtures.statistics.remote.StatisticsRemote
 import com.kuba.flashscorecompose.data.fixtures.lineups.LineupsDataSource
 import com.kuba.flashscorecompose.data.fixtures.lineups.LineupsRepository
 import com.kuba.flashscorecompose.data.fixtures.lineups.local.LineupLocal

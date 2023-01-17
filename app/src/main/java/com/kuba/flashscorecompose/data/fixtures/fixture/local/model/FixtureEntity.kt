@@ -9,8 +9,8 @@ import com.kuba.flashscorecompose.data.league.local.model.LeagueEntity
 data class FixtureEntity(
     @PrimaryKey @ColumnInfo(name = "id") val id: Int,
     @Embedded(prefix = "current_round_") val currentRound: CurrentRoundEntity,
-    @ColumnInfo(name = "h2h") val h2h: String?,
-    @ColumnInfo(name = "date") val date: String?,
+    @ColumnInfo(name = "h2h") val h2h: String,
+    @ColumnInfo(name = "date") val date: String,
     @Embedded(prefix = "fixture_info_") val fixture: FixtureInfoEntity,
     @Embedded(prefix = "goals_") val goals: GoalsEntity,
     @Embedded(prefix = "league_") val league: LeagueEntity,

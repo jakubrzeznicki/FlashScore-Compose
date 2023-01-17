@@ -13,7 +13,8 @@ interface StatisticsUiState {
     data class HasData(
         override val isLoading: Boolean,
         override val error: StatisticsError,
-        val statistics: List<Statistics>,
+        val homeStatistics: Statistics,
+        val awayStatistics: Statistics,
         val fixtures: List<FixtureItem>
     ) : StatisticsUiState
 

@@ -2,7 +2,7 @@ package com.kuba.flashscorecompose.data.fixtures.lineups
 
 import android.util.Log
 import com.kuba.flashscorecompose.data.fixtures.fixture.mapper.toTeamEntity
-import com.kuba.flashscorecompose.data.fixtures.fixture.remote.LineupsRemoteDataSource
+import com.kuba.flashscorecompose.data.fixtures.lineups.remote.LineupsRemoteDataSource
 import com.kuba.flashscorecompose.data.fixtures.lineups.local.LineupLocalDataSource
 import com.kuba.flashscorecompose.data.fixtures.lineups.mapper.toCoachEntity
 import com.kuba.flashscorecompose.data.fixtures.lineups.mapper.toLineup
@@ -25,8 +25,6 @@ class LineupsRepository(
 
     override fun observeLineups(fixtureId: Int): Flow<List<Lineup>> {
         return local.observeLineups(fixtureId).map { lineups ->
-            Log.d("TEST_LOG", "observeLineups repo $lineups")
-            Log.d("TEST_LOG", "observeLineups repo converted ${lineups.map { it.toLineup() }}")
             lineups.map { it.toLineup() }
         }
     }
@@ -38,9 +36,7 @@ class LineupsRepository(
     override suspend fun loadLineups(fixtureId: Int): RepositoryResult<List<Lineup>> {
         val result = remote.loadLineups(fixtureId = fixtureId)
         return try {
-            Log.d("TEST_LOG", "loadLineups in repo = ${ result.body()?.response}")
             val lineups = result.body()?.response?.map { it.toLineup(fixtureId) }
-            Log.d("TEST_LOG", "loadLineups in repo converter = $lineups")
             saveLineups(lineups.orEmpty())
             local.saveCoaches(lineups?.map { it.coach.toCoachEntity() }.orEmpty())
             local.saveTeams(lineups?.map { it.team.toTeamEntity() }.orEmpty())

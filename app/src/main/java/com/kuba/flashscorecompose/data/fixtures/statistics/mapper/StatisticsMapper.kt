@@ -8,48 +8,62 @@ import com.kuba.flashscorecompose.data.fixtures.statistics.local.model.Statistic
 import com.kuba.flashscorecompose.data.fixtures.statistics.model.Statistic
 import com.kuba.flashscorecompose.data.fixtures.statistics.model.Statistics
 import com.kuba.flashscorecompose.data.fixtures.statistics.remote.model.StatisticDto
+import com.kuba.flashscorecompose.data.fixtures.statistics.remote.model.StatisticsDataDto
 import com.kuba.flashscorecompose.data.fixtures.statistics.remote.model.StatisticsTeamDto
-import java.util.*
 
 /**
  * Created by jrzeznicki on 03/01/2023.
  */
 
-fun Statistics.toStatisticsEntity(): StatisticsEntity {
+fun Statistics.toStatisticsEntity(fixtureId: Int, isHome: Boolean): StatisticsEntity {
     return StatisticsEntity(
-        teamId = teamId,
+        teamId = team.id,
         fixtureId = fixtureId,
         statistics = statistics.map { it.toStatisticRowEntity() },
-        team = team.toTeamEntity()
+        team = team.toTeamEntity(),
+        isHome = isHome
     )
 }
 
 fun Statistic.toStatisticRowEntity(): StatisticRowEntity {
-    return StatisticRowEntity(type = type.orEmpty(), value = value.toString())
+    return StatisticRowEntity(type = type, value = value)
 }
 
 fun StatisticsEntity.toStatistics(): Statistics {
     return Statistics(
-        teamId = teamId,
-        fixtureId = fixtureId,
+        isHome = isHome,
         statistics = statistics.map { it.toStatistic() },
-        team = team.toTeam()
+        team = team.toTeam(),
+        fixtureId = fixtureId
     )
 }
 
 fun StatisticRowEntity.toStatistic(): Statistic {
-    return Statistic(type = type.orEmpty(), value = value.toString())
+    return Statistic(type = type, value = value)
 }
 
-fun StatisticsTeamDto.toStatistics(fixtureId: Int): Statistics {
+fun StatisticsTeamDto.toStatistics(fixtureId: Int, isHome: Boolean): Statistics {
     return Statistics(
-        teamId = team?.id ?: 0,
         fixtureId = fixtureId,
         statistics = statistics?.map { it.toStatistic() }.orEmpty(),
-        team = team?.toTeam() ?: Team.EMPTY_TEAM
+        team = team?.toTeam() ?: Team.EMPTY_TEAM,
+        isHome = isHome
     )
 }
 
 fun StatisticDto.toStatistic(): Statistic {
-    return Statistic(type = type.orEmpty(), value = value.toString())
+    return Statistic(
+        type = type.orEmpty(),
+        value = (if (value != null) {
+            when (value) {
+                is Float -> value.toInt()
+                is Double -> value.toInt()
+                is Int -> value.toInt()
+                is String -> value.toString()
+                else -> value
+            }
+        } else {
+            0
+        }).toString()
+    )
 }

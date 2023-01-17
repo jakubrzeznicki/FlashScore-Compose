@@ -4,11 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -16,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -24,12 +22,15 @@ import com.kuba.flashscorecompose.countries.screen.FullScreenLoading
 import com.kuba.flashscorecompose.countries.screen.LoadingContent
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.fixtures.statistics.model.Statistics
-import com.kuba.flashscorecompose.home.screen.WidgetFixtures
 import com.kuba.flashscorecompose.fixturedetails.statistics.model.StatisticsUiState
 import com.kuba.flashscorecompose.fixturedetails.statistics.viewmodel.StatisticsViewModel
 import com.kuba.flashscorecompose.ui.theme.TextGreyLight
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
+import com.kuba.flashscorecompose.R
+import com.kuba.flashscorecompose.ui.component.EmptyState
+import com.kuba.flashscorecompose.ui.component.FixtureCard
 
 /**
  * Created by jrzeznicki on 23/12/2022.
@@ -42,7 +43,7 @@ fun StatisticsScreen(
     fixtureId: Int,
     leagueId: Int,
     round: String,
-    //navigator: DestinationsNavigator,
+    navigator: DestinationsNavigator,
     viewModel: StatisticsViewModel = getViewModel { parametersOf(fixtureId, leagueId, round) },
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -74,39 +75,47 @@ fun StatisticsList(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             when (uiState) {
-                is StatisticsUiState.HasData -> StatisticsRows(uiState.statistics)
-                else -> EmptyStatisticsRows()
-            }
-            Spacer(modifier = Modifier.size(24.dp))
-            OtherMatchHeader()
-            Spacer(modifier = Modifier.size(16.dp))
-            when (uiState) {
                 is StatisticsUiState.HasData -> {
-                    WidgetFixtures(
-                        Modifier,
-                        uiState.fixtures,
-                        onFixtureClick,
-                        { }
-                    )
+                    StatisticsRows(uiState.homeStatistics, uiState.awayStatistics)
+                    Spacer(modifier = Modifier.size(24.dp))
+                    OtherMatchHeader()
+                    Spacer(modifier = Modifier.size(16.dp))
+                    OtherFixtures(fixtures = uiState.fixtures, onFixtureClick = onFixtureClick)
                 }
-                else -> EmptyFixtureWidget()
+                is StatisticsUiState.NoData -> EmptyState(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(),
+                    iconId = R.drawable.ic_close,
+                    contentDescriptionId = R.string.load_data_from_network,
+                    textId = R.string.no_statistics,
+                    onRefreshClick = onRefreshClick
+                )
             }
         }
     }
 }
 
 @Composable
-fun StatisticsRows(statistics: List<Statistics>) {
-    val homeStatisticsItems = statistics.firstOrNull()?.statistics.orEmpty()
-    val awayStatisticsItems = statistics.lastOrNull()?.statistics.orEmpty()
-    val statisticsItems = homeStatisticsItems.zip(awayStatisticsItems)
+private fun OtherFixtures(fixtures: List<FixtureItem>, onFixtureClick: (FixtureItem) -> Unit) {
+    Column {
+        fixtures.forEach { fixtureItem ->
+            FixtureCard(fixtureItem = fixtureItem, onFixtureClick = onFixtureClick)
+            Spacer(modifier = Modifier.size(8.dp))
+        }
+    }
+}
+
+@Composable
+private fun StatisticsRows(homeStatistics: Statistics, awayStatistics: Statistics) {
+    val statisticsItems = homeStatistics.statistics.zip(awayStatistics.statistics)
     statisticsItems.forEach { (home, away) ->
         StatisticDetailRow(home.value, away.value, home.type)
     }
 }
 
 @Composable
-fun StatisticDetailRow(homeValue: String, awayValue: String, stat: String) {
+private fun StatisticDetailRow(homeValue: String, awayValue: String, stat: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -137,62 +146,22 @@ fun StatisticDetailRow(homeValue: String, awayValue: String, stat: String) {
 }
 
 @Composable
-fun OtherMatchHeader() {
+private fun OtherMatchHeader() {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Other Match",
+            text = stringResource(id = R.string.other_matches),
             fontWeight = FontWeight.SemiBold,
             fontSize = 20.sp,
             color = Color.White,
         )
         Text(
-            text = "See all",
+            text = stringResource(id = R.string.see_all),
             fontSize = 12.sp,
             color = TextGreyLight,
         )
-    }
-}
-
-//@Composable
-//fun FixtureWidgets(fixtureWidgetsList: List<FixtureData>) {
-//    Column {
-//        fixtureWidgetsList.forEach {
-//            //FixtureWidgetCard(fixtureData = it)
-//            Spacer(modifier = Modifier.size(16.dp))
-//        }
-//    }
-//}
-
-@Composable
-fun EmptyFixtureWidget() {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Icon(
-            imageVector = Icons.Rounded.Close,
-            modifier = Modifier.size(40.dp),
-            contentDescription = ""
-        )
-        Text("No Fixture", modifier = Modifier.padding(16.dp))
-    }
-}
-
-@Composable
-fun EmptyStatisticsRows() {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Icon(
-            imageVector = Icons.Rounded.Close,
-            modifier = Modifier.size(40.dp),
-            contentDescription = ""
-        )
-        Text("No Statistics", modifier = Modifier.padding(16.dp))
     }
 }

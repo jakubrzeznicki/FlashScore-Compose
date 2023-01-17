@@ -34,7 +34,7 @@ import com.kuba.flashscorecompose.data.league.local.model.LeagueEntity
     entities = [CountryEntity::class, LeagueEntity::class, CurrentRoundEntity::class,
         FixtureInfoEntity::class, TeamEntity::class, VenueEntity::class,
         CoachEntity::class, PlayerEntity::class, StatisticsEntity::class, LineupEntity::class, FixtureEntity::class],
-    version = 16
+    version = 18
 )
 @TypeConverters(StatisticsDataConverter::class, LineupsDataConverter::class)
 abstract class FlashScoreDatabase : RoomDatabase() {

@@ -17,6 +17,7 @@ import java.time.format.DateTimeFormatter
 /**
  * Created by jrzeznicki on 05/01/2023.
  */
+@RequiresApi(Build.VERSION_CODES.O)
 class HomeViewModel(
     private val countryRepository: CountryDataSource,
     private val fixturesRepository: FixturesDataSource,
@@ -24,7 +25,7 @@ class HomeViewModel(
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(HomeViewModelState())
-
+    private val formationDate by lazy { localDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT)) }
     val uiState = viewModelState
         .map { it.toUiState() }
         .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
@@ -39,8 +40,8 @@ class HomeViewModel(
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun refresh() {
-        // refreshCountries()
-        // refreshFixtures()
+        refreshCountries()
+        refreshFixtures()
     }
 
     private fun observeCountries() {
@@ -56,37 +57,35 @@ class HomeViewModel(
     private fun refreshCountries() {
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            Log.d("TEST_LOG", "loadCountries")
             val result = countryRepository.loadCountries()
             viewModelState.update {
                 when (result) {
-                    is RepositoryResult.Success -> {
-                        Log.d("TEST_LOG", "refreshCountries success size ${result.data?.size}")
-                        it.copy(isLoading = false)
-                    }
-                    is RepositoryResult.Error -> {
-                        Log.d(
-                            "TEST_LOG",
-                            "refreshCountriesTest error size ${result.error.internalStatus}"
-                        )
-                        it.copy(
-                            isLoading = false,
-                            error = HomeError.RemoteError(result.error)
-                        )
-                    }
+                    is RepositoryResult.Success -> it.copy(isLoading = false)
+                    is RepositoryResult.Error -> it.copy(
+                        isLoading = false,
+                        error = HomeError.RemoteError(result.error)
+                    )
                 }
             }
+        }
+    }
+
+    fun getFixturesByCountry(countryName: String, isSelected: Boolean) {
+        viewModelScope.launch {
+            val countryNames = if (isSelected) COUNTRY_NAMES else listOf(countryName)
+            val fixtures = fixturesRepository.getFixturesByCountry(countryNames)
+            val leagueWithFixtures = fixtures.groupBy { it.league }
+            viewModelState.update { it.copy(leagueWithFixtures = leagueWithFixtures) }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun observeFixtures() {
         viewModelScope.launch {
-            val formattedDate = localDate.format(DateTimeFormatter.ofPattern("yyy-MM-dd"))
             fixturesRepository.observeFixturesByDate("2021-04-07", COUNTRY_NAMES)
                 .collect { fixtures ->
-                    Log.d("TEST_LOG", "observeFixtures size ${fixtures.size}")
-                    viewModelState.update { it.copy(fixtureItems = fixtures) }
+                    val leagueWithFixtures = fixtures.groupBy { it.league }
+                    viewModelState.update { it.copy(leagueWithFixtures = leagueWithFixtures) }
                 }
         }
     }
@@ -95,25 +94,14 @@ class HomeViewModel(
     private fun refreshFixtures() {
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            val formattedDate = localDate.format(DateTimeFormatter.ofPattern("yyy-MM-dd"))
-            Log.d("TEST_LOG", "refreshFixtures")
             val result = fixturesRepository.loadFixturesByDate("2021-04-07")
             viewModelState.update {
                 when (result) {
-                    is RepositoryResult.Success -> {
-                        Log.d("TEST_LOG", "refreshFixtures success size ${result.data?.size}")
-                        it.copy(isLoading = false)
-                    }
-                    is RepositoryResult.Error -> {
-                        Log.d(
-                            "TEST_LOG",
-                            "refreshFixtures error size ${result.error.internalStatus}"
-                        )
-                        it.copy(
-                            isLoading = false,
-                            error = HomeError.RemoteError(result.error)
-                        )
-                    }
+                    is RepositoryResult.Success -> it.copy(isLoading = false)
+                    is RepositoryResult.Error -> it.copy(
+                        isLoading = false,
+                        error = HomeError.RemoteError(result.error)
+                    )
                 }
             }
         }
@@ -124,19 +112,19 @@ class HomeViewModel(
     }
 
     companion object {
-        val COUNTRY_CODES = listOf("PL", "DE", "FR", "GB", "ES", "IT", "NL", "PT")
+        val COUNTRY_CODES = listOf("PL", "DE", "FR", "ES", "IT", "NL", "PT", "TR", "UA", "BE")
         val COUNTRY_NAMES = listOf(
             "Poland",
             "Deutschland",
             "France",
-            "England",
-            "Great Britain",
             "Spain",
             "Netherlands",
             "Portugal",
-            "Belgium",
-            "Turkey"
+            "Turkey",
+            "Ukraine",
+            "Belgium"
         )
         const val LAST_X_FIXTURES = 60
+        const val DATE_FORMAT = "yyy-MM-dd"
     }
 }

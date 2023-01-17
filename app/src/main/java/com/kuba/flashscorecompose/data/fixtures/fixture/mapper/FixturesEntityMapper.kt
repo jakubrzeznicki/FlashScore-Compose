@@ -3,65 +3,88 @@ package com.kuba.flashscorecompose.data.fixtures.fixture.mapper
 import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.*
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.*
 import com.kuba.flashscorecompose.data.league.mapper.toLeague
-import com.kuba.flashscorecompose.data.league.model.League
 
 /**
  * Created by jrzeznicki on 03/01/2023.
  */
 fun TeamEntity.toTeam(): Team {
-    return Team(id = id, logo = logo.orEmpty(), name = name.orEmpty(), winner = isWinner ?: false)
+    return Team(
+        id = id,
+        logo = logo,
+        name = name,
+        isWinner = isWinner,
+        code = code,
+        founded = founded,
+        isNational = isNational,
+        colors = colors.toColors()
+    )
+}
+
+fun ColorsEntity.toColors(): Colors {
+    return Colors(goalkeeper.toPlayerColor(), player = player.toPlayerColor())
+}
+
+fun PlayerColorEntity.toPlayerColor(): PlayerColor {
+    return PlayerColor(border = border, number = number, primary = primary)
 }
 
 fun VenueEntity.toVenue(): Venue {
-    return Venue(city = city.orEmpty(), id = id ?: 0, name = name.orEmpty())
+    return Venue(
+        city = city,
+        id = id,
+        name = name,
+        address = address,
+        capacity = capacity,
+        surface = surface,
+        image = image
+    )
 }
 
 fun PeriodsEntity.toPeriods(): Periods {
-    return Periods(first ?: 0, second ?: 0)
+    return Periods(first, second)
 }
 
 fun StatusEntity.toStatus(): Status {
-    return Status(elapsed = elapsed ?: 0, long = longValue.orEmpty(), short = shortValue.orEmpty())
+    return Status(elapsed = elapsed, long = longValue, short = shortValue)
 }
 
 fun ScoreEntity.toScore(): Score {
     return Score(
-        extratime = extratime?.toGoals() ?: Goals.EMPTY_GOALS,
-        fulltime = fulltime?.toGoals() ?: Goals.EMPTY_GOALS,
-        halftime = halftime?.toGoals() ?: Goals.EMPTY_GOALS,
-        penalty = penalty?.toGoals() ?: Goals.EMPTY_GOALS
+        extratime = extratime.toGoals(),
+        fulltime = fulltime.toGoals(),
+        halftime = halftime.toGoals(),
+        penalty = penalty.toGoals()
     )
 }
 
 fun GoalsEntity.toGoals(): Goals {
-    return Goals(home = home ?: 0, away = away ?: 0)
+    return Goals(home = home, away = away)
 }
 
 fun FixtureInfoEntity.toFixtureInfo(): FixtureInfo {
     return FixtureInfo(
-        date = date.orEmpty(),
-        id = id ?: 0,
-        referee = referee.orEmpty(),
-        status = status?.toStatus() ?: Status.EMPTY_STATUS,
-        timestamp = timestamp ?: 0,
-        timezone = timezone.orEmpty(),
-        venue = venue?.toVenue() ?: Venue.EMPTY_VENUE,
-        periods = periods?.toPeriods() ?: Periods.EMPTY_PERIODS
+        date = date,
+        id = id,
+        referee = referee,
+        status = status.toStatus(),
+        timestamp = timestamp,
+        timezone = timezone,
+        venue = venue.toVenue(),
+        periods = periods.toPeriods()
     )
 }
 
 fun FixtureEntity.toFixtureItem(): FixtureItem {
     return FixtureItem(
         id = id,
-        leagueId = currentRound.leagueId,
         season = currentRound.season,
         round = currentRound.round,
-        h2h = h2h.orEmpty(),
-        date = date.orEmpty(),
-        fixture = fixture?.toFixtureInfo() ?: FixtureInfo.EMPTY_FIXTURE_INFO,
-        goals = goals?.toGoals() ?: Goals.EMPTY_GOALS,
-        league = league?.toLeague() ?: League.EMPTY_LEAGUE,
-        score = score?.toScore() ?: Score.EMPTY_SCORE,
+        h2h = h2h,
+        date = date,
+        fixture = fixture.toFixtureInfo(),
+        goals = goals.toGoals(),
+        league = league.toLeague(),
+        score = score.toScore(),
         homeTeam = homeTeam.toTeam(),
         awayTeam = awayTeam.toTeam()
     )

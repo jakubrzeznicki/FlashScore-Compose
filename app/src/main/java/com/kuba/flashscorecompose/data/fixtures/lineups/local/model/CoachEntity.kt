@@ -1,6 +1,7 @@
 package com.kuba.flashscorecompose.data.fixtures.lineups.local.model
 
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -16,5 +17,8 @@ data class CoachEntity(
     @ColumnInfo(name = "first_name") val firstName: String,
     @ColumnInfo(name = "last_name") val lastName: String,
     @ColumnInfo(name = "age") val age: Int,
-    @ColumnInfo(name = "nationality") val nationality: String
+    @ColumnInfo(name = "nationality") val nationality: String,
+    @ColumnInfo(name = "height") val height: String,
+    @ColumnInfo(name = "weight") val weight: String,
+    @Embedded(prefix = "birth_") val birth: BirthEntity
 )

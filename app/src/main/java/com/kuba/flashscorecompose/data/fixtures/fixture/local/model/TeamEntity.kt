@@ -1,6 +1,7 @@
 package com.kuba.flashscorecompose.data.fixtures.fixture.local.model
 
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -14,6 +15,6 @@ data class TeamEntity(
     @ColumnInfo(name = "code") val code: String,
     @ColumnInfo(name = "founded") val founded: Int,
     @ColumnInfo(name = "is_national") val isNational: Boolean,
-    @ColumnInfo(name = "colors") val colors: String,
-    @ColumnInfo(name = "league_id") val leagueId: Int,
+    @Embedded(prefix = "colors_") val colors: ColorsEntity,
+    @ColumnInfo(name = "league_id") val leagueId: Int
 )

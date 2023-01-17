@@ -1,6 +1,5 @@
 package com.kuba.flashscorecompose.data.country
 
-import android.util.Log
 import com.kuba.flashscorecompose.data.country.local.CountryLocalDataSource
 import com.kuba.flashscorecompose.data.country.mapper.toCountry
 import com.kuba.flashscorecompose.data.country.mapper.toCountryEntity
@@ -22,32 +21,23 @@ class CountryRepository(
     private val remote: CountryRemoteDataSource
 ) : CountryDataSource {
     override fun observeCountries(countryCodes: List<String>): Flow<List<Country>> =
-        local.observeCountries(countryCodes).map { countryEntity -> countryEntity.map { it.toCountry() } }
-
+        local.observeCountries(countryCodes)
+            .map { countryEntity -> countryEntity.map { it.toCountry() } }
 
     override fun saveCountries(countries: List<Country>) {
         local.saveCountries(countries.map { it.toCountryEntity() })
     }
 
     override suspend fun loadCountries(): RepositoryResult<List<Country>> {
-        Log.d("TEST_LOG", "loadCountries repositiry")
         val result = remote.loadCountries()
-        Log.d("TEST_LOG", "loadCountries repositiry code ${result.code()}")
         return try {
-            Log.d("TEST_LOG", "loadCountries success ${result.body()}")
-            Log.d("TEST_LOG", "loadCountries success ${result.message()}")
-            Log.d("TEST_LOG", "loadCountries success ${result.errorBody()}")
-            Log.d("TEST_LOG", "loadCountries success ${result.headers()}")
-            Log.d("TEST_LOG", "loadCountries success ${result.raw()}")
-            Log.d("TEST_LOG", "loadCountries success ${result.code()}")
             val countries = result.body()?.countries?.map { it.toCountry() }
             withContext(Dispatchers.IO) {
                 local.deleteCountries()
-                local.saveCountries(countries?.map { it.toCountryEntity() }.orEmpty())
+                saveCountries(countries = countries.orEmpty())
             }
             RepositoryResult.Success(countries)
         } catch (e: HttpException) {
-            Log.d("TEST_LOG", "loadCountries error ${result.code()}")
             RepositoryResult.Error(ResponseStatus().apply {
                 this.statusMessage = e.message()
                 this.internalStatus = e.code()

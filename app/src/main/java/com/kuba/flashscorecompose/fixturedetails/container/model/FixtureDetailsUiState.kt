@@ -1,12 +1,11 @@
 package com.kuba.flashscorecompose.fixturedetails.container.model
 
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
-import com.kuba.flashscorecompose.data.fixtures.lineups.model.Lineup
 
 /**
  * Created by jrzeznicki on 10/01/2023.
  */
-interface FixtureDetaislUiState {
+interface FixtureDetailsUiState {
     val isLoading: Boolean
     val error: FixtureDetailsError
 
@@ -14,10 +13,10 @@ interface FixtureDetaislUiState {
         override val isLoading: Boolean,
         override val error: FixtureDetailsError,
         val fixtureItem: FixtureItem
-    ) : FixtureDetaislUiState
+    ) : FixtureDetailsUiState
 
     data class NoData(
         override val isLoading: Boolean,
         override val error: FixtureDetailsError
-    ) : FixtureDetaislUiState
+    ) : FixtureDetailsUiState
 }
