@@ -41,10 +41,10 @@ android {
 //        buildConfigField "String", "API_KEY", "\"${properties.getProperty("API_KEY")}\""
         signingConfig signingConfigs.debug
     }
-    lintOptions {
-        abortOnError false
-        checkReleaseBuilds false
-    }
+//    lintOptions {
+//        abortOnError false
+//        checkReleaseBuilds false
+//    }
     buildTypes {
         debug {
             resValue "string", "flashscore_app_name", "FlashScore Debug"

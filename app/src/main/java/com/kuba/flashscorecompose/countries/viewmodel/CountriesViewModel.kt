@@ -1,5 +1,7 @@
 package com.kuba.flashscorecompose.countries.viewmodel
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.countries.model.CountriesError
@@ -20,11 +22,13 @@ class CountriesViewModel(private val countryRepository: CountryDataSource) : Vie
         .map { it.toUiState() }
         .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun setup() {
         //refreshCountries()
         observeCountries()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun observeCountries() {
         viewModelScope.launch {
             countryRepository.observeCountries(HomeViewModel.COUNTRY_CODES).collect { countries ->
