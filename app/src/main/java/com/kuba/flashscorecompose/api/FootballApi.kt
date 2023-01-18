@@ -6,6 +6,7 @@ import com.kuba.flashscorecompose.data.fixtures.fixture.remote.model.FixtureData
 import com.kuba.flashscorecompose.data.fixtures.lineups.remote.model.LineupDataDto
 import com.kuba.flashscorecompose.data.fixtures.statistics.remote.model.StatisticsDataDto
 import com.kuba.flashscorecompose.data.league.remote.model.LeagueDataDto
+import com.kuba.flashscorecompose.data.standings.remote.model.StandingsDataDto
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -56,6 +57,12 @@ interface FootballApi {
     @GET("$API_VERSION/$FIXTURES/$LINEUPS")
     suspend fun getFixturesLineups(@Query(FIXTURE) fixtureId: Int): Response<LineupDataDto>
 
+    @GET("$API_VERSION/$STANDINGS")
+    suspend fun getStandings(
+        @Query(SEASON) season: Int,
+        @Query(LEAGUE) leagueId: Int
+    ): Response<StandingsDataDto>
+
     companion object {
         const val API_VERSION = "v3"
         const val COUNTRIES = "countries"
@@ -75,5 +82,6 @@ interface FootballApi {
         const val DATE = "date"
         const val LAST = "last"
         const val TEAM = "team"
+        const val STANDINGS = "standings"
     }
 }

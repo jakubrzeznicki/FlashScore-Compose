@@ -27,6 +27,10 @@ import com.kuba.flashscorecompose.data.league.LeagueDataSource
 import com.kuba.flashscorecompose.data.league.LeagueRepository
 import com.kuba.flashscorecompose.data.league.local.LeagueLocal
 import com.kuba.flashscorecompose.data.league.remote.LeagueRemote
+import com.kuba.flashscorecompose.data.standings.StandingsDataSource
+import com.kuba.flashscorecompose.data.standings.StandingsRepository
+import com.kuba.flashscorecompose.data.standings.local.StandingsLocal
+import com.kuba.flashscorecompose.data.standings.remote.StandingsRemote
 import com.kuba.flashscorecompose.home.viewmodel.HomeViewModel
 import com.kuba.flashscorecompose.leagues.viewmodel.LeaguesViewModel
 import com.kuba.flashscorecompose.fixturedetails.container.viewmodel.FixtureDetailsViewModel
@@ -99,6 +103,11 @@ class KoinModules {
             val local = CurrentRoundLocal(get())
             val remote = CurrentRoundRemote(get())
             CurrentRoundRepository(local, remote)
+        }
+        single<StandingsDataSource> {
+            val local = StandingsLocal(get())
+            val remote = StandingsRemote(get())
+            StandingsRepository(local, remote)
         }
     }
 
