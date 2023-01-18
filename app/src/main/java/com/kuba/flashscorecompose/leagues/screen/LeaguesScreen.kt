@@ -1,13 +1,11 @@
 package com.kuba.flashscorecompose.leagues.screen
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -39,9 +37,6 @@ import com.kuba.flashscorecompose.ui.theme.Red800
 import com.kuba.flashscorecompose.ui.theme.Yellow500
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -111,7 +106,6 @@ fun LeaguesScreen(
     }
 }
 
-@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun DaysList(
     days: List<DayItem>,
@@ -122,23 +116,23 @@ fun DaysList(
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val selectedIndex = remember { mutableStateOf(6) }
-    coroutineScope.launch { listState.scrollToItem(selectedIndex.value) }
-    LazyRow(modifier = modifier, state = listState) {
-        itemsIndexed(items = days) { index, item ->
-            coroutineScope.launch { listState.scrollToItem(selectedIndex.value) }
-            Row {
-                DayCard(
-                    dayItem = item,
-                    onDayClick = onDayClick,
-                    selectedIndex = selectedIndex,
-                    state
-                )
-            }
-        }
-        CoroutineScope(Dispatchers.Main).launch {
-            listState.scrollToItem(selectedIndex.value)
-        }
-    }
+//    coroutineScope.launch { listState.scrollToItem(selectedIndex.value) }
+//    LazyRow(modifier = modifier, state = listState) {
+//        itemsIndexed(items = days) { index, item ->
+//            coroutineScope.launch { listState.scrollToItem(selectedIndex.value) }
+//            Row {
+//                DayCard(
+//                    dayItem = item,
+//                    onDayClick = onDayClick,
+//                    selectedIndex = selectedIndex,
+//                    state
+//                )
+//            }
+//        }
+//        CoroutineScope(Dispatchers.Main).launch {
+//            listState.scrollToItem(selectedIndex.value)
+//        }
+//    }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
