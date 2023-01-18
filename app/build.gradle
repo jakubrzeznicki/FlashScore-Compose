@@ -6,6 +6,7 @@ plugins {
     id 'kotlin-parcelize'
     id 'com.google.devtools.ksp' version '1.7.0-1.0.6'
     id 'com.google.relay'
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 kotlin {
@@ -33,11 +34,11 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
-
-        Properties properties = new Properties()
-        properties.load(project.rootProject.file("local.properties").newDataInputStream())
-
-        buildConfigField "String", "API_KEY", "\"${properties.getProperty("API_KEY")}\""
+//
+//        Properties properties = new Properties()
+//        properties.load(project.rootProject.file("local.properties").newDataInputStream())
+//
+//        buildConfigField "String", "API_KEY", "\"${properties.getProperty("API_KEY")}\""
         signingConfig signingConfigs.debug
     }
 
