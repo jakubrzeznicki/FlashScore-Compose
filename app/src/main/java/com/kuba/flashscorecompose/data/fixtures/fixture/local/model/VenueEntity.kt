@@ -12,5 +12,6 @@ data class VenueEntity(
     @ColumnInfo(name = "address") val address: String,
     @ColumnInfo(name = "capacity") val capacity: Int,
     @ColumnInfo(name = "surface") val surface: String,
-    @ColumnInfo(name = "image") val image: String
+    @ColumnInfo(name = "image") val image: String,
+    @ColumnInfo(name = "team_id") val teamId: Int
 )
