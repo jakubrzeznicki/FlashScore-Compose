@@ -1,5 +1,6 @@
 package com.kuba.flashscorecompose.api.provider
 
+import com.kuba.flashscorecompose.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
