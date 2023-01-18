@@ -1,3 +1,26 @@
 <resources>
     <string name="app_name">FlashScoreCompose</string>
+    <string name="countries">Countries</string>
+    <string name="leagues">Leagues</string>
+    <string name="live_score">Live Score</string>
+    <string name="football">Football</string>
+    <string name="text_banner">Liverpool UEFA Champion League Celebration</string>
+    <string name="text_second_banner">Yesterday, 06.30 PM</string>
+    <string name="refresh">Refresh</string>
+    <string name="no_fixtures_and_countries">You don\'t have any fixtures and countries</string>
+    <string name="no_head_to_head">You don\'t have any head to head fixtures</string>
+    <string name="no_last_fixtures">You don\'t have any last fixtures</string>
+    <string name="no_fixture_details">You don\'t have fixture details</string>
+    <string name="no_lineups">You don\'t have lineups</string>
+    <string name="no_statistics">You don\'t have statistics</string>
+    <string name="load_data_from_network">Load data from network</string>
+    <string name="empty_database">Empty database</string>
+    <string name="retry">Retry</string>
+    <string name="search">Search</string>
+    <string name="notifications">Notifications</string>
+    <string name="last_matches">Last Matches</string>
+    <string name="between">Between</string>
+    <string name="other_matches">Other Matches</string>
+    <string name="formation">Formation</string>
+    <string name="see_all">See All</string>
 </resources>
