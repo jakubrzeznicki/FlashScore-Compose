@@ -1,12 +1,9 @@
 package com.kuba.flashscorecompose.countries.viewmodel
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.countries.model.CountriesError
 import com.kuba.flashscorecompose.data.country.CountryDataSource
-import com.kuba.flashscorecompose.home.viewmodel.HomeViewModel
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -22,16 +19,14 @@ class CountriesViewModel(private val countryRepository: CountryDataSource) : Vie
         .map { it.toUiState() }
         .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun setup() {
         //refreshCountries()
         observeCountries()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun observeCountries() {
         viewModelScope.launch {
-            countryRepository.observeCountries(HomeViewModel.COUNTRY_CODES).collect { countries ->
+            countryRepository.observeCountries(COUNTRY_CODES).collect { countries ->
                 viewModelState.update { it.copy(countryItems = countries) }
             }
         }
@@ -55,5 +50,9 @@ class CountriesViewModel(private val countryRepository: CountryDataSource) : Vie
 
     fun cleanError() {
         viewModelState.update { it.copy(error = CountriesError.NoError) }
+    }
+
+    private companion object {
+        val COUNTRY_CODES = listOf("PL", "DE", "FR", "ES", "IT", "NL", "PT", "TR", "UA", "BE", "GB")
     }
 }

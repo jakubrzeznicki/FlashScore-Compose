@@ -1,6 +1,5 @@
 package com.kuba.flashscorecompose.leagues.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.data.league.LeagueDataSource

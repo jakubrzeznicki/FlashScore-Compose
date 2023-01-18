@@ -1,8 +1,6 @@
 package com.kuba.flashscorecompose.home.viewmodel
 
 import android.os.Build
-import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.data.country.CountryDataSource
@@ -17,7 +15,6 @@ import java.time.format.DateTimeFormatter
 /**
  * Created by jrzeznicki on 05/01/2023.
  */
-@RequiresApi(Build.VERSION_CODES.O)
 class HomeViewModel(
     private val countryRepository: CountryDataSource,
     private val fixturesRepository: FixturesDataSource,
@@ -25,12 +22,10 @@ class HomeViewModel(
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(HomeViewModelState())
-    private val formationDate by lazy { localDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT)) }
     val uiState = viewModelState
         .map { it.toUiState() }
         .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun setup() {
         //refreshCountries()
         //refreshFixtures()
@@ -38,7 +33,6 @@ class HomeViewModel(
         observeFixtures()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun refresh() {
 //        refreshCountries()
 //        refreshFixtures()
@@ -79,10 +73,14 @@ class HomeViewModel(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun observeFixtures() {
         viewModelScope.launch {
-            fixturesRepository.observeFixturesByDate(formationDate, COUNTRY_NAMES)
+            val formattedDate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                localDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT))
+            } else {
+                "2021-07-14"
+            }
+            fixturesRepository.observeFixturesByDate(formattedDate, COUNTRY_NAMES)
                 .collect { fixtures ->
                     val leagueWithFixtures = fixtures.groupBy { it.league }
                     viewModelState.update { it.copy(leagueWithFixtures = leagueWithFixtures) }
@@ -90,11 +88,15 @@ class HomeViewModel(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun refreshFixtures() {
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            val result = fixturesRepository.loadFixturesByDate(formationDate)
+            val formattedDate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                localDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT))
+            } else {
+                "2021-07-14"
+            }
+            val result = fixturesRepository.loadFixturesByDate(formattedDate)
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)

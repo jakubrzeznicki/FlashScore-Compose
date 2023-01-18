@@ -1,7 +1,6 @@
 package com.kuba.flashscorecompose.fixturedetails.headtohead.screen
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -55,7 +54,6 @@ import java.util.*
  */
 private const val HEAD_TO_HEAD = "HEAD_TO_HEAD"
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HeadToHeadScreen(
     homeTeam: Team,
@@ -76,7 +74,6 @@ fun HeadToHeadScreen(
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HeadToHeadList(
     homeTeam: Team,
@@ -153,7 +150,6 @@ fun HeadToHeadList(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun LastMatchesSection(
     fixtures: List<FixtureItem>,
@@ -180,7 +176,6 @@ fun LastMatchesSection(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HeadToHeadMatchItem(fixtureItem: FixtureItem, onFixtureClick: (FixtureItem) -> Unit) {
     val formattedDate = LocalDateTime.ofInstant(

@@ -55,7 +55,6 @@ import org.koin.androidx.compose.getViewModel
 
 private const val SETUP_HOME_KEY = "SETUP_HOME_KEY"
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Destination(route = "home", start = true)
 @Composable
 fun HomeScreenRoute(
