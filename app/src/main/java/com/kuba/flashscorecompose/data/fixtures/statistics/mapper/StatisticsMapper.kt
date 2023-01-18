@@ -20,7 +20,7 @@ fun Statistics.toStatisticsEntity(fixtureId: Int, isHome: Boolean): StatisticsEn
         teamId = team.id,
         fixtureId = fixtureId,
         statistics = statistics.map { it.toStatisticRowEntity() },
-        team = team.toTeamEntity(),
+        team = team.toTeamEntity(null),
         isHome = isHome
     )
 }

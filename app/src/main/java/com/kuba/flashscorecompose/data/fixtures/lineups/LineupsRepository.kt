@@ -1,6 +1,5 @@
 package com.kuba.flashscorecompose.data.fixtures.lineups
 
-import android.util.Log
 import com.kuba.flashscorecompose.data.fixtures.fixture.mapper.toTeamEntity
 import com.kuba.flashscorecompose.data.fixtures.lineups.remote.LineupsRemoteDataSource
 import com.kuba.flashscorecompose.data.fixtures.lineups.local.LineupLocalDataSource
@@ -39,7 +38,7 @@ class LineupsRepository(
             val lineups = result.body()?.response?.map { it.toLineup(fixtureId) }
             saveLineups(lineups.orEmpty())
             local.saveCoaches(lineups?.map { it.coach.toCoachEntity() }.orEmpty())
-            local.saveTeams(lineups?.map { it.team.toTeamEntity() }.orEmpty())
+            local.saveTeams(lineups?.map { it.team.toTeamEntity(null) }.orEmpty())
             val startXI = lineups?.map {
                 it.startXI.map { player -> player.toPlayerEntity() }
             }.orEmpty().flatten()

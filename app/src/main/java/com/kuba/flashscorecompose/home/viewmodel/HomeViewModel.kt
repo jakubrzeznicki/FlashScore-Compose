@@ -40,8 +40,8 @@ class HomeViewModel(
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun refresh() {
-        refreshCountries()
-        refreshFixtures()
+//        refreshCountries()
+//        refreshFixtures()
     }
 
     private fun observeCountries() {
@@ -82,7 +82,7 @@ class HomeViewModel(
     @RequiresApi(Build.VERSION_CODES.O)
     private fun observeFixtures() {
         viewModelScope.launch {
-            fixturesRepository.observeFixturesByDate("2021-04-07", COUNTRY_NAMES)
+            fixturesRepository.observeFixturesByDate(formationDate, COUNTRY_NAMES)
                 .collect { fixtures ->
                     val leagueWithFixtures = fixtures.groupBy { it.league }
                     viewModelState.update { it.copy(leagueWithFixtures = leagueWithFixtures) }
@@ -94,7 +94,7 @@ class HomeViewModel(
     private fun refreshFixtures() {
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            val result = fixturesRepository.loadFixturesByDate("2021-04-07")
+            val result = fixturesRepository.loadFixturesByDate(formationDate)
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
@@ -112,7 +112,7 @@ class HomeViewModel(
     }
 
     companion object {
-        val COUNTRY_CODES = listOf("PL", "DE", "FR", "ES", "IT", "NL", "PT", "TR", "UA", "BE")
+        val COUNTRY_CODES = listOf("PL", "DE", "FR", "ES", "IT", "NL", "PT", "TR", "UA", "BE", "GB")
         val COUNTRY_NAMES = listOf(
             "Poland",
             "Deutschland",
@@ -122,7 +122,8 @@ class HomeViewModel(
             "Portugal",
             "Turkey",
             "Ukraine",
-            "Belgium"
+            "Belgium",
+            "England"
         )
         const val LAST_X_FIXTURES = 60
         const val DATE_FORMAT = "yyy-MM-dd"

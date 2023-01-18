@@ -80,7 +80,7 @@ fun Lineup.toLineupEntity(): LineupEntity {
         formation = formation,
         startXI = startXI.map { it.toPlayerEntity() },
         substitutes = substitutes.map { it.toPlayerEntity() },
-        team = team.toTeamEntity()
+        team = team.toTeamEntity(null)
     )
 }
 

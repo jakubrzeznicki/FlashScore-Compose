@@ -8,7 +8,7 @@ import com.kuba.flashscorecompose.data.league.mapper.toLeagueEntity
 /**
  * Created by jrzeznicki on 03/01/2023.
  */
-fun Team.toTeamEntity(): TeamEntity {
+fun Team.toTeamEntity(leagueId: Int?): TeamEntity {
     return TeamEntity(
         id = id,
         logo = logo,
@@ -19,11 +19,11 @@ fun Team.toTeamEntity(): TeamEntity {
         founded = 0,
         isNational = false,
         colors = colors.toColorsEntity(),
-        leagueId = 0
+        leagueId = leagueId ?: 0
     )
 }
 
-fun Venue.toVenueEntity(): VenueEntity {
+fun Venue.toVenueEntity(teamId: Int?): VenueEntity {
     return VenueEntity(
         city = city,
         id = id,
@@ -31,7 +31,8 @@ fun Venue.toVenueEntity(): VenueEntity {
         address = address,
         capacity = capacity,
         surface = surface,
-        image = image
+        image = image,
+        teamId = teamId ?: 0
     )
 }
 
@@ -71,7 +72,7 @@ fun Colors.toColorsEntity(): ColorsEntity {
     )
 }
 
-fun FixtureInfo.toFixtureInfoEntity(): FixtureInfoEntity {
+fun FixtureInfo.toFixtureInfoEntity(teamId: Int?): FixtureInfoEntity {
     return FixtureInfoEntity(
         date = date,
         id = id,
@@ -79,7 +80,7 @@ fun FixtureInfo.toFixtureInfoEntity(): FixtureInfoEntity {
         status = status.toStatusEntity(),
         timestamp = timestamp,
         timezone = timezone,
-        venue = venue.toVenueEntity(),
+        venue = venue.toVenueEntity(teamId),
         periods = periods.toPeriodsEntity()
     )
 }
@@ -95,11 +96,11 @@ fun FixtureItem.toFixtureEntity(): FixtureEntity {
         ),
         h2h = h2h,
         date = date,
-        fixture = fixture.toFixtureInfoEntity(),
+        fixture = fixture.toFixtureInfoEntity(homeTeam.id),
         goals = goals.toGoalsEntity(),
         league = league.toLeagueEntity(),
         score = score.toScoreEntity(),
-        homeTeam = homeTeam.toTeamEntity(),
-        awayTeam = awayTeam.toTeamEntity()
+        homeTeam = homeTeam.toTeamEntity(league.id),
+        awayTeam = awayTeam.toTeamEntity(league.id)
     )
 }
