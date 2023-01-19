@@ -18,8 +18,8 @@ class StandingsRepository(
     private val local: StandingsLocalDataSource,
     private val remote: StandingsRemoteDataSource
 ) : StandingsDataSource {
-    override fun observeStandings(leagueId: Int, season: Int): Flow<List<Standings>> {
-        return local.observeStandings(leagueId, season).map { standingsEntity ->
+    override fun observeStandings(leagueIds: List<Int>, season: Int): Flow<List<Standings>> {
+        return local.observeStandings(leagueIds, season).map { standingsEntity ->
             standingsEntity.map { it.toStandings() }
         }
     }

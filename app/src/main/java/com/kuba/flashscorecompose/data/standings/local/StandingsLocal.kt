@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.Flow
  * Created by jrzeznicki on 18/01/2023.
  */
 class StandingsLocal(private val roomStorage: RoomStorage) : StandingsLocalDataSource {
-    override fun observeStandings(leagueId: Int, season: Int): Flow<List<StandingsEntity>> {
-        return roomStorage.getDatabase().standingDao().observeStandings(leagueId, season)
+    override fun observeStandings(leagueIds: List<Int>, season: Int): Flow<List<StandingsEntity>> {
+        return roomStorage.getDatabase().standingDao().observeStandings(leagueIds, season)
     }
 
     override suspend fun saveStandings(standings: List<StandingsEntity>) {

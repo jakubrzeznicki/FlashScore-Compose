@@ -7,6 +7,6 @@ import kotlinx.coroutines.flow.Flow
  * Created by jrzeznicki on 18/01/2023.
  */
 interface StandingsLocalDataSource {
-    fun observeStandings(leagueId: Int, season: Int): Flow<List<StandingsEntity>>
+    fun observeStandings(leagueIds: List<Int>, season: Int): Flow<List<StandingsEntity>>
     suspend fun saveStandings(standings: List<StandingsEntity>)
 }

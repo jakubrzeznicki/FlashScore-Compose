@@ -39,6 +39,7 @@ import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.destinations.FixtureDetailsRouteDestination
 import com.kuba.flashscorecompose.home.model.HomeError
 import com.kuba.flashscorecompose.home.model.HomeUiState
+import com.kuba.flashscorecompose.home.model.LeagueFixturesData
 import com.kuba.flashscorecompose.home.viewmodel.HomeViewModel
 import com.kuba.flashscorecompose.ui.component.AppTopBar
 import com.kuba.flashscorecompose.ui.component.EmptyState
@@ -115,10 +116,10 @@ fun HomeScreen(
                     .verticalScroll(scrollState)
                     .padding(16.dp)
             ) {
-                Banner()
-                Spacer(modifier = Modifier.size(16.dp))
                 when (uiState) {
                     is HomeUiState.HasData -> {
+                        Banner()
+                        Spacer(modifier = Modifier.size(16.dp))
                         CountriesWidget(
                             modifier = Modifier,
                             uiState.countryItems,
@@ -127,7 +128,7 @@ fun HomeScreen(
                         Spacer(modifier = Modifier.size(16.dp))
                         WidgetFixtures(
                             modifier,
-                            uiState.leagueWithFixtures,
+                            uiState.leagueFixturesDataList,
                             onFixtureClick,
                             onLeagueClick
                         )
@@ -151,16 +152,16 @@ fun HomeScreen(
 @Composable
 fun WidgetFixtures(
     modifier: Modifier,
-    leagueWithFixtures: Map<League, List<FixtureItem>>,
+    leagueFixturesData: List<LeagueFixturesData>,
     onFixtureClick: (FixtureItem) -> Unit,
     onLeagueClick: (Int) -> Unit
 ) {
     Column(modifier = modifier) {
-        leagueWithFixtures.forEach {
+        leagueFixturesData.forEach {
             Spacer(modifier = Modifier.size(24.dp))
-            HeaderLeague(it.key, onLeagueClick)
+            HeaderLeague(it.league, onLeagueClick)
             Spacer(modifier = Modifier.size(16.dp))
-            it.value.forEach { fixtureItem ->
+            it.fixtures.forEach { fixtureItem ->
                 FixtureCard(fixtureItem, onFixtureClick)
                 Spacer(modifier = Modifier.size(8.dp))
             }
