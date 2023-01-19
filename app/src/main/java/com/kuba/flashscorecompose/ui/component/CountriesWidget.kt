@@ -31,7 +31,7 @@ import coil.request.ImageRequest
 import coil.size.Size
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.country.model.Country
-import com.kuba.flashscorecompose.ui.theme.Dark500
+import com.kuba.flashscorecompose.ui.theme.GreyLight
 import com.kuba.flashscorecompose.ui.theme.LightOrange
 import com.kuba.flashscorecompose.ui.theme.Orange
 
@@ -82,7 +82,7 @@ private fun CountryWidgetCard(
         val normalModifier = Modifier
             .padding(PaddingValues(7.dp))
             .background(
-                shape = RoundedCornerShape(16.dp), color = Dark500
+                shape = RoundedCornerShape(16.dp), color = GreyLight
             )
         Column(
             modifier = if (isSelected) isSelectedModifier else normalModifier,

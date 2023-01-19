@@ -35,7 +35,7 @@ fun SimpleSearchBar(
         onValueChange = { onQueryChange(it) },
         leadingIcon = leadingIcon,
         label = { Text(text = label) },
-        textStyle = MaterialTheme.typography.subtitle1,
+        textStyle = MaterialTheme.typography.subtitle2,
         singleLine = true,
         keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
         keyboardOptions = KeyboardOptions(

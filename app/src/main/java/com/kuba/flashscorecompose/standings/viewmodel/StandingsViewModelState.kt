@@ -21,7 +21,6 @@ data class StandingsViewModelState(
             isLoading,
             error,
             standingsQuery,
-            standings,
             filteredStandings,
             countryItems
         )

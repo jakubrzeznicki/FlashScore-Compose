@@ -1,27 +1,21 @@
 package com.kuba.flashscorecompose.standings.screen
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,6 +34,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
 import com.kuba.flashscorecompose.data.standings.model.Standings
+import com.kuba.flashscorecompose.standings.model.StandingsError
 import com.kuba.flashscorecompose.ui.component.*
 import com.kuba.flashscorecompose.ui.theme.GreyDark
 import com.kuba.flashscorecompose.ui.theme.GreyLight
@@ -69,9 +64,9 @@ fun StandingsRoute(
             viewModel.getStandingsByCountry(countryName, isSelected)
         },
         onStandingsClick = {},
-        onErrorClear = {},
+        onErrorClear = { viewModel.cleanError() },
         scaffoldState = scaffoldState,
-        onStandingsQueryChanged = {}
+        onStandingsQueryChanged = { viewModel.updateStandingsQuery(it) }
     )
 }
 
@@ -112,9 +107,11 @@ fun StandingsScreen(
                 SimpleSearchBar(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(color = GreyLight)
                         .border(
-                            BorderStroke(width = 2.dp, color = GreyDark),
-                            shape = RoundedCornerShape(16.dp)
+                            shape = RoundedCornerShape(16.dp),
+                            border = BorderStroke(width = 2.dp, color = GreyDark),
                         ),
                     label = stringResource(id = R.string.search_standings),
                     query = uiState.standingsQuery,
@@ -152,6 +149,12 @@ fun StandingsScreen(
             }
         }
     }
+    ErrorSnackbar(
+        uiState = uiState,
+        onRefreshClick = onRefreshClick,
+        onErrorClear = onErrorClear,
+        scaffoldState = scaffoldState
+    )
 }
 
 @Composable
@@ -159,15 +162,11 @@ fun StandingsWidget(
     standings: List<Standings>,
     onStandingsClick: (Standings) -> Unit
 ) {
-    LazyColumn(
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .height(500.dp)
     ) {
-        items(
-            items = standings,
-            key = { it.leagueId }
-        ) {
+        standings.forEach {
             StandingWithLeague(it, onStandingsClick)
             Spacer(modifier = Modifier.size(16.dp))
         }
@@ -192,14 +191,14 @@ fun StandingCard(standings: List<StandingItem>) {
         Column(modifier = Modifier.padding(16.dp)) {
             StandingHeaderRow()
             Spacer(modifier = Modifier.size(16.dp))
-            standings.forEach { standingItem ->
+            standings.take(3).forEach { standingItem ->
                 StandingElementRow(standingItem)
                 Divider(
                     color = GreyDark,
-                    thickness = 3.dp,
+                    thickness = 2.dp,
                     modifier = Modifier
                         .fillMaxWidth(0.5f)
-                        .align(Alignment.End),
+                        .align(Alignment.End)
                 )
             }
         }
@@ -216,7 +215,7 @@ private fun StandingHeaderRow() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp),
+            .padding(horizontal = 4.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -245,13 +244,13 @@ private fun StandingHeaderRow() {
         )
         Text(
             modifier = Modifier.weight(1f),
-            text = stringResource(id = R.string.loses),
+            text = stringResource(id = R.string.draws),
             fontSize = 12.sp,
             color = White
         )
         Text(
             modifier = Modifier.weight(1f),
-            text = stringResource(id = R.string.draws),
+            text = stringResource(id = R.string.goals_diff),
             fontSize = 12.sp,
             color = White
         )
@@ -275,7 +274,8 @@ private fun StandingElementRow(standingItem: StandingItem) {
         AsyncImage(
             modifier = Modifier
                 .weight(1f)
-                .size(24.dp),
+                .size(24.dp)
+                .padding(4.dp),
             model = ImageRequest.Builder(LocalContext.current)
                 .decoderFactory(SvgDecoder.Factory())
                 .data(standingItem.team.logo)
@@ -290,7 +290,8 @@ private fun StandingElementRow(standingItem: StandingItem) {
             modifier = Modifier.weight(5f),
             text = standingItem.team.name,
             fontSize = 12.sp,
-            color = White
+            color = White,
+            overflow = TextOverflow.Ellipsis
         )
         Text(
             modifier = Modifier.weight(1f),
@@ -331,6 +332,34 @@ private fun StandingElementRow(standingItem: StandingItem) {
     }
 }
 
+@Composable
+private fun ErrorSnackbar(
+    uiState: StandingsUiState,
+    onRefreshClick: () -> Unit,
+    onErrorClear: () -> Unit,
+    scaffoldState: ScaffoldState
+) {
+    when (val error = uiState.error) {
+        is StandingsError.NoError -> {}
+        is StandingsError.RemoteError -> {
+            val errorMessageText =
+                remember(uiState) { error.responseStatus.statusMessage.orEmpty() }
+            val retryMessageText = stringResource(id = R.string.retry)
+            val onRefreshPostStates by rememberUpdatedState(onRefreshClick)
+            val onErrorDismissState by rememberUpdatedState(onErrorClear)
+            LaunchedEffect(errorMessageText, retryMessageText, scaffoldState) {
+                val snackbarResult = scaffoldState.snackbarHostState.showSnackbar(
+                    message = errorMessageText,
+                    actionLabel = retryMessageText
+                )
+                if (snackbarResult == SnackbarResult.ActionPerformed) {
+                    onRefreshPostStates()
+                }
+                onErrorDismissState()
+            }
+        }
+    }
+}
 
 @Preview
 @Composable
@@ -403,9 +432,11 @@ fun TextSimpleTextField() {
     SimpleSearchBar(
         modifier = Modifier
             .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(color = GreyLight)
             .border(
                 shape = RoundedCornerShape(16.dp),
-                border =BorderStroke(width = 2.dp, color = GreyDark),
+                border = BorderStroke(width = 2.dp, color = GreyDark),
             ),
         label = stringResource(id = R.string.search_standings),
         query = "dd",

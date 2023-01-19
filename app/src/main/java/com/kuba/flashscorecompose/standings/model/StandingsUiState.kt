@@ -16,7 +16,6 @@ sealed interface StandingsUiState {
         override val error: StandingsError,
         override val standingsQuery: String,
         val standings: List<Standings>,
-        val filteredStandings: List<Standings>,
         val countryItems: List<Country>
     ) : StandingsUiState
 
