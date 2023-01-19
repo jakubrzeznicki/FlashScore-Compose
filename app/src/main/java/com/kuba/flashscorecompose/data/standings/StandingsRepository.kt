@@ -3,7 +3,7 @@ package com.kuba.flashscorecompose.data.standings
 import com.kuba.flashscorecompose.data.standings.local.StandingsLocalDataSource
 import com.kuba.flashscorecompose.data.standings.mapper.toStandings
 import com.kuba.flashscorecompose.data.standings.mapper.toStandingsEntity
-import com.kuba.flashscorecompose.data.standings.model.Standings
+import com.kuba.flashscorecompose.data.standings.model.Standing
 import com.kuba.flashscorecompose.data.standings.remote.StandingsRemoteDataSource
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import com.kuba.flashscorecompose.utils.ResponseStatus
@@ -18,24 +18,28 @@ class StandingsRepository(
     private val local: StandingsLocalDataSource,
     private val remote: StandingsRemoteDataSource
 ) : StandingsDataSource {
-    override fun observeStandings(leagueIds: List<Int>, season: Int): Flow<List<Standings>> {
+    override fun observeStandings(leagueIds: List<Int>, season: Int): Flow<List<Standing>> {
         return local.observeStandings(leagueIds, season).map { standingsEntity ->
             standingsEntity.map { it.toStandings() }
         }
     }
 
-    override suspend fun saveStandings(standings: List<Standings>) {
+    override suspend fun getStanding(leagueId: Int, season: Int): Standing {
+        return local.getStanding(leagueId, season).toStandings()
+    }
+
+    override suspend fun saveStandings(standings: List<Standing>) {
         local.saveStandings(standings.map { it.toStandingsEntity() })
     }
 
     override suspend fun loadStandings(
         leagueId: Int,
         season: Int
-    ): RepositoryResult<List<Standings>> {
+    ): RepositoryResult<List<Standing>> {
         val result = remote.loadStandings(leagueId, season)
         return try {
             val standings = result.body()?.response?.map { leagueStandingsDto ->
-                leagueStandingsDto.league?.toStandings() ?: Standings.EMPTY_STANDINGS
+                leagueStandingsDto.league?.toStandings() ?: Standing.EMPTY_Standing
             }.orEmpty()
             saveStandings(standings = standings)
             RepositoryResult.Success(standings)

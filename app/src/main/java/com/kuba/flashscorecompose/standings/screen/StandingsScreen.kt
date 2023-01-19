@@ -33,7 +33,7 @@ import com.kuba.flashscorecompose.standings.viewmodel.StandingsViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
-import com.kuba.flashscorecompose.data.standings.model.Standings
+import com.kuba.flashscorecompose.data.standings.model.Standing
 import com.kuba.flashscorecompose.standings.model.StandingsError
 import com.kuba.flashscorecompose.ui.component.*
 import com.kuba.flashscorecompose.ui.theme.GreyDark
@@ -77,7 +77,7 @@ fun StandingsScreen(
     navigator: DestinationsNavigator,
     onRefreshClick: () -> Unit,
     onCountryClick: (String, Boolean) -> Unit,
-    onStandingsClick: (Standings) -> Unit,
+    onStandingsClick: (Standing) -> Unit,
     onErrorClear: () -> Unit,
     scaffoldState: ScaffoldState,
     onStandingsQueryChanged: (String) -> Unit
@@ -159,8 +159,8 @@ fun StandingsScreen(
 
 @Composable
 fun StandingsWidget(
-    standings: List<Standings>,
-    onStandingsClick: (Standings) -> Unit
+    standings: List<Standing>,
+    onStandingsClick: (Standing) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -175,13 +175,13 @@ fun StandingsWidget(
 
 @Composable
 fun StandingWithLeague(
-    it: Standings,
-    onStandingsClick: (Standings) -> Unit
+    it: Standing,
+    onStandingsClick: (Standing) -> Unit
 ) {
     Column {
         HeaderLeague(league = it.league, onLeagueClick = {})
         Spacer(modifier = Modifier.size(16.dp))
-        StandingCard(it.standings)
+        StandingCard(it.standingItems)
     }
 }
 

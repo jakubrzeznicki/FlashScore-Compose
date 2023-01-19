@@ -6,7 +6,7 @@ import com.kuba.flashscorecompose.data.country.CountryDataSource
 import com.kuba.flashscorecompose.data.league.LeagueDataSource
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.data.standings.StandingsDataSource
-import com.kuba.flashscorecompose.data.standings.model.Standings
+import com.kuba.flashscorecompose.data.standings.model.Standing
 import com.kuba.flashscorecompose.home.viewmodel.HomeViewModel
 import com.kuba.flashscorecompose.standings.model.StandingsError
 import com.kuba.flashscorecompose.utils.RepositoryResult
@@ -118,9 +118,9 @@ class StandingsViewModel(
     }
 
     private fun filterStandings(
-        standings: List<Standings> = viewModelState.value.standings,
+        standings: List<Standing> = viewModelState.value.standings,
         query: String = viewModelState.value.standingsQuery
-    ): List<Standings> {
+    ): List<Standing> {
         return standings
             .filter {
                 it.league.name.containsQuery(query) || it.league.countryName.containsQuery(query)

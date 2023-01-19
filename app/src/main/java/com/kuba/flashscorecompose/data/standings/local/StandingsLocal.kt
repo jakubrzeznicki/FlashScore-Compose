@@ -12,6 +12,10 @@ class StandingsLocal(private val roomStorage: RoomStorage) : StandingsLocalDataS
         return roomStorage.getDatabase().standingDao().observeStandings(leagueIds, season)
     }
 
+    override suspend fun getStanding(leagueId: Int, season: Int): StandingsEntity {
+        return roomStorage.getDatabase().standingDao().getStanding(leagueId, season)
+    }
+
     override suspend fun saveStandings(standings: List<StandingsEntity>) {
         roomStorage.getDatabase().standingDao().saveStandings(standings)
     }
