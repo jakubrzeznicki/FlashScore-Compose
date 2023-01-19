@@ -18,8 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuba.flashscorecompose.countries.screen.FullScreenLoading
-import com.kuba.flashscorecompose.countries.screen.LoadingContent
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.fixtures.statistics.model.Statistics
 import com.kuba.flashscorecompose.fixturedetails.statistics.model.StatisticsUiState
@@ -31,6 +29,8 @@ import org.koin.core.parameter.parametersOf
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.ui.component.EmptyState
 import com.kuba.flashscorecompose.ui.component.FixtureCard
+import com.kuba.flashscorecompose.ui.component.FullScreenLoading
+import com.kuba.flashscorecompose.ui.component.LoadingContent
 
 /**
  * Created by jrzeznicki on 23/12/2022.

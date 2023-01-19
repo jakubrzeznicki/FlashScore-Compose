@@ -33,6 +33,8 @@ import com.kuba.flashscorecompose.leagues.model.DayItem
 import com.kuba.flashscorecompose.leagues.model.LeaguesUiState
 import com.kuba.flashscorecompose.leagues.viewmodel.LeaguesViewModel
 import com.kuba.flashscorecompose.ui.component.AppTopBar
+import com.kuba.flashscorecompose.ui.component.FullScreenLoading
+import com.kuba.flashscorecompose.ui.component.LoadingContent
 import com.kuba.flashscorecompose.ui.theme.Red800
 import com.kuba.flashscorecompose.ui.theme.Yellow500
 import com.ramcosta.composedestinations.annotation.Destination
@@ -275,17 +277,6 @@ fun TopBar(context: Context) {
         }
 
     )
-}
-
-@Composable
-fun FullScreenLoading() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .wrapContentSize(Alignment.Center)
-    ) {
-        CircularProgressIndicator()
-    }
 }
 
 @Composable

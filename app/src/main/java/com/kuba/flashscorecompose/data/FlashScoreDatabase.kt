@@ -26,6 +26,9 @@ import com.kuba.flashscorecompose.data.fixtures.statistics.local.StatisticsDao
 import com.kuba.flashscorecompose.data.fixtures.statistics.local.model.StatisticsEntity
 import com.kuba.flashscorecompose.data.league.local.LeagueDao
 import com.kuba.flashscorecompose.data.league.local.model.LeagueEntity
+import com.kuba.flashscorecompose.data.standings.converter.StandingsDataConverter
+import com.kuba.flashscorecompose.data.standings.local.StandingDao
+import com.kuba.flashscorecompose.data.standings.local.model.StandingsEntity
 
 /**
  * Created by jrzeznicki on 9/5/2022
@@ -33,10 +36,15 @@ import com.kuba.flashscorecompose.data.league.local.model.LeagueEntity
 @Database(
     entities = [CountryEntity::class, LeagueEntity::class, CurrentRoundEntity::class,
         FixtureInfoEntity::class, TeamEntity::class, VenueEntity::class,
-        CoachEntity::class, PlayerEntity::class, StatisticsEntity::class, LineupEntity::class, FixtureEntity::class],
-    version = 19
+        CoachEntity::class, PlayerEntity::class, StatisticsEntity::class, LineupEntity::class,
+        FixtureEntity::class, StandingsEntity::class],
+    version = 20
 )
-@TypeConverters(StatisticsDataConverter::class, LineupsDataConverter::class)
+@TypeConverters(
+    StatisticsDataConverter::class,
+    LineupsDataConverter::class,
+    StandingsDataConverter::class
+)
 abstract class FlashScoreDatabase : RoomDatabase() {
     abstract fun countryDao(): CountryDao
     abstract fun leagueDao(): LeagueDao
@@ -48,4 +56,5 @@ abstract class FlashScoreDatabase : RoomDatabase() {
     abstract fun teamDao(): TeamDao
     abstract fun coachDao(): CoachDao
     abstract fun playerDao(): PlayerDao
+    abstract fun standingDao(): StandingDao
 }

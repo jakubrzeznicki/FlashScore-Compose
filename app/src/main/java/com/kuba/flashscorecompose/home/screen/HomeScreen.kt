@@ -1,16 +1,15 @@
 package com.kuba.flashscorecompose.home.screen
 
 import android.content.Context
-import android.os.Build
 import android.widget.Toast
-import androidx.annotation.RequiresApi
-import androidx.compose.foundation.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
@@ -23,28 +22,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import coil.decode.SvgDecoder
-import coil.request.ImageRequest
-import coil.size.Size
 import com.kuba.flashscorecompose.R
-import com.kuba.flashscorecompose.countries.screen.FullScreenLoading
-import com.kuba.flashscorecompose.countries.screen.LoadingContent
-import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
-import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.destinations.FixtureDetailsRouteDestination
 import com.kuba.flashscorecompose.home.model.HomeError
 import com.kuba.flashscorecompose.home.model.HomeUiState
+import com.kuba.flashscorecompose.home.model.LeagueFixturesData
 import com.kuba.flashscorecompose.home.viewmodel.HomeViewModel
-import com.kuba.flashscorecompose.ui.component.AppTopBar
-import com.kuba.flashscorecompose.ui.component.EmptyState
-import com.kuba.flashscorecompose.ui.component.FixtureCard
-import com.kuba.flashscorecompose.ui.component.FlashScoreSnackbarHost
-import com.kuba.flashscorecompose.ui.theme.*
+import com.kuba.flashscorecompose.ui.component.*
+import com.kuba.flashscorecompose.ui.theme.Black500
+import com.kuba.flashscorecompose.ui.theme.Blue500
+import com.kuba.flashscorecompose.ui.theme.Blue800
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
@@ -81,7 +71,7 @@ fun HomeScreenRoute(
 }
 
 @Composable
-fun HomeScreen(
+private fun HomeScreen(
     modifier: Modifier = Modifier,
     uiState: HomeUiState,
     navigator: DestinationsNavigator,
@@ -115,19 +105,18 @@ fun HomeScreen(
                     .verticalScroll(scrollState)
                     .padding(16.dp)
             ) {
-                Banner()
-                Spacer(modifier = Modifier.size(16.dp))
                 when (uiState) {
                     is HomeUiState.HasData -> {
+                        Banner()
+                        Spacer(modifier = Modifier.size(16.dp))
                         CountriesWidget(
-                            modifier = Modifier,
-                            uiState.countryItems,
-                            onCountryClick
+                            countries = uiState.countryItems,
+                            onCountryClick = onCountryClick
                         )
                         Spacer(modifier = Modifier.size(16.dp))
                         WidgetFixtures(
                             modifier,
-                            uiState.leagueWithFixtures,
+                            uiState.leagueFixturesDataList,
                             onFixtureClick,
                             onLeagueClick
                         )
@@ -149,18 +138,18 @@ fun HomeScreen(
 }
 
 @Composable
-fun WidgetFixtures(
+private fun WidgetFixtures(
     modifier: Modifier,
-    leagueWithFixtures: Map<League, List<FixtureItem>>,
+    leagueFixturesData: List<LeagueFixturesData>,
     onFixtureClick: (FixtureItem) -> Unit,
     onLeagueClick: (Int) -> Unit
 ) {
     Column(modifier = modifier) {
-        leagueWithFixtures.forEach {
+        leagueFixturesData.forEach {
             Spacer(modifier = Modifier.size(24.dp))
-            HeaderLeague(it.key, onLeagueClick)
+            HeaderLeague(it.league, onLeagueClick)
             Spacer(modifier = Modifier.size(16.dp))
-            it.value.forEach { fixtureItem ->
+            it.fixtures.forEach { fixtureItem ->
                 FixtureCard(fixtureItem, onFixtureClick)
                 Spacer(modifier = Modifier.size(8.dp))
             }
@@ -169,9 +158,9 @@ fun WidgetFixtures(
 }
 
 @Composable
-fun TopBar(context: Context) {
+private fun TopBar(context: Context) {
     AppTopBar(
-        title = { Text(text = stringResource(id = R.string.live_score)) },
+        title = { Text(text = stringResource(id = R.string.live_score), color = Color.White) },
         actions = {
             IconButton(
                 modifier = Modifier
@@ -182,7 +171,9 @@ fun TopBar(context: Context) {
                 }) {
                 Icon(
                     imageVector = Icons.Filled.Search,
-                    contentDescription = stringResource(id = R.string.search)
+                    contentDescription = stringResource(id = R.string.search),
+                    tint = Color.White
+
                 )
             }
             IconButton(
@@ -194,14 +185,15 @@ fun TopBar(context: Context) {
                 }) {
                 Icon(
                     imageVector = Icons.Filled.Notifications,
-                    contentDescription = stringResource(id = R.string.notifications)
+                    contentDescription = stringResource(id = R.string.notifications),
+                    tint = Color.White
                 )
             }
         })
 }
 
 @Composable
-fun Banner() {
+private fun Banner() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -258,129 +250,6 @@ fun Banner() {
             contentDescription = "",
             contentScale = ContentScale.Crop
         )
-    }
-}
-
-@Composable
-fun CountriesWidget(
-    modifier: Modifier,
-    countries: List<Country>,
-    onCountryClick: (String, Boolean) -> Unit,
-    state: LazyListState = rememberLazyListState()
-) {
-    val selectedCountryName = remember { mutableStateOf("") }
-    LazyRow(modifier = modifier, state = state) {
-        items(countries) { country ->
-            CountryWidgetCard(
-                country = country,
-                isSelected = selectedCountryName.value == country.name
-            ) {
-                val isSelected = selectedCountryName.value == it
-                selectedCountryName.value = if (isSelected) "" else it
-                onCountryClick(it, isSelected)
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun CountryWidgetCard(
-    country: Country,
-    isSelected: Boolean,
-    onCountryClick: (String) -> Unit
-) {
-    Card(
-        onClick = { onCountryClick(country.name) },
-        backgroundColor = MaterialTheme.colors.background,
-        modifier = Modifier.size(width = 115.dp, height = 130.dp),
-    ) {
-        val isSelectedModifier = Modifier
-            .padding(PaddingValues(7.dp))
-            .background(
-                shape = RoundedCornerShape(16.dp),
-                brush = Brush.horizontalGradient(colors = listOf(LightOrange, Orange))
-            )
-        val normalModifier = Modifier
-            .padding(PaddingValues(7.dp))
-            .background(
-                shape = RoundedCornerShape(16.dp), color = Dark500
-            )
-        Column(
-            modifier = if (isSelected) isSelectedModifier else normalModifier,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            AsyncImage(
-                modifier = Modifier.size(40.dp),
-                model = ImageRequest.Builder(LocalContext.current)
-                    .decoderFactory(SvgDecoder.Factory())
-                    .data(country.flag)
-                    .size(Size.ORIGINAL)
-                    .crossfade(true)
-                    .build(),
-                placeholder = painterResource(id = R.drawable.ic_launcher_background),
-                contentDescription = null,
-                contentScale = ContentScale.Fit
-            )
-            Spacer(modifier = Modifier.size(8.dp))
-            Text(
-                text = country.name,
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
-                color = Color.White,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-    }
-}
-
-@Composable
-fun HeaderLeague(league: League, onLeagueClick: (Int) -> Unit) {
-    Row(
-        modifier = Modifier
-            .clickable { onLeagueClick(league.id) }
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            AsyncImage(
-                modifier = Modifier.size(24.dp),
-                model = ImageRequest.Builder(LocalContext.current)
-                    .decoderFactory(SvgDecoder.Factory())
-                    .data(league.countryFlag)
-                    .size(Size.ORIGINAL)
-                    .crossfade(true)
-                    .build(),
-                placeholder = painterResource(id = R.drawable.ic_launcher_background),
-                contentDescription = null,
-                contentScale = ContentScale.Fit
-            )
-            Spacer(modifier = Modifier.size(16.dp))
-            Column {
-                Text(
-                    text = league.name,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 16.sp,
-                    color = Color.White
-                )
-                Text(
-                    text = league.countryName,
-                    fontSize = 12.sp,
-                    color = Grey
-                )
-            }
-        }
-        IconButton(modifier = Modifier
-            .padding(horizontal = 12.dp)
-            .size(16.dp), onClick = { }) {
-            Icon(imageVector = Icons.Filled.ArrowForward, contentDescription = "")
-        }
     }
 }
 

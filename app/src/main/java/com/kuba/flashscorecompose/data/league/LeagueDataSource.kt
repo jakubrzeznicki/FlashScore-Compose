@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.Flow
 interface LeagueDataSource {
     fun observeLeagues(countryCode: String): Flow<List<League>>
     fun observeLeagues(countryCodes: List<String>): Flow<List<League>>
+    suspend fun getLeagues(countryNames: List<String>): List<League>
     fun saveLeagues(leagues: List<League>)
     suspend fun loadLeagues(countryCode: String): RepositoryResult<List<League>>
 }

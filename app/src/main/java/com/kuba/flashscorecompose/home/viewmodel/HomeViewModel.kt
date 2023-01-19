@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.data.country.CountryDataSource
 import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesDataSource
+import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.home.model.HomeError
+import com.kuba.flashscorecompose.home.model.LeagueFixturesData
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -27,8 +29,8 @@ class HomeViewModel(
         .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
 
     fun setup() {
-        //refreshCountries()
-        //refreshFixtures()
+//        refreshCountries()
+//        refreshFixtures()
         observeCountries()
         observeFixtures()
     }
@@ -68,8 +70,8 @@ class HomeViewModel(
         viewModelScope.launch {
             val countryNames = if (isSelected) COUNTRY_NAMES else listOf(countryName)
             val fixtures = fixturesRepository.getFixturesByCountry(countryNames)
-            val leagueWithFixtures = fixtures.groupBy { it.league }
-            viewModelState.update { it.copy(leagueWithFixtures = leagueWithFixtures) }
+            val leagueFixturesList = fixtures.toLeagueFixturesData()
+            viewModelState.update { it.copy(leagueFixturesDataList = leagueFixturesList) }
         }
     }
 
@@ -82,9 +84,19 @@ class HomeViewModel(
             }
             fixturesRepository.observeFixturesByDate(formattedDate, COUNTRY_NAMES)
                 .collect { fixtures ->
-                    val leagueWithFixtures = fixtures.groupBy { it.league }
-                    viewModelState.update { it.copy(leagueWithFixtures = leagueWithFixtures) }
+                    val leagueFixturesList = fixtures.toLeagueFixturesData()
+                    viewModelState.update { it.copy(leagueFixturesDataList = leagueFixturesList) }
                 }
+        }
+    }
+
+    private fun List<FixtureItem>.toLeagueFixturesData(): List<LeagueFixturesData> {
+        val leagueWithFixtures = groupBy { it.league.id }
+        return leagueWithFixtures.map { (leagueId, fixtures) ->
+            LeagueFixturesData(
+                league = fixtures.map { it.league }.first() { it.id == leagueId },
+                fixtures = fixtures
+            )
         }
     }
 

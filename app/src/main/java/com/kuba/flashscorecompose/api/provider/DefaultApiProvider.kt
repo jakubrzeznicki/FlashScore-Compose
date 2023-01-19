@@ -24,7 +24,6 @@ class DefaultApiProvider : ApiProvider {
                 builder.header(KEY_NAME, BuildConfig.API_KEY)
                 builder.header(HOST_NAME, HOST_VALUE)
                 return@Interceptor chain.proceed(builder.build())
-                //
             }
             return header
         }
