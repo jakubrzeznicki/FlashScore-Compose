@@ -115,10 +115,14 @@ fun TopBar(navigator: DestinationsNavigator, uiState: FixtureDetailsUiState) {
                     .padding(horizontal = 12.dp)
                     .size(24.dp),
                 onClick = { navigator.popBackStack() }) {
-                Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "")
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = "",
+                    tint = Color.White
+                )
             }
         },
-        title = { Text(text = titleText) }
+        title = { Text(text = titleText, color = Color.White) }
     )
 }
 

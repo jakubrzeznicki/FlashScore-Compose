@@ -13,6 +13,7 @@
     <string name="no_fixture_details">You don\'t have fixture details</string>
     <string name="no_lineups">You don\'t have lineups</string>
     <string name="no_statistics">You don\'t have statistics</string>
+    <string name="no_standings">You don\'t have standings</string>
     <string name="load_data_from_network">Load data from network</string>
     <string name="empty_database">Empty database</string>
     <string name="retry">Retry</string>
@@ -23,4 +24,13 @@
     <string name="other_matches">Other Matches</string>
     <string name="formation">Formation</string>
     <string name="see_all">See All</string>
+    <string name="search_standings">Search standings</string>
+    <string name="standings">Standings</string>
+    <string name="team">Team</string>
+    <string name="played">P</string>
+    <string name="wins">W</string>
+    <string name="loses">L</string>
+    <string name="draws">D</string>
+    <string name="goals_diff">Gd</string>
+    <string name="points">Pts</string>
 </resources>

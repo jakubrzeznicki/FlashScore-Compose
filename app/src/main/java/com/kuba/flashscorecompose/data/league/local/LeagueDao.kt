@@ -18,6 +18,9 @@ interface LeagueDao {
     @Query("SELECT * FROM leagues WHERE countryCode IN(:countryCodes)")
     fun observeLeagues(countryCodes: List<String>): Flow<List<LeagueEntity>>
 
+    @Query("SELECT * FROM leagues WHERE countryName IN(:countryNames)")
+    suspend fun getLeagues(countryNames: List<String>): List<LeagueEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveLeagues(leagues: List<LeagueEntity>)
 

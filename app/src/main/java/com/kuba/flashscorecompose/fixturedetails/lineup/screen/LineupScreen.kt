@@ -23,14 +23,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuba.flashscorecompose.R
-import com.kuba.flashscorecompose.countries.screen.FullScreenLoading
-import com.kuba.flashscorecompose.countries.screen.LoadingContent
 import com.kuba.flashscorecompose.data.fixtures.lineups.model.Lineup
 import com.kuba.flashscorecompose.data.fixtures.lineups.model.Player
 import com.kuba.flashscorecompose.fixturedetails.lineup.model.LineupUiState
 import com.kuba.flashscorecompose.fixturedetails.lineup.model.TeamTab
 import com.kuba.flashscorecompose.fixturedetails.lineup.viewmodel.LineupViewModel
 import com.kuba.flashscorecompose.ui.component.EmptyState
+import com.kuba.flashscorecompose.ui.component.FullScreenLoading
+import com.kuba.flashscorecompose.ui.component.LoadingContent
 import com.kuba.flashscorecompose.ui.theme.*
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel

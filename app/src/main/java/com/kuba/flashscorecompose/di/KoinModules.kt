@@ -39,6 +39,7 @@ import com.kuba.flashscorecompose.fixturedetails.lineup.viewmodel.LineupViewMode
 import com.kuba.flashscorecompose.fixturedetails.statistics.viewmodel.StatisticsViewModel
 import com.kuba.flashscorecompose.network.uuidsource.UuidData
 import com.kuba.flashscorecompose.network.uuidsource.UuidSource
+import com.kuba.flashscorecompose.standings.viewmodel.StandingsViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -66,6 +67,7 @@ class KoinModules {
                 get()
             )
         }
+        viewModel { StandingsViewModel(get(), get(), get()) }
     }
 
     private val componentsModule = module {

@@ -11,20 +11,22 @@ private val DarkColorPalette = darkColors(
     primary = Black500,
     primaryVariant = Black500,
     secondary = Grey500,
+    secondaryVariant = White,
     onSecondary = Color.White,
     error = Red800,
     background = Black500,
-    surface = MarineBlue500,
+    surface = Black500
 )
 
 private val LightColorPalette = lightColors(
     primary = Black500,
     primaryVariant = Black500,
     secondary = Grey500,
+    secondaryVariant = White,
     onSecondary = Color.White,
     error = Red800,
     background = Black500,
-    surface = MarineBlue500,
+    surface = Black500,
 )
 
 @Composable

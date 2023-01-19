@@ -1,5 +1,6 @@
 package com.kuba.flashscorecompose.standings.model
 
+import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.standings.model.Standings
 
 /**
@@ -8,15 +9,20 @@ import com.kuba.flashscorecompose.data.standings.model.Standings
 sealed interface StandingsUiState {
     val isLoading: Boolean
     val error: StandingsError
+    val standingsQuery: String
 
     data class HasData(
         override val isLoading: Boolean,
         override val error: StandingsError,
-        val standings: List<Standings>
+        override val standingsQuery: String,
+        val standings: List<Standings>,
+        val filteredStandings: List<Standings>,
+        val countryItems: List<Country>
     ) : StandingsUiState
 
     data class NoData(
         override val isLoading: Boolean,
-        override val error: StandingsError
+        override val error: StandingsError,
+        override val standingsQuery: String
     ) : StandingsUiState
 }

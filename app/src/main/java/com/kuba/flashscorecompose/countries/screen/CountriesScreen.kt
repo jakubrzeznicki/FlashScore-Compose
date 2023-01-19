@@ -28,14 +28,14 @@ import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import coil.size.Size
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.countries.model.CountriesUiState
 import com.kuba.flashscorecompose.countries.viewmodel.CountriesViewModel
 import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.destinations.LeaguesListScreenDestination
 import com.kuba.flashscorecompose.ui.component.AppTopBar
+import com.kuba.flashscorecompose.ui.component.FullScreenLoading
+import com.kuba.flashscorecompose.ui.component.LoadingContent
 import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -99,27 +99,6 @@ fun CountriesScreen(
                 is CountriesUiState.NoCountries -> EmptyScreen(onRefreshClick)
             }
         }
-    }
-}
-
-@Composable
-fun LoadingContent(
-    modifier: Modifier = Modifier,
-    empty: Boolean,
-    emptyContent: @Composable () -> Unit,
-    loading: Boolean,
-    onRefresh: () -> Unit,
-    content: @Composable () -> Unit
-) {
-    if (empty) {
-        emptyContent()
-    } else {
-        SwipeRefresh(
-            modifier = modifier,
-            state = rememberSwipeRefreshState(isRefreshing = loading),
-            onRefresh = onRefresh,
-            content = content
-        )
     }
 }
 
@@ -202,17 +181,6 @@ fun TopBar(context: Context, navigator: DestinationsNavigator) {
             }
         }
     )
-}
-
-@Composable
-fun FullScreenLoading() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .wrapContentSize(Alignment.Center)
-    ) {
-        CircularProgressIndicator()
-    }
 }
 
 @Composable
