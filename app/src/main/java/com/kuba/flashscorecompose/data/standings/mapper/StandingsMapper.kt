@@ -77,6 +77,7 @@ fun StandingItemEntity.toStandingItem(): StandingItem {
         all = all.toInformationStanding(),
         away = away.toInformationStanding(),
         home = home.toInformationStanding(),
+        selectedInformationStanding = all.toInformationStanding(),
         description = description,
         form = form,
         goalsDiff = goalsDiff,
@@ -127,6 +128,8 @@ fun StandingItemDto.toStandingItem(): StandingItem {
         all = all?.toInformationStanding() ?: InformationStanding.EMPTY_INFORMATION_STANDING,
         away = away?.toInformationStanding() ?: InformationStanding.EMPTY_INFORMATION_STANDING,
         home = home?.toInformationStanding() ?: InformationStanding.EMPTY_INFORMATION_STANDING,
+        selectedInformationStanding = all?.toInformationStanding()
+            ?: InformationStanding.EMPTY_INFORMATION_STANDING,
         description = description.orEmpty(),
         form = form.orEmpty(),
         goalsDiff = goalsDiff ?: 0,

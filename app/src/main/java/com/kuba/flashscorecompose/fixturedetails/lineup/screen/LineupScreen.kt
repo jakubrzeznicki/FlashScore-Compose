@@ -29,6 +29,7 @@ import com.kuba.flashscorecompose.fixturedetails.lineup.model.LineupUiState
 import com.kuba.flashscorecompose.fixturedetails.lineup.model.TeamTab
 import com.kuba.flashscorecompose.fixturedetails.lineup.viewmodel.LineupViewModel
 import com.kuba.flashscorecompose.ui.component.EmptyState
+import com.kuba.flashscorecompose.ui.component.FilterTextButtonTab
 import com.kuba.flashscorecompose.ui.component.FullScreenLoading
 import com.kuba.flashscorecompose.ui.component.LoadingContent
 import com.kuba.flashscorecompose.ui.theme.*
@@ -161,41 +162,9 @@ fun TeamFormationButtons(
     teamTab: TeamTab,
     onTabChanged: () -> Unit
 ) {
-    val isHomeActive = when (teamTab) {
-        is TeamTab.Home -> true
-        is TeamTab.Away -> false
-    }
     Row(modifier = Modifier.fillMaxWidth()) {
-        TextButtonTab(text = homeTeamName, isHomeActive, onTabChanged)
-        TextButtonTab(text = awayTeamName, !isHomeActive, onTabChanged)
-    }
-}
-
-@Composable
-fun TextButtonTab(text: String, isActive: Boolean, onTabChanged: () -> Unit) {
-    TextButton(
-        onClick = onTabChanged,
-        modifier = if (isActive) {
-            Modifier
-                .height(40.dp)
-                .clip(RoundedCornerShape(50))
-                .background(
-                    brush = Brush.horizontalGradient(colors = listOf(LightOrange, Orange))
-                )
-                .padding(horizontal = 16.dp)
-        } else {
-            Modifier
-                .height(40.dp)
-                .clip(RoundedCornerShape(50))
-        }
-    ) {
-        Text(
-            text = text,
-            fontSize = 14.sp,
-            color = Color.White,
-            fontWeight = FontWeight.SemiBold,
-            textAlign = TextAlign.Center
-        )
+        FilterTextButtonTab(text = homeTeamName, teamTab is TeamTab.Home, onTabChanged)
+        FilterTextButtonTab(text = awayTeamName, teamTab is TeamTab.Away, onTabChanged)
     }
 }
 
