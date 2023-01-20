@@ -33,7 +33,8 @@ import com.kuba.flashscorecompose.standings.viewmodel.StandingsViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
-import com.kuba.flashscorecompose.data.standings.model.Standings
+import com.kuba.flashscorecompose.data.standings.model.Standing
+import com.kuba.flashscorecompose.destinations.StandingsDetailsRouteDestination
 import com.kuba.flashscorecompose.standings.model.StandingsError
 import com.kuba.flashscorecompose.ui.component.*
 import com.kuba.flashscorecompose.ui.theme.GreyDark
@@ -58,12 +59,18 @@ fun StandingsRoute(
     LaunchedEffect(key1 = SETUP_STANDINGS_KEY) { viewModel.setup() }
     StandingsScreen(
         uiState = uiState,
-        navigator = navigator,
         onRefreshClick = { viewModel.refreshStandings() },
         onCountryClick = { countryName, isSelected ->
             viewModel.getStandingsByCountry(countryName, isSelected)
         },
-        onStandingsClick = {},
+        onStandingsClick = {
+            navigator.navigate(
+                StandingsDetailsRouteDestination(
+                    leagueId = it.leagueId,
+                    season = it.season
+                )
+            )
+        },
         onErrorClear = { viewModel.cleanError() },
         scaffoldState = scaffoldState,
         onStandingsQueryChanged = { viewModel.updateStandingsQuery(it) }
@@ -74,10 +81,9 @@ fun StandingsRoute(
 fun StandingsScreen(
     modifier: Modifier = Modifier,
     uiState: StandingsUiState,
-    navigator: DestinationsNavigator,
     onRefreshClick: () -> Unit,
     onCountryClick: (String, Boolean) -> Unit,
-    onStandingsClick: (Standings) -> Unit,
+    onStandingsClick: (Standing) -> Unit,
     onErrorClear: () -> Unit,
     scaffoldState: ScaffoldState,
     onStandingsQueryChanged: (String) -> Unit
@@ -159,15 +165,15 @@ fun StandingsScreen(
 
 @Composable
 fun StandingsWidget(
-    standings: List<Standings>,
-    onStandingsClick: (Standings) -> Unit
+    standings: List<Standing>,
+    onStandingsClick: (Standing) -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        standings.forEach {
-            StandingWithLeague(it, onStandingsClick)
+        standings.forEach { standing ->
+            StandingWithLeague(standing, onStandingsClick)
             Spacer(modifier = Modifier.size(16.dp))
         }
     }
@@ -175,13 +181,13 @@ fun StandingsWidget(
 
 @Composable
 fun StandingWithLeague(
-    it: Standings,
-    onStandingsClick: (Standings) -> Unit
+    standing: Standing,
+    onStandingsClick: (Standing) -> Unit
 ) {
-    Column {
-        HeaderLeague(league = it.league, onLeagueClick = {})
+    Column(Modifier.clickable { onStandingsClick(standing) }) {
+        HeaderLeague(league = standing.league, onLeagueClick = {})
         Spacer(modifier = Modifier.size(16.dp))
-        StandingCard(it.standings)
+        StandingCard(standing.standingItems)
     }
 }
 
@@ -369,6 +375,7 @@ fun Test() {
             InformationStanding(0, GoalsStanding.EMPTY_GOALS_STANDING, 0, 0, 0),
             InformationStanding.EMPTY_INFORMATION_STANDING,
             InformationStanding.EMPTY_INFORMATION_STANDING,
+            InformationStanding.EMPTY_INFORMATION_STANDING,
             "sdsd",
             "sdf",
             2,
@@ -383,6 +390,7 @@ fun Test() {
             InformationStanding(0, GoalsStanding.EMPTY_GOALS_STANDING, 0, 0, 0),
             InformationStanding.EMPTY_INFORMATION_STANDING,
             InformationStanding.EMPTY_INFORMATION_STANDING,
+            InformationStanding.EMPTY_INFORMATION_STANDING,
             "sdsd",
             "sdf",
             2,
@@ -395,6 +403,7 @@ fun Test() {
         ),
         StandingItem(
             InformationStanding(0, GoalsStanding.EMPTY_GOALS_STANDING, 0, 0, 0),
+            InformationStanding.EMPTY_INFORMATION_STANDING,
             InformationStanding.EMPTY_INFORMATION_STANDING,
             InformationStanding.EMPTY_INFORMATION_STANDING,
             "sdsd",

@@ -2,13 +2,13 @@ package com.kuba.flashscorecompose.data.standings.model
 
 import com.kuba.flashscorecompose.data.league.model.League
 
-data class Standings(
+data class Standing(
     val league: League,
     val leagueId: Int,
     val season: Int,
-    val standings: List<StandingItem>
+    val standingItems: List<StandingItem>
 ) {
     companion object {
-        val EMPTY_STANDINGS = Standings(League.EMPTY_LEAGUE, 0, 0, listOf())
+        val EMPTY_Standing = Standing(League.EMPTY_LEAGUE, 0, 0, listOf())
     }
 }

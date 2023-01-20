@@ -13,7 +13,7 @@ import com.kuba.flashscorecompose.data.standings.local.model.StandingsEntity
 import com.kuba.flashscorecompose.data.standings.model.GoalsStanding
 import com.kuba.flashscorecompose.data.standings.model.InformationStanding
 import com.kuba.flashscorecompose.data.standings.model.StandingItem
-import com.kuba.flashscorecompose.data.standings.model.Standings
+import com.kuba.flashscorecompose.data.standings.model.Standing
 import com.kuba.flashscorecompose.data.standings.remote.model.GoalsStandingDto
 import com.kuba.flashscorecompose.data.standings.remote.model.InformationStandingDto
 import com.kuba.flashscorecompose.data.standings.remote.model.StandingItemDto
@@ -23,12 +23,12 @@ import com.kuba.flashscorecompose.data.standings.remote.model.StandingsDto
  * Created by jrzeznicki on 18/01/2023.
  */
 
-fun Standings.toStandingsEntity(): StandingsEntity {
+fun Standing.toStandingsEntity(): StandingsEntity {
     return StandingsEntity(
         league = league.toLeagueEntity(),
         leagueId = leagueId,
         season = season,
-        standings = standings.map { it.toStandingItemEntity(leagueId) }
+        standings = standingItems.map { it.toStandingItemEntity(leagueId) }
     )
 }
 
@@ -63,12 +63,12 @@ fun GoalsStanding.toGoalsStandingEntity(): GoalsStandingEntity {
     return GoalsStandingEntity(against = against, forValue = forValue)
 }
 
-fun StandingsEntity.toStandings(): Standings {
-    return Standings(
+fun StandingsEntity.toStandings(): Standing {
+    return Standing(
         league = league.toLeague(),
         leagueId = leagueId,
         season = season,
-        standings = standings.map { it.toStandingItem() }
+        standingItems = standings.map { it.toStandingItem() }
     )
 }
 
@@ -77,6 +77,7 @@ fun StandingItemEntity.toStandingItem(): StandingItem {
         all = all.toInformationStanding(),
         away = away.toInformationStanding(),
         home = home.toInformationStanding(),
+        selectedInformationStanding = all.toInformationStanding(),
         description = description,
         form = form,
         goalsDiff = goalsDiff,
@@ -103,8 +104,8 @@ fun GoalsStandingEntity.toGoalsStanding(): GoalsStanding {
     return GoalsStanding(against = against, forValue = forValue)
 }
 
-fun StandingsDto.toStandings(): Standings {
-    return Standings(
+fun StandingsDto.toStandings(): Standing {
+    return Standing(
         league = League(
             id = id ?: 0,
             name = name.orEmpty(),
@@ -118,7 +119,7 @@ fun StandingsDto.toStandings(): Standings {
         ),
         leagueId = id ?: 0,
         season = season ?: 0,
-        standings = standings.flatMap { it?.map { it.toStandingItem() }.orEmpty() }
+        standingItems = standings.flatMap { it?.map { it.toStandingItem() }.orEmpty() }
     )
 }
 
@@ -127,6 +128,8 @@ fun StandingItemDto.toStandingItem(): StandingItem {
         all = all?.toInformationStanding() ?: InformationStanding.EMPTY_INFORMATION_STANDING,
         away = away?.toInformationStanding() ?: InformationStanding.EMPTY_INFORMATION_STANDING,
         home = home?.toInformationStanding() ?: InformationStanding.EMPTY_INFORMATION_STANDING,
+        selectedInformationStanding = all?.toInformationStanding()
+            ?: InformationStanding.EMPTY_INFORMATION_STANDING,
         description = description.orEmpty(),
         form = form.orEmpty(),
         goalsDiff = goalsDiff ?: 0,

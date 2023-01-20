@@ -33,4 +33,7 @@
     <string name="draws">D</string>
     <string name="goals_diff">Gd</string>
     <string name="points">Pts</string>
+    <string name="all">All</string>
+    <string name="home">Home</string>
+    <string name="away">Away</string>
 </resources>

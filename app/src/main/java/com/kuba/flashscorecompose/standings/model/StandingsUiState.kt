@@ -1,7 +1,7 @@
 package com.kuba.flashscorecompose.standings.model
 
 import com.kuba.flashscorecompose.data.country.model.Country
-import com.kuba.flashscorecompose.data.standings.model.Standings
+import com.kuba.flashscorecompose.data.standings.model.Standing
 
 /**
  * Created by jrzeznicki on 18/01/2023.
@@ -15,7 +15,7 @@ sealed interface StandingsUiState {
         override val isLoading: Boolean,
         override val error: StandingsError,
         override val standingsQuery: String,
-        val standings: List<Standings>,
+        val standings: List<Standing>,
         val countryItems: List<Country>
     ) : StandingsUiState
 
