@@ -62,8 +62,8 @@ class FixturesRepository(
         }
     }
 
-    override suspend fun getFixture(fixtureId: Int): FixtureItem {
-        return local.getFixture(fixtureId).toFixtureItem()
+    override suspend fun getFixture(fixtureId: Int): FixtureItem? {
+        return local.getFixture(fixtureId)?.toFixtureItem()
     }
 
     override suspend fun getFixturesByCountry(countryNames: List<String>): List<FixtureItem> {

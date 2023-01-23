@@ -6,6 +6,8 @@
     <string name="football">Football</string>
     <string name="text_banner">Liverpool UEFA Champion League Celebration</string>
     <string name="text_second_banner">Yesterday, 06.30 PM</string>
+    <string name="explore">Explore</string>
+    <string name="profile">Profile</string>
     <string name="refresh">Refresh</string>
     <string name="no_fixtures_and_countries">You don\'t have any fixtures and countries</string>
     <string name="no_head_to_head">You don\'t have any head to head fixtures</string>
@@ -36,4 +38,8 @@
     <string name="all">All</string>
     <string name="home">Home</string>
     <string name="away">Away</string>
+    <string name="empty_leagues">You have empty leagues</string>
+    <string name="statistics">Statistic</string>
+    <string name="lineups">Lineups</string>
+    <string name="head_to_head">H2H</string>
 </resources>

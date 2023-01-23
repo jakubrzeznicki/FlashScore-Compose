@@ -1,14 +1,13 @@
 package com.kuba.flashscorecompose.fixturedetails.headtohead.screen
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -35,7 +35,6 @@ import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.Team
 import com.kuba.flashscorecompose.destinations.FixtureDetailsRouteDestination
 import com.kuba.flashscorecompose.fixturedetails.headtohead.model.FixtureItemStyle
-import com.kuba.flashscorecompose.fixturedetails.headtohead.model.H2HType
 import com.kuba.flashscorecompose.fixturedetails.headtohead.model.HeadToHeadUiState
 import com.kuba.flashscorecompose.fixturedetails.headtohead.viewmodel.HeadToHeadViewModel
 import com.kuba.flashscorecompose.ui.component.EmptyState
@@ -45,9 +44,6 @@ import com.kuba.flashscorecompose.ui.theme.*
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
-import java.time.Instant
-import java.time.LocalDateTime
-import java.util.*
 
 /**
  * Created by jrzeznicki on 23/12/2022.
@@ -82,7 +78,7 @@ fun HeadToHeadList(
     onRefreshClick: () -> Unit,
     onFixtureClick: (FixtureItem) -> Unit
 ) {
-    val scrollState = rememberScrollState()
+    val scrollState = rememberLazyListState()
     LoadingContent(
         empty = when (uiState) {
             is HeadToHeadUiState.HasData -> false
@@ -91,100 +87,90 @@ fun HeadToHeadList(
         loading = uiState.isLoading,
         onRefresh = onRefreshClick
     ) {
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
-                .background(MaterialTheme.colors.background)
                 .padding(vertical = 16.dp),
+            state = scrollState,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             when (uiState) {
-                is HeadToHeadUiState.HasData -> LastMatchesSection(
-                    fixtures = uiState.homeTeamFixtures,
-                    type = H2HType.LastFirstTeam(homeTeam.name),
-                    onFixtureClick = onFixtureClick
-                )
-                else -> EmptyState(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    iconId = R.drawable.ic_close,
-                    contentDescriptionId = R.string.load_data_from_network,
-                    textId = R.string.no_last_fixtures,
-                    onRefreshClick = onRefreshClick
-                )
-            }
-            Spacer(modifier = Modifier.size(16.dp))
-            when (uiState) {
-                is HeadToHeadUiState.HasData -> LastMatchesSection(
-                    fixtures = uiState.awayTeamFixtures,
-                    type = H2HType.LastSecondTeam(awayTeam.name),
-                    onFixtureClick = onFixtureClick
-                )
-                else -> EmptyState(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    iconId = R.drawable.ic_close,
-                    contentDescriptionId = R.string.load_data_from_network,
-                    textId = R.string.no_last_fixtures,
-                    onRefreshClick = onRefreshClick
-                )
-            }
-            Spacer(modifier = Modifier.size(16.dp))
-            when (uiState) {
-                is HeadToHeadUiState.HasData -> LastMatchesSection(
-                    fixtures = uiState.h2hFixtures,
-                    type = H2HType.HeadToHead,
-                    onFixtureClick = onFixtureClick
-                )
-                else -> EmptyState(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    iconId = R.drawable.ic_close,
-                    contentDescriptionId = R.string.load_data_from_network,
-                    textId = R.string.no_fixtures_and_countries,
-                    onRefreshClick = onRefreshClick
-                )
+                is HeadToHeadUiState.HasData -> {
+                    item {
+                        MatchesHeaderText(
+                            modifier = Modifier.padding(bottom = 8.dp),
+                            title = "${stringResource(id = R.string.last_matches)}: ${homeTeam.name}"
+                        )
+                    }
+                    items(items = uiState.homeTeamFixtures) {
+                        LastMatchesSection(fixture = it, onFixtureClick = onFixtureClick)
+                    }
+                    item {
+                        MatchesHeaderText(
+                            modifier = Modifier.padding(bottom = 24.dp),
+                            title = "${stringResource(id = R.string.last_matches)}: ${awayTeam.name}"
+                        )
+                    }
+                    items(items = uiState.awayTeamFixtures) {
+                        LastMatchesSection(fixture = it, onFixtureClick = onFixtureClick)
+                    }
+                    item {
+                        MatchesHeaderText(
+                            modifier = Modifier.padding(bottom = 8.dp),
+                            title = stringResource(id = R.string.between)
+                        )
+                    }
+                    items(items = uiState.h2hFixtures) {
+                        LastMatchesSection(fixture = it, onFixtureClick = onFixtureClick)
+                    }
+                }
+                is HeadToHeadUiState.NoData -> {
+                    item {
+                        EmptyState(
+                            modifier = Modifier.fillMaxWidth(),
+                            iconId = R.drawable.ic_close,
+                            contentDescriptionId = R.string.load_data_from_network,
+                            textId = R.string.no_last_fixtures,
+                            onRefreshClick = onRefreshClick
+                        )
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-fun LastMatchesSection(
-    fixtures: List<FixtureItem>,
-    type: H2HType,
+private fun MatchesHeaderText(modifier: Modifier = Modifier, title: String) {
+    Text(
+        modifier = modifier,
+        text = title,
+        style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold),
+        color = Color.White,
+        textAlign = TextAlign.Start
+    )
+}
+
+@Composable
+private fun LastMatchesSection(
+    fixture: FixtureItem,
     onFixtureClick: (FixtureItem) -> Unit
 ) {
-    Column(modifier = Modifier.padding(8.dp)) {
-        Text(
-            text = "${stringResource(id = type.titleTextId)}: ${type.name}",
-            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold),
-            color = Color.White
-        )
-        Spacer(modifier = Modifier.size(8.dp))
-        Column {
-            fixtures.forEach {
-                HeadToHeadMatchItem(fixtureItem = it, onFixtureClick)
-                Divider(
-                    color = GreyDark,
-                    thickness = 2.dp,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-            }
-        }
-    }
+    MatchItem(fixtureItem = fixture, onFixtureClick)
+    Divider(
+        color = GreyDark,
+        thickness = 2.dp,
+        modifier = Modifier.padding(vertical = 8.dp)
+    )
 }
 
 @Composable
-fun HeadToHeadMatchItem(fixtureItem: FixtureItem, onFixtureClick: (FixtureItem) -> Unit) {
-    val formattedDate = LocalDateTime.ofInstant(
-        Instant.ofEpochMilli(fixtureItem.fixture.timestamp.toLong()),
-        TimeZone.getDefault().toZoneId()
-    )
+private fun MatchItem(fixtureItem: FixtureItem, onFixtureClick: (FixtureItem) -> Unit) {
     val fixtureItemStyle = fixtureItemStyling(fixtureItem = fixtureItem)
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onFixtureClick(fixtureItem) },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -193,11 +179,11 @@ fun HeadToHeadMatchItem(fixtureItem: FixtureItem, onFixtureClick: (FixtureItem) 
             horizontalArrangement = Arrangement.Start
         ) {
             Text(
-                text = formattedDate.year.toString(),
+                text = fixtureItem.fixture.year,
                 style = TextStyle(fontSize = 10.sp, fontWeight = FontWeight.SemiBold),
-                color = Color.White
+                color = Color.White,
+                modifier = Modifier.padding(end = 16.dp)
             )
-            Spacer(modifier = Modifier.size(16.dp))
             Column {
                 TeamInfo(
                     teamLogo = fixtureItem.homeTeam.logo,
@@ -215,8 +201,7 @@ fun HeadToHeadMatchItem(fixtureItem: FixtureItem, onFixtureClick: (FixtureItem) 
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            FixtureScore(fixtureItemStyle, fixtureItem)
-            Spacer(modifier = Modifier.size(20.dp))
+            FixtureScore(modifier = Modifier.padding(end = 20.dp), fixtureItemStyle, fixtureItem)
             FixtureResultIcon(fixtureItemStyle)
         }
     }
@@ -226,7 +211,9 @@ fun HeadToHeadMatchItem(fixtureItem: FixtureItem, onFixtureClick: (FixtureItem) 
 private fun TeamInfo(teamLogo: String, teamName: String, fontWeight: FontWeight) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         AsyncImage(
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier
+                .size(24.dp)
+                .padding(end = 8.dp),
             model = ImageRequest.Builder(LocalContext.current)
                 .decoderFactory(SvgDecoder.Factory())
                 .data(teamLogo)
@@ -237,7 +224,6 @@ private fun TeamInfo(teamLogo: String, teamName: String, fontWeight: FontWeight)
             contentDescription = null,
             contentScale = ContentScale.Fit
         )
-        Spacer(modifier = Modifier.size(8.dp))
         Text(
             text = teamName,
             style = TextStyle(
@@ -251,11 +237,13 @@ private fun TeamInfo(teamLogo: String, teamName: String, fontWeight: FontWeight)
 
 @Composable
 private fun FixtureScore(
+    modifier: Modifier,
     fixtureItemStyle: Pair<FixtureItemStyle, FixtureItemStyle>,
     fixtureItem: FixtureItem
 ) {
-    Column {
+    Column(modifier = modifier) {
         Text(
+            modifier = Modifier.padding(bottom = 4.dp),
             text = fixtureItem.goals.home.toString(),
             style = TextStyle(
                 fontSize = 12.sp,
@@ -263,7 +251,6 @@ private fun FixtureScore(
             ),
             color = Color.White
         )
-        Spacer(modifier = Modifier.size(4.dp))
         Text(
             text = fixtureItem.goals.away.toString(),
             style = TextStyle(

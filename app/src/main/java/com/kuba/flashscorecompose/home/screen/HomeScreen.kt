@@ -5,9 +5,10 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
@@ -25,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuba.flashscorecompose.R
+import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.destinations.FixtureDetailsRouteDestination
 import com.kuba.flashscorecompose.home.model.HomeError
@@ -57,10 +59,9 @@ fun HomeScreenRoute(
     LaunchedEffect(key1 = SETUP_HOME_KEY) { viewModel.setup() }
     HomeScreen(
         uiState = uiState,
-        navigator = navigator,
         onRefreshClick = { viewModel.refresh() },
-        onCountryClick = { countryName, isSelected ->
-            viewModel.getFixturesByCountry(countryName, isSelected)
+        onCountryClick = { country, isSelected ->
+            viewModel.updateSelectedCountry(country, isSelected)
         },
         onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixture.id)) },
         onLeagueClick = { },
@@ -74,16 +75,15 @@ fun HomeScreenRoute(
 private fun HomeScreen(
     modifier: Modifier = Modifier,
     uiState: HomeUiState,
-    navigator: DestinationsNavigator,
     onRefreshClick: () -> Unit,
-    onCountryClick: (String, Boolean) -> Unit,
+    onCountryClick: (Country, Boolean) -> Unit,
     onFixtureClick: (FixtureItem) -> Unit,
     onLeagueClick: (Int) -> Unit,
     onErrorClear: () -> Unit,
     scaffoldState: ScaffoldState = rememberScaffoldState(),
     context: Context
 ) {
-    val scrollState = rememberScrollState()
+    val scrollState = rememberLazyListState()
     Scaffold(
         topBar = { TopBar(context = context) },
         scaffoldState = scaffoldState,
@@ -99,62 +99,55 @@ private fun HomeScreen(
             loading = uiState.isLoading,
             onRefresh = onRefreshClick
         ) {
-            Column(
+            LazyColumn(
                 Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(scrollState)
-                    .padding(16.dp)
+                    .fillMaxSize()
+                    .padding(16.dp),
+                state = scrollState
             ) {
                 when (uiState) {
                     is HomeUiState.HasData -> {
-                        Banner()
-                        Spacer(modifier = Modifier.size(16.dp))
-                        CountriesWidget(
-                            countries = uiState.countryItems,
-                            onCountryClick = onCountryClick
-                        )
-                        Spacer(modifier = Modifier.size(16.dp))
-                        WidgetFixtures(
-                            modifier,
-                            uiState.leagueFixturesDataList,
-                            onFixtureClick,
-                            onLeagueClick
-                        )
+                        item {
+                            Banner()
+                            Spacer(modifier = Modifier.size(16.dp))
+                        }
+                        item {
+                            CountriesWidget(
+                                countries = uiState.countries,
+                                selectedItem = uiState.selectedCountry,
+                                onCountryClick = onCountryClick
+                            )
+                        }
+                        item {
+                            Spacer(modifier = Modifier.size(24.dp))
+                        }
+                        items(items = uiState.leagueFixturesDataList) {
+                            FixturesWidget(
+                                leagueFixturesData = it,
+                                onFixtureClick = onFixtureClick,
+                                onLeagueClick = onLeagueClick
+                            )
+                            Spacer(modifier = Modifier.size(24.dp))
+                        }
                     }
-                    is HomeUiState.NoData -> EmptyState(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight(),
-                        iconId = R.drawable.ic_close,
-                        contentDescriptionId = R.string.load_data_from_network,
-                        textId = R.string.no_fixtures_and_countries,
-                        onRefreshClick = onRefreshClick
-                    )
+                    is HomeUiState.NoData -> {
+                        item {
+                            EmptyState(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(),
+                                iconId = R.drawable.ic_close,
+                                contentDescriptionId = R.string.load_data_from_network,
+                                textId = R.string.no_fixtures_and_countries,
+                                onRefreshClick = onRefreshClick
+                            )
+                        }
+                    }
                 }
             }
         }
     }
     ErrorSnackbar(uiState, onRefreshClick, onErrorClear, scaffoldState)
-}
-
-@Composable
-private fun WidgetFixtures(
-    modifier: Modifier,
-    leagueFixturesData: List<LeagueFixturesData>,
-    onFixtureClick: (FixtureItem) -> Unit,
-    onLeagueClick: (Int) -> Unit
-) {
-    Column(modifier = modifier) {
-        leagueFixturesData.forEach {
-            Spacer(modifier = Modifier.size(24.dp))
-            HeaderLeague(it.league, onLeagueClick)
-            Spacer(modifier = Modifier.size(16.dp))
-            it.fixtures.forEach { fixtureItem ->
-                FixtureCard(fixtureItem, onFixtureClick)
-                Spacer(modifier = Modifier.size(8.dp))
-            }
-        }
-    }
 }
 
 @Composable
@@ -173,7 +166,6 @@ private fun TopBar(context: Context) {
                     imageVector = Icons.Filled.Search,
                     contentDescription = stringResource(id = R.string.search),
                     tint = Color.White
-
                 )
             }
             IconButton(
@@ -198,9 +190,7 @@ private fun Banner() {
         modifier = Modifier
             .fillMaxWidth()
             .background(
-                brush = Brush.horizontalGradient(
-                    colors = listOf(Blue500, Blue800)
-                ),
+                brush = Brush.horizontalGradient(colors = listOf(Blue500, Blue800)),
                 shape = RoundedCornerShape(16.dp)
             )
     ) {
@@ -230,19 +220,22 @@ private fun Banner() {
                     text = stringResource(id = R.string.football),
                     color = Black500,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp
+                    fontSize = 12.sp,
                 )
             }
             Spacer(modifier = Modifier.size(8.dp))
             Text(
                 text = stringResource(id = R.string.text_banner),
+                color = Color.White,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 lineHeight = 25.sp
             )
             Spacer(modifier = Modifier.size(8.dp))
             Text(
-                text = stringResource(id = R.string.text_second_banner), fontSize = 12.sp
+                text = stringResource(id = R.string.text_second_banner),
+                fontSize = 12.sp,
+                color = Color.White,
             )
         }
         Image(
@@ -250,6 +243,18 @@ private fun Banner() {
             contentDescription = "",
             contentScale = ContentScale.Crop
         )
+    }
+}
+
+@Composable
+private fun FixturesWidget(
+    leagueFixturesData: LeagueFixturesData,
+    onFixtureClick: (FixtureItem) -> Unit,
+    onLeagueClick: (Int) -> Unit
+) {
+    LeagueHeader(leagueFixturesData.league, onLeagueClick)
+    leagueFixturesData.fixtures.forEach { fixtureItem ->
+        FixtureCard(fixtureItem, onFixtureClick)
     }
 }
 

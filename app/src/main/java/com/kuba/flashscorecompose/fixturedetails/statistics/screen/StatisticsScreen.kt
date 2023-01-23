@@ -1,10 +1,9 @@
 package com.kuba.flashscorecompose.fixturedetails.statistics.screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.MaterialTheme
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,7 +18,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
-import com.kuba.flashscorecompose.data.fixtures.statistics.model.Statistics
 import com.kuba.flashscorecompose.fixturedetails.statistics.model.StatisticsUiState
 import com.kuba.flashscorecompose.fixturedetails.statistics.viewmodel.StatisticsViewModel
 import com.kuba.flashscorecompose.ui.theme.TextGreyLight
@@ -27,6 +25,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 import com.kuba.flashscorecompose.R
+import com.kuba.flashscorecompose.destinations.FixtureDetailsRouteDestination
 import com.kuba.flashscorecompose.ui.component.EmptyState
 import com.kuba.flashscorecompose.ui.component.FixtureCard
 import com.kuba.flashscorecompose.ui.component.FullScreenLoading
@@ -43,12 +42,23 @@ fun StatisticsScreen(
     fixtureId: Int,
     leagueId: Int,
     round: String,
+    season: Int,
     navigator: DestinationsNavigator,
-    viewModel: StatisticsViewModel = getViewModel { parametersOf(fixtureId, leagueId, round) },
+    viewModel: StatisticsViewModel = getViewModel {
+        parametersOf(
+            fixtureId,
+            leagueId,
+            round,
+            season
+        )
+    }
 ) {
     val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(key1 = STATISTICS_KEY) { viewModel.setup() }
-    StatisticsList(uiState = uiState, onRefreshClick = { viewModel.refresh() }, onFixtureClick = {})
+    StatisticsList(
+        uiState = uiState,
+        onRefreshClick = { viewModel.refresh() },
+        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.id)) })
 }
 
 @Composable
@@ -57,7 +67,7 @@ fun StatisticsList(
     onRefreshClick: () -> Unit,
     onFixtureClick: (FixtureItem) -> Unit
 ) {
-    val scrollState = rememberScrollState()
+    val scrollState = rememberLazyListState()
     LoadingContent(
         empty = when (uiState) {
             is StatisticsUiState.HasData -> false
@@ -66,51 +76,40 @@ fun StatisticsList(
         loading = uiState.isLoading,
         onRefresh = onRefreshClick
     ) {
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
-                .background(MaterialTheme.colors.background)
                 .padding(vertical = 16.dp),
+            state = scrollState,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             when (uiState) {
                 is StatisticsUiState.HasData -> {
-                    StatisticsRows(uiState.homeStatistics, uiState.awayStatistics)
-                    Spacer(modifier = Modifier.size(24.dp))
-                    OtherMatchHeader()
-                    Spacer(modifier = Modifier.size(16.dp))
-                    OtherFixtures(fixtures = uiState.fixtures, onFixtureClick = onFixtureClick)
+                    items(items = uiState.statistics) { (home, away) ->
+                        StatisticDetailRow(home.value, away.value, home.type)
+                    }
+                    item {
+                        OtherMatchesHeader()
+                    }
+                    items(items = uiState.fixtures) {
+                        FixtureCard(fixtureItem = it, onFixtureClick = onFixtureClick)
+                    }
                 }
-                is StatisticsUiState.NoData -> EmptyState(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(),
-                    iconId = R.drawable.ic_close,
-                    contentDescriptionId = R.string.load_data_from_network,
-                    textId = R.string.no_statistics,
-                    onRefreshClick = onRefreshClick
-                )
+                is StatisticsUiState.NoData -> {
+                    item {
+                        EmptyState(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight(),
+                            iconId = R.drawable.ic_close,
+                            contentDescriptionId = R.string.load_data_from_network,
+                            textId = R.string.no_statistics,
+                            onRefreshClick = onRefreshClick
+                        )
+                    }
+                }
             }
         }
-    }
-}
-
-@Composable
-private fun OtherFixtures(fixtures: List<FixtureItem>, onFixtureClick: (FixtureItem) -> Unit) {
-    Column {
-        fixtures.forEach { fixtureItem ->
-            FixtureCard(fixtureItem = fixtureItem, onFixtureClick = onFixtureClick)
-            Spacer(modifier = Modifier.size(8.dp))
-        }
-    }
-}
-
-@Composable
-private fun StatisticsRows(homeStatistics: Statistics, awayStatistics: Statistics) {
-    val statisticsItems = homeStatistics.statistics.zip(awayStatistics.statistics)
-    statisticsItems.forEach { (home, away) ->
-        StatisticDetailRow(home.value, away.value, home.type)
     }
 }
 
@@ -146,9 +145,11 @@ private fun StatisticDetailRow(homeValue: String, awayValue: String, stat: Strin
 }
 
 @Composable
-private fun OtherMatchHeader() {
+private fun OtherMatchesHeader() {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 24.dp, bottom = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

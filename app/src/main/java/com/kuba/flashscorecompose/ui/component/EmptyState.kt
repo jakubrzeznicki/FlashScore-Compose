@@ -37,11 +37,13 @@ fun EmptyState(
                 .size(128.dp)
                 .padding(8.dp),
             painter = painterResource(id = iconId),
-            contentDescription = stringResource(id = contentDescriptionId)
+            contentDescription = stringResource(id = contentDescriptionId),
+            tint = Color.White
         )
         Text(
             modifier = Modifier.padding(8.dp),
-            text = stringResource(id = textId)
+            text = stringResource(id = textId),
+            color = Color.White
         )
         Button(
             modifier = Modifier

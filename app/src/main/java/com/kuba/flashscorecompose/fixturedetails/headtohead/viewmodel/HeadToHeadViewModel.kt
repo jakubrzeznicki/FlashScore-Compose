@@ -3,10 +3,14 @@ package com.kuba.flashscorecompose.fixturedetails.headtohead.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesDataSource
+import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.fixturedetails.headtohead.model.HeadToHeadError
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.LocalDateTime
+import java.util.*
 
 /**
  * Created by jrzeznicki on 14/01/2023.
@@ -33,34 +37,36 @@ class HeadToHeadViewModel(
     }
 
     fun refresh() {
-//        loadHeadToHead()
-//        loadFixturesByTeam(homeTeamId)
-//        loadFixturesByTeam(awayTeamId)
+        loadHeadToHead()
+        loadFixturesByTeam(homeTeamId)
+        loadFixturesByTeam(awayTeamId)
     }
 
     private fun observeFixturesHeadToHead() {
         viewModelScope.launch {
             fixturesRepository.observeFixturesHeadToHead(TEAM_TO_TEAM(homeTeamId, awayTeamId))
                 .collect { fixtures ->
-                    viewModelState.update { it.copy(h2hFixtures = fixtures) }
+                    viewModelState.update { it.copy(h2hFixtures = fixtures.updateYear()) }
                 }
         }
     }
 
     private fun observeHomeTeam() {
         viewModelScope.launch {
-            fixturesRepository.observeFixturesByTeam(homeTeamId, 2021)
+            fixturesRepository.observeFixturesByTeam(homeTeamId, season)
                 .collect { fixtures ->
-                    viewModelState.update { it.copy(homeTeamFixtures = fixtures) }
+                    viewModelState.update { it.copy(homeTeamFixtures = fixtures.updateYear()) }
                 }
         }
     }
 
     private fun observeAwayTeam() {
         viewModelScope.launch {
-            fixturesRepository.observeFixturesByTeam(awayTeamId, 2021)
+            fixturesRepository.observeFixturesByTeam(awayTeamId, season)
                 .collect { fixtures ->
-                    viewModelState.update { it.copy(awayTeamFixtures = fixtures) }
+                    viewModelState.update {
+                        it.copy(awayTeamFixtures = fixtures.updateYear())
+                    }
                 }
         }
     }
@@ -68,11 +74,10 @@ class HeadToHeadViewModel(
     private fun loadHeadToHead() {
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            val result =
-                fixturesRepository.loadFixturesHeadToHead(
-                    TEAM_TO_TEAM(homeTeamId, awayTeamId),
-                    COUNT
-                )
+            val result = fixturesRepository.loadFixturesHeadToHead(
+                TEAM_TO_TEAM(homeTeamId, awayTeamId),
+                COUNT
+            )
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
@@ -88,7 +93,7 @@ class HeadToHeadViewModel(
     private fun loadFixturesByTeam(teamId: Int) {
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            val result = fixturesRepository.loadFixturesByTeam(teamId, 2021, COUNT)
+            val result = fixturesRepository.loadFixturesByTeam(teamId, season, COUNT)
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
@@ -98,6 +103,17 @@ class HeadToHeadViewModel(
                     )
                 }
             }
+        }
+    }
+
+    private fun List<FixtureItem>.updateYear(): List<FixtureItem> {
+        return map { fixtureItem ->
+            val formattedDate = LocalDateTime.ofInstant(
+                Instant.ofEpochMilli(fixtureItem.fixture.timestamp.toLong()),
+                TimeZone.getDefault().toZoneId()
+            )
+            val year = formattedDate.year.toString()
+            fixtureItem.copy(fixture = fixtureItem.fixture.copy(year = year))
         }
     }
 

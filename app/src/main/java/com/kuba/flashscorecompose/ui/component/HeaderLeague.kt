@@ -30,10 +30,10 @@ import com.kuba.flashscorecompose.ui.theme.Grey
  */
 
 @Composable
-fun HeaderLeague(league: League, onLeagueClick: (Int) -> Unit) {
+fun LeagueHeader(league: League, onLeagueClick: (Int) -> Unit) {
     Row(
         modifier = Modifier
-            .padding(horizontal = 8.dp)
+            .padding(top = 8.dp, bottom = 24.dp)
             .clickable { onLeagueClick(league.id) }
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,

@@ -2,7 +2,7 @@ package com.kuba.flashscorecompose.standingsdetails.viewmodel
 
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.data.standings.model.StandingItem
-import com.kuba.flashscorecompose.standingsdetails.model.FilteredButton
+import com.kuba.flashscorecompose.standingsdetails.model.StandingFilterButton
 import com.kuba.flashscorecompose.standingsdetails.model.StandingsDetailsUiState
 
 /**
@@ -10,13 +10,13 @@ import com.kuba.flashscorecompose.standingsdetails.model.StandingsDetailsUiState
  */
 data class StandingsDetailsViewModelState(
     val league: League = League.EMPTY_LEAGUE,
-    val standingButtonState: FilteredButton = FilteredButton.All,
+    val standingFilterButton: StandingFilterButton = StandingFilterButton.All,
     val standingsItems: List<StandingItem> = emptyList(),
     val filteredStandings: List<StandingItem> = emptyList()
 ) {
     fun toUiState(): StandingsDetailsUiState = StandingsDetailsUiState(
         league = league,
-        standingButtonState = standingButtonState,
+        standingFilterButton = standingFilterButton,
         standingsItems = filteredStandings
     )
 }

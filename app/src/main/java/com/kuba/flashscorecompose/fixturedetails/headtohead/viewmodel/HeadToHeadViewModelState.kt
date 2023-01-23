@@ -14,9 +14,16 @@ data class HeadToHeadViewModelState(
     val awayTeamFixtures: List<FixtureItem> = emptyList(),
     val h2hFixtures: List<FixtureItem> = emptyList()
 ) {
-    fun toUiState(): HeadToHeadUiState = if (h2hFixtures.isNotEmpty()) {
-        HeadToHeadUiState.HasData(isLoading, error, homeTeamFixtures, awayTeamFixtures, h2hFixtures)
-    } else {
-        HeadToHeadUiState.NoData(isLoading, error)
-    }
+    fun toUiState(): HeadToHeadUiState =
+        if (h2hFixtures.isNotEmpty() || homeTeamFixtures.isNotEmpty() || awayTeamFixtures.isNotEmpty()) {
+            HeadToHeadUiState.HasData(
+                isLoading,
+                error,
+                homeTeamFixtures,
+                awayTeamFixtures,
+                h2hFixtures
+            )
+        } else {
+            HeadToHeadUiState.NoData(isLoading, error)
+        }
 }

@@ -4,11 +4,13 @@ import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.data.country.CountryDataSource
+import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesDataSource
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.home.model.HomeError
 import com.kuba.flashscorecompose.home.model.LeagueFixturesData
 import com.kuba.flashscorecompose.utils.RepositoryResult
+import com.kuba.flashscorecompose.utils.containsQuery
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -36,15 +38,15 @@ class HomeViewModel(
     }
 
     fun refresh() {
-//        refreshCountries()
-//        refreshFixtures()
+        refreshCountries()
+        refreshFixtures()
     }
 
     private fun observeCountries() {
         viewModelScope.launch {
             countryRepository.observeCountries(COUNTRY_CODES).collect { countries ->
                 viewModelState.update {
-                    it.copy(countryItems = countries)
+                    it.copy(countries = countries)
                 }
             }
         }
@@ -66,26 +68,23 @@ class HomeViewModel(
         }
     }
 
-    fun getFixturesByCountry(countryName: String, isSelected: Boolean) {
-        viewModelScope.launch {
-            val countryNames = if (isSelected) COUNTRY_NAMES else listOf(countryName)
-            val fixtures = fixturesRepository.getFixturesByCountry(countryNames)
-            val leagueFixturesList = fixtures.toLeagueFixturesData()
-            viewModelState.update { it.copy(leagueFixturesDataList = leagueFixturesList) }
-        }
-    }
-
     private fun observeFixtures() {
         viewModelScope.launch {
             val formattedDate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 localDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT))
             } else {
-                "2021-07-14"
+                TESTING_DATE
             }
-            fixturesRepository.observeFixturesByDate(formattedDate, COUNTRY_NAMES)
+            fixturesRepository.observeFixturesByDate(TESTING_DATE, COUNTRY_NAMES)
                 .collect { fixtures ->
                     val leagueFixturesList = fixtures.toLeagueFixturesData()
-                    viewModelState.update { it.copy(leagueFixturesDataList = leagueFixturesList) }
+                    val filteredLeagueFixturesList = filterFixtureItems(leagueFixturesList)
+                    viewModelState.update {
+                        it.copy(
+                            leagueFixturesDataList = leagueFixturesList,
+                            filteredLeagueFixtureDataList = filteredLeagueFixturesList
+                        )
+                    }
                 }
         }
     }
@@ -94,8 +93,34 @@ class HomeViewModel(
         val leagueWithFixtures = groupBy { it.league.id }
         return leagueWithFixtures.map { (leagueId, fixtures) ->
             LeagueFixturesData(
-                league = fixtures.map { it.league }.first() { it.id == leagueId },
+                league = fixtures.map { it.league }.first { it.id == leagueId },
                 fixtures = fixtures
+            )
+        }
+    }
+
+    private fun filterFixtureItems(
+        leagueFixturesDataList: List<LeagueFixturesData> = viewModelState.value.leagueFixturesDataList,
+        selectedCountry: Country = viewModelState.value.selectedCountry
+    ): List<LeagueFixturesData> {
+        val countryName = selectedCountry.name
+        val countryCode = selectedCountry.code
+        return leagueFixturesDataList.filter {
+            it.league.countryCode.containsQuery(countryCode)
+                    || it.league.countryName.containsQuery(countryName)
+        }
+    }
+
+    fun updateSelectedCountry(newSelectedCountry: Country, isSelected: Boolean) {
+        val filteredLeagueFixturesList = if (isSelected) {
+            viewModelState.value.leagueFixturesDataList
+        } else {
+            filterFixtureItems(selectedCountry = newSelectedCountry)
+        }
+        viewModelState.update {
+            it.copy(
+                filteredLeagueFixtureDataList = filteredLeagueFixturesList,
+                selectedCountry = if (isSelected) Country.EMPTY_COUNTRY else newSelectedCountry
             )
         }
     }
@@ -106,9 +131,9 @@ class HomeViewModel(
             val formattedDate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 localDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT))
             } else {
-                "2021-07-14"
+                TESTING_DATE
             }
-            val result = fixturesRepository.loadFixturesByDate(formattedDate)
+            val result = fixturesRepository.loadFixturesByDate(TESTING_DATE)
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
@@ -139,7 +164,7 @@ class HomeViewModel(
             "Belgium",
             "England"
         )
-        const val LAST_X_FIXTURES = 60
         const val DATE_FORMAT = "yyy-MM-dd"
+        const val TESTING_DATE = "2023-01-22"
     }
 }

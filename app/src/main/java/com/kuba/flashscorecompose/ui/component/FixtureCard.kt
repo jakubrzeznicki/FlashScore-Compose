@@ -35,12 +35,13 @@ fun FixtureCard(fixtureItem: FixtureItem, onFixtureClick: (FixtureItem) -> Unit)
     Card(
         onClick = { onFixtureClick(fixtureItem) },
         backgroundColor = GreyLight,
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier.padding(bottom = 8.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ClubImages(
+            TeamLogos(
                 modifier = Modifier
                     .weight(3f)
                     .padding(horizontal = 8.dp),
@@ -67,7 +68,7 @@ fun FixtureCard(fixtureItem: FixtureItem, onFixtureClick: (FixtureItem) -> Unit)
 }
 
 @Composable
-fun ClubImages(modifier: Modifier, fixtureItem: FixtureItem) {
+fun TeamLogos(modifier: Modifier, fixtureItem: FixtureItem) {
     Row(modifier = modifier) {
         LogoWithBackground(
             logo = fixtureItem.homeTeam.logo,

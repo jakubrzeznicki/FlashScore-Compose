@@ -12,8 +12,10 @@ sealed interface HomeUiState {
     data class HasData(
         override val isLoading: Boolean,
         override val error: HomeError,
-        val countryItems: List<Country>,
-        val leagueFixturesDataList: List<LeagueFixturesData>
+        val countries: List<Country>,
+        val leagueFixturesDataList: List<LeagueFixturesData>,
+        val selectedCountry: Country,
+        val searchQuery: String
     ) : HomeUiState
 
     data class NoData(

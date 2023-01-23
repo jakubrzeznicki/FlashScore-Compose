@@ -56,8 +56,8 @@ class KoinModules {
         viewModel { CountriesViewModel(get()) }
         viewModel { (countryCode: String) -> LeaguesViewModel(countryCode, get(), get()) }
         viewModel { (fixtureId: Int) -> FixtureDetailsViewModel(fixtureId, get()) }
-        viewModel { (fixtureId: Int, leagueId: Int, round: String) ->
-            StatisticsViewModel(fixtureId, leagueId, round, get(), get())
+        viewModel { (fixtureId: Int, leagueId: Int, round: String, season: Int) ->
+            StatisticsViewModel(fixtureId, leagueId, round, season, get(), get())
         }
         viewModel { (fixtureId: Int) -> LineupViewModel(fixtureId, get()) }
         viewModel { (homeTeamId: Int, awayTeamId: Int, season: Int) ->

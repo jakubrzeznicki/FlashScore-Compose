@@ -1,6 +1,5 @@
 package com.kuba.flashscorecompose.data.standings.model
 
-import androidx.compose.ui.graphics.Color
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.Team
 

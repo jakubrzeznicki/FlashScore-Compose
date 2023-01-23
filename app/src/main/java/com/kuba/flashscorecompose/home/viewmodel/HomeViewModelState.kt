@@ -12,11 +12,22 @@ data class HomeViewModelState(
     val isLoading: Boolean = false,
     val error: HomeError = HomeError.NoError,
     val leagueFixturesDataList: List<LeagueFixturesData> = emptyList(),
-    val countryItems: List<Country> = emptyList(),
+    val filteredLeagueFixtureDataList: List<LeagueFixturesData> = emptyList(),
+    val selectedCountry: Country = Country.EMPTY_COUNTRY,
+    val searchQuery: String = "",
+    val countries: List<Country> = emptyList(),
 ) {
-    fun toUiState(): HomeUiState = if (leagueFixturesDataList.isEmpty() && countryItems.isEmpty()) {
-        HomeUiState.NoData(isLoading, error)
-    } else {
-        HomeUiState.HasData(isLoading, error, countryItems, leagueFixturesDataList)
-    }
+    fun toUiState(): HomeUiState =
+        if (filteredLeagueFixtureDataList.isEmpty() && countries.isEmpty()) {
+            HomeUiState.NoData(isLoading, error)
+        } else {
+            HomeUiState.HasData(
+                isLoading,
+                error,
+                countries,
+                filteredLeagueFixtureDataList,
+                selectedCountry,
+                searchQuery
+            )
+        }
 }

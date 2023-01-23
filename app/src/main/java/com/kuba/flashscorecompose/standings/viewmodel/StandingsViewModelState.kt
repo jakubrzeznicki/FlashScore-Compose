@@ -14,15 +14,17 @@ data class StandingsViewModelState(
     val standingsQuery: String = "",
     val standings: List<Standing> = emptyList(),
     val filteredStandings: List<Standing> = emptyList(),
-    val countryItems: List<Country> = emptyList()
+    val selectedCountry: Country = Country.EMPTY_COUNTRY,
+    val countries: List<Country> = emptyList()
 ) {
-    fun toUiState(): StandingsUiState = if (standings.isNotEmpty() && countryItems.isNotEmpty()) {
+    fun toUiState(): StandingsUiState = if (standings.isNotEmpty() && countries.isNotEmpty()) {
         StandingsUiState.HasData(
             isLoading,
             error,
             standingsQuery,
             filteredStandings,
-            countryItems
+            selectedCountry,
+            countries
         )
     } else {
         StandingsUiState.NoData(isLoading, error, standingsQuery)

@@ -27,7 +27,8 @@ fun LineupEntity.toLineup(): Lineup {
         substitutes = substitutes.map { it.toPlayer() },
         team = team.toTeam(),
         teamId = teamId,
-        fixtureId = fixtureId
+        fixtureId = fixtureId,
+        startXIWithPosition = emptyMap()
     )
 }
 
@@ -133,7 +134,8 @@ fun LineupDto.toLineup(fixtureId: Int): Lineup {
         formation = formation.orEmpty(),
         startXI = startXI?.map { it.player.toPlayer(team?.id ?: 0) }.orEmpty(),
         substitutes = substitutes?.map { it.player.toPlayer(team?.id ?: 0) }.orEmpty(),
-        team = team?.toTeam() ?: Team.EMPTY_TEAM
+        team = team?.toTeam() ?: Team.EMPTY_TEAM,
+        emptyMap()
     )
 }
 

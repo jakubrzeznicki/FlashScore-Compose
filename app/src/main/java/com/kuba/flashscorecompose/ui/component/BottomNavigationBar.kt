@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -28,19 +29,24 @@ fun BottomNavigationBar(navController: NavHostController) {
         NavigationItem.Profile
     )
     BottomNavigation(
-        backgroundColor = colorResource(id = R.color.dark500),
+        backgroundColor = colorResource(id = R.color.black500),
         contentColor = Color.White
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
         items.forEach { item ->
             BottomNavigationItem(
-                icon = { Icon(painterResource(id = item.icon), contentDescription = item.title) },
-                label = { Text(text = item.title) },
+                icon = {
+                    Icon(
+                        painterResource(id = item.icon),
+                        contentDescription = stringResource(id = item.titleId)
+                    )
+                },
+                label = { Text(text = stringResource(id = item.titleId)) },
                 selectedContentColor = Blue500,
                 unselectedContentColor = Color.White.copy(0.4f),
                 alwaysShowLabel = item.route == currentRoute,
-                selected = item.route == currentRoute,
+                selected = currentRoute?.startsWith(item.route) ?: (currentRoute === item.route),
                 onClick = {
                     navController.navigate(item.route) {
                         navController.graph.startDestinationRoute?.let { route ->
@@ -60,5 +66,5 @@ fun BottomNavigationBar(navController: NavHostController) {
 @Preview(showBackground = true)
 @Composable
 fun BottomNavigationBarPreview() {
- //   BottomNavigationBar()
+    //   BottomNavigationBar()
 }
