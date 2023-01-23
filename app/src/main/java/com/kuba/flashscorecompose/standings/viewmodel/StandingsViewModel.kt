@@ -3,6 +3,7 @@ package com.kuba.flashscorecompose.standings.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.data.country.CountryDataSource
+import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.league.LeagueDataSource
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.data.standings.StandingsDataSource
@@ -10,9 +11,9 @@ import com.kuba.flashscorecompose.data.standings.model.Standing
 import com.kuba.flashscorecompose.home.viewmodel.HomeViewModel
 import com.kuba.flashscorecompose.standings.model.StandingsError
 import com.kuba.flashscorecompose.utils.RepositoryResult
+import com.kuba.flashscorecompose.utils.containsQuery
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.util.*
 
 /**
  * Created by jrzeznicki on 18/01/2023.
@@ -35,11 +36,16 @@ class StandingsViewModel(
         //refreshStandings()
     }
 
+    fun refresh() {
+        refreshCountries()
+        refreshStandings()
+    }
+
     private fun observeCountries() {
         viewModelScope.launch {
             countryRepository.observeCountries(HomeViewModel.COUNTRY_CODES).collect { countries ->
                 viewModelState.update {
-                    it.copy(countryItems = countries)
+                    it.copy(countries = countries)
                 }
             }
         }
@@ -61,11 +67,15 @@ class StandingsViewModel(
         }
     }
 
-    fun refreshStandings() {
+    private fun refreshStandings() {
         viewModelScope.launch {
             val leagues = leagueRepository.getLeagues(HomeViewModel.COUNTRY_NAMES)
+            if (leagues.isEmpty()) {
+                viewModelState.update { it.copy(error = StandingsError.EmptyLeague) }
+                return@launch
+            }
             leagues.forEach { league ->
-                //refreshStanding(league)
+                refreshStanding(league)
             }
         }
     }
@@ -89,6 +99,10 @@ class StandingsViewModel(
     private fun observeStandings() {
         viewModelScope.launch {
             val leagues = leagueRepository.getLeagues(HomeViewModel.COUNTRY_NAMES)
+            if (leagues.isEmpty()) {
+                viewModelState.update { it.copy(error = StandingsError.EmptyLeague) }
+                return@launch
+            }
             standingsRepository.observeStandings(leagues.map { it.id }, leagues.first().season)
                 .collect { standings ->
                     val filteredStandings = filterStandings(standings)
@@ -106,24 +120,33 @@ class StandingsViewModel(
         }
     }
 
-    fun getStandingsByCountry(countryName: String, isSelected: Boolean) {
+    fun updateSelectedCountry(newSelectedCountry: Country, isSelected: Boolean) {
         val filteredStandings = if (isSelected) {
             viewModelState.value.standings
         } else {
-            filterStandings(query = countryName)
+            filterStandings(selectedCountry = newSelectedCountry)
         }
         viewModelState.update {
-            it.copy(filteredStandings = filteredStandings, standingsQuery = "")
+            it.copy(
+                filteredStandings = filteredStandings,
+                selectedCountry = if (isSelected) Country.EMPTY_COUNTRY else newSelectedCountry,
+                standingsQuery = if (isSelected) EMPTY else viewModelState.value.standingsQuery
+            )
         }
     }
 
     private fun filterStandings(
         standings: List<Standing> = viewModelState.value.standings,
-        query: String = viewModelState.value.standingsQuery
+        query: String = viewModelState.value.standingsQuery,
+        selectedCountry: Country = viewModelState.value.selectedCountry
     ): List<Standing> {
+        val countryName = selectedCountry.name
+        val countryCode = selectedCountry.code
         return standings
             .filter {
-                it.league.name.containsQuery(query) || it.league.countryName.containsQuery(query)
+                (it.league.name.containsQuery(query) || it.league.countryName.containsQuery(query))
+                        &&
+                        (it.league.countryName == countryName || it.league.countryCode == countryCode)
             }
     }
 
@@ -131,8 +154,7 @@ class StandingsViewModel(
         viewModelState.update { it.copy(error = StandingsError.NoError) }
     }
 
-    private fun String?.containsQuery(query: String) =
-        this.orEmpty()
-            .lowercase(Locale.getDefault())
-            .contains(query.lowercase(Locale.getDefault()))
+    private companion object {
+        const val EMPTY = ""
+    }
 }

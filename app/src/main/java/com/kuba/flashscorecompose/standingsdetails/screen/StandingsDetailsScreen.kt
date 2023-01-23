@@ -3,11 +3,13 @@ package com.kuba.flashscorecompose.standingsdetails.screen
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -31,11 +33,12 @@ import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import coil.size.Size
+import com.google.relay.compose.BoxScopeInstanceImpl.matchParentSize
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.Team
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.data.standings.model.StandingItem
-import com.kuba.flashscorecompose.standingsdetails.model.FilteredButton
+import com.kuba.flashscorecompose.standingsdetails.model.StandingFilterButton
 import com.kuba.flashscorecompose.standingsdetails.model.StandingsDetailsUiState
 import com.kuba.flashscorecompose.standingsdetails.viewmodel.StandingsDetailsViewModel
 import com.kuba.flashscorecompose.ui.component.AppTopBar
@@ -68,7 +71,7 @@ fun StandingsDetailsRoute(
         navigator = navigator,
         onTeamClick = {},
         scaffoldState = scaffoldState,
-        onFilteredButtonsStateChanged = { viewModel.updateButtonState(it) }
+        onStandingsFilteredButtonClick = { viewModel.filterStandings(it) }
     )
 }
 
@@ -80,25 +83,39 @@ private fun StandingsDetailsScreen(
     navigator: DestinationsNavigator,
     onTeamClick: (Team) -> Unit,
     scaffoldState: ScaffoldState,
-    onFilteredButtonsStateChanged: (FilteredButton) -> Unit
+    onStandingsFilteredButtonClick: (StandingFilterButton) -> Unit
 ) {
-    val scrollState = rememberScrollState()
+    val scrollState = rememberLazyListState()
     Scaffold(
         modifier = modifier,
         topBar = { TopBar(navigator, uiState.league) },
         scaffoldState = scaffoldState
     ) {
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.dp),
+            state = scrollState
         ) {
-            LeagueHeader(uiState.league)
-            Spacer(modifier = Modifier.size(32.dp))
-            FilterStandingChips(uiState.standingButtonState, onFilteredButtonsStateChanged)
-            Spacer(modifier = Modifier.size(24.dp))
-            StandingItemsList(uiState.standingsItems, onTeamClick)
+            item {
+                LeagueHeader(uiState.league)
+            }
+            item {
+                StandingFilterChips(uiState.standingFilterButton, onStandingsFilteredButtonClick)
+            }
+            item {
+                StandingHeaderRow()
+                Divider(
+                    color = GreyDark,
+                    thickness = 2.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                )
+            }
+            items(items = uiState.standingsItems) {
+                StandingElementRow(it, onTeamClick)
+            }
         }
     }
 }
@@ -121,7 +138,7 @@ private fun TopBar(navigator: DestinationsNavigator, league: League) {
         },
         title = {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.matchParentSize(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
@@ -147,7 +164,9 @@ private fun TopBar(navigator: DestinationsNavigator, league: League) {
 @Composable
 private fun LeagueHeader(league: League) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -178,30 +197,35 @@ private fun LeagueHeader(league: League) {
             text = league.name,
             fontWeight = FontWeight.SemiBold,
             fontSize = 24.sp,
-            color = Color.White
+            color = Color.White,
+            textAlign = TextAlign.Center
         )
     }
 }
 
 @Composable
-private fun FilterStandingChips(
-    selectedFilteredButton: FilteredButton,
-    onFilteredChanged: (FilteredButton) -> Unit
+private fun StandingFilterChips(
+    selectedFilteredButton: StandingFilterButton,
+    onFilteredChanged: (StandingFilterButton) -> Unit
 ) {
-    Row(modifier = Modifier.fillMaxWidth()) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 24.dp)
+    ) {
         FilteredTextButton(
-            filteredButton = FilteredButton.All,
-            isSelected = selectedFilteredButton is FilteredButton.All,
+            filteredButton = StandingFilterButton.All,
+            isSelected = selectedFilteredButton is StandingFilterButton.All,
             onStateChanged = onFilteredChanged
         )
         FilteredTextButton(
-            filteredButton = FilteredButton.Home,
-            isSelected = selectedFilteredButton is FilteredButton.Home,
+            filteredButton = StandingFilterButton.Home,
+            isSelected = selectedFilteredButton is StandingFilterButton.Home,
             onStateChanged = onFilteredChanged
         )
         FilteredTextButton(
-            filteredButton = FilteredButton.Away,
-            isSelected = selectedFilteredButton is FilteredButton.Away,
+            filteredButton = StandingFilterButton.Away,
+            isSelected = selectedFilteredButton is StandingFilterButton.Away,
             onStateChanged = onFilteredChanged
         )
     }
@@ -209,9 +233,9 @@ private fun FilterStandingChips(
 
 @Composable
 fun FilteredTextButton(
-    filteredButton: FilteredButton,
+    filteredButton: StandingFilterButton,
     isSelected: Boolean,
-    onStateChanged: (FilteredButton) -> Unit
+    onStateChanged: (StandingFilterButton) -> Unit
 ) {
     TextButton(
         onClick = { onStateChanged(filteredButton) },
@@ -237,22 +261,6 @@ fun FilteredTextButton(
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center
         )
-    }
-}
-
-@Composable
-fun StandingItemsList(standingsItems: List<StandingItem>, onTeamClick: (Team) -> Unit) {
-    Column {
-        StandingHeaderRow()
-        Divider(
-            color = GreyDark,
-            thickness = 2.dp,
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.size(16.dp))
-        standingsItems.forEach { standingItem ->
-            StandingElementRow(standingItem, onTeamClick)
-        }
     }
 }
 
@@ -313,6 +321,7 @@ private fun StandingHeaderRow() {
 private fun StandingElementRow(standingItem: StandingItem, onTeamClick: (Team) -> Unit) {
     Row(
         modifier = Modifier
+            .clickable { onTeamClick(standingItem.team) }
             .fillMaxWidth()
             .padding(vertical = 4.dp)
             .background(
@@ -332,7 +341,7 @@ private fun StandingElementRow(standingItem: StandingItem, onTeamClick: (Team) -
             modifier = Modifier
                 .weight(1f)
                 .size(28.dp)
-                .padding(4.dp),
+                .padding(end = 4.dp),
             model = ImageRequest.Builder(LocalContext.current)
                 .decoderFactory(SvgDecoder.Factory())
                 .data(standingItem.team.logo)

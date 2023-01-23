@@ -13,20 +13,20 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
  */
 typealias ComposableFun = @Composable () -> Unit
 
-sealed class TabItem(var icon: Int, var title: String, var screen: ComposableFun) {
-    class MatchDetail(
+sealed class TabItem(var icon: Int, var titleId: Int, var screen: ComposableFun) {
+    class Statistics(
         fixtureId: Int,
         leagueId: Int,
         round: String,
+        season: Int,
         navigator: DestinationsNavigator
-    ) :
-        TabItem(
-            R.drawable.ic_profile,
-            "Match Detail",
-            { StatisticsScreen(fixtureId, leagueId, round, navigator) })
+    ) : TabItem(
+        R.drawable.ic_profile,
+        R.string.statistics,
+        { StatisticsScreen(fixtureId, leagueId, round, season, navigator) })
 
     class LineUp(fixtureId: Int, navigator: DestinationsNavigator) :
-        TabItem(R.drawable.ic_standings, "Line Up", { LineupScreen(fixtureId, navigator) })
+        TabItem(R.drawable.ic_standings, R.string.lineups, { LineupScreen(fixtureId, navigator) })
 
     class HeadToHead(
         homeTeam: Team,
@@ -34,9 +34,8 @@ sealed class TabItem(var icon: Int, var title: String, var screen: ComposableFun
         season: Int,
         fixtureId: Int,
         navigator: DestinationsNavigator
-    ) :
-        TabItem(
-            R.drawable.ic_explore,
-            "H2H",
-            { HeadToHeadScreen(homeTeam, awayTeam, season, fixtureId, navigator) })
+    ) : TabItem(
+        R.drawable.ic_explore,
+        R.string.head_to_head,
+        { HeadToHeadScreen(homeTeam, awayTeam, season, fixtureId, navigator) })
 }

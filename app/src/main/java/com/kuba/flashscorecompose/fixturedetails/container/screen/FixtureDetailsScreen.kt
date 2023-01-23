@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -35,6 +36,7 @@ import com.kuba.flashscorecompose.fixturedetails.container.viewmodel.FixtureDeta
 import com.kuba.flashscorecompose.fixturedetails.tabs.TabItem
 import com.kuba.flashscorecompose.ui.component.AppTopBar
 import com.kuba.flashscorecompose.ui.component.EmptyState
+import com.kuba.flashscorecompose.ui.component.FlashScoreSnackbarHost
 import com.kuba.flashscorecompose.ui.theme.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -47,6 +49,7 @@ import org.koin.core.parameter.parametersOf
  * Created by jrzeznicki on 23/12/2022.
  */
 private const val SETUP_FIXTURE_DETAILS_CONTAINER_KEY = "SETUP_FIXTURE_DETAILS_CONTAINER_KEY"
+private const val EMPTY_TITLE = ""
 
 @Destination(route = "home/fixturedetails")
 @Composable
@@ -72,12 +75,13 @@ fun FixtureDetailsScreen(
     uiState: FixtureDetailsUiState,
     navigator: DestinationsNavigator,
     onTeamClick: (Team) -> Unit,
-    scaffoldState: ScaffoldState = rememberScaffoldState()
+    scaffoldState: ScaffoldState
 ) {
     Scaffold(
         modifier = modifier,
         topBar = { TopBar(navigator, uiState) },
         scaffoldState = scaffoldState,
+        snackbarHost = { FlashScoreSnackbarHost(hostState = it) }
     ) { paddingValues ->
         Column(
             Modifier
@@ -87,7 +91,6 @@ fun FixtureDetailsScreen(
             when (uiState) {
                 is FixtureDetailsUiState.HasData -> {
                     HeaderMatchInfo(uiState.fixtureItem, onTeamClick)
-                    Spacer(modifier = Modifier.size(32.dp))
                     FixtureDetailsTabs(uiState, navigator)
                 }
                 is FixtureDetailsUiState.NoData -> EmptyState(
@@ -103,10 +106,10 @@ fun FixtureDetailsScreen(
 }
 
 @Composable
-fun TopBar(navigator: DestinationsNavigator, uiState: FixtureDetailsUiState) {
+private fun TopBar(navigator: DestinationsNavigator, uiState: FixtureDetailsUiState) {
     val titleText = when (uiState) {
         is FixtureDetailsUiState.HasData -> uiState.fixtureItem.league.round
-        else -> ""
+        else -> EMPTY_TITLE
     }
     AppTopBar(
         navigationIcon = {
@@ -117,7 +120,7 @@ fun TopBar(navigator: DestinationsNavigator, uiState: FixtureDetailsUiState) {
                 onClick = { navigator.popBackStack() }) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "",
+                    contentDescription = null,
                     tint = Color.White
                 )
             }
@@ -127,7 +130,7 @@ fun TopBar(navigator: DestinationsNavigator, uiState: FixtureDetailsUiState) {
 }
 
 @Composable
-fun HeaderMatchInfo(fixtureItem: FixtureItem, onTeamClick: (Team) -> Unit) {
+private fun HeaderMatchInfo(fixtureItem: FixtureItem, onTeamClick: (Team) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -142,9 +145,9 @@ fun HeaderMatchInfo(fixtureItem: FixtureItem, onTeamClick: (Team) -> Unit) {
 }
 
 @Composable
-fun TeamInfo(team: Team, modifier: Modifier, onTeamClick: (Team) -> Unit) {
+private fun TeamInfo(team: Team, modifier: Modifier, onTeamClick: (Team) -> Unit) {
     Column(
-        modifier = modifier,
+        modifier = modifier.clickable { onTeamClick(team) },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -183,7 +186,7 @@ fun TeamInfo(team: Team, modifier: Modifier, onTeamClick: (Team) -> Unit) {
 }
 
 @Composable
-fun TeamInfoScore(goals: Goals, status: Status, modifier: Modifier) {
+private fun TeamInfoScore(goals: Goals, status: Status, modifier: Modifier) {
     Column(
         modifier.padding(vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -220,13 +223,14 @@ fun TeamInfoScore(goals: Goals, status: Status, modifier: Modifier) {
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun FixtureDetailsTabs(uiState: FixtureDetailsUiState.HasData, navigator: DestinationsNavigator) {
+private fun FixtureDetailsTabs(uiState: FixtureDetailsUiState.HasData, navigator: DestinationsNavigator) {
     Column {
         val tabs = listOf(
-            TabItem.MatchDetail(
+            TabItem.Statistics(
                 uiState.fixtureItem.id,
                 uiState.fixtureItem.league.id,
                 uiState.fixtureItem.league.round,
+                uiState.fixtureItem.season,
                 navigator
             ),
             TabItem.LineUp(uiState.fixtureItem.id, navigator),
@@ -249,7 +253,7 @@ fun FixtureDetailsTabs(uiState: FixtureDetailsUiState.HasData, navigator: Destin
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun FixtureDetailsTabs(
+private fun FixtureDetailsTabs(
     tabs: List<TabItem>,
     pagerState: PagerState,
     coroutineScope: CoroutineScope
@@ -297,7 +301,7 @@ private fun FixtureDetailsTab(
             Modifier
                 .clip(RoundedCornerShape(50))
         },
-        text = { Text(tab.title) },
+        text = { Text(stringResource(id = tab.titleId)) },
         selected = pagerState.currentPage == index,
         onClick = {
             coroutineScope.launch {
@@ -309,7 +313,7 @@ private fun FixtureDetailsTab(
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun TabsContent(tabs: List<TabItem>, pagerState: PagerState) {
+private fun TabsContent(tabs: List<TabItem>, pagerState: PagerState) {
     HorizontalPager(state = pagerState, count = tabs.size) { page ->
         tabs[page].screen()
     }

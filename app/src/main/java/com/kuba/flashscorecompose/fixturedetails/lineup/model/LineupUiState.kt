@@ -12,8 +12,8 @@ interface LineupUiState {
     data class HasData(
         override val isLoading: Boolean,
         override val error: LineupError,
-        val homeLineup: Lineup,
-        val awayLineup: Lineup
+        val lineups: List<Lineup>,
+        val selectedLineup: Lineup
     ) : LineupUiState
 
     data class NoData(

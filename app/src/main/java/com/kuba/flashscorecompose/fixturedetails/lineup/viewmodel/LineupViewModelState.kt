@@ -10,11 +10,16 @@ import com.kuba.flashscorecompose.fixturedetails.lineup.model.LineupUiState
 data class LineupViewModelState(
     val isLoading: Boolean = false,
     val error: LineupError = LineupError.NoError,
-    val homeLineup: Lineup? = null,
-    val awayLineup: Lineup? = null
+    val lineups: List<Lineup> = emptyList(),
+    val selectedLineup: Lineup = Lineup.EMPTY_LINEUP,
 ) {
-    fun toUiState(): LineupUiState = if (homeLineup != null && awayLineup != null) {
-        LineupUiState.HasData(isLoading, error, homeLineup, awayLineup)
+    fun toUiState(): LineupUiState = if (lineups.isNotEmpty()) {
+        LineupUiState.HasData(
+            isLoading,
+            error,
+            lineups,
+            selectedLineup,
+        )
     } else {
         LineupUiState.NoData(isLoading, error)
     }

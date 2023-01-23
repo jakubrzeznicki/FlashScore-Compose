@@ -70,7 +70,8 @@ fun FixtureInfoEntity.toFixtureInfo(): FixtureInfo {
         timestamp = timestamp,
         timezone = timezone,
         venue = venue.toVenue(),
-        periods = periods.toPeriods()
+        periods = periods.toPeriods(),
+        ""
     )
 }
 

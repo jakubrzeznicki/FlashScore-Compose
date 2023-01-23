@@ -31,7 +31,6 @@ fun Statistic.toStatisticRowEntity(): StatisticRowEntity {
 
 fun StatisticsEntity.toStatistics(): Statistics {
     return Statistics(
-        isHome = isHome,
         statistics = statistics.map { it.toStatistic() },
         team = team.toTeam(),
         fixtureId = fixtureId
@@ -47,7 +46,6 @@ fun StatisticsTeamDto.toStatistics(fixtureId: Int, isHome: Boolean): Statistics 
         fixtureId = fixtureId,
         statistics = statistics?.map { it.toStatistic() }.orEmpty(),
         team = team?.toTeam() ?: Team.EMPTY_TEAM,
-        isHome = isHome
     )
 }
 

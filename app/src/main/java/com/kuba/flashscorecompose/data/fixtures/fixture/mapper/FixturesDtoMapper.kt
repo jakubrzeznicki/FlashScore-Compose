@@ -74,7 +74,8 @@ fun FixtureInfoDto.toFixtureInfo(): FixtureInfo {
         timestamp = timestamp ?: 0,
         timezone = timezone.orEmpty(),
         venue = venue?.toVenue() ?: Venue.EMPTY_VENUE,
-        periods = periods?.toPeriods() ?: Periods.EMPTY_PERIODS
+        periods = periods?.toPeriods() ?: Periods.EMPTY_PERIODS,
+        year = ""
     )
 }
 

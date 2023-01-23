@@ -8,6 +8,6 @@ import com.kuba.flashscorecompose.data.standings.model.StandingItem
  */
 data class StandingsDetailsUiState(
     val league: League,
-    val standingButtonState: FilteredButton = FilteredButton.All,
-    val standingsItems: List<StandingItem> = emptyList()
+    val standingFilterButton: StandingFilterButton,
+    val standingsItems: List<StandingItem>
 )

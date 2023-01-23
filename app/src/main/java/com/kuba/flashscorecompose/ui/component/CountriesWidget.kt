@@ -43,20 +43,17 @@ import com.kuba.flashscorecompose.ui.theme.Orange
 fun CountriesWidget(
     modifier: Modifier = Modifier,
     countries: List<Country>,
-    onCountryClick: (String, Boolean) -> Unit,
+    onCountryClick: (Country, Boolean) -> Unit,
+    selectedItem: Country,
     state: LazyListState = rememberLazyListState()
 ) {
-    val selectedCountryName = remember { mutableStateOf("") }
     LazyRow(modifier = modifier, state = state) {
         items(countries) { country ->
             CountryWidgetCard(
                 country = country,
-                isSelected = selectedCountryName.value == country.name
-            ) {
-                val isSelected = selectedCountryName.value == it
-                selectedCountryName.value = if (isSelected) "" else it
-                onCountryClick(it, isSelected)
-            }
+                isSelected = selectedItem == country,
+                onCountryClick = onCountryClick
+            )
         }
     }
 }
@@ -66,10 +63,10 @@ fun CountriesWidget(
 private fun CountryWidgetCard(
     country: Country,
     isSelected: Boolean,
-    onCountryClick: (String) -> Unit
+    onCountryClick: (Country, Boolean) -> Unit
 ) {
     Card(
-        onClick = { onCountryClick(country.name) },
+        onClick = { onCountryClick(country, isSelected) },
         backgroundColor = MaterialTheme.colors.background,
         modifier = Modifier.size(width = 115.dp, height = 130.dp),
     ) {

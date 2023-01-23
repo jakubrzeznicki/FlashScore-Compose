@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesDataSource
 import com.kuba.flashscorecompose.data.fixtures.statistics.StatisticsDataSource
+import com.kuba.flashscorecompose.data.fixtures.statistics.model.Statistics
 import com.kuba.flashscorecompose.fixturedetails.statistics.model.StatisticsError
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
@@ -16,6 +17,7 @@ class StatisticsViewModel(
     private val fixtureId: Int,
     private val leagueId: Int,
     private val round: String,
+    private val season: Int,
     private val statisticsRepository: StatisticsDataSource,
     private val fixturesRepository: FixturesDataSource
 ) : ViewModel() {
@@ -33,17 +35,20 @@ class StatisticsViewModel(
     }
 
     fun refresh() {
-//        loadStatistics()
-//        loadFixtures()
+        loadStatistics()
+        loadFixtures()
     }
 
     private fun observeStatistics() {
         viewModelScope.launch {
             statisticsRepository.observeStatistics(fixtureId).collect { statistics ->
+                val homeStatistics = statistics.firstOrNull() ?: Statistics.EMPTY_STATISTICS
+                val awayStatistics = statistics.lastOrNull() ?: Statistics.EMPTY_STATISTICS
                 viewModelState.update {
                     it.copy(
-                        homeStatistics = statistics.firstOrNull(),
-                        awayStatistics = statistics.lastOrNull()
+                        homeTeam = homeStatistics.team,
+                        awayTeam = awayStatistics.team,
+                        statistics = homeStatistics.statistics.zip(awayStatistics.statistics)
                     )
                 }
             }
@@ -52,7 +57,7 @@ class StatisticsViewModel(
 
     private fun observeFixtures() {
         viewModelScope.launch {
-            fixturesRepository.observeFixturesFilteredByRound(leagueId, 2021, round)
+            fixturesRepository.observeFixturesFilteredByRound(leagueId, season, round)
                 .collect { fixtures ->
                     viewModelState.update { it.copy(fixtures = fixtures) }
                 }
@@ -78,7 +83,7 @@ class StatisticsViewModel(
     private fun loadFixtures() {
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            val result = fixturesRepository.loadFixturesFilteredByRound(leagueId, 2021, round)
+            val result = fixturesRepository.loadFixturesFilteredByRound(leagueId, season, round)
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
