@@ -4,14 +4,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.sp
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.fixturedetails.statistics.model.StatisticsUiState
 import com.kuba.flashscorecompose.fixturedetails.statistics.viewmodel.StatisticsViewModel
-import com.kuba.flashscorecompose.ui.theme.TextGreyLight
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
@@ -125,20 +124,20 @@ private fun StatisticDetailRow(homeValue: String, awayValue: String, stat: Strin
         Text(
             text = homeValue,
             fontSize = 16.sp,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSecondary,
             textAlign = TextAlign.Center
         )
         Text(
             text = stat,
             fontWeight = FontWeight.SemiBold,
             fontSize = 16.sp,
-            color = TextGreyLight,
+            color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center
         )
         Text(
             text = awayValue,
             fontSize = 16.sp,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSecondary,
             textAlign = TextAlign.Center
         )
     }
@@ -157,12 +156,12 @@ private fun OtherMatchesHeader() {
             text = stringResource(id = R.string.other_matches),
             fontWeight = FontWeight.SemiBold,
             fontSize = 20.sp,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSecondary,
         )
         Text(
             text = stringResource(id = R.string.see_all),
             fontSize = 12.sp,
-            color = TextGreyLight,
+            color = MaterialTheme.colorScheme.onBackground,
         )
     }
 }

@@ -7,15 +7,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
-import androidx.compose.material.Text
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -92,7 +92,7 @@ fun HeadToHeadList(
                 .fillMaxSize()
                 .padding(vertical = 16.dp),
             state = scrollState,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.Start
         ) {
             when (uiState) {
                 is HeadToHeadUiState.HasData -> {
@@ -106,6 +106,7 @@ fun HeadToHeadList(
                         LastMatchesSection(fixture = it, onFixtureClick = onFixtureClick)
                     }
                     item {
+                        Spacer(modifier = Modifier.size(16.dp))
                         MatchesHeaderText(
                             modifier = Modifier.padding(bottom = 24.dp),
                             title = "${stringResource(id = R.string.last_matches)}: ${awayTeam.name}"
@@ -115,6 +116,7 @@ fun HeadToHeadList(
                         LastMatchesSection(fixture = it, onFixtureClick = onFixtureClick)
                     }
                     item {
+                        Spacer(modifier = Modifier.size(16.dp))
                         MatchesHeaderText(
                             modifier = Modifier.padding(bottom = 8.dp),
                             title = stringResource(id = R.string.between)
@@ -146,7 +148,7 @@ private fun MatchesHeaderText(modifier: Modifier = Modifier, title: String) {
         modifier = modifier,
         text = title,
         style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold),
-        color = Color.White,
+        color = MaterialTheme.colorScheme.onSecondary,
         textAlign = TextAlign.Start
     )
 }
@@ -158,7 +160,7 @@ private fun LastMatchesSection(
 ) {
     MatchItem(fixtureItem = fixture, onFixtureClick)
     Divider(
-        color = GreyDark,
+        color = MaterialTheme.colorScheme.surface,
         thickness = 2.dp,
         modifier = Modifier.padding(vertical = 8.dp)
     )
@@ -181,7 +183,7 @@ private fun MatchItem(fixtureItem: FixtureItem, onFixtureClick: (FixtureItem) ->
             Text(
                 text = fixtureItem.fixture.year,
                 style = TextStyle(fontSize = 10.sp, fontWeight = FontWeight.SemiBold),
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSecondary,
                 modifier = Modifier.padding(end = 16.dp)
             )
             Column {
@@ -230,7 +232,7 @@ private fun TeamInfo(teamLogo: String, teamName: String, fontWeight: FontWeight)
                 fontSize = 12.sp,
                 fontWeight = fontWeight
             ),
-            color = Color.White
+            color = MaterialTheme.colorScheme.onSecondary
         )
     }
 }
@@ -249,7 +251,7 @@ private fun FixtureScore(
                 fontSize = 12.sp,
                 fontWeight = fixtureItemStyle.first.fontWeight
             ),
-            color = Color.White
+            color = MaterialTheme.colorScheme.onSecondary
         )
         Text(
             text = fixtureItem.goals.away.toString(),
@@ -257,7 +259,7 @@ private fun FixtureScore(
                 fontSize = 12.sp,
                 fontWeight = fixtureItemStyle.second.fontWeight
             ),
-            color = Color.White
+            color = MaterialTheme.colorScheme.onSecondary
         )
     }
 }
@@ -280,7 +282,7 @@ private fun FixtureResultIcon(fixtureItemStyle: Pair<FixtureItemStyle, FixtureIt
             style = TextStyle(
                 fontSize = 12.sp, fontWeight = FontWeight.SemiBold
             ),
-            color = Color.White
+            color = MaterialTheme.colorScheme.onSecondary
         )
     }
 }
@@ -291,19 +293,19 @@ private fun fixtureItemStyling(fixtureItem: FixtureItem): Pair<FixtureItemStyle,
     return if (homeGoals > awayGoals) {
         FixtureItemStyle(FontWeight.Bold, GreenLight, "W") to FixtureItemStyle(
             FontWeight.Normal,
-            Red800,
+            RedDark,
             "W"
         )
     } else if (awayGoals > homeGoals) {
-        FixtureItemStyle(FontWeight.Normal, Color.Red, "L") to FixtureItemStyle(
+        FixtureItemStyle(FontWeight.Normal, RedDark, "L") to FixtureItemStyle(
             FontWeight.Bold,
             GreenLight,
             "L"
         )
     } else {
-        FixtureItemStyle(FontWeight.SemiBold, Blue500, "D") to FixtureItemStyle(
+        FixtureItemStyle(FontWeight.SemiBold, Blue, "D") to FixtureItemStyle(
             FontWeight.SemiBold,
-            Blue500,
+            Blue,
             "D"
         )
     }

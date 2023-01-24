@@ -7,13 +7,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -29,11 +24,9 @@ import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import coil.size.Size
+import com.google.relay.compose.BoxScopeInstanceImpl.align
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.country.model.Country
-import com.kuba.flashscorecompose.ui.theme.GreyLight
-import com.kuba.flashscorecompose.ui.theme.LightOrange
-import com.kuba.flashscorecompose.ui.theme.Orange
 
 /**
  * Created by jrzeznicki on 19/01/2023.
@@ -58,37 +51,36 @@ fun CountriesWidget(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CountryWidgetCard(
     country: Country,
     isSelected: Boolean,
     onCountryClick: (Country, Boolean) -> Unit
 ) {
+    val color =
+        if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
     Card(
         onClick = { onCountryClick(country, isSelected) },
-        backgroundColor = MaterialTheme.colors.background,
-        modifier = Modifier.size(width = 115.dp, height = 130.dp),
+        colors = CardDefaults.cardColors(containerColor = color),
+        modifier = Modifier
+            .padding(8.dp)
+            .align(Alignment.Center),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        //.size(width = 115.dp, height = 130.dp)
     ) {
-        val isSelectedModifier = Modifier
-            .padding(PaddingValues(7.dp))
-            .background(
-                shape = RoundedCornerShape(16.dp),
-                brush = Brush.horizontalGradient(colors = listOf(LightOrange, Orange))
-            )
-        val normalModifier = Modifier
-            .padding(PaddingValues(7.dp))
-            .background(
-                shape = RoundedCornerShape(16.dp), color = GreyLight
-            )
         Column(
-            modifier = if (isSelected) isSelectedModifier else normalModifier,
+            modifier = Modifier
+                .background(color = color)
+                .padding(30.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.SpaceBetween,
         ) {
             AsyncImage(
                 modifier = Modifier.size(40.dp),
-                model = ImageRequest.Builder(LocalContext.current)
+                model = ImageRequest
+                    .Builder(LocalContext.current)
                     .decoderFactory(SvgDecoder.Factory())
                     .data(country.flag)
                     .size(Size.ORIGINAL)
@@ -98,12 +90,12 @@ private fun CountryWidgetCard(
                 contentDescription = null,
                 contentScale = ContentScale.Fit
             )
-            Spacer(modifier = Modifier.size(8.dp))
+            Spacer(modifier = Modifier.size(16.dp))
             Text(
                 text = country.name,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSecondary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
