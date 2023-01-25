@@ -6,15 +6,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -35,8 +34,7 @@ import com.kuba.flashscorecompose.leagues.viewmodel.LeaguesViewModel
 import com.kuba.flashscorecompose.ui.component.AppTopBar
 import com.kuba.flashscorecompose.ui.component.FullScreenLoading
 import com.kuba.flashscorecompose.ui.component.LoadingContent
-import com.kuba.flashscorecompose.ui.theme.Red800
-import com.kuba.flashscorecompose.ui.theme.Yellow500
+import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
@@ -52,8 +50,7 @@ private const val SETUP_LEAGUES_KEY = "SETUP_LEAGUES_KEY"
 fun LeaguesListScreen(
     countryCode: String,
     navigator: DestinationsNavigator,
-    viewModel: LeaguesViewModel = getViewModel(parameters = { parametersOf(countryCode) }),
-    scaffoldState: ScaffoldState = rememberScaffoldState()
+    viewModel: LeaguesViewModel = getViewModel(parameters = { parametersOf(countryCode) })
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
@@ -64,11 +61,11 @@ fun LeaguesListScreen(
         onLeagueClick = { },
         onDayClick = { },
         onErrorClear = { viewModel.cleanError() },
-        scaffoldState = scaffoldState,
         context = context
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LeaguesScreen(
     modifier: Modifier = Modifier,
@@ -77,10 +74,9 @@ fun LeaguesScreen(
     onLeagueClick: (League) -> Unit,
     onDayClick: (DayItem) -> Unit,
     onErrorClear: () -> Unit,
-    scaffoldState: ScaffoldState,
     context: Context
 ) {
-    Scaffold(topBar = { TopBar(context) }, scaffoldState = scaffoldState) { paddingValues ->
+    Scaffold(topBar = { TopBar(context) }) { paddingValues ->
         LoadingContent(
             modifier = Modifier.padding(paddingValues),
             empty = when (uiState) {
@@ -137,7 +133,6 @@ fun DaysList(
 //    }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DayCard(
     dayItem: DayItem,
@@ -156,8 +151,11 @@ fun DayCard(
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val color =
-            if (selectedIndex.value == dayItem.index) Red800 else MaterialTheme.colors.secondary
+        val color = if (selectedIndex.value == dayItem.index) {
+            MaterialTheme.colorScheme.error
+        } else {
+            MaterialTheme.colorScheme.secondary
+        }
         Text(text = dayItem.weekDay, color = color)
         Text(text = dayItem.formattedDate, color = color)
     }
@@ -188,7 +186,7 @@ fun LeaguesList(
         }
         Text(
             text = "Others competitions [A-Z]".uppercase(),
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSecondary,
             fontWeight = FontWeight.W500
         )
         LazyColumn(modifier = modifier, contentPadding = contentPadding, state = state) {
@@ -212,7 +210,7 @@ fun FavoritesSection(
 ) {
     Text(
         text = "Favorite competitions".uppercase(),
-        color = Yellow500,
+        color = MaterialTheme.colorScheme.primary,
         fontWeight = FontWeight.W500
     )
     LazyColumn(contentPadding = contentPadding, state = state) {
@@ -255,23 +253,24 @@ fun LeagueItem(leagueItem: League, onLeagueClick: (League) -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
-            Text(text = leagueItem.name.uppercase(), color = Color.White)
+            Text(text = leagueItem.name.uppercase(), color = MaterialTheme.colorScheme.onSecondary)
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(context: Context) {
     AppTopBar(
         title = {
-            Text(text = stringResource(id = R.string.leagues))
+            Text(text = stringResource(id = R.string.leagues), style = FlashScoreTypography.headlineSmall)
         },
         actions = {
             IconButton(
                 modifier = Modifier
                     .padding(horizontal = 8.dp)
                     .size(24.dp),
-                onClick = { Toast.makeText(context, "settings", Toast.LENGTH_SHORT) }) {
+                onClick = { Toast.makeText(context, "settings", Toast.LENGTH_SHORT).show() }) {
                 Icon(imageVector = Icons.Filled.Settings, contentDescription = "settings")
             }
         }
@@ -299,12 +298,12 @@ fun EmptyScreen(onRefreshClick: () -> Unit) {
                 .fillMaxWidth()
                 .padding(8.dp),
             onClick = onRefreshClick,
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue)
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
         ) {
             Text(
                 text = "Refresh",
                 textAlign = TextAlign.Center,
-                color = Color.White
+                color =  MaterialTheme.colorScheme.onSecondary
             )
         }
     }

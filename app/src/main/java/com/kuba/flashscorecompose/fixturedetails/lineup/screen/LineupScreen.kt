@@ -3,14 +3,14 @@ package com.kuba.flashscorecompose.fixturedetails.lineup.screen
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -27,7 +27,8 @@ import com.kuba.flashscorecompose.fixturedetails.lineup.viewmodel.LineupViewMode
 import com.kuba.flashscorecompose.ui.component.EmptyState
 import com.kuba.flashscorecompose.ui.component.FullScreenLoading
 import com.kuba.flashscorecompose.ui.component.LoadingContent
-import com.kuba.flashscorecompose.ui.theme.*
+import com.kuba.flashscorecompose.ui.theme.GreenDark
+import com.kuba.flashscorecompose.ui.theme.GreenLight
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
@@ -113,14 +114,14 @@ private fun FormationInfoRow(formation: String) {
             modifier = Modifier.padding(end = 8.dp),
             text = stringResource(id = R.string.formation),
             fontSize = 20.sp,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSecondary,
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center
         )
         Text(
             text = "($formation)",
             fontSize = 14.sp,
-            color = TextGreyLight,
+            color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center
         )
     }
@@ -159,7 +160,12 @@ private fun LineupButton(
                 .height(40.dp)
                 .clip(RoundedCornerShape(50))
                 .background(
-                    brush = Brush.horizontalGradient(colors = listOf(LightOrange, Orange))
+                    brush = Brush.horizontalGradient(
+                        colors = listOf(
+                            MaterialTheme.colorScheme.primary,
+                            MaterialTheme.colorScheme.secondary
+                        )
+                    )
                 )
                 .padding(horizontal = 4.dp)
         } else {
@@ -172,7 +178,7 @@ private fun LineupButton(
         Text(
             text = lineup.team.name,
             fontSize = 14.sp,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSecondary,
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center
         )
@@ -236,7 +242,7 @@ fun PlayerItem(player: Player, onPlayerClick: (Player) -> Unit) {
                 .border(
                     width = 1.dp,
                     shape = RoundedCornerShape(24.dp),
-                    color = Color.White.copy(alpha = 0.3f)
+                    color = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.3f)
                 )
                 .size(32.dp),
             contentAlignment = Alignment.Center
@@ -245,7 +251,7 @@ fun PlayerItem(player: Player, onPlayerClick: (Player) -> Unit) {
                 text = player.number.toString(),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 12.sp,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSecondary,
             )
         }
         Spacer(modifier = Modifier.size(4.dp))
@@ -261,7 +267,7 @@ fun PlayerItem(player: Player, onPlayerClick: (Player) -> Unit) {
                 modifier = Modifier.padding(3.dp),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 11.sp,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSecondary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )

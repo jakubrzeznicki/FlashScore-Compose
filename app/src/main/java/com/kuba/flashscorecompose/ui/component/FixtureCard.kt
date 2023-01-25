@@ -3,13 +3,10 @@ package com.kuba.flashscorecompose.ui.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -23,20 +20,23 @@ import coil.request.ImageRequest
 import coil.size.Size
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
-import com.kuba.flashscorecompose.ui.theme.GreyDark
-import com.kuba.flashscorecompose.ui.theme.GreyLight
 
 /**
  * Created by jrzeznicki on 17/01/2023.
  */
-@OptIn(ExperimentalMaterialApi::class)
+
+const val VERSUS = "vs"
+const val DASH = "-"
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FixtureCard(fixtureItem: FixtureItem, onFixtureClick: (FixtureItem) -> Unit) {
     Card(
         onClick = { onFixtureClick(fixtureItem) },
-        backgroundColor = GreyLight,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.inverseSurface),
         shape = RoundedCornerShape(16.dp),
-        modifier = Modifier.padding(bottom = 8.dp)
+        modifier = Modifier.padding(bottom = 8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -58,7 +58,7 @@ fun FixtureCard(fixtureItem: FixtureItem, onFixtureClick: (FixtureItem) -> Unit)
                     .weight(2f)
                     .background(
                         shape = RoundedCornerShape(topEnd = 16.dp, bottomEnd = 16.dp),
-                        color = GreyDark
+                        color = MaterialTheme.colorScheme.surface
                     )
                     .size(70.dp),
                 fixtureItem = fixtureItem
@@ -73,13 +73,19 @@ fun TeamLogos(modifier: Modifier, fixtureItem: FixtureItem) {
         LogoWithBackground(
             logo = fixtureItem.homeTeam.logo,
             modifier = Modifier
-                .background(shape = RoundedCornerShape(30.dp), color = GreyDark)
+                .background(
+                    shape = RoundedCornerShape(30.dp),
+                    color = MaterialTheme.colorScheme.surface
+                )
                 .size(36.dp)
         )
         LogoWithBackground(
             logo = fixtureItem.awayTeam.logo,
             modifier = Modifier
-                .background(shape = RoundedCornerShape(30.dp), color = GreyDark)
+                .background(
+                    shape = RoundedCornerShape(30.dp),
+                    color = MaterialTheme.colorScheme.surface
+                )
                 .size(36.dp)
         )
     }
@@ -115,8 +121,8 @@ fun FixtureDetails(modifier: Modifier, fixtureItem: FixtureItem) {
         )
         FixtureDetailsColumn(
             modifier = Modifier.weight(2f),
-            firstLine = "vs",
-            secondLine = "-"
+            firstLine = VERSUS,
+            secondLine = DASH
         )
         FixtureDetailsColumn(
             modifier = Modifier.weight(6f),
@@ -137,7 +143,7 @@ fun FixtureDetailsColumn(modifier: Modifier, firstLine: String, secondLine: Stri
             text = firstLine,
             fontWeight = FontWeight.SemiBold,
             fontSize = 14.sp,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSecondary,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1
         )
@@ -145,7 +151,7 @@ fun FixtureDetailsColumn(modifier: Modifier, firstLine: String, secondLine: Stri
             text = secondLine,
             fontWeight = FontWeight.SemiBold,
             fontSize = 14.sp,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSecondary,
         )
     }
 }
@@ -161,7 +167,7 @@ fun FixtureStatus(modifier: Modifier, fixtureItem: FixtureItem) {
             text = fixtureItem.fixture.status.short,
             fontWeight = FontWeight.SemiBold,
             fontSize = 14.sp,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSecondary,
         )
     }
 }

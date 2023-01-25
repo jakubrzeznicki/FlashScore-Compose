@@ -1,32 +1,51 @@
 package com.kuba.flashscorecompose.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-private val DarkColorPalette = darkColors(
-    primary = Black500,
-    primaryVariant = Black500,
-    secondary = Grey500,
-    secondaryVariant = White,
-    onSecondary = Color.White,
-    error = Red800,
-    background = Black500,
-    surface = Black500
+private val DarkColorPalette = darkColorScheme(
+    primary = LightOrange,
+    onPrimary = White,
+    secondary = Orange,
+    onSecondary = White,
+    tertiary = Blue,
+    onTertiary = White,
+    tertiaryContainer = BlueDark,
+    onTertiaryContainer = White,
+    error = RedDark,
+    background = BlackBackground,
+    onBackground = GreyTextLight,
+    surface = GreyDark,
+    onSurface = White,
+    inverseSurface = GreyLight,
+    inverseOnSurface = GreyTextDark,
+    outline = Grey
 )
+//import androidx.compose.ui.graphics.Color
 
-private val LightColorPalette = lightColors(
-    primary = Black500,
-    primaryVariant = Black500,
-    secondary = Grey500,
-    secondaryVariant = White,
-    onSecondary = Color.White,
-    error = Red800,
-    background = Black500,
-    surface = Black500,
+//import com.kuba.flashscorecompose.ui.theme.GreyTextLight
+
+private val LightColorPalette = lightColorScheme(
+    primary = LightOrange,
+    onPrimary = White,
+    secondary = Orange,
+    onSecondary = White,
+    tertiary = Blue,
+    onTertiary = White,
+    tertiaryContainer = BlueDark,
+    onTertiaryContainer = White,
+    error = RedDark,
+    background = BlackBackground,
+    onBackground = GreyTextLight,
+    surface = GreyDark,
+    onSurface = White,
+    inverseSurface = GreyLight,
+    inverseOnSurface = GreyTextDark,
+    outline = Grey
 )
 
 @Composable
@@ -41,7 +60,7 @@ fun FlashScoreComposeTheme(
     }
 
     MaterialTheme(
-        colors = colors,
+        colorScheme = colors,
         typography = FlashScoreTypography,
         shapes = Shapes,
         content = content

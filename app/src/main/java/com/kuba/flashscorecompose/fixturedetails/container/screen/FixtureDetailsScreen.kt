@@ -3,15 +3,14 @@ package com.kuba.flashscorecompose.fixturedetails.container.screen
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -34,10 +33,10 @@ import com.kuba.flashscorecompose.data.fixtures.fixture.model.Team
 import com.kuba.flashscorecompose.fixturedetails.container.model.FixtureDetailsUiState
 import com.kuba.flashscorecompose.fixturedetails.container.viewmodel.FixtureDetailsViewModel
 import com.kuba.flashscorecompose.fixturedetails.tabs.TabItem
-import com.kuba.flashscorecompose.ui.component.AppTopBar
+import com.kuba.flashscorecompose.ui.component.CenterAppTopBar
 import com.kuba.flashscorecompose.ui.component.EmptyState
 import com.kuba.flashscorecompose.ui.component.FlashScoreSnackbarHost
-import com.kuba.flashscorecompose.ui.theme.*
+import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.CoroutineScope
@@ -57,31 +56,31 @@ fun FixtureDetailsRoute(
     fixtureId: Int,
     viewModel: FixtureDetailsViewModel = getViewModel { parametersOf(fixtureId) },
     navigator: DestinationsNavigator,
-    scaffoldState: ScaffoldState = rememberScaffoldState()
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
     val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(key1 = SETUP_FIXTURE_DETAILS_CONTAINER_KEY) { viewModel.setup() }
     FixtureDetailsScreen(
         uiState = uiState,
         navigator = navigator,
         onTeamClick = {},
-        scaffoldState = scaffoldState
+        snackbarHostState = snackbarHostState
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FixtureDetailsScreen(
     modifier: Modifier = Modifier,
     uiState: FixtureDetailsUiState,
     navigator: DestinationsNavigator,
     onTeamClick: (Team) -> Unit,
-    scaffoldState: ScaffoldState
+    snackbarHostState: SnackbarHostState
 ) {
     Scaffold(
         modifier = modifier,
         topBar = { TopBar(navigator, uiState) },
-        scaffoldState = scaffoldState,
-        snackbarHost = { FlashScoreSnackbarHost(hostState = it) }
+        snackbarHost = { FlashScoreSnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
         Column(
             Modifier
@@ -105,13 +104,14 @@ fun FixtureDetailsScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopBar(navigator: DestinationsNavigator, uiState: FixtureDetailsUiState) {
     val titleText = when (uiState) {
         is FixtureDetailsUiState.HasData -> uiState.fixtureItem.league.round
         else -> EMPTY_TITLE
     }
-    AppTopBar(
+    CenterAppTopBar(
         navigationIcon = {
             IconButton(
                 modifier = Modifier
@@ -121,11 +121,17 @@ private fun TopBar(navigator: DestinationsNavigator, uiState: FixtureDetailsUiSt
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     contentDescription = null,
-                    tint = Color.White
+                    tint = MaterialTheme.colorScheme.onSecondary
                 )
             }
         },
-        title = { Text(text = titleText, color = Color.White) }
+        title = {
+            Text(
+                text = titleText,
+                color = MaterialTheme.colorScheme.onSecondary,
+                style = FlashScoreTypography.headlineSmall
+            )
+        }
     )
 }
 
@@ -153,14 +159,21 @@ private fun TeamInfo(team: Team, modifier: Modifier, onTeamClick: (Team) -> Unit
     ) {
         Box(
             modifier = Modifier
-                .background(shape = RoundedCornerShape(50.dp), color = GreyDark)
-                .border(width = 2.dp, shape = RoundedCornerShape(50.dp), color = GreyLight)
+                .background(
+                    shape = RoundedCornerShape(50.dp),
+                    color = MaterialTheme.colorScheme.surface
+                )
+                .border(
+                    width = 2.dp,
+                    shape = RoundedCornerShape(50.dp),
+                    color = MaterialTheme.colorScheme.inverseSurface
+                )
                 .size(70.dp)
         ) {
             AsyncImage(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues = PaddingValues(12.dp)),
+                    .padding(12.dp),
                 model = ImageRequest.Builder(LocalContext.current)
                     .decoderFactory(SvgDecoder.Factory())
                     .data(team.logo)
@@ -177,7 +190,7 @@ private fun TeamInfo(team: Team, modifier: Modifier, onTeamClick: (Team) -> Unit
             text = team.name,
             fontWeight = FontWeight.SemiBold,
             fontSize = 14.sp,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSecondary,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center
@@ -196,7 +209,7 @@ private fun TeamInfoScore(goals: Goals, status: Status, modifier: Modifier) {
             text = "${goals.home} - ${goals.away}",
             fontWeight = FontWeight.SemiBold,
             fontSize = 32.sp,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onBackground,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
@@ -205,7 +218,7 @@ private fun TeamInfoScore(goals: Goals, status: Status, modifier: Modifier) {
             text = status.long,
             fontWeight = FontWeight.SemiBold,
             fontSize = 14.sp,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onBackground,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
@@ -214,7 +227,7 @@ private fun TeamInfoScore(goals: Goals, status: Status, modifier: Modifier) {
             text = "${status.elapsed}'",
             fontWeight = FontWeight.SemiBold,
             fontSize = 14.sp,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onBackground,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
@@ -223,7 +236,10 @@ private fun TeamInfoScore(goals: Goals, status: Status, modifier: Modifier) {
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-private fun FixtureDetailsTabs(uiState: FixtureDetailsUiState.HasData, navigator: DestinationsNavigator) {
+private fun FixtureDetailsTabs(
+    uiState: FixtureDetailsUiState.HasData,
+    navigator: DestinationsNavigator
+) {
     Column {
         val tabs = listOf(
             TabItem.Statistics(
@@ -244,7 +260,7 @@ private fun FixtureDetailsTabs(uiState: FixtureDetailsUiState.HasData, navigator
         )
         val pagerState = rememberPagerState()
         val coroutineScope = rememberCoroutineScope()
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
             FixtureDetailsTabs(tabs = tabs, pagerState = pagerState, coroutineScope)
             TabsContent(tabs = tabs, pagerState = pagerState)
         }
@@ -264,8 +280,8 @@ private fun FixtureDetailsTabs(
             .padding(vertical = 4.dp, horizontal = 8.dp)
             .clip(RoundedCornerShape(50))
             .padding(1.dp),
-        backgroundColor = MaterialTheme.colors.background,
-        contentColor = Color.White,
+        contentColor = MaterialTheme.colorScheme.onSecondary,
+        containerColor = MaterialTheme.colorScheme.background,
         indicator = {
             Box {}
         },
@@ -295,7 +311,12 @@ private fun FixtureDetailsTab(
             Modifier
                 .clip(RoundedCornerShape(50))
                 .background(
-                    brush = Brush.horizontalGradient(colors = listOf(LightOrange, Orange))
+                    brush = Brush.horizontalGradient(
+                        colors = listOf(
+                            MaterialTheme.colorScheme.primary,
+                            MaterialTheme.colorScheme.secondary
+                        )
+                    )
                 )
         } else {
             Modifier

@@ -2,23 +2,18 @@ package com.kuba.flashscorecompose.ui.component
 
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.SnackbarDefaults.backgroundColor
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import com.kuba.flashscorecompose.ui.theme.GreyLight
-import com.kuba.flashscorecompose.ui.theme.GreyTextDark
 
 /**
  * Created by jrzeznicki on 19/01/2023.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SimpleSearchBar(
     modifier: Modifier = Modifier,
@@ -35,7 +30,7 @@ fun SimpleSearchBar(
         onValueChange = { onQueryChange(it) },
         leadingIcon = leadingIcon,
         label = { Text(text = label) },
-        textStyle = MaterialTheme.typography.subtitle2,
+        textStyle = MaterialTheme.typography.titleMedium,
         singleLine = true,
         keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
         keyboardOptions = KeyboardOptions(
@@ -43,14 +38,14 @@ fun SimpleSearchBar(
             keyboardType = KeyboardType.Text
         ),
         colors = TextFieldDefaults.textFieldColors(
-            textColor = GreyTextDark,
-            backgroundColor = GreyLight,
+            textColor = MaterialTheme.colorScheme.onBackground,
+            containerColor =  MaterialTheme.colorScheme.surface,
             focusedIndicatorColor = Color.Transparent,
-            focusedLabelColor = GreyTextDark,
-            cursorColor = GreyTextDark,
-            unfocusedLabelColor = GreyTextDark,
+            focusedLabelColor = MaterialTheme.colorScheme.onBackground,
+            cursorColor = MaterialTheme.colorScheme.onBackground,
+            unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
             unfocusedIndicatorColor = Color.Transparent,
-            placeholderColor = GreyTextDark
+            placeholderColor = MaterialTheme.colorScheme.onBackground
         ),
         enabled = isEnabled
     )

@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.kuba.flashscorecompose.countries.screen
 
 import android.content.Context
@@ -6,10 +8,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -17,7 +19,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -50,8 +51,7 @@ private const val SETUP_COUNTRIES_KEY = "SETUP_COUNTRIES_KEY"
 @Composable
 fun CountryListScreen(
     navigator: DestinationsNavigator,
-    viewModel: CountriesViewModel = getViewModel(),
-    scaffoldState: ScaffoldState = rememberScaffoldState()
+    viewModel: CountriesViewModel = getViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
@@ -61,11 +61,11 @@ fun CountryListScreen(
         onRefreshClick = { viewModel.refreshCountries() },
         navigator = navigator,
         onErrorClear = { viewModel.cleanError() },
-        scaffoldState = scaffoldState,
         context = context
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CountriesScreen(
     modifier: Modifier = Modifier,
@@ -73,12 +73,10 @@ fun CountriesScreen(
     onRefreshClick: () -> Unit,
     navigator: DestinationsNavigator,
     onErrorClear: () -> Unit,
-    scaffoldState: ScaffoldState,
     context: Context
 ) {
     Scaffold(
         topBar = { TopBar(context, navigator) },
-        scaffoldState = scaffoldState
     ) { paddingValues ->
         LoadingContent(
             modifier = modifier.padding(paddingValues),
@@ -125,13 +123,12 @@ fun CountryList(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CountryCard(countryItem: Country, navigator: DestinationsNavigator) {
     Card(
         onClick = { navigator.navigate(LeaguesListScreenDestination(countryCode = countryItem.code)) },
-        elevation = 4.dp,
-        backgroundColor = MaterialTheme.colors.surface,
+        elevation = CardDefaults.cardElevation(pressedElevation = 8.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         modifier = Modifier.padding(PaddingValues(vertical = 2.dp))
     ) {
         Row(
@@ -157,9 +154,9 @@ fun CountryCard(countryItem: Country, navigator: DestinationsNavigator) {
             )
             Spacer(modifier = Modifier.size(8.dp))
             Text(
-                text = countryItem.name.orEmpty(),
-                style = FlashScoreTypography.h6,
-                color = MaterialTheme.colors.secondary
+                text = countryItem.name,
+                style = FlashScoreTypography.titleMedium,
+                color = MaterialTheme.colorScheme.onSecondary
             )
         }
     }
@@ -169,7 +166,10 @@ fun CountryCard(countryItem: Country, navigator: DestinationsNavigator) {
 fun TopBar(context: Context, navigator: DestinationsNavigator) {
     AppTopBar(
         title = {
-            Text(text = stringResource(id = R.string.countries))
+            Text(
+                text = stringResource(id = R.string.countries),
+                style = FlashScoreTypography.headlineSmall
+            )
         },
         actions = {
             IconButton(
@@ -203,12 +203,12 @@ fun EmptyScreen(onRefreshClick: () -> Unit) {
                 .fillMaxWidth()
                 .padding(8.dp),
             onClick = onRefreshClick,
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue)
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
         ) {
             Text(
                 text = "Refresh",
                 textAlign = TextAlign.Center,
-                color = Color.White
+                color = MaterialTheme.colorScheme.onSecondary
             )
         }
     }

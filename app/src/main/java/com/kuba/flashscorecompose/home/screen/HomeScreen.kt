@@ -9,15 +9,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -34,9 +33,7 @@ import com.kuba.flashscorecompose.home.model.HomeUiState
 import com.kuba.flashscorecompose.home.model.LeagueFixturesData
 import com.kuba.flashscorecompose.home.viewmodel.HomeViewModel
 import com.kuba.flashscorecompose.ui.component.*
-import com.kuba.flashscorecompose.ui.theme.Black500
-import com.kuba.flashscorecompose.ui.theme.Blue500
-import com.kuba.flashscorecompose.ui.theme.Blue800
+import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
@@ -51,11 +48,11 @@ private const val SETUP_HOME_KEY = "SETUP_HOME_KEY"
 @Composable
 fun HomeScreenRoute(
     navigator: DestinationsNavigator,
-    viewModel: HomeViewModel = getViewModel(),
-    scaffoldState: ScaffoldState = rememberScaffoldState()
+    viewModel: HomeViewModel = getViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(key1 = SETUP_HOME_KEY) { viewModel.setup() }
     HomeScreen(
         uiState = uiState,
@@ -66,11 +63,12 @@ fun HomeScreenRoute(
         onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixture.id)) },
         onLeagueClick = { },
         onErrorClear = { viewModel.cleanError() },
-        scaffoldState = scaffoldState,
+        snackbarHostState = snackbarHostState,
         context = context
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeScreen(
     modifier: Modifier = Modifier,
@@ -80,14 +78,13 @@ private fun HomeScreen(
     onFixtureClick: (FixtureItem) -> Unit,
     onLeagueClick: (Int) -> Unit,
     onErrorClear: () -> Unit,
-    scaffoldState: ScaffoldState = rememberScaffoldState(),
+    snackbarHostState: SnackbarHostState,
     context: Context
 ) {
     val scrollState = rememberLazyListState()
     Scaffold(
         topBar = { TopBar(context = context) },
-        scaffoldState = scaffoldState,
-        snackbarHost = { FlashScoreSnackbarHost(hostState = it) }
+        snackbarHost = { FlashScoreSnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
         LoadingContent(
             modifier = modifier.padding(paddingValues),
@@ -147,13 +144,20 @@ private fun HomeScreen(
             }
         }
     }
-    ErrorSnackbar(uiState, onRefreshClick, onErrorClear, scaffoldState)
+    ErrorSnackbar(uiState, onRefreshClick, onErrorClear, snackbarHostState)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopBar(context: Context) {
     AppTopBar(
-        title = { Text(text = stringResource(id = R.string.live_score), color = Color.White) },
+        title = {
+            Text(
+                text = stringResource(id = R.string.live_score),
+                color = MaterialTheme.colorScheme.onSecondary,
+                style = FlashScoreTypography.headlineSmall
+            )
+        },
         actions = {
             IconButton(
                 modifier = Modifier
@@ -165,7 +169,7 @@ private fun TopBar(context: Context) {
                 Icon(
                     imageVector = Icons.Filled.Search,
                     contentDescription = stringResource(id = R.string.search),
-                    tint = Color.White
+                    tint = MaterialTheme.colorScheme.onSecondary
                 )
             }
             IconButton(
@@ -178,7 +182,7 @@ private fun TopBar(context: Context) {
                 Icon(
                     imageVector = Icons.Filled.Notifications,
                     contentDescription = stringResource(id = R.string.notifications),
-                    tint = Color.White
+                    tint = MaterialTheme.colorScheme.onSecondary
                 )
             }
         })
@@ -190,7 +194,12 @@ private fun Banner() {
         modifier = Modifier
             .fillMaxWidth()
             .background(
-                brush = Brush.horizontalGradient(colors = listOf(Blue500, Blue800)),
+                brush = Brush.horizontalGradient(
+                    colors = listOf(
+                        MaterialTheme.colorScheme.tertiary,
+                        MaterialTheme.colorScheme.tertiaryContainer
+                    )
+                ),
                 shape = RoundedCornerShape(16.dp)
             )
     ) {
@@ -202,7 +211,7 @@ private fun Banner() {
             Row(
                 Modifier
                     .background(
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onSecondary,
                         shape = RoundedCornerShape(46.dp)
                     )
                     .padding(8.dp),
@@ -218,7 +227,7 @@ private fun Banner() {
                 Spacer(modifier = Modifier.size(4.dp))
                 Text(
                     text = stringResource(id = R.string.football),
-                    color = Black500,
+                    color = MaterialTheme.colorScheme.background,
                     fontWeight = FontWeight.Bold,
                     fontSize = 12.sp,
                 )
@@ -226,7 +235,7 @@ private fun Banner() {
             Spacer(modifier = Modifier.size(8.dp))
             Text(
                 text = stringResource(id = R.string.text_banner),
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSecondary,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 lineHeight = 25.sp
@@ -235,7 +244,7 @@ private fun Banner() {
             Text(
                 text = stringResource(id = R.string.text_second_banner),
                 fontSize = 12.sp,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSecondary,
             )
         }
         Image(
@@ -263,7 +272,7 @@ private fun ErrorSnackbar(
     uiState: HomeUiState,
     onRefreshClick: () -> Unit,
     onErrorClear: () -> Unit,
-    scaffoldState: ScaffoldState
+    snackbarHostState: SnackbarHostState
 ) {
     when (val error = uiState.error) {
         is HomeError.NoError -> {}
@@ -273,8 +282,8 @@ private fun ErrorSnackbar(
             val retryMessageText = stringResource(id = R.string.retry)
             val onRefreshPostStates by rememberUpdatedState(onRefreshClick)
             val onErrorDismissState by rememberUpdatedState(onErrorClear)
-            LaunchedEffect(errorMessageText, retryMessageText, scaffoldState) {
-                val snackbarResult = scaffoldState.snackbarHostState.showSnackbar(
+            LaunchedEffect(errorMessageText, retryMessageText) {
+                val snackbarResult = snackbarHostState.showSnackbar(
                     message = errorMessageText,
                     actionLabel = retryMessageText
                 )

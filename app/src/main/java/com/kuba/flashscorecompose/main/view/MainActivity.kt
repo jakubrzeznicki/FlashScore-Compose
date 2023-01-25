@@ -5,8 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -35,13 +36,14 @@ class MainActivity : ComponentActivity() {
         )
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun MainScreen() {
         val navController: NavHostController = rememberNavController()
         Scaffold(
             bottomBar = { BottomNavigationBar(navController) },
-            backgroundColor = MaterialTheme.colors.background,
-            contentColor = MaterialTheme.colors.onSecondary
+            containerColor = MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.onSecondary
         ) { innerPadding: PaddingValues ->
             FlashScoreNavigation(
                 innerPadding = innerPadding,
