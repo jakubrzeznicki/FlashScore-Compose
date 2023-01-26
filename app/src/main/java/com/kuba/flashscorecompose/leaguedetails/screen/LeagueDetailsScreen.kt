@@ -132,8 +132,6 @@ fun LeagueDetailsScreen(
                         item {
                             EmptyState(
                                 modifier = Modifier.fillMaxWidth(),
-                                iconId = R.drawable.ic_close,
-                                contentDescriptionId = R.string.load_data_from_network,
                                 textId = R.string.no_fixtures
                             )
                         }

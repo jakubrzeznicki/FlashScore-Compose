@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -12,6 +13,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -69,7 +71,9 @@ fun StatisticsList(
     val scrollState = rememberLazyListState()
     LoadingContent(
         empty = when (uiState) {
-            is StatisticsUiState.HasData -> false
+            is StatisticsUiState.HasAllData -> false
+            is StatisticsUiState.HasOnlyStatistics -> false
+            is StatisticsUiState.HasOnlyOtherFixtures -> false
             else -> uiState.isLoading
         }, emptyContent = { FullScreenLoading() },
         loading = uiState.isLoading,
@@ -83,9 +87,28 @@ fun StatisticsList(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             when (uiState) {
-                is StatisticsUiState.HasData -> {
+                is StatisticsUiState.HasAllData -> {
                     items(items = uiState.statistics) { (home, away) ->
                         StatisticDetailRow(home.value, away.value, home.type)
+                    }
+                    item {
+                        OtherMatchesHeader()
+                    }
+                    items(items = uiState.fixtures) {
+                        FixtureCard(fixtureItem = it, onFixtureClick = onFixtureClick)
+                    }
+                }
+                is StatisticsUiState.HasOnlyStatistics -> {
+                    items(items = uiState.statistics) { (home, away) ->
+                        StatisticDetailRow(home.value, away.value, home.type)
+                    }
+                }
+                is StatisticsUiState.HasOnlyOtherFixtures -> {
+                    item {
+                        EmptyState(
+                            modifier = Modifier.fillMaxWidth(),
+                            textId = R.string.no_statistics
+                        )
                     }
                     item {
                         OtherMatchesHeader()
@@ -100,10 +123,17 @@ fun StatisticsList(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .fillMaxHeight(),
-                            iconId = R.drawable.ic_close,
-                            contentDescriptionId = R.string.load_data_from_network,
-                            textId = R.string.no_statistics
-                        )
+                            textId = R.string.no_loaded_statistics
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(128.dp)
+                                    .padding(8.dp),
+                                painter = painterResource(id = R.drawable.ic_close),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.inverseOnSurface
+                            )
+                        }
                     }
                 }
             }

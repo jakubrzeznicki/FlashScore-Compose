@@ -19,17 +19,26 @@ data class HomeViewModelState(
     val date: String = ""
 ) {
     fun toUiState(): HomeUiState =
-        if (filteredLeagueFixtureDataList.isEmpty() && countries.isEmpty()) {
-            HomeUiState.NoData(isLoading, error)
-        } else {
-            HomeUiState.HasData(
-                isLoading,
-                error,
-                countries,
-                filteredLeagueFixtureDataList,
-                selectedCountry,
-                searchQuery,
-                date
-            )
+        when {
+            filteredLeagueFixtureDataList.isNotEmpty() && countries.isNotEmpty() ->
+                HomeUiState.HasAllData(
+                    isLoading,
+                    error,
+                    searchQuery,
+                    countries,
+                    selectedCountry,
+                    filteredLeagueFixtureDataList
+                )
+            filteredLeagueFixtureDataList.isNotEmpty() ->
+                HomeUiState.HasOnlyFixtures(isLoading, error, searchQuery, leagueFixturesDataList)
+            countries.isNotEmpty() ->
+                HomeUiState.HasOnlyCountries(
+                    isLoading,
+                    error,
+                    searchQuery,
+                    selectedCountry,
+                    countries
+                )
+            else -> HomeUiState.NoData(isLoading, error, searchQuery)
         }
 }

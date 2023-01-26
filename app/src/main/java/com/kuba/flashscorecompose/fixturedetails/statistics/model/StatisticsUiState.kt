@@ -11,12 +11,28 @@ interface StatisticsUiState {
     val isLoading: Boolean
     val error: StatisticsError
 
-    data class HasData(
+    data class HasAllData(
         override val isLoading: Boolean,
         override val error: StatisticsError,
         val homeTeam: Team,
         val awayTeam: Team,
         val statistics: List<Pair<Statistic, Statistic>>,
+        val fixtures: List<FixtureItem>
+    ) : StatisticsUiState
+
+    data class HasOnlyStatistics(
+        override val isLoading: Boolean,
+        override val error: StatisticsError,
+        val homeTeam: Team,
+        val awayTeam: Team,
+        val statistics: List<Pair<Statistic, Statistic>>,
+    ) : StatisticsUiState
+
+    data class HasOnlyOtherFixtures(
+        override val isLoading: Boolean,
+        override val error: StatisticsError,
+        val homeTeam: Team,
+        val awayTeam: Team,
         val fixtures: List<FixtureItem>
     ) : StatisticsUiState
 
