@@ -40,7 +40,9 @@ import com.kuba.flashscorecompose.fixturedetails.headtohead.viewmodel.HeadToHead
 import com.kuba.flashscorecompose.ui.component.EmptyState
 import com.kuba.flashscorecompose.ui.component.FullScreenLoading
 import com.kuba.flashscorecompose.ui.component.LoadingContent
-import com.kuba.flashscorecompose.ui.theme.*
+import com.kuba.flashscorecompose.ui.theme.Blue
+import com.kuba.flashscorecompose.ui.theme.GreenLight
+import com.kuba.flashscorecompose.ui.theme.RedDark
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
@@ -132,8 +134,7 @@ fun HeadToHeadList(
                             modifier = Modifier.fillMaxWidth(),
                             iconId = R.drawable.ic_close,
                             contentDescriptionId = R.string.load_data_from_network,
-                            textId = R.string.no_last_fixtures,
-                            onRefreshClick = onRefreshClick
+                            textId = R.string.no_last_fixtures
                         )
                     }
                 }

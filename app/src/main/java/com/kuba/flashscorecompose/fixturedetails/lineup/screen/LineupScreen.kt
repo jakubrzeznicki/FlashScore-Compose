@@ -93,8 +93,7 @@ private fun LineupList(
                         .fillMaxHeight(),
                     iconId = R.drawable.ic_close,
                     contentDescriptionId = R.string.load_data_from_network,
-                    textId = R.string.no_lineups,
-                    onRefreshClick = onRefreshClick
+                    textId = R.string.no_lineups
                 )
             }
         }

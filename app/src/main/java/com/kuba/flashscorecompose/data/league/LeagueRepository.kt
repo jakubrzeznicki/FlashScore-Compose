@@ -32,6 +32,8 @@ class LeagueRepository(
     override suspend fun getLeagues(countryNames: List<String>): List<League> =
         local.getLeagues(countryNames).map { it.toLeague() }
 
+    override suspend fun getLeague(id: Int): League = local.getLeagueById(id).toLeague()
+
     override fun saveLeagues(leagues: List<League>) {
         local.saveLeagues(leagues.map { it.toLeagueEntity() })
     }

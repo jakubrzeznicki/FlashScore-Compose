@@ -96,8 +96,7 @@ fun FixtureDetailsScreen(
                     modifier = Modifier.fillMaxWidth(),
                     iconId = R.drawable.ic_close,
                     contentDescriptionId = R.string.empty_database,
-                    textId = R.string.no_fixture_details,
-                    onRefreshClick = {}
+                    textId = R.string.no_fixture_details
                 )
             }
         }

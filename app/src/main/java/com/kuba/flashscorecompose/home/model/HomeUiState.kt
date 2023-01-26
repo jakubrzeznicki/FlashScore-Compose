@@ -15,7 +15,8 @@ sealed interface HomeUiState {
         val countries: List<Country>,
         val leagueFixturesDataList: List<LeagueFixturesData>,
         val selectedCountry: Country,
-        val searchQuery: String
+        val searchQuery: String,
+        val date: String
     ) : HomeUiState
 
     data class NoData(

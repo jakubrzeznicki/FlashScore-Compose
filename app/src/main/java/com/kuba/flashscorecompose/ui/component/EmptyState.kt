@@ -1,7 +1,12 @@
 package com.kuba.flashscorecompose.ui.component
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -9,7 +14,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.kuba.flashscorecompose.R
 
 /**
  * Created by jrzeznicki on 17/01/2023.
@@ -19,8 +23,7 @@ fun EmptyState(
     modifier: Modifier,
     iconId: Int,
     contentDescriptionId: Int,
-    textId: Int,
-    onRefreshClick: () -> Unit
+    textId: Int
 ) {
     Column(
         modifier = modifier,
@@ -33,25 +36,14 @@ fun EmptyState(
                 .padding(8.dp),
             painter = painterResource(id = iconId),
             contentDescription = stringResource(id = contentDescriptionId),
-            tint = MaterialTheme.colorScheme.onSecondary
+            tint = MaterialTheme.colorScheme.inverseOnSurface
         )
         Text(
-            modifier = Modifier.padding(8.dp),
-            text = stringResource(id = textId),
-            color = MaterialTheme.colorScheme.onSecondary
-        )
-        Button(
             modifier = Modifier
-                .fillMaxWidth()
                 .padding(8.dp),
-            onClick = onRefreshClick,
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
-        ) {
-            Text(
-                stringResource(id = R.string.refresh),
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSecondary
-            )
-        }
+            text = stringResource(id = textId),
+            color = MaterialTheme.colorScheme.inverseOnSurface,
+            textAlign = TextAlign.Center
+        )
     }
 }

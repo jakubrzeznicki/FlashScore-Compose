@@ -29,6 +29,9 @@ interface FixtureDao {
     @Query("SELECT * FROM fixture WHERE date = :date AND league_countryName IN(:countryNames) ORDER BY fixture_info_timestamp")
     fun observeFixturesByDate(date: String, countryNames: List<String>): Flow<List<FixtureEntity>>
 
+    @Query("SELECT * FROM fixture WHERE league_id = :leagueId")
+    fun observeFixturesByLeague(leagueId: Int): Flow<List<FixtureEntity>>
+
     @Query("SELECT * FROM fixture WHERE league_countryName IN(:countryNames) ORDER BY fixture_info_timestamp LIMIT :count")
     fun observeXLastFixtures(count: Int, countryNames: List<String>): Flow<List<FixtureEntity>>
 

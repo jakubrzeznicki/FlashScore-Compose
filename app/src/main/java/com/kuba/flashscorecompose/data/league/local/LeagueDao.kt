@@ -21,6 +21,9 @@ interface LeagueDao {
     @Query("SELECT * FROM leagues WHERE countryName IN(:countryNames)")
     suspend fun getLeagues(countryNames: List<String>): List<LeagueEntity>
 
+    @Query("SELECT * FROM leagues WHERE id = :id")
+    suspend fun getLeagueById(id: Int): LeagueEntity
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveLeagues(leagues: List<LeagueEntity>)
 

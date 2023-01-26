@@ -26,17 +26,17 @@ import coil.request.ImageRequest
 import coil.size.Size
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.country.model.Country
+import com.kuba.flashscorecompose.data.standings.model.Standing
 import com.kuba.flashscorecompose.data.standings.model.StandingItem
+import com.kuba.flashscorecompose.destinations.StandingsDetailsRouteDestination
+import com.kuba.flashscorecompose.standings.model.StandingsError
 import com.kuba.flashscorecompose.standings.model.StandingsUiState
 import com.kuba.flashscorecompose.standings.viewmodel.StandingsViewModel
+import com.kuba.flashscorecompose.ui.component.*
+import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
-import com.kuba.flashscorecompose.data.standings.model.Standing
-import com.kuba.flashscorecompose.destinations.StandingsDetailsRouteDestination
-import com.kuba.flashscorecompose.standings.model.StandingsError
-import com.kuba.flashscorecompose.ui.component.*
-import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
 
 /**
  * Created by jrzeznicki on 23/12/2022.
@@ -156,8 +156,7 @@ fun StandingsScreen(
                                     .fillMaxHeight(),
                                 iconId = R.drawable.ic_close,
                                 contentDescriptionId = R.string.load_data_from_network,
-                                textId = R.string.no_standings,
-                                onRefreshClick = onRefreshClick
+                                textId = R.string.no_standings
                             )
                         }
                     }
@@ -183,7 +182,7 @@ fun StandingWithLeagueItem(
             .clickable { onStandingsClick(standing) }
             .padding(bottom = 16.dp)
     ) {
-        LeagueHeader(league = standing.league, onLeagueClick = {})
+        LeagueHeader(league = standing.league, date = "", onLeagueClick = { _, _ -> })
         StandingCard(standing.standingItems)
     }
 }

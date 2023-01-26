@@ -16,6 +16,7 @@
     <string name="no_lineups">You don\'t have lineups</string>
     <string name="no_statistics">You don\'t have statistics</string>
     <string name="no_standings">You don\'t have standings</string>
+    <string name="no_fixtures">There are no fixtures for the day. Please select another day </string>
     <string name="load_data_from_network">Load data from network</string>
     <string name="empty_database">Empty database</string>
     <string name="retry">Retry</string>
@@ -42,4 +43,5 @@
     <string name="statistics">Statistic</string>
     <string name="lineups">Lineups</string>
     <string name="head_to_head">H2H</string>
+    <string name="standing">Standing</string>
 </resources>

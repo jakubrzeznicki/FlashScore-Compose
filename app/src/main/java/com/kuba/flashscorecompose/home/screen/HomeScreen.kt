@@ -27,7 +27,9 @@ import androidx.compose.ui.unit.sp
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
+import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.destinations.FixtureDetailsRouteDestination
+import com.kuba.flashscorecompose.destinations.LeagueDetailsRouteDestination
 import com.kuba.flashscorecompose.home.model.HomeError
 import com.kuba.flashscorecompose.home.model.HomeUiState
 import com.kuba.flashscorecompose.home.model.LeagueFixturesData
@@ -61,7 +63,9 @@ fun HomeScreenRoute(
             viewModel.updateSelectedCountry(country, isSelected)
         },
         onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixture.id)) },
-        onLeagueClick = { },
+        onLeagueClick = { league, date ->
+            navigator.navigate(LeagueDetailsRouteDestination(league.id, league.season))
+        },
         onErrorClear = { viewModel.cleanError() },
         snackbarHostState = snackbarHostState,
         context = context
@@ -76,7 +80,7 @@ private fun HomeScreen(
     onRefreshClick: () -> Unit,
     onCountryClick: (Country, Boolean) -> Unit,
     onFixtureClick: (FixtureItem) -> Unit,
-    onLeagueClick: (Int) -> Unit,
+    onLeagueClick: (League, String) -> Unit,
     onErrorClear: () -> Unit,
     snackbarHostState: SnackbarHostState,
     context: Context
@@ -122,7 +126,8 @@ private fun HomeScreen(
                             FixturesWidget(
                                 leagueFixturesData = it,
                                 onFixtureClick = onFixtureClick,
-                                onLeagueClick = onLeagueClick
+                                onLeagueClick = onLeagueClick,
+                                uiState.date
                             )
                             Spacer(modifier = Modifier.size(24.dp))
                         }
@@ -135,8 +140,7 @@ private fun HomeScreen(
                                     .fillMaxHeight(),
                                 iconId = R.drawable.ic_close,
                                 contentDescriptionId = R.string.load_data_from_network,
-                                textId = R.string.no_fixtures_and_countries,
-                                onRefreshClick = onRefreshClick
+                                textId = R.string.no_fixtures_and_countries
                             )
                         }
                     }
@@ -259,9 +263,10 @@ private fun Banner() {
 private fun FixturesWidget(
     leagueFixturesData: LeagueFixturesData,
     onFixtureClick: (FixtureItem) -> Unit,
-    onLeagueClick: (Int) -> Unit
+    onLeagueClick: (League, String) -> Unit,
+    date: String
 ) {
-    LeagueHeader(leagueFixturesData.league, onLeagueClick)
+    LeagueHeader(leagueFixturesData.league, date, onLeagueClick)
     leagueFixturesData.fixtures.forEach { fixtureItem ->
         FixtureCard(fixtureItem, onFixtureClick)
     }

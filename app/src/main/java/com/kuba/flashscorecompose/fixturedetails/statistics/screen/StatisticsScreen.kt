@@ -17,18 +17,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
+import com.kuba.flashscorecompose.destinations.FixtureDetailsRouteDestination
 import com.kuba.flashscorecompose.fixturedetails.statistics.model.StatisticsUiState
 import com.kuba.flashscorecompose.fixturedetails.statistics.viewmodel.StatisticsViewModel
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import org.koin.androidx.compose.getViewModel
-import org.koin.core.parameter.parametersOf
-import com.kuba.flashscorecompose.R
-import com.kuba.flashscorecompose.destinations.FixtureDetailsRouteDestination
 import com.kuba.flashscorecompose.ui.component.EmptyState
 import com.kuba.flashscorecompose.ui.component.FixtureCard
 import com.kuba.flashscorecompose.ui.component.FullScreenLoading
 import com.kuba.flashscorecompose.ui.component.LoadingContent
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import org.koin.androidx.compose.getViewModel
+import org.koin.core.parameter.parametersOf
 
 /**
  * Created by jrzeznicki on 23/12/2022.
@@ -102,8 +102,7 @@ fun StatisticsList(
                                 .fillMaxHeight(),
                             iconId = R.drawable.ic_close,
                             contentDescriptionId = R.string.load_data_from_network,
-                            textId = R.string.no_statistics,
-                            onRefreshClick = onRefreshClick
+                            textId = R.string.no_statistics
                         )
                     }
                 }

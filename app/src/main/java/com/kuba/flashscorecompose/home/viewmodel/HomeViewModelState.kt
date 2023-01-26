@@ -16,6 +16,7 @@ data class HomeViewModelState(
     val selectedCountry: Country = Country.EMPTY_COUNTRY,
     val searchQuery: String = "",
     val countries: List<Country> = emptyList(),
+    val date: String = ""
 ) {
     fun toUiState(): HomeUiState =
         if (filteredLeagueFixtureDataList.isEmpty() && countries.isEmpty()) {
@@ -27,7 +28,8 @@ data class HomeViewModelState(
                 countries,
                 filteredLeagueFixtureDataList,
                 selectedCountry,
-                searchQuery
+                searchQuery,
+                date
             )
         }
 }

@@ -29,11 +29,11 @@ import com.kuba.flashscorecompose.data.league.model.League
  */
 
 @Composable
-fun LeagueHeader(league: League, onLeagueClick: (Int) -> Unit) {
+fun LeagueHeader(league: League, date: String, onLeagueClick: (League, String) -> Unit) {
     Row(
         modifier = Modifier
             .padding(top = 8.dp, bottom = 24.dp)
-            .clickable { onLeagueClick(league.id) }
+            .clickable { onLeagueClick(league, date) }
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically

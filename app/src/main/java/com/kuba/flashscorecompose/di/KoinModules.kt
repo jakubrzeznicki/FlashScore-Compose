@@ -15,14 +15,14 @@ import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesDataSource
 import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesRepository
 import com.kuba.flashscorecompose.data.fixtures.fixture.local.FixtureLocal
 import com.kuba.flashscorecompose.data.fixtures.fixture.remote.FixtureRemote
-import com.kuba.flashscorecompose.data.fixtures.lineups.remote.LineupsRemote
-import com.kuba.flashscorecompose.data.fixtures.statistics.remote.StatisticsRemote
 import com.kuba.flashscorecompose.data.fixtures.lineups.LineupsDataSource
 import com.kuba.flashscorecompose.data.fixtures.lineups.LineupsRepository
 import com.kuba.flashscorecompose.data.fixtures.lineups.local.LineupLocal
+import com.kuba.flashscorecompose.data.fixtures.lineups.remote.LineupsRemote
 import com.kuba.flashscorecompose.data.fixtures.statistics.StatisticsDataSource
 import com.kuba.flashscorecompose.data.fixtures.statistics.StatisticsRepository
 import com.kuba.flashscorecompose.data.fixtures.statistics.local.StatisticsLocal
+import com.kuba.flashscorecompose.data.fixtures.statistics.remote.StatisticsRemote
 import com.kuba.flashscorecompose.data.league.LeagueDataSource
 import com.kuba.flashscorecompose.data.league.LeagueRepository
 import com.kuba.flashscorecompose.data.league.local.LeagueLocal
@@ -31,12 +31,13 @@ import com.kuba.flashscorecompose.data.standings.StandingsDataSource
 import com.kuba.flashscorecompose.data.standings.StandingsRepository
 import com.kuba.flashscorecompose.data.standings.local.StandingsLocal
 import com.kuba.flashscorecompose.data.standings.remote.StandingsRemote
-import com.kuba.flashscorecompose.home.viewmodel.HomeViewModel
-import com.kuba.flashscorecompose.leagues.viewmodel.LeaguesViewModel
 import com.kuba.flashscorecompose.fixturedetails.container.viewmodel.FixtureDetailsViewModel
 import com.kuba.flashscorecompose.fixturedetails.headtohead.viewmodel.HeadToHeadViewModel
 import com.kuba.flashscorecompose.fixturedetails.lineup.viewmodel.LineupViewModel
 import com.kuba.flashscorecompose.fixturedetails.statistics.viewmodel.StatisticsViewModel
+import com.kuba.flashscorecompose.home.viewmodel.HomeViewModel
+import com.kuba.flashscorecompose.leaguedetails.viewmodel.LeagueDetailsViewModel
+import com.kuba.flashscorecompose.leagues.viewmodel.LeaguesViewModel
 import com.kuba.flashscorecompose.network.uuidsource.UuidData
 import com.kuba.flashscorecompose.network.uuidsource.UuidSource
 import com.kuba.flashscorecompose.standings.viewmodel.StandingsViewModel
@@ -73,6 +74,14 @@ class KoinModules {
             StandingsDetailsViewModel(
                 leagueId,
                 season,
+                get()
+            )
+        }
+        viewModel { (leagueId: Int, season: Int) ->
+            LeagueDetailsViewModel(
+                leagueId,
+                season,
+                get(),
                 get()
             )
         }
