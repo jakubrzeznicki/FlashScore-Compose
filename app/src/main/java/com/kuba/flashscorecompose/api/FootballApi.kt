@@ -10,6 +10,7 @@ import com.kuba.flashscorecompose.data.standings.remote.model.StandingsDataDto
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 /**
  * Created by jrzeznicki on 9/5/2022
@@ -33,7 +34,7 @@ interface FootballApi {
     ): Response<FixtureDataDto>
 
     @GET("$API_VERSION/$FIXTURES")
-    suspend fun getFixturesByDate(@Query(DATE) date: String): Response<FixtureDataDto>
+    suspend fun getFixturesByDate(@QueryMap queryMap: Map<String, String>): Response<FixtureDataDto>
 
     @GET("$API_VERSION/$FIXTURES")
     suspend fun getLastXFixtures(@Query(LAST) count: Int): Response<FixtureDataDto>

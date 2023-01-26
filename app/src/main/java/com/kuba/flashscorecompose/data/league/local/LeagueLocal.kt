@@ -20,6 +20,10 @@ class LeagueLocal(private val roomStorage: RoomStorage) : LeagueLocalDataSource 
         return roomStorage.getDatabase().leagueDao().getLeagues(countryNames)
     }
 
+    override suspend fun getLeagueById(id: Int): LeagueEntity {
+        return roomStorage.getDatabase().leagueDao().getLeagueById(id)
+    }
+
     override fun saveLeagues(leagues: List<LeagueEntity>) {
         roomStorage.getDatabase().leagueDao().saveLeagues(leagues)
     }

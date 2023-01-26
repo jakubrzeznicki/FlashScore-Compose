@@ -21,6 +21,7 @@ interface FixturesDataSource {
     ): Flow<List<FixtureItem>>
 
     fun observeFixturesByDate(date: String, countryNames: List<String>): Flow<List<FixtureItem>>
+    fun observeFixtureByLeague(leagueId: Int): Flow<List<FixtureItem>>
     fun observeXLastFixtures(count: Int, countryNames: List<String>): Flow<List<FixtureItem>>
     suspend fun getFixture(fixtureId: Int): FixtureItem?
     suspend fun getFixturesByCountry(countryNames: List<String>): List<FixtureItem>
@@ -32,7 +33,7 @@ interface FixturesDataSource {
     ): RepositoryResult<List<FixtureItem>>
 
     suspend fun loadFixturesHeadToHead(h2h: String, count: Int): RepositoryResult<List<FixtureItem>>
-    suspend fun loadFixturesByDate(date: String): RepositoryResult<List<FixtureItem>>
+    suspend fun loadFixturesByDate(queryMap: Map<String, String>): RepositoryResult<List<FixtureItem>>
     suspend fun loadLastXFixtures(count: Int): RepositoryResult<List<FixtureItem>>
     suspend fun loadFixturesByTeam(
         teamId: Int,

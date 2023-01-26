@@ -35,6 +35,12 @@ class FixtureLocal(private val roomStorage: RoomStorage) : FixtureLocalDataSourc
         return roomStorage.getDatabase().fixtureDao().observeFixturesByDate(date, countryNames)
     }
 
+    override fun observeFixturesByLeague(
+        leagueId: Int
+    ): Flow<List<FixtureEntity>> {
+        return roomStorage.getDatabase().fixtureDao().observeFixturesByLeague(leagueId)
+    }
+
     override fun observeXLastFixtures(
         count: Int,
         countryNames: List<String>

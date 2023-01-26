@@ -27,7 +27,9 @@ import androidx.compose.ui.unit.sp
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
+import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.destinations.FixtureDetailsRouteDestination
+import com.kuba.flashscorecompose.destinations.LeagueDetailsRouteDestination
 import com.kuba.flashscorecompose.home.model.HomeError
 import com.kuba.flashscorecompose.home.model.HomeUiState
 import com.kuba.flashscorecompose.home.model.LeagueFixturesData
@@ -61,7 +63,7 @@ fun HomeScreenRoute(
             viewModel.updateSelectedCountry(country, isSelected)
         },
         onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixture.id)) },
-        onLeagueClick = { },
+        onLeagueClick = { navigator.navigate(LeagueDetailsRouteDestination(it.id, it.season)) },
         onErrorClear = { viewModel.cleanError() },
         snackbarHostState = snackbarHostState,
         context = context
@@ -76,7 +78,7 @@ private fun HomeScreen(
     onRefreshClick: () -> Unit,
     onCountryClick: (Country, Boolean) -> Unit,
     onFixtureClick: (FixtureItem) -> Unit,
-    onLeagueClick: (Int) -> Unit,
+    onLeagueClick: (League) -> Unit,
     onErrorClear: () -> Unit,
     snackbarHostState: SnackbarHostState,
     context: Context
@@ -89,7 +91,9 @@ private fun HomeScreen(
         LoadingContent(
             modifier = modifier.padding(paddingValues),
             empty = when (uiState) {
-                is HomeUiState.HasData -> false
+                is HomeUiState.HasAllData -> false
+                is HomeUiState.HasOnlyCountries -> false
+                is HomeUiState.HasOnlyFixtures -> false
                 is HomeUiState.NoData -> uiState.isLoading
             },
             emptyContent = { FullScreenLoading() },
@@ -102,12 +106,12 @@ private fun HomeScreen(
                     .padding(16.dp),
                 state = scrollState
             ) {
+                item {
+                    Banner()
+                    Spacer(modifier = Modifier.size(16.dp))
+                }
                 when (uiState) {
-                    is HomeUiState.HasData -> {
-                        item {
-                            Banner()
-                            Spacer(modifier = Modifier.size(16.dp))
-                        }
+                    is HomeUiState.HasAllData -> {
                         item {
                             CountriesWidget(
                                 countries = uiState.countries,
@@ -127,17 +131,47 @@ private fun HomeScreen(
                             Spacer(modifier = Modifier.size(24.dp))
                         }
                     }
+                    is HomeUiState.HasOnlyCountries -> {
+                        item {
+                            CountriesWidget(
+                                countries = uiState.countries,
+                                selectedItem = uiState.selectedCountry,
+                                onCountryClick = onCountryClick
+                            )
+                            Spacer(modifier = Modifier.size(24.dp))
+                            EmptyState(
+                                modifier = Modifier.fillMaxWidth(),
+                                textId = R.string.no_fixtures_home
+                            )
+                        }
+                    }
+                    is HomeUiState.HasOnlyFixtures -> {
+                        items(items = uiState.leagueFixturesDataList) {
+                            FixturesWidget(
+                                leagueFixturesData = it,
+                                onFixtureClick = onFixtureClick,
+                                onLeagueClick = onLeagueClick
+                            )
+                            Spacer(modifier = Modifier.size(24.dp))
+                        }
+                    }
                     is HomeUiState.NoData -> {
                         item {
                             EmptyState(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .fillMaxHeight(),
-                                iconId = R.drawable.ic_close,
-                                contentDescriptionId = R.string.load_data_from_network,
-                                textId = R.string.no_fixtures_and_countries,
-                                onRefreshClick = onRefreshClick
-                            )
+                                textId = R.string.no_fixtures_and_countries
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .size(128.dp)
+                                        .padding(8.dp),
+                                    painter = painterResource(id = R.drawable.ic_close),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.inverseOnSurface
+                                )
+                            }
                         }
                     }
                 }
@@ -259,7 +293,7 @@ private fun Banner() {
 private fun FixturesWidget(
     leagueFixturesData: LeagueFixturesData,
     onFixtureClick: (FixtureItem) -> Unit,
-    onLeagueClick: (Int) -> Unit
+    onLeagueClick: (League) -> Unit
 ) {
     LeagueHeader(leagueFixturesData.league, onLeagueClick)
     leagueFixturesData.fixtures.forEach { fixtureItem ->

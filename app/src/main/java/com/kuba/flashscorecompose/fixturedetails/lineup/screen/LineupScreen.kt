@@ -6,7 +6,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -91,10 +94,7 @@ private fun LineupList(
                     modifier = Modifier
                         .fillMaxWidth()
                         .fillMaxHeight(),
-                    iconId = R.drawable.ic_close,
-                    contentDescriptionId = R.string.load_data_from_network,
-                    textId = R.string.no_lineups,
-                    onRefreshClick = onRefreshClick
+                    textId = R.string.no_lineups
                 )
             }
         }

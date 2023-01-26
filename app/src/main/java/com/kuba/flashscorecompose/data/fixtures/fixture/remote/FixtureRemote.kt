@@ -22,8 +22,8 @@ class FixtureRemote(private val footballApi: FootballApi) : FixtureRemoteDataSou
     override suspend fun loadFixturesHeadToHead(h2h: String, count: Int): Response<FixtureDataDto> =
         footballApi.getFixturesHeadToHead(h2h = h2h, count = count)
 
-    override suspend fun loadFixturesByDate(date: String): Response<FixtureDataDto> =
-        footballApi.getFixturesByDate(date)
+    override suspend fun loadFixturesByDate(queryMap: Map<String, String>): Response<FixtureDataDto> =
+        footballApi.getFixturesByDate(queryMap)
 
     override suspend fun loadLastXFixtures(count: Int): Response<FixtureDataDto> =
         footballApi.getLastXFixtures(count = count)

@@ -11,13 +11,28 @@ sealed interface StandingsUiState {
     val error: StandingsError
     val standingsQuery: String
 
-    data class HasData(
+    data class HasAllData(
         override val isLoading: Boolean,
         override val error: StandingsError,
         override val standingsQuery: String,
         val standings: List<Standing>,
         val selectedCountry: Country,
         val countries: List<Country>
+    ) : StandingsUiState
+
+    data class HasOnlyCountries(
+        override val isLoading: Boolean,
+        override val error: StandingsError,
+        override val standingsQuery: String,
+        val selectedCountry: Country,
+        val countries: List<Country>
+    ) : StandingsUiState
+
+    data class HasOnlyStandings(
+        override val isLoading: Boolean,
+        override val error: StandingsError,
+        override val standingsQuery: String,
+        val standings: List<Standing>,
     ) : StandingsUiState
 
     data class NoData(

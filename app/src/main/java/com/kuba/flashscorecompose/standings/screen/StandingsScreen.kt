@@ -26,17 +26,17 @@ import coil.request.ImageRequest
 import coil.size.Size
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.country.model.Country
+import com.kuba.flashscorecompose.data.standings.model.Standing
 import com.kuba.flashscorecompose.data.standings.model.StandingItem
+import com.kuba.flashscorecompose.destinations.StandingsDetailsRouteDestination
+import com.kuba.flashscorecompose.standings.model.StandingsError
 import com.kuba.flashscorecompose.standings.model.StandingsUiState
 import com.kuba.flashscorecompose.standings.viewmodel.StandingsViewModel
+import com.kuba.flashscorecompose.ui.component.*
+import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
-import com.kuba.flashscorecompose.data.standings.model.Standing
-import com.kuba.flashscorecompose.destinations.StandingsDetailsRouteDestination
-import com.kuba.flashscorecompose.standings.model.StandingsError
-import com.kuba.flashscorecompose.ui.component.*
-import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
 
 /**
  * Created by jrzeznicki on 23/12/2022.
@@ -93,7 +93,9 @@ fun StandingsScreen(
         LoadingContent(
             modifier = modifier.padding(paddingValues),
             empty = when (uiState) {
-                is StandingsUiState.HasData -> false
+                is StandingsUiState.HasAllData -> false
+                is StandingsUiState.HasOnlyCountries -> false
+                is StandingsUiState.HasOnlyStandings -> false
                 is StandingsUiState.NoData -> uiState.isLoading
             },
             emptyContent = { FullScreenLoading() },
@@ -133,7 +135,7 @@ fun StandingsScreen(
                     Spacer(modifier = Modifier.size(28.dp))
                 }
                 when (uiState) {
-                    is StandingsUiState.HasData -> {
+                    is StandingsUiState.HasAllData -> {
                         item {
                             CountriesWidget(
                                 countries = uiState.countries,
@@ -148,17 +150,41 @@ fun StandingsScreen(
                             StandingWithLeagueItem(it, onStandingsClick)
                         }
                     }
+                    is StandingsUiState.HasOnlyCountries -> {
+                        item {
+                            CountriesWidget(
+                                countries = uiState.countries,
+                                onCountryClick = onCountryClick,
+                                selectedItem = uiState.selectedCountry
+                            )
+                            EmptyState(
+                                modifier = Modifier.fillMaxWidth(),
+                                textId = R.string.no_standings
+                            )
+                        }
+                    }
+                    is StandingsUiState.HasOnlyStandings -> {
+                        items(items = uiState.standings) {
+                            StandingWithLeagueItem(it, onStandingsClick)
+                        }
+                    }
                     is StandingsUiState.NoData -> {
                         item {
                             EmptyState(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .fillMaxHeight(),
-                                iconId = R.drawable.ic_close,
-                                contentDescriptionId = R.string.load_data_from_network,
-                                textId = R.string.no_standings,
-                                onRefreshClick = onRefreshClick
-                            )
+                                textId = R.string.no_standings
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .size(128.dp)
+                                        .padding(8.dp),
+                                    painter = painterResource(id = R.drawable.ic_close),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.inverseOnSurface
+                                )
+                            }
                         }
                     }
                 }
@@ -183,7 +209,7 @@ fun StandingWithLeagueItem(
             .clickable { onStandingsClick(standing) }
             .padding(bottom = 16.dp)
     ) {
-        LeagueHeader(league = standing.league, onLeagueClick = {})
+        LeagueHeader(league = standing.league, onLeagueClick = { })
         StandingCard(standing.standingItems)
     }
 }

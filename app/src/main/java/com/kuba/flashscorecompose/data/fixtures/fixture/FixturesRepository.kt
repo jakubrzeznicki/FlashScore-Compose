@@ -1,7 +1,11 @@
 package com.kuba.flashscorecompose.data.fixtures.fixture
 
+import com.kuba.flashscorecompose.api.FootballApi.Companion.DATE
 import com.kuba.flashscorecompose.data.fixtures.fixture.local.FixtureLocalDataSource
-import com.kuba.flashscorecompose.data.fixtures.fixture.mapper.*
+import com.kuba.flashscorecompose.data.fixtures.fixture.mapper.toFixtureEntity
+import com.kuba.flashscorecompose.data.fixtures.fixture.mapper.toFixtureItem
+import com.kuba.flashscorecompose.data.fixtures.fixture.mapper.toTeamEntity
+import com.kuba.flashscorecompose.data.fixtures.fixture.mapper.toVenueEntity
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.fixtures.fixture.remote.FixtureRemoteDataSource
 import com.kuba.flashscorecompose.data.league.mapper.toLeagueEntity
@@ -49,6 +53,12 @@ class FixturesRepository(
         countryNames: List<String>
     ): Flow<List<FixtureItem>> {
         return local.observeFixturesByDate(date, countryNames).map { fixtureEntities ->
+            fixtureEntities.map { it.toFixtureItem() }
+        }
+    }
+
+    override fun observeFixtureByLeague(leagueId: Int): Flow<List<FixtureItem>> {
+        return local.observeFixturesByLeague(leagueId).map { fixtureEntities ->
             fixtureEntities.map { it.toFixtureItem() }
         }
     }
@@ -130,9 +140,10 @@ class FixturesRepository(
         }
     }
 
-    override suspend fun loadFixturesByDate(date: String): RepositoryResult<List<FixtureItem>> {
-        val result = remote.loadFixturesByDate(date = date)
+    override suspend fun loadFixturesByDate(queryMap: Map<String, String>): RepositoryResult<List<FixtureItem>> {
+        val result = remote.loadFixturesByDate(queryMap)
         return try {
+            val date = queryMap[DATE].orEmpty()
             val fixtureItems = result.body()?.response?.map { it.toFixtureItem(date = date) }
             withContext(Dispatchers.IO) {
                 local.saveFixtures(fixtureItems?.map { it.toFixtureEntity() }.orEmpty())
