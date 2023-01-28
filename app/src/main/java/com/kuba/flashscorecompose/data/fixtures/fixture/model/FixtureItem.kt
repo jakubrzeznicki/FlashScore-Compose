@@ -2,6 +2,7 @@ package com.kuba.flashscorecompose.data.fixtures.fixture.model
 
 import android.os.Parcelable
 import com.kuba.flashscorecompose.data.league.model.League
+import com.kuba.flashscorecompose.data.team.information.model.Team
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

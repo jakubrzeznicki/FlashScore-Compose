@@ -1,6 +1,7 @@
 package com.kuba.flashscorecompose.data.fixtures.fixture.local.model
 
 import androidx.room.*
+import com.kuba.flashscorecompose.data.team.information.local.model.VenueEntity
 
 @SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
 @Entity(tableName = "fixture_info")

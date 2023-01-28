@@ -1,9 +1,9 @@
 package com.kuba.flashscorecompose.data.fixtures.fixture.local
 
 import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.FixtureEntity
-import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.TeamEntity
-import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.VenueEntity
 import com.kuba.flashscorecompose.data.league.local.model.LeagueEntity
+import com.kuba.flashscorecompose.data.team.information.local.model.TeamEntity
+import com.kuba.flashscorecompose.data.team.information.local.model.VenueEntity
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -24,7 +24,7 @@ interface FixtureLocalDataSource {
     suspend fun getFixture(fixtureId: Int): FixtureEntity?
     suspend fun getFixturesByCountry(countryNames: List<String>): List<FixtureEntity>
     fun saveFixtures(fixtures: List<FixtureEntity>)
-    fun saveVenues(venues: List<VenueEntity>)
+    suspend fun saveVenues(venues: List<VenueEntity>)
     fun saveLeagues(leagues: List<LeagueEntity>)
     suspend fun saveTeams(teams: List<TeamEntity>)
     fun deleteFixturesByRound(leagueId: Int, season: Int, round: String)

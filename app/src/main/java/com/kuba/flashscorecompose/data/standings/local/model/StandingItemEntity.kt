@@ -3,7 +3,7 @@ package com.kuba.flashscorecompose.data.standings.local.model
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import com.google.gson.annotations.SerializedName
-import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.TeamEntity
+import com.kuba.flashscorecompose.data.team.information.local.model.TeamEntity
 
 data class StandingItemEntity(
     @Embedded(prefix = "information_all_") val all: InformationStandingEntity,

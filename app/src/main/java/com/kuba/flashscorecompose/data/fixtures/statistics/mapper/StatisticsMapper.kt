@@ -1,15 +1,14 @@
 package com.kuba.flashscorecompose.data.fixtures.statistics.mapper
 
-import com.kuba.flashscorecompose.data.fixtures.fixture.mapper.toTeam
-import com.kuba.flashscorecompose.data.fixtures.fixture.mapper.toTeamEntity
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.Team
 import com.kuba.flashscorecompose.data.fixtures.statistics.local.model.StatisticRowEntity
 import com.kuba.flashscorecompose.data.fixtures.statistics.local.model.StatisticsEntity
 import com.kuba.flashscorecompose.data.fixtures.statistics.model.Statistic
 import com.kuba.flashscorecompose.data.fixtures.statistics.model.Statistics
 import com.kuba.flashscorecompose.data.fixtures.statistics.remote.model.StatisticDto
-import com.kuba.flashscorecompose.data.fixtures.statistics.remote.model.StatisticsDataDto
 import com.kuba.flashscorecompose.data.fixtures.statistics.remote.model.StatisticsTeamDto
+import com.kuba.flashscorecompose.data.team.information.mapper.toTeam
+import com.kuba.flashscorecompose.data.team.information.mapper.toTeamEntity
+import com.kuba.flashscorecompose.data.team.information.model.Team
 
 /**
  * Created by jrzeznicki on 03/01/2023.

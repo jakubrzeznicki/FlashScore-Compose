@@ -1,4 +1,6 @@
-package com.kuba.flashscorecompose.data.fixtures.lineups.model
+package com.kuba.flashscorecompose.data.team.information.model
+
+import com.kuba.flashscorecompose.data.fixtures.lineups.model.Birth
 
 data class Coach(
     val id: Int,

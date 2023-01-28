@@ -33,9 +33,10 @@ import coil.request.ImageRequest
 import coil.size.Size
 import com.google.relay.compose.BoxScopeInstanceImpl.matchParentSize
 import com.kuba.flashscorecompose.R
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.Team
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.data.standings.model.StandingItem
+import com.kuba.flashscorecompose.data.team.information.model.Team
+import com.kuba.flashscorecompose.destinations.TeamDetailsRouteDestination
 import com.kuba.flashscorecompose.standingsdetails.model.StandingFilterButton
 import com.kuba.flashscorecompose.standingsdetails.model.StandingsDetailsUiState
 import com.kuba.flashscorecompose.standingsdetails.viewmodel.StandingsDetailsViewModel
@@ -66,7 +67,9 @@ fun StandingsDetailsRoute(
     StandingsDetailsScreen(
         uiState = uiState,
         navigator = navigator,
-        onTeamClick = {},
+        onTeamClick = { team, leagueIdParam ->
+            navigator.navigate(TeamDetailsRouteDestination(team.id, leagueIdParam))
+        },
         onStandingsFilteredButtonClick = { viewModel.filterStandings(it) }
     )
 }
@@ -77,7 +80,7 @@ private fun StandingsDetailsScreen(
     modifier: Modifier = Modifier,
     uiState: StandingsDetailsUiState,
     navigator: DestinationsNavigator,
-    onTeamClick: (Team) -> Unit,
+    onTeamClick: (Team, Int) -> Unit,
     onStandingsFilteredButtonClick: (StandingFilterButton) -> Unit
 ) {
     val scrollState = rememberLazyListState()
@@ -109,7 +112,7 @@ private fun StandingsDetailsScreen(
                 )
             }
             items(items = uiState.standingsItems) {
-                StandingElementRow(it, onTeamClick)
+                StandingElementRow(it, uiState.league, onTeamClick)
             }
         }
     }
@@ -327,10 +330,14 @@ private fun StandingHeaderRow() {
 }
 
 @Composable
-private fun StandingElementRow(standingItem: StandingItem, onTeamClick: (Team) -> Unit) {
+private fun StandingElementRow(
+    standingItem: StandingItem,
+    league: League,
+    onTeamClick: (Team, Int) -> Unit
+) {
     Row(
         modifier = Modifier
-            .clickable { onTeamClick(standingItem.team) }
+            .clickable { onTeamClick(standingItem.team, league.id) }
             .fillMaxWidth()
             .padding(vertical = 4.dp)
             .background(

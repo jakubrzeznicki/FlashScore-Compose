@@ -1,13 +1,13 @@
 package com.kuba.flashscorecompose.data.fixtures.lineups
 
-import com.kuba.flashscorecompose.data.fixtures.fixture.mapper.toTeamEntity
-import com.kuba.flashscorecompose.data.fixtures.lineups.remote.LineupsRemoteDataSource
 import com.kuba.flashscorecompose.data.fixtures.lineups.local.LineupLocalDataSource
-import com.kuba.flashscorecompose.data.fixtures.lineups.mapper.toCoachEntity
 import com.kuba.flashscorecompose.data.fixtures.lineups.mapper.toLineup
 import com.kuba.flashscorecompose.data.fixtures.lineups.mapper.toLineupEntity
 import com.kuba.flashscorecompose.data.fixtures.lineups.mapper.toPlayerEntity
 import com.kuba.flashscorecompose.data.fixtures.lineups.model.Lineup
+import com.kuba.flashscorecompose.data.fixtures.lineups.remote.LineupsRemoteDataSource
+import com.kuba.flashscorecompose.data.team.information.mapper.toCoachEntity
+import com.kuba.flashscorecompose.data.team.information.mapper.toTeamEntity
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import com.kuba.flashscorecompose.utils.ResponseStatus
 import kotlinx.coroutines.flow.Flow

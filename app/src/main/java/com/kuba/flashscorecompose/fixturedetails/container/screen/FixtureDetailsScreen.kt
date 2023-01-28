@@ -9,12 +9,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -29,18 +26,19 @@ import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.Goals
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.Status
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.Team
+import com.kuba.flashscorecompose.data.team.information.model.Team
+import com.kuba.flashscorecompose.destinations.TeamDetailsRouteDestination
 import com.kuba.flashscorecompose.fixturedetails.container.model.FixtureDetailsUiState
 import com.kuba.flashscorecompose.fixturedetails.container.viewmodel.FixtureDetailsViewModel
-import com.kuba.flashscorecompose.fixturedetails.tabs.TabItem
 import com.kuba.flashscorecompose.ui.component.CenterAppTopBar
 import com.kuba.flashscorecompose.ui.component.EmptyState
 import com.kuba.flashscorecompose.ui.component.FlashScoreSnackbarHost
+import com.kuba.flashscorecompose.ui.component.tabs.TabItem
+import com.kuba.flashscorecompose.ui.component.tabs.Tabs
+import com.kuba.flashscorecompose.ui.component.tabs.TabsContent
 import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -63,18 +61,20 @@ fun FixtureDetailsRoute(
     FixtureDetailsScreen(
         uiState = uiState,
         navigator = navigator,
-        onTeamClick = {},
+        onTeamClick = { team, leagueId ->
+            navigator.navigate(TeamDetailsRouteDestination(team.id, leagueId))
+        },
         snackbarHostState = snackbarHostState
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FixtureDetailsScreen(
+private fun FixtureDetailsScreen(
     modifier: Modifier = Modifier,
     uiState: FixtureDetailsUiState,
     navigator: DestinationsNavigator,
-    onTeamClick: (Team) -> Unit,
+    onTeamClick: (Team, Int) -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
     Scaffold(
@@ -133,7 +133,7 @@ private fun TopBar(navigator: DestinationsNavigator, uiState: FixtureDetailsUiSt
 }
 
 @Composable
-private fun HeaderMatchInfo(fixtureItem: FixtureItem, onTeamClick: (Team) -> Unit) {
+private fun HeaderMatchInfo(fixtureItem: FixtureItem, onTeamClick: (Team, Int) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -141,16 +141,31 @@ private fun HeaderMatchInfo(fixtureItem: FixtureItem, onTeamClick: (Team) -> Uni
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        TeamInfo(team = fixtureItem.homeTeam, Modifier.weight(2f), onTeamClick)
+        TeamInfo(
+            team = fixtureItem.homeTeam,
+            fixtureItem.league.id,
+            Modifier.weight(2f),
+            onTeamClick
+        )
         TeamInfoScore(fixtureItem.goals, fixtureItem.fixture.status, Modifier.weight(4f))
-        TeamInfo(team = fixtureItem.awayTeam, Modifier.weight(2f), onTeamClick)
+        TeamInfo(
+            team = fixtureItem.awayTeam,
+            fixtureItem.league.id,
+            Modifier.weight(2f),
+            onTeamClick
+        )
     }
 }
 
 @Composable
-private fun TeamInfo(team: Team, modifier: Modifier, onTeamClick: (Team) -> Unit) {
+private fun TeamInfo(
+    team: Team,
+    leagueId: Int,
+    modifier: Modifier,
+    onTeamClick: (Team, Int) -> Unit
+) {
     Column(
-        modifier = modifier.clickable { onTeamClick(team) },
+        modifier = modifier.clickable { onTeamClick(team, leagueId) },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -237,102 +252,27 @@ private fun FixtureDetailsTabs(
     uiState: FixtureDetailsUiState.HasData,
     navigator: DestinationsNavigator
 ) {
-    Column {
-        val tabs = listOf(
-            TabItem.Statistics(
-                uiState.fixtureItem.id,
-                uiState.fixtureItem.league.id,
-                uiState.fixtureItem.league.round,
-                uiState.fixtureItem.season,
-                navigator
-            ),
-            TabItem.LineUp(uiState.fixtureItem.id, navigator),
-            TabItem.HeadToHead(
-                uiState.fixtureItem.homeTeam,
-                uiState.fixtureItem.awayTeam,
-                uiState.fixtureItem.season,
-                uiState.fixtureItem.id,
-                navigator
-            )
+    val tabs = listOf(
+        TabItem.FixtureDetails.Statistics(
+            uiState.fixtureItem.id,
+            uiState.fixtureItem.league.id,
+            uiState.fixtureItem.league.round,
+            uiState.fixtureItem.season,
+            navigator
+        ),
+        TabItem.FixtureDetails.LineUp(uiState.fixtureItem.id, navigator),
+        TabItem.FixtureDetails.HeadToHead(
+            uiState.fixtureItem.homeTeam,
+            uiState.fixtureItem.awayTeam,
+            uiState.fixtureItem.season,
+            uiState.fixtureItem.id,
+            navigator
         )
-        val pagerState = rememberPagerState()
-        val coroutineScope = rememberCoroutineScope()
-        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-            FixtureDetailsTabs(tabs = tabs, pagerState = pagerState, coroutineScope)
-            TabsContent(tabs = tabs, pagerState = pagerState)
-        }
-    }
-}
-
-@OptIn(ExperimentalPagerApi::class)
-@Composable
-private fun FixtureDetailsTabs(
-    tabs: List<TabItem>,
-    pagerState: PagerState,
-    coroutineScope: CoroutineScope
-) {
-    TabRow(
-        selectedTabIndex = pagerState.currentPage,
-        modifier = Modifier
-            .padding(vertical = 4.dp, horizontal = 8.dp)
-            .clip(RoundedCornerShape(50))
-            .padding(1.dp),
-        contentColor = MaterialTheme.colorScheme.onSecondary,
-        containerColor = MaterialTheme.colorScheme.background,
-        indicator = {
-            Box {}
-        },
-        divider = {}
-    ) {
-        tabs.forEachIndexed { index, tab ->
-            FixtureDetailsTab(
-                pagerState = pagerState,
-                coroutineScope = coroutineScope,
-                tab = tab,
-                index = index
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalPagerApi::class)
-@Composable
-private fun FixtureDetailsTab(
-    pagerState: PagerState,
-    coroutineScope: CoroutineScope,
-    tab: TabItem,
-    index: Int
-) {
-    Tab(
-        modifier = if (pagerState.currentPage == index) {
-            Modifier
-                .clip(RoundedCornerShape(50))
-                .background(
-                    brush = Brush.horizontalGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.primary,
-                            MaterialTheme.colorScheme.secondary
-                        )
-                    )
-                )
-        } else {
-            Modifier
-                .clip(RoundedCornerShape(50))
-        },
-        text = { Text(stringResource(id = tab.titleId)) },
-        selected = pagerState.currentPage == index,
-        onClick = {
-            coroutineScope.launch {
-                pagerState.animateScrollToPage(index)
-            }
-        }
     )
-}
-
-@OptIn(ExperimentalPagerApi::class)
-@Composable
-private fun TabsContent(tabs: List<TabItem>, pagerState: PagerState) {
-    HorizontalPager(state = pagerState, count = tabs.size) { page ->
-        tabs[page].screen()
+    val pagerState = rememberPagerState()
+    val coroutineScope = rememberCoroutineScope()
+    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+        Tabs(tabs = tabs, pagerState = pagerState, coroutineScope)
+        TabsContent(tabs = tabs, pagerState = pagerState)
     }
 }

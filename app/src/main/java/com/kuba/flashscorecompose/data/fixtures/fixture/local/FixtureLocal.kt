@@ -2,9 +2,9 @@ package com.kuba.flashscorecompose.data.fixtures.fixture.local
 
 import com.kuba.flashscorecompose.data.RoomStorage
 import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.FixtureEntity
-import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.TeamEntity
-import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.VenueEntity
 import com.kuba.flashscorecompose.data.league.local.model.LeagueEntity
+import com.kuba.flashscorecompose.data.team.information.local.model.TeamEntity
+import com.kuba.flashscorecompose.data.team.information.local.model.VenueEntity
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -60,7 +60,7 @@ class FixtureLocal(private val roomStorage: RoomStorage) : FixtureLocalDataSourc
         roomStorage.getDatabase().fixtureDao().saveFixtures(fixtures = fixtures)
     }
 
-    override fun saveVenues(venues: List<VenueEntity>) {
+    override suspend fun saveVenues(venues: List<VenueEntity>) {
         roomStorage.getDatabase().venueDao().saveVenue(venues)
     }
 

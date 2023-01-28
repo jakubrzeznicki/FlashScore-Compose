@@ -1,8 +1,5 @@
 package com.kuba.flashscorecompose.data.standings.mapper
 
-import com.kuba.flashscorecompose.data.fixtures.fixture.mapper.toTeam
-import com.kuba.flashscorecompose.data.fixtures.fixture.mapper.toTeamEntity
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.Team
 import com.kuba.flashscorecompose.data.league.mapper.toLeague
 import com.kuba.flashscorecompose.data.league.mapper.toLeagueEntity
 import com.kuba.flashscorecompose.data.league.model.League
@@ -12,12 +9,15 @@ import com.kuba.flashscorecompose.data.standings.local.model.StandingItemEntity
 import com.kuba.flashscorecompose.data.standings.local.model.StandingsEntity
 import com.kuba.flashscorecompose.data.standings.model.GoalsStanding
 import com.kuba.flashscorecompose.data.standings.model.InformationStanding
-import com.kuba.flashscorecompose.data.standings.model.StandingItem
 import com.kuba.flashscorecompose.data.standings.model.Standing
+import com.kuba.flashscorecompose.data.standings.model.StandingItem
 import com.kuba.flashscorecompose.data.standings.remote.model.GoalsStandingDto
 import com.kuba.flashscorecompose.data.standings.remote.model.InformationStandingDto
 import com.kuba.flashscorecompose.data.standings.remote.model.StandingItemDto
 import com.kuba.flashscorecompose.data.standings.remote.model.StandingsDto
+import com.kuba.flashscorecompose.data.team.information.mapper.toTeam
+import com.kuba.flashscorecompose.data.team.information.mapper.toTeamEntity
+import com.kuba.flashscorecompose.data.team.information.model.Team
 
 /**
  * Created by jrzeznicki on 18/01/2023.

@@ -7,6 +7,8 @@ import com.kuba.flashscorecompose.data.fixtures.lineups.remote.model.LineupDataD
 import com.kuba.flashscorecompose.data.fixtures.statistics.remote.model.StatisticsDataDto
 import com.kuba.flashscorecompose.data.league.remote.model.LeagueDataDto
 import com.kuba.flashscorecompose.data.standings.remote.model.StandingsDataDto
+import com.kuba.flashscorecompose.data.team.information.remote.model.CoachDataDto
+import com.kuba.flashscorecompose.data.team.information.remote.model.TeamDataDto
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -64,6 +66,12 @@ interface FootballApi {
         @Query(LEAGUE) leagueId: Int
     ): Response<StandingsDataDto>
 
+    @GET("$API_VERSION/$TEAMS")
+    suspend fun getTeamInformation(@Query(ID) teamId: Int): Response<TeamDataDto>
+
+    @GET("$API_VERSION/$COACHS")
+    suspend fun getCoachByTeam(@Query(TEAM) teamId: Int): Response<CoachDataDto>
+
     companion object {
         const val API_VERSION = "v3"
         const val COUNTRIES = "countries"
@@ -83,6 +91,9 @@ interface FootballApi {
         const val DATE = "date"
         const val LAST = "last"
         const val TEAM = "team"
+        const val TEAMS = "teams"
+        const val ID = "id"
         const val STANDINGS = "standings"
+        const val COACHS = "coachs"
     }
 }

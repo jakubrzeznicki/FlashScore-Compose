@@ -3,6 +3,7 @@ package com.kuba.flashscorecompose.data.fixtures.fixture.local.model
 import androidx.room.*
 import com.kuba.flashscorecompose.data.fixtures.currentround.local.model.CurrentRoundEntity
 import com.kuba.flashscorecompose.data.league.local.model.LeagueEntity
+import com.kuba.flashscorecompose.data.team.information.local.model.TeamEntity
 
 @SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
 @Entity(tableName = "fixture")

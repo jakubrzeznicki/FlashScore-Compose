@@ -1,4 +1,4 @@
-package com.kuba.flashscorecompose.data.fixtures.fixture.remote.model
+package com.kuba.flashscorecompose.data.team.information.remote.model
 
 import com.google.gson.annotations.SerializedName
 

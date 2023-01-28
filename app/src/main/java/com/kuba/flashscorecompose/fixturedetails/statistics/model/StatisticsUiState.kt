@@ -1,8 +1,8 @@
 package com.kuba.flashscorecompose.fixturedetails.statistics.model
 
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.Team
 import com.kuba.flashscorecompose.data.fixtures.statistics.model.Statistic
+import com.kuba.flashscorecompose.data.team.information.model.Team
 
 /**
  * Created by jrzeznicki on 12/01/2023.
