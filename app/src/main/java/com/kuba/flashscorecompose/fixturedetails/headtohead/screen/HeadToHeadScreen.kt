@@ -32,7 +32,7 @@ import coil.size.Size
 import com.google.relay.compose.RowScopeInstanceImpl.align
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.Team
+import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.destinations.FixtureDetailsRouteDestination
 import com.kuba.flashscorecompose.fixturedetails.headtohead.model.FixtureItemStyle
 import com.kuba.flashscorecompose.fixturedetails.headtohead.model.HeadToHeadUiState

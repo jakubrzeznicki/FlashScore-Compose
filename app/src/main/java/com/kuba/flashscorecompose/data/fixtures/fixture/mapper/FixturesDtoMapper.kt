@@ -4,35 +4,14 @@ import com.kuba.flashscorecompose.data.fixtures.fixture.model.*
 import com.kuba.flashscorecompose.data.fixtures.fixture.remote.model.*
 import com.kuba.flashscorecompose.data.league.mapper.toLeague
 import com.kuba.flashscorecompose.data.league.model.League
+import com.kuba.flashscorecompose.data.team.information.mapper.toTeam
+import com.kuba.flashscorecompose.data.team.information.mapper.toVenue
+import com.kuba.flashscorecompose.data.team.information.model.Team
+import com.kuba.flashscorecompose.data.team.information.model.Venue
 
 /**
  * Created by jrzeznicki on 03/01/2023.
  */
-fun TeamDto.toTeam(): Team {
-    return Team(
-        id = id ?: 0,
-        logo = logo.orEmpty(),
-        name = name.orEmpty(),
-        isWinner = winner ?: false,
-        code = code.orEmpty(),
-        founded = founded ?: 0,
-        isNational = national ?: false,
-        colors = colors?.toColors() ?: Colors.EMPTY_COLORS
-    )
-}
-
-fun VenueDto.toVenue(): Venue {
-    return Venue(
-        city = city.orEmpty(),
-        id = id ?: 0,
-        name = name.orEmpty(),
-        address = address.orEmpty(),
-        capacity = capacity ?: 0,
-        surface = surface.orEmpty(),
-        image = image.orEmpty()
-    )
-}
-
 fun PeriodsDto.toPeriods(): Periods {
     return Periods(first = first ?: 0, second = second ?: 0)
 }
@@ -65,7 +44,7 @@ fun ColorsDto.toColors(): Colors {
     )
 }
 
-fun FixtureInfoDto.toFixtureInfo(): FixtureInfo {
+fun FixtureInfoDto.toFixtureInfo(teamId: Int?): FixtureInfo {
     return FixtureInfo(
         date = date.orEmpty(),
         id = id ?: 0,
@@ -73,7 +52,7 @@ fun FixtureInfoDto.toFixtureInfo(): FixtureInfo {
         status = status?.toStatus() ?: Status.EMPTY_STATUS,
         timestamp = timestamp ?: 0,
         timezone = timezone.orEmpty(),
-        venue = venue?.toVenue() ?: Venue.EMPTY_VENUE,
+        venue = venue?.toVenue(teamId) ?: Venue.EMPTY_VENUE,
         periods = periods?.toPeriods() ?: Periods.EMPTY_PERIODS,
         year = ""
     )
@@ -91,7 +70,7 @@ fun FixtureDto.toFixtureItem(
         round = round ?: league?.round.orEmpty(),
         h2h = h2h ?: "${teams?.home?.id ?: 0}-${teams?.away?.id ?: 0}",
         date = date ?: fixture?.date.orEmpty(),
-        fixture = fixture?.toFixtureInfo() ?: FixtureInfo.EMPTY_FIXTURE_INFO,
+        fixture = fixture?.toFixtureInfo(teams?.home?.id) ?: FixtureInfo.EMPTY_FIXTURE_INFO,
         goals = goals?.toGoals() ?: Goals.EMPTY_GOALS,
         league = league?.toLeague() ?: League.EMPTY_LEAGUE,
         score = score?.toScore() ?: Score.EMPTY_SCORE,

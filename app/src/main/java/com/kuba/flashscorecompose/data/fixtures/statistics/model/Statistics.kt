@@ -1,6 +1,6 @@
 package com.kuba.flashscorecompose.data.fixtures.statistics.model
 
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.Team
+import com.kuba.flashscorecompose.data.team.information.model.Team
 
 data class Statistics(
     val fixtureId: Int,

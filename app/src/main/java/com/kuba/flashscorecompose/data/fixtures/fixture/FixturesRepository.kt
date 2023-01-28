@@ -4,11 +4,11 @@ import com.kuba.flashscorecompose.api.FootballApi.Companion.DATE
 import com.kuba.flashscorecompose.data.fixtures.fixture.local.FixtureLocalDataSource
 import com.kuba.flashscorecompose.data.fixtures.fixture.mapper.toFixtureEntity
 import com.kuba.flashscorecompose.data.fixtures.fixture.mapper.toFixtureItem
-import com.kuba.flashscorecompose.data.fixtures.fixture.mapper.toTeamEntity
-import com.kuba.flashscorecompose.data.fixtures.fixture.mapper.toVenueEntity
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.fixtures.fixture.remote.FixtureRemoteDataSource
 import com.kuba.flashscorecompose.data.league.mapper.toLeagueEntity
+import com.kuba.flashscorecompose.data.team.information.mapper.toTeamEntity
+import com.kuba.flashscorecompose.data.team.information.mapper.toVenueEntity
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import com.kuba.flashscorecompose.utils.ResponseStatus
 import kotlinx.coroutines.Dispatchers
@@ -96,7 +96,7 @@ class FixturesRepository(
                 it.toFixtureItem(season = season, round = round)
             }
             withContext(Dispatchers.IO) {
-                local.saveFixtures(fixtureItems?.map { it.toFixtureEntity() }.orEmpty())
+                saveFixtureItem(fixtureItems.orEmpty())
                 local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
                 local.saveTeams(fixtureItems?.map { it.homeTeam.toTeamEntity(it.league.id) }
                     .orEmpty())

@@ -4,38 +4,12 @@ import com.kuba.flashscorecompose.data.fixtures.currentround.local.model.Current
 import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.*
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.*
 import com.kuba.flashscorecompose.data.league.mapper.toLeagueEntity
+import com.kuba.flashscorecompose.data.team.information.mapper.toTeamEntity
+import com.kuba.flashscorecompose.data.team.information.mapper.toVenueEntity
 
 /**
  * Created by jrzeznicki on 03/01/2023.
  */
-fun Team.toTeamEntity(leagueId: Int?): TeamEntity {
-    return TeamEntity(
-        id = id,
-        logo = logo,
-        name = name,
-        isWinner = isWinner,
-        isHome = false,
-        code = "",
-        founded = 0,
-        isNational = false,
-        colors = colors.toColorsEntity(),
-        leagueId = leagueId ?: 0
-    )
-}
-
-fun Venue.toVenueEntity(teamId: Int?): VenueEntity {
-    return VenueEntity(
-        city = city,
-        id = id,
-        name = name,
-        address = address,
-        capacity = capacity,
-        surface = surface,
-        image = image,
-        teamId = teamId ?: 0
-    )
-}
-
 fun Periods.toPeriodsEntity(): PeriodsEntity {
     return PeriodsEntity(first = first, second = second)
 }

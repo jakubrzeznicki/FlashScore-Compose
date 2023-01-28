@@ -1,10 +1,10 @@
-package com.kuba.flashscorecompose.data.fixtures.fixture.local
+package com.kuba.flashscorecompose.data.team.information.local
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.TeamEntity
+import com.kuba.flashscorecompose.data.team.information.local.model.TeamEntity
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -14,10 +14,13 @@ import kotlinx.coroutines.flow.Flow
 interface TeamDao {
 
     @Query("SELECT * FROM team WHERE league_id = :leagueId")
-    fun getTeamsByLeague(leagueId: Int): Flow<List<TeamEntity>>
+    fun observeTeamsByLeague(leagueId: Int): Flow<List<TeamEntity>>
 
     @Query("SELECT * FROM team WHERE id = :teamId")
-    fun getTeam(teamId: Int): TeamEntity
+    suspend fun getTeam(teamId: Int): TeamEntity
+
+    @Query("SELECT * FROM team WHERE id = :teamId")
+    fun observeTeam(teamId: Int): Flow<TeamEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveTeams(teams: List<TeamEntity>)

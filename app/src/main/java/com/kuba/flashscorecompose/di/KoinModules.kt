@@ -31,6 +31,10 @@ import com.kuba.flashscorecompose.data.standings.StandingsDataSource
 import com.kuba.flashscorecompose.data.standings.StandingsRepository
 import com.kuba.flashscorecompose.data.standings.local.StandingsLocal
 import com.kuba.flashscorecompose.data.standings.remote.StandingsRemote
+import com.kuba.flashscorecompose.data.team.information.TeamDataSource
+import com.kuba.flashscorecompose.data.team.information.TeamRepository
+import com.kuba.flashscorecompose.data.team.information.local.TeamLocal
+import com.kuba.flashscorecompose.data.team.information.remote.TeamRemote
 import com.kuba.flashscorecompose.fixturedetails.container.viewmodel.FixtureDetailsViewModel
 import com.kuba.flashscorecompose.fixturedetails.headtohead.viewmodel.HeadToHeadViewModel
 import com.kuba.flashscorecompose.fixturedetails.lineup.viewmodel.LineupViewModel
@@ -42,6 +46,8 @@ import com.kuba.flashscorecompose.network.uuidsource.UuidData
 import com.kuba.flashscorecompose.network.uuidsource.UuidSource
 import com.kuba.flashscorecompose.standings.viewmodel.StandingsViewModel
 import com.kuba.flashscorecompose.standingsdetails.viewmodel.StandingsDetailsViewModel
+import com.kuba.flashscorecompose.teamdetails.container.viewmodel.TeamDetailsViewModel
+import com.kuba.flashscorecompose.teamdetails.informations.viewmodel.TeamInformationsViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -85,6 +91,10 @@ class KoinModules {
                 get()
             )
         }
+        viewModel { (teamId: Int) -> TeamDetailsViewModel(teamId, get()) }
+        viewModel { (teamId: Int, leagueId: Int) ->
+            TeamInformationsViewModel(teamId, leagueId, get())
+        }
     }
 
     private val componentsModule = module {
@@ -127,6 +137,11 @@ class KoinModules {
             val local = StandingsLocal(get())
             val remote = StandingsRemote(get())
             StandingsRepository(local, remote)
+        }
+        single<TeamDataSource> {
+            val local = TeamLocal(get())
+            val remote = TeamRemote(get())
+            TeamRepository(local, remote)
         }
     }
 

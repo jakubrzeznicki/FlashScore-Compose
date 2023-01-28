@@ -1,7 +1,8 @@
 package com.kuba.flashscorecompose.data.fixtures.lineups.local.model
 
 import androidx.room.*
-import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.TeamEntity
+import com.kuba.flashscorecompose.data.team.information.local.model.CoachEntity
+import com.kuba.flashscorecompose.data.team.information.local.model.TeamEntity
 
 /**
  * Created by jrzeznicki on 04/01/2023.

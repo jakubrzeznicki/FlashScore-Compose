@@ -1,7 +1,9 @@
 package com.kuba.flashscorecompose.data.standings.local
 
 import com.kuba.flashscorecompose.data.RoomStorage
+import com.kuba.flashscorecompose.data.league.local.model.LeagueEntity
 import com.kuba.flashscorecompose.data.standings.local.model.StandingsEntity
+import com.kuba.flashscorecompose.data.team.information.local.model.TeamEntity
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -18,5 +20,13 @@ class StandingsLocal(private val roomStorage: RoomStorage) : StandingsLocalDataS
 
     override suspend fun saveStandings(standings: List<StandingsEntity>) {
         roomStorage.getDatabase().standingDao().saveStandings(standings)
+    }
+
+    override suspend fun saveLeagues(leagues: List<LeagueEntity>) {
+        roomStorage.getDatabase().leagueDao().saveLeagues(leagues)
+    }
+
+    override suspend fun saveTeams(teams: List<TeamEntity>) {
+        roomStorage.getDatabase().teamDao().saveTeams(teams)
     }
 }

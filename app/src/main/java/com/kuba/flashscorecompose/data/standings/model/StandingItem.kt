@@ -1,7 +1,7 @@
 package com.kuba.flashscorecompose.data.standings.model
 
 import com.kuba.flashscorecompose.R
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.Team
+import com.kuba.flashscorecompose.data.team.information.model.Team
 
 data class StandingItem(
     val all: InformationStanding,

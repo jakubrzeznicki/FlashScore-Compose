@@ -3,41 +3,18 @@ package com.kuba.flashscorecompose.data.fixtures.fixture.mapper
 import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.*
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.*
 import com.kuba.flashscorecompose.data.league.mapper.toLeague
+import com.kuba.flashscorecompose.data.team.information.mapper.toTeam
+import com.kuba.flashscorecompose.data.team.information.mapper.toVenue
 
 /**
  * Created by jrzeznicki on 03/01/2023.
  */
-fun TeamEntity.toTeam(): Team {
-    return Team(
-        id = id,
-        logo = logo,
-        name = name,
-        isWinner = isWinner,
-        code = code,
-        founded = founded,
-        isNational = isNational,
-        colors = colors.toColors()
-    )
-}
-
 fun ColorsEntity.toColors(): Colors {
     return Colors(goalkeeper.toPlayerColor(), player = player.toPlayerColor())
 }
 
 fun PlayerColorEntity.toPlayerColor(): PlayerColor {
     return PlayerColor(border = border, number = number, primary = primary)
-}
-
-fun VenueEntity.toVenue(): Venue {
-    return Venue(
-        city = city,
-        id = id,
-        name = name,
-        address = address,
-        capacity = capacity,
-        surface = surface,
-        image = image
-    )
 }
 
 fun PeriodsEntity.toPeriods(): Periods {
