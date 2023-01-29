@@ -12,9 +12,9 @@ import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.FixtureEntit
 import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.FixtureInfoEntity
 import com.kuba.flashscorecompose.data.fixtures.lineups.converter.LineupsDataConverter
 import com.kuba.flashscorecompose.data.fixtures.lineups.local.LineupDao
-import com.kuba.flashscorecompose.data.fixtures.lineups.local.PlayerDao
+import com.kuba.flashscorecompose.data.players.local.PlayerDao
 import com.kuba.flashscorecompose.data.fixtures.lineups.local.model.LineupEntity
-import com.kuba.flashscorecompose.data.fixtures.lineups.local.model.PlayerEntity
+import com.kuba.flashscorecompose.data.players.local.model.PlayerEntity
 import com.kuba.flashscorecompose.data.fixtures.statistics.converter.StatisticsDataConverter
 import com.kuba.flashscorecompose.data.fixtures.statistics.local.StatisticsDao
 import com.kuba.flashscorecompose.data.fixtures.statistics.local.model.StatisticsEntity

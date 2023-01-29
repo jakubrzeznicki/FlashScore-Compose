@@ -1,4 +1,4 @@
-package com.kuba.flashscorecompose.data.fixtures.lineups.model
+package com.kuba.flashscorecompose.data.players.model
 
 
 /**

@@ -4,7 +4,7 @@ import com.kuba.flashscorecompose.data.RoomStorage
 import com.kuba.flashscorecompose.data.team.information.local.model.TeamEntity
 import com.kuba.flashscorecompose.data.team.information.local.model.CoachEntity
 import com.kuba.flashscorecompose.data.fixtures.lineups.local.model.LineupEntity
-import com.kuba.flashscorecompose.data.fixtures.lineups.local.model.PlayerEntity
+import com.kuba.flashscorecompose.data.players.local.model.PlayerEntity
 import kotlinx.coroutines.flow.Flow
 
 /**

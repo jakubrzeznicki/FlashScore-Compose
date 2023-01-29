@@ -1,4 +1,4 @@
-package com.kuba.flashscorecompose.data.fixtures.lineups.local.model
+package com.kuba.flashscorecompose.data.players.local.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Embedded

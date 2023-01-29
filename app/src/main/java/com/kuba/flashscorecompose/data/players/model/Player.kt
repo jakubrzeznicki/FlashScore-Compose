@@ -1,4 +1,6 @@
-package com.kuba.flashscorecompose.data.fixtures.lineups.model
+package com.kuba.flashscorecompose.data.players.model
+
+import com.kuba.flashscorecompose.data.players.model.Birth
 
 data class Player(
     val grid: String,

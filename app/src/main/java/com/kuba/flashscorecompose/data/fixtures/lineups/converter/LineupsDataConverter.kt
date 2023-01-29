@@ -3,7 +3,7 @@ package com.kuba.flashscorecompose.data.fixtures.lineups.converter
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.kuba.flashscorecompose.data.fixtures.lineups.local.model.PlayerEntity
+import com.kuba.flashscorecompose.data.players.local.model.PlayerEntity
 
 /**
  * Created by jrzeznicki on 04/01/2023.

@@ -5,7 +5,7 @@ import com.kuba.flashscorecompose.data.fixtures.fixture.mapper.toColorsEntity
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.Colors
 import com.kuba.flashscorecompose.data.fixtures.lineups.mapper.toBirth
 import com.kuba.flashscorecompose.data.fixtures.lineups.mapper.toBirthEntity
-import com.kuba.flashscorecompose.data.fixtures.lineups.model.Birth
+import com.kuba.flashscorecompose.data.players.model.Birth
 import com.kuba.flashscorecompose.data.team.information.local.model.CoachEntity
 import com.kuba.flashscorecompose.data.team.information.local.model.TeamEntity
 import com.kuba.flashscorecompose.data.team.information.local.model.VenueEntity
