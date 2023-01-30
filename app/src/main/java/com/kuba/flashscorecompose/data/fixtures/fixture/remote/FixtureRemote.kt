@@ -12,25 +12,59 @@ class FixtureRemote(private val footballApi: FootballApi) : FixtureRemoteDataSou
         leagueId: Int,
         season: Int,
         round: String
-    ): Response<FixtureDataDto> =
-        footballApi.getFixturesFilteredByRound(
-            leagueId = leagueId,
-            season = season,
-            round = round
+    ): Response<FixtureDataDto> {
+        val queryMap = mapOf(
+            FootballApi.LEAGUE to leagueId.toString(),
+            FootballApi.SEASON to season.toString(),
+            FootballApi.ROUND to round
         )
+        return footballApi.getFixtures(queryMap)
+    }
 
     override suspend fun loadFixturesHeadToHead(h2h: String, count: Int): Response<FixtureDataDto> =
         footballApi.getFixturesHeadToHead(h2h = h2h, count = count)
 
-    override suspend fun loadFixturesByDate(queryMap: Map<String, String>): Response<FixtureDataDto> =
-        footballApi.getFixturesByDate(queryMap)
+    override suspend fun loadFixturesByDate(date: String): Response<FixtureDataDto> {
+        val queryMap = mapOf(FootballApi.DATE to date)
+        return footballApi.getFixtures(queryMap)
+    }
 
-    override suspend fun loadLastXFixtures(count: Int): Response<FixtureDataDto> =
-        footballApi.getLastXFixtures(count = count)
+    override suspend fun loadFixturesByDate(
+        date: String,
+        leagueId: Int,
+        season: Int
+    ): Response<FixtureDataDto> {
+        val queryMap = mapOf(
+            FootballApi.LEAGUE to leagueId.toString(),
+            FootballApi.SEASON to season.toString(),
+            FootballApi.DATE to date
+        )
+        return footballApi.getFixtures(queryMap)
+    }
+
+    override suspend fun loadLastXFixtures(count: Int): Response<FixtureDataDto> {
+        val queryMap = mapOf(FootballApi.LAST to count.toString())
+        return footballApi.getFixtures(queryMap)
+    }
 
     override suspend fun loadFixturesByTeam(
         teamId: Int,
         season: Int,
         count: Int
-    ): Response<FixtureDataDto> = footballApi.getFixturesByTeam(teamId, season, count)
+    ): Response<FixtureDataDto> {
+        val queryMap = mapOf(
+            FootballApi.TEAM to teamId.toString(),
+            FootballApi.SEASON to season.toString(),
+            FootballApi.LAST to count.toString()
+        )
+        return footballApi.getFixtures(queryMap)
+    }
+
+    override suspend fun loadFixturesByTeam(teamId: Int, season: Int): Response<FixtureDataDto> {
+        val queryMap = mapOf(
+            FootballApi.TEAM to teamId.toString(),
+            FootballApi.SEASON to season.toString()
+        )
+        return footballApi.getFixtures(queryMap)
+    }
 }

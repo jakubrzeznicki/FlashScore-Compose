@@ -9,6 +9,7 @@ import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.fixturedetails.headtohead.screen.HeadToHeadScreen
 import com.kuba.flashscorecompose.fixturedetails.lineup.screen.LineupScreen
 import com.kuba.flashscorecompose.fixturedetails.statistics.screen.StatisticsScreen
+import com.kuba.flashscorecompose.teamdetails.fixturesteam.screen.FixturesTeamScreen
 import com.kuba.flashscorecompose.teamdetails.informations.screen.TeamInformationsScreen
 import com.kuba.flashscorecompose.teamdetails.players.screen.PlayersScreen
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -73,12 +74,13 @@ sealed class TabItem(var icon: ImageVector, var titleId: Int, var screen: Compos
         )
 
         class Fixtures(
-            team: Team?,
+            teamId: Int,
+            season: Int,
             navigator: DestinationsNavigator
         ) : TabItem(
             Icons.Default.FiberDvr,
             R.string.fixtures,
-            {}
+            { FixturesTeamScreen(teamId = teamId, season = season, navigator = navigator) }
         )
 
         class Injuries(

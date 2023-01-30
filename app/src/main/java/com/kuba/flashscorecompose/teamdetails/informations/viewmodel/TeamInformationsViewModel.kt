@@ -1,9 +1,10 @@
 package com.kuba.flashscorecompose.teamdetails.informations.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kuba.flashscorecompose.data.country.CountryDataSource
 import com.kuba.flashscorecompose.data.team.information.TeamDataSource
+import com.kuba.flashscorecompose.teamdetails.informations.model.TeamCountry
 import com.kuba.flashscorecompose.teamdetails.informations.model.TeamInformationsError
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
@@ -15,7 +16,8 @@ import kotlinx.coroutines.launch
 class TeamInformationsViewModel(
     private val teamId: Int,
     private val leagueId: Int,
-    private val teamRepository: TeamDataSource
+    private val teamRepository: TeamDataSource,
+    private val countryRepository: CountryDataSource
 ) : ViewModel() {
     private val viewModelState = MutableStateFlow(TeamInformationsViewModelState())
     val uiState = viewModelState
@@ -31,9 +33,9 @@ class TeamInformationsViewModel(
     private fun observeTeam() {
         viewModelScope.launch {
             teamRepository.observeTeam(teamId).collect { team ->
-                Log.d("TEST_LOG", "observe team - $team")
+                val country = countryRepository.getCountry(team.country)
                 viewModelState.update {
-                    it.copy(team = team)
+                    it.copy(teamCountry = TeamCountry(team, country))
                 }
             }
         }

@@ -69,7 +69,9 @@ fun PlayersListScreen(uiState: PlayersUiState, onRefreshClick: () -> Unit) {
         onRefresh = onRefreshClick
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(vertical = 16.dp),
             state = scrollState
         ) {
             when (uiState) {

@@ -61,8 +61,8 @@ fun FixtureDetailsRoute(
     FixtureDetailsScreen(
         uiState = uiState,
         navigator = navigator,
-        onTeamClick = { team, leagueId ->
-            navigator.navigate(TeamDetailsRouteDestination(team.id, leagueId))
+        onTeamClick = { team, leagueId, season ->
+            navigator.navigate(TeamDetailsRouteDestination(team.id, leagueId, season))
         },
         snackbarHostState = snackbarHostState
     )
@@ -74,7 +74,7 @@ private fun FixtureDetailsScreen(
     modifier: Modifier = Modifier,
     uiState: FixtureDetailsUiState,
     navigator: DestinationsNavigator,
-    onTeamClick: (Team, Int) -> Unit,
+    onTeamClick: (Team, Int, Int) -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
     Scaffold(
@@ -133,7 +133,7 @@ private fun TopBar(navigator: DestinationsNavigator, uiState: FixtureDetailsUiSt
 }
 
 @Composable
-private fun HeaderMatchInfo(fixtureItem: FixtureItem, onTeamClick: (Team, Int) -> Unit) {
+private fun HeaderMatchInfo(fixtureItem: FixtureItem, onTeamClick: (Team, Int, Int) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -143,7 +143,8 @@ private fun HeaderMatchInfo(fixtureItem: FixtureItem, onTeamClick: (Team, Int) -
     ) {
         TeamInfo(
             team = fixtureItem.homeTeam,
-            fixtureItem.league.id,
+            leagueId = fixtureItem.league.id,
+            season = fixtureItem.season,
             Modifier.weight(2f),
             onTeamClick
         )
@@ -151,6 +152,7 @@ private fun HeaderMatchInfo(fixtureItem: FixtureItem, onTeamClick: (Team, Int) -
         TeamInfo(
             team = fixtureItem.awayTeam,
             fixtureItem.league.id,
+            season = fixtureItem.season,
             Modifier.weight(2f),
             onTeamClick
         )
@@ -161,11 +163,12 @@ private fun HeaderMatchInfo(fixtureItem: FixtureItem, onTeamClick: (Team, Int) -
 private fun TeamInfo(
     team: Team,
     leagueId: Int,
+    season: Int,
     modifier: Modifier,
-    onTeamClick: (Team, Int) -> Unit
+    onTeamClick: (Team, Int, Int) -> Unit
 ) {
     Column(
-        modifier = modifier.clickable { onTeamClick(team, leagueId) },
+        modifier = modifier.clickable { onTeamClick(team, leagueId, season) },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {

@@ -2,7 +2,6 @@ package com.kuba.flashscorecompose.leaguedetails.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kuba.flashscorecompose.api.FootballApi
 import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesDataSource
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.league.LeagueDataSource
@@ -80,12 +79,7 @@ class LeagueDetailsViewModel(
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             val date = viewModelState.value.date
-            val queryMap = mapOf(
-                FootballApi.DATE to date.toString(),
-                FootballApi.SEASON to season.toString(),
-                FootballApi.LEAGUE to leagueId.toString()
-            )
-            val result = fixturesRepository.loadFixturesByDate(queryMap)
+            val result = fixturesRepository.loadFixturesByDate(date.toString(), leagueId, season)
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)

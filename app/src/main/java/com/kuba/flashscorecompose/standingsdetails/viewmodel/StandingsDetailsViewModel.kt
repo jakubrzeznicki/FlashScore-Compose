@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.standings.StandingsDataSource
 import com.kuba.flashscorecompose.data.standings.model.StandingItem
-import com.kuba.flashscorecompose.standingsdetails.model.StandingFilterButton
+import com.kuba.flashscorecompose.ui.component.chips.FilterChip
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -41,35 +41,35 @@ class StandingsDetailsViewModel(
         }
     }
 
-    fun filterStandings(newStandingFilterButton: StandingFilterButton) {
+    fun filterStandings(newStandingFilterChip: FilterChip.Standings) {
         val filteredStandingItems =
-            filterStandingItems(standingFilterButton = newStandingFilterButton)
+            filterStandingItems(standingFilterChip = newStandingFilterChip)
         viewModelState.update {
             it.copy(
                 filteredStandings = filteredStandingItems,
-                standingFilterButton = newStandingFilterButton
+                standingFilterChip = newStandingFilterChip
             )
         }
     }
 
     private fun filterStandingItems(
         standingItems: List<StandingItem> = viewModelState.value.standingsItems,
-        standingFilterButton: StandingFilterButton = viewModelState.value.standingFilterButton
+        standingFilterChip: FilterChip.Standings = viewModelState.value.standingFilterChip
     ): List<StandingItem> {
-        return when (standingFilterButton) {
-            is StandingFilterButton.All -> standingItems.map {
+        return when (standingFilterChip) {
+            is FilterChip.Standings.All -> standingItems.map {
                 it.copy(
                     selectedInformationStanding = it.all,
                     colorId = getColorId(it.rank)
                 )
             }
-            is StandingFilterButton.Home -> standingItems.map {
+            is FilterChip.Standings.Home -> standingItems.map {
                 it.copy(
                     selectedInformationStanding = it.home,
                     colorId = getColorId(it.rank)
                 )
             }
-            is StandingFilterButton.Away -> standingItems.map {
+            is FilterChip.Standings.Away -> standingItems.map {
                 it.copy(
                     selectedInformationStanding = it.away,
                     colorId = getColorId(it.rank)

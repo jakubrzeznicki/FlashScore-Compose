@@ -1,6 +1,5 @@
 package com.kuba.flashscorecompose.data.fixtures.fixture
 
-import com.kuba.flashscorecompose.api.FootballApi.Companion.DATE
 import com.kuba.flashscorecompose.data.fixtures.fixture.local.FixtureLocalDataSource
 import com.kuba.flashscorecompose.data.fixtures.fixture.mapper.toFixtureEntity
 import com.kuba.flashscorecompose.data.fixtures.fixture.mapper.toFixtureItem
@@ -140,11 +139,38 @@ class FixturesRepository(
         }
     }
 
-    override suspend fun loadFixturesByDate(queryMap: Map<String, String>): RepositoryResult<List<FixtureItem>> {
-        val result = remote.loadFixturesByDate(queryMap)
+    override suspend fun loadFixturesByDate(date: String): RepositoryResult<List<FixtureItem>> {
+        val result = remote.loadFixturesByDate(date)
         return try {
-            val date = queryMap[DATE].orEmpty()
             val fixtureItems = result.body()?.response?.map { it.toFixtureItem(date = date) }
+            withContext(Dispatchers.IO) {
+                local.saveFixtures(fixtureItems?.map { it.toFixtureEntity() }.orEmpty())
+                local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
+                local.saveTeams(fixtureItems?.map { it.homeTeam.toTeamEntity(it.league.id) }
+                    .orEmpty())
+                local.saveTeams(fixtureItems?.map { it.awayTeam.toTeamEntity(it.league.id) }
+                    .orEmpty())
+                local.saveVenues(fixtureItems?.map { it.fixture.venue.toVenueEntity(it.homeTeam.id) }
+                    .orEmpty())
+            }
+            RepositoryResult.Success(fixtureItems)
+        } catch (e: HttpException) {
+            RepositoryResult.Error(ResponseStatus().apply {
+                this.statusMessage = e.message()
+                this.internalStatus = e.code()
+            })
+        }
+    }
+
+    override suspend fun loadFixturesByDate(
+        date: String,
+        leagueId: Int,
+        season: Int
+    ): RepositoryResult<List<FixtureItem>> {
+        val result = remote.loadFixturesByDate(date)
+        return try {
+            val fixtureItems =
+                result.body()?.response?.map { it.toFixtureItem(date = date, season = season) }
             withContext(Dispatchers.IO) {
                 local.saveFixtures(fixtureItems?.map { it.toFixtureEntity() }.orEmpty())
                 local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
@@ -193,6 +219,32 @@ class FixturesRepository(
         count: Int
     ): RepositoryResult<List<FixtureItem>> {
         val result = remote.loadFixturesByTeam(teamId, season, count)
+        return try {
+            val fixtureItems = result.body()?.response?.map { it.toFixtureItem(season = season) }
+            withContext(Dispatchers.IO) {
+                local.saveFixtures(fixtureItems?.map { it.toFixtureEntity() }.orEmpty())
+                local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
+                local.saveTeams(fixtureItems?.map { it.homeTeam.toTeamEntity(it.league.id) }
+                    .orEmpty())
+                local.saveTeams(fixtureItems?.map { it.awayTeam.toTeamEntity(it.league.id) }
+                    .orEmpty())
+                local.saveVenues(fixtureItems?.map { it.fixture.venue.toVenueEntity(it.homeTeam.id) }
+                    .orEmpty())
+            }
+            RepositoryResult.Success(fixtureItems)
+        } catch (e: HttpException) {
+            RepositoryResult.Error(ResponseStatus().apply {
+                this.statusMessage = e.message()
+                this.internalStatus = e.code()
+            })
+        }
+    }
+
+    override suspend fun loadFixturesByTeam(
+        teamId: Int,
+        season: Int
+    ): RepositoryResult<List<FixtureItem>> {
+        val result = remote.loadFixturesByTeam(teamId, season)
         return try {
             val fixtureItems = result.body()?.response?.map { it.toFixtureItem(season = season) }
             withContext(Dispatchers.IO) {

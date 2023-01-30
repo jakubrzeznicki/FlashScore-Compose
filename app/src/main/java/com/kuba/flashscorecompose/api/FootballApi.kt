@@ -32,22 +32,7 @@ interface FootballApi {
     ): Response<CurrentRoundDataDto>
 
     @GET("$API_VERSION/$FIXTURES")
-    suspend fun getFixturesFilteredByRound(
-        @Query(LEAGUE) leagueId: Int, @Query(SEASON) season: Int, @Query(ROUND) round: String
-    ): Response<FixtureDataDto>
-
-    @GET("$API_VERSION/$FIXTURES")
-    suspend fun getFixturesByDate(@QueryMap queryMap: Map<String, String>): Response<FixtureDataDto>
-
-    @GET("$API_VERSION/$FIXTURES")
-    suspend fun getLastXFixtures(@Query(LAST) count: Int): Response<FixtureDataDto>
-
-    @GET("$API_VERSION/$FIXTURES")
-    suspend fun getFixturesByTeam(
-        @Query(TEAM) teamId: Int,
-        @Query(SEASON) season: Int,
-        @Query(LAST) count: Int
-    ): Response<FixtureDataDto>
+    suspend fun getFixtures(@QueryMap queryMap: Map<String, String>): Response<FixtureDataDto>
 
     @GET("$API_VERSION/$FIXTURES/$HEAD_TO_HEAD")
     suspend fun getFixturesHeadToHead(

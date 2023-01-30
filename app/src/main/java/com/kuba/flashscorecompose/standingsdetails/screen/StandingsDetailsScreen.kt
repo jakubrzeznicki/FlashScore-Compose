@@ -11,12 +11,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.FlightTakeoff
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Subject
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -37,10 +39,10 @@ import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.data.standings.model.StandingItem
 import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.destinations.TeamDetailsRouteDestination
-import com.kuba.flashscorecompose.standingsdetails.model.StandingFilterButton
 import com.kuba.flashscorecompose.standingsdetails.model.StandingsDetailsUiState
 import com.kuba.flashscorecompose.standingsdetails.viewmodel.StandingsDetailsViewModel
 import com.kuba.flashscorecompose.ui.component.CenterAppTopBar
+import com.kuba.flashscorecompose.ui.component.chips.FilterChip
 import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -67,10 +69,10 @@ fun StandingsDetailsRoute(
     StandingsDetailsScreen(
         uiState = uiState,
         navigator = navigator,
-        onTeamClick = { team, leagueIdParam ->
-            navigator.navigate(TeamDetailsRouteDestination(team.id, leagueIdParam))
+        onTeamClick = {
+            navigator.navigate(TeamDetailsRouteDestination(it.id, leagueId, season))
         },
-        onStandingsFilteredButtonClick = { viewModel.filterStandings(it) }
+        onStandingsFilterClick = { viewModel.filterStandings(it) }
     )
 }
 
@@ -80,8 +82,8 @@ private fun StandingsDetailsScreen(
     modifier: Modifier = Modifier,
     uiState: StandingsDetailsUiState,
     navigator: DestinationsNavigator,
-    onTeamClick: (Team, Int) -> Unit,
-    onStandingsFilteredButtonClick: (StandingFilterButton) -> Unit
+    onTeamClick: (Team) -> Unit,
+    onStandingsFilterClick: (FilterChip.Standings) -> Unit
 ) {
     val scrollState = rememberLazyListState()
     Scaffold(
@@ -99,7 +101,7 @@ private fun StandingsDetailsScreen(
                 LeagueHeader(uiState.league)
             }
             item {
-                StandingFilterChips(uiState.standingFilterButton, onStandingsFilteredButtonClick)
+                StandingFilterChips(uiState.standingFilterChip, onStandingsFilterClick)
             }
             item {
                 StandingHeaderRow()
@@ -112,7 +114,7 @@ private fun StandingsDetailsScreen(
                 )
             }
             items(items = uiState.standingsItems) {
-                StandingElementRow(it, uiState.league, onTeamClick)
+                StandingElementRow(it, onTeamClick)
             }
         }
     }
@@ -212,68 +214,77 @@ private fun LeagueHeader(league: League) {
 
 @Composable
 private fun StandingFilterChips(
-    selectedFilteredButton: StandingFilterButton,
-    onFilteredChanged: (StandingFilterButton) -> Unit
+    standingFilerChip: FilterChip.Standings,
+    onStandingsFilterClick: (FilterChip.Standings) -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 24.dp)
     ) {
-        FilteredTextButton(
-            filteredButton = StandingFilterButton.All,
-            isSelected = selectedFilteredButton is StandingFilterButton.All,
-            onStateChanged = onFilteredChanged
+        FilterStandingChip(
+            standingFilterChip = FilterChip.Standings.All,
+            isSelected = standingFilerChip is FilterChip.Standings.All,
+            onStateChanged = onStandingsFilterClick,
+            icon = Icons.Filled.Subject
         )
-        FilteredTextButton(
-            filteredButton = StandingFilterButton.Home,
-            isSelected = selectedFilteredButton is StandingFilterButton.Home,
-            onStateChanged = onFilteredChanged
+        FilterStandingChip(
+            standingFilterChip = FilterChip.Standings.Home,
+            isSelected = standingFilerChip is FilterChip.Standings.Home,
+            onStateChanged = onStandingsFilterClick,
+            icon = Icons.Filled.Home
         )
-        FilteredTextButton(
-            filteredButton = StandingFilterButton.Away,
-            isSelected = selectedFilteredButton is StandingFilterButton.Away,
-            onStateChanged = onFilteredChanged
+        FilterStandingChip(
+            standingFilterChip = FilterChip.Standings.Away,
+            isSelected = standingFilerChip is FilterChip.Standings.Away,
+            onStateChanged = onStandingsFilterClick,
+            icon = Icons.Filled.FlightTakeoff
+
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FilteredTextButton(
-    filteredButton: StandingFilterButton,
+fun FilterStandingChip(
+    standingFilterChip: FilterChip.Standings,
     isSelected: Boolean,
-    onStateChanged: (StandingFilterButton) -> Unit
+    onStateChanged: (FilterChip.Standings) -> Unit,
+    icon: ImageVector
 ) {
-    TextButton(
-        onClick = { onStateChanged(filteredButton) },
-        modifier = if (isSelected) {
-            Modifier
-                .height(50.dp)
-                .background(
-                    brush = Brush.horizontalGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.primary,
-                            MaterialTheme.colorScheme.secondary
-                        )
-                    ),
-                    shape = RoundedCornerShape(50)
-                )
-                .padding(horizontal = 4.dp)
-        } else {
-            Modifier
-                .height(50.dp)
-                .clip(RoundedCornerShape(50))
-                .padding(horizontal = 4.dp)
-        }
-    ) {
-        Text(
-            text = stringResource(id = filteredButton.textId),
-            fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.onSecondary,
-            fontWeight = FontWeight.SemiBold,
-            textAlign = TextAlign.Center
-        )
-    }
+    FilterChip(
+        modifier = Modifier.padding(horizontal = 4.dp),
+        selected = isSelected,
+        colors = FilterChipDefaults.filterChipColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            iconColor = MaterialTheme.colorScheme.onSecondary,
+            labelColor = MaterialTheme.colorScheme.onSecondary,
+            selectedContainerColor = MaterialTheme.colorScheme.primary,
+            selectedLabelColor = MaterialTheme.colorScheme.inverseOnSurface,
+            selectedLeadingIconColor = MaterialTheme.colorScheme.inverseOnSurface
+        ),
+        label = {
+            Text(
+                text = stringResource(id = standingFilterChip.textId),
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSecondary,
+                fontWeight = FontWeight.SemiBold,
+                textAlign = TextAlign.Center
+            )
+        },
+        shape = RoundedCornerShape(50),
+        leadingIcon = {
+            Icon(
+                modifier = Modifier.size(14.dp),
+                imageVector = icon,
+                contentDescription = null
+            )
+        },
+        border = FilterChipDefaults.filterChipBorder(
+            borderColor = MaterialTheme.colorScheme.inverseSurface
+        ),
+        onClick = { onStateChanged(standingFilterChip) }
+    )
 }
 
 @Composable
@@ -332,12 +343,11 @@ private fun StandingHeaderRow() {
 @Composable
 private fun StandingElementRow(
     standingItem: StandingItem,
-    league: League,
-    onTeamClick: (Team, Int) -> Unit
+    onTeamClick: (Team) -> Unit
 ) {
     Row(
         modifier = Modifier
-            .clickable { onTeamClick(standingItem.team, league.id) }
+            .clickable { onTeamClick(standingItem.team) }
             .fillMaxWidth()
             .padding(vertical = 4.dp)
             .background(

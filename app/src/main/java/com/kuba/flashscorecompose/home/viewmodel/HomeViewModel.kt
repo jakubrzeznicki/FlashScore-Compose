@@ -3,7 +3,6 @@ package com.kuba.flashscorecompose.home.viewmodel
 import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kuba.flashscorecompose.api.FootballApi
 import com.kuba.flashscorecompose.data.country.CountryDataSource
 import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesDataSource
@@ -135,8 +134,7 @@ class HomeViewModel(
             } else {
                 TESTING_DATE
             }
-            val queryMap = mapOf(FootballApi.DATE to TESTING_DATE)
-            val result = fixturesRepository.loadFixturesByDate(queryMap)
+            val result = fixturesRepository.loadFixturesByDate(TESTING_DATE)
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
