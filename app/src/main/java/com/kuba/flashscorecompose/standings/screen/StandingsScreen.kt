@@ -271,7 +271,7 @@ private fun StandingHeaderRow() {
         )
         Text(
             modifier = Modifier.weight(1f),
-            text = stringResource(id = R.string.played),
+            text = stringResource(id = R.string.played_short),
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSecondary
         )

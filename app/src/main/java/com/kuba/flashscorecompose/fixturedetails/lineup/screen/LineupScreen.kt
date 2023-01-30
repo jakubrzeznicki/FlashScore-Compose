@@ -2,10 +2,9 @@ package com.kuba.flashscorecompose.fixturedetails.lineup.screen
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -13,8 +12,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -22,6 +21,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
+import coil.size.Size
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.fixtures.lineups.model.Lineup
 import com.kuba.flashscorecompose.data.players.model.Player
@@ -53,7 +56,7 @@ fun LineupScreen(
         uiState = uiState,
         onRefreshClick = { viewModel.refresh() },
         onPlayerClick = { },
-        onLineupButtonClick = { viewModel.changeSelectedLineup(it) }
+        onLineupClick = { viewModel.changeSelectedLineup(it) }
     )
 }
 
@@ -62,7 +65,7 @@ private fun LineupList(
     uiState: LineupUiState,
     onRefreshClick: () -> Unit,
     onPlayerClick: (Player) -> Unit,
-    onLineupButtonClick: (Lineup) -> Unit
+    onLineupClick: (Lineup) -> Unit
 ) {
     val scrollState = rememberScrollState()
     LoadingContent(
@@ -86,7 +89,7 @@ private fun LineupList(
                     LineupButtons(
                         lineups = uiState.lineups,
                         selectedLineup = uiState.selectedLineup,
-                        onLineupButtonClick = onLineupButtonClick
+                        onLineupClick = onLineupClick
                     )
                     LineupFieldImage(uiState.selectedLineup, onPlayerClick)
                 }
@@ -131,58 +134,71 @@ private fun FormationInfoRow(formation: String) {
 private fun LineupButtons(
     lineups: List<Lineup>,
     selectedLineup: Lineup,
-    onLineupButtonClick: (Lineup) -> Unit
+    onLineupClick: (Lineup) -> Unit
 ) {
     Row(modifier = Modifier.fillMaxWidth()) {
-        LineupButton(
+        LineupChip(
             lineup = lineups.first(),
-            isActive = lineups.first().team.id == selectedLineup.team.id,
-            onButtonClick = onLineupButtonClick
+            isSelected = lineups.first().team.id == selectedLineup.team.id,
+            onChipClick = onLineupClick
         )
-        LineupButton(
+        LineupChip(
             lineup = lineups.last(),
-            isActive = lineups.last().team.id == selectedLineup.team.id,
-            onButtonClick = onLineupButtonClick
+            isSelected = lineups.last().team.id == selectedLineup.team.id,
+            onChipClick = onLineupClick
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun LineupButton(
+private fun LineupChip(
     lineup: Lineup,
-    isActive: Boolean,
-    onButtonClick: (Lineup) -> Unit
+    isSelected: Boolean,
+    onChipClick: (Lineup) -> Unit
 ) {
-    TextButton(
-        onClick = { onButtonClick(lineup) },
-        modifier = if (isActive) {
-            Modifier
-                .height(40.dp)
-                .clip(RoundedCornerShape(50))
-                .background(
-                    brush = Brush.horizontalGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.primary,
-                            MaterialTheme.colorScheme.secondary
-                        )
-                    )
-                )
-                .padding(horizontal = 4.dp)
-        } else {
-            Modifier
-                .height(40.dp)
-                .clip(RoundedCornerShape(50))
-                .padding(horizontal = 4.dp)
-        }
-    ) {
-        Text(
-            text = lineup.team.name,
-            fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.onSecondary,
-            fontWeight = FontWeight.SemiBold,
-            textAlign = TextAlign.Center
-        )
-    }
+    FilterChip(
+        modifier = Modifier.padding(horizontal = 4.dp),
+        selected = isSelected,
+        colors = FilterChipDefaults.filterChipColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            iconColor = MaterialTheme.colorScheme.onSecondary,
+            labelColor = MaterialTheme.colorScheme.onSecondary,
+            selectedContainerColor = MaterialTheme.colorScheme.primary,
+            selectedLabelColor = MaterialTheme.colorScheme.inverseOnSurface,
+            selectedLeadingIconColor = MaterialTheme.colorScheme.inverseOnSurface
+        ),
+        label = {
+            Text(
+                text = lineup.team.name,
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSecondary,
+                fontWeight = FontWeight.SemiBold,
+                textAlign = TextAlign.Center
+            )
+        },
+        shape = RoundedCornerShape(50),
+        leadingIcon = {
+            AsyncImage(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .size(18.dp),
+                model = ImageRequest.Builder(LocalContext.current)
+                    .decoderFactory(SvgDecoder.Factory())
+                    .data(lineup.team.logo)
+                    .size(Size.ORIGINAL)
+                    .crossfade(true)
+                    .build(),
+                placeholder = painterResource(id = R.drawable.ic_launcher_background),
+                contentDescription = null,
+                contentScale = ContentScale.Crop
+            )
+        },
+        border = FilterChipDefaults.filterChipBorder(
+            borderColor = MaterialTheme.colorScheme.inverseSurface
+        ),
+        onClick = { onChipClick(lineup) }
+    )
 }
 
 @Composable

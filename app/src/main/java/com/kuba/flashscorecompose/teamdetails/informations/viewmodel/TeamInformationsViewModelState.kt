@@ -1,8 +1,8 @@
 package com.kuba.flashscorecompose.teamdetails.informations.viewmodel
 
 import com.kuba.flashscorecompose.data.team.information.model.Coach
-import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.data.team.information.model.Venue
+import com.kuba.flashscorecompose.teamdetails.informations.model.TeamCountry
 import com.kuba.flashscorecompose.teamdetails.informations.model.TeamInformationsError
 import com.kuba.flashscorecompose.teamdetails.informations.model.TeamInformationsUiState
 
@@ -12,17 +12,17 @@ import com.kuba.flashscorecompose.teamdetails.informations.model.TeamInformation
 data class TeamInformationsViewModelState(
     val isLoading: Boolean = false,
     val error: TeamInformationsError = TeamInformationsError.NoError,
-    val team: Team? = Team.EMPTY_TEAM,
+    val teamCountry: TeamCountry? = TeamCountry.EMPTY_TEAM_COUNTRY,
     val venue: Venue? = Venue.EMPTY_VENUE,
     val coach: Coach? = Coach.EMPTY_COACH,
 ) {
     fun toUiState(): TeamInformationsUiState = when {
-        team != null && venue != null && coach != null ->
-            TeamInformationsUiState.HasFullData(isLoading, error, team, venue, coach)
-        team != null && venue != null && coach == null ->
-            TeamInformationsUiState.HasDataWithoutCoach(isLoading, error, team, venue)
-        team != null && venue == null && coach == null ->
-            TeamInformationsUiState.HasDataWithoutVenueAndCoach(isLoading, error, team)
+        teamCountry != null && venue != null && coach != null ->
+            TeamInformationsUiState.HasFullData(isLoading, error, teamCountry, venue, coach)
+        teamCountry != null && venue != null && coach == null ->
+            TeamInformationsUiState.HasDataWithoutCoach(isLoading, error, teamCountry, venue)
+        teamCountry != null && venue == null && coach == null ->
+            TeamInformationsUiState.HasDataWithoutVenueAndCoach(isLoading, error, teamCountry)
         else -> TeamInformationsUiState.NoData(isLoading, error)
     }
 }

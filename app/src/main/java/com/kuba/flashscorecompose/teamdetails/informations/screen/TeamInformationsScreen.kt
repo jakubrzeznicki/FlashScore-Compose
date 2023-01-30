@@ -28,8 +28,8 @@ import coil.request.ImageRequest
 import coil.size.Size
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.team.information.model.Coach
-import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.data.team.information.model.Venue
+import com.kuba.flashscorecompose.teamdetails.informations.model.TeamCountry
 import com.kuba.flashscorecompose.teamdetails.informations.model.TeamInformationsUiState
 import com.kuba.flashscorecompose.teamdetails.informations.viewmodel.TeamInformationsViewModel
 import com.kuba.flashscorecompose.ui.component.EmptyState
@@ -88,7 +88,7 @@ fun InformationsScreen(uiState: TeamInformationsUiState, onRefreshClick: () -> U
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSecondary,
                     )
-                    TeamInfoCard(team = uiState.team)
+                    TeamInfoCard(teamCountry = uiState.teamCountry)
                     Spacer(modifier = Modifier.size(16.dp))
                     Text(
                         modifier = Modifier.padding(bottom = 8.dp),
@@ -116,7 +116,7 @@ fun InformationsScreen(uiState: TeamInformationsUiState, onRefreshClick: () -> U
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSecondary,
                     )
-                    TeamInfoCard(team = uiState.team)
+                    TeamInfoCard(teamCountry = uiState.teamCountry)
                     Spacer(modifier = Modifier.size(16.dp))
                     Text(
                         modifier = Modifier.padding(bottom = 8.dp),
@@ -135,7 +135,7 @@ fun InformationsScreen(uiState: TeamInformationsUiState, onRefreshClick: () -> U
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSecondary,
                     )
-                    TeamInfoCard(team = uiState.team)
+                    TeamInfoCard(teamCountry = uiState.teamCountry)
                 }
                 is TeamInformationsUiState.NoData -> {
                     EmptyState(
@@ -150,27 +150,8 @@ fun InformationsScreen(uiState: TeamInformationsUiState, onRefreshClick: () -> U
     }
 }
 
-/*
-name:"Manchester United"
-code:"MUN"
-country:"England"
-founded:1878
-national:false
-logo:"https://media.api-sports.io/football/teams/33.png"
- */
-
-/*
-id:556
-name:"Old Trafford"
-address:"Sir Matt Busby Way"
-city:"Manchester"
-capacity:76212
-surface:"grass"
-image:"https://media.api-sports.io/football/venues/556.png"
- */
-
 @Composable
-fun TeamInfoCard(team: Team) {
+fun TeamInfoCard(teamCountry: TeamCountry) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(16.dp),
@@ -181,7 +162,11 @@ fun TeamInfoCard(team: Team) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            InfoWithImageRow(labelId = R.string.country, title = team.country, image = team.logo)
+            InfoWithImageRow(
+                labelId = R.string.country,
+                title = teamCountry.team.country,
+                image = teamCountry.country.flag
+            )
             Spacer(modifier = Modifier.size(16.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -191,7 +176,7 @@ fun TeamInfoCard(team: Team) {
                 InfoWithIconRow(
                     modifier = Modifier.weight(8f),
                     labelId = R.string.founded,
-                    title = team.founded.toString(),
+                    title = teamCountry.team.founded.toString(),
                     Icons.Default.Foundation
                 )
                 Divider(
@@ -204,7 +189,7 @@ fun TeamInfoCard(team: Team) {
                 InfoWithIconRow(
                     modifier = Modifier.weight(8f),
                     labelId = R.string.is_national,
-                    title = team.isNational.toString(),
+                    title = teamCountry.team.isNational.toString(),
                     Icons.Default.Flag
                 )
             }

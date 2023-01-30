@@ -34,7 +34,7 @@
     <string name="search_standings">Search your competition...</string>
     <string name="standings">Standings</string>
     <string name="team">Team</string>
-    <string name="played">P</string>
+    <string name="played_short">P</string>
     <string name="wins">W</string>
     <string name="loses">L</string>
     <string name="draws">D</string>
@@ -71,4 +71,7 @@
     <string name="height">Height</string>
     <string name="weight">Weight</string>
     <string name="is_national">Is National?</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="played">Played</string>
+    <string name="live">Live</string>
 </resources>

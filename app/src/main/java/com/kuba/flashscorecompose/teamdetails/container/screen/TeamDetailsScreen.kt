@@ -47,6 +47,7 @@ private const val SETUP_TEAM_DETAILS_KEY = "SETUP_TEAM_DETAILS_KEY"
 fun TeamDetailsRoute(
     teamId: Int,
     leagueId: Int,
+    season: Int,
     viewModel: TeamDetailsViewModel = getViewModel { parametersOf(teamId) },
     navigator: DestinationsNavigator
 ) {
@@ -56,6 +57,7 @@ fun TeamDetailsRoute(
         uiState = uiState,
         teamId = teamId,
         leagueId = leagueId,
+        season = season,
         navigator = navigator
     )
 }
@@ -67,6 +69,7 @@ fun TeamDetailsScreen(
     uiState: TeamDetailsUiState,
     teamId: Int,
     leagueId: Int,
+    season: Int,
     navigator: DestinationsNavigator
 ) {
     Scaffold(
@@ -79,7 +82,7 @@ fun TeamDetailsScreen(
                 .padding(paddingValues)
         ) {
             TeamHeader(uiState.team)
-            TeamDetailsTabs(uiState, teamId, leagueId, navigator)
+            TeamDetailsTabs(uiState, teamId, leagueId, season, navigator)
         }
     }
 }
@@ -164,12 +167,13 @@ fun TeamDetailsTabs(
     uiState: TeamDetailsUiState,
     teamId: Int,
     leagueId: Int,
+    season: Int,
     navigator: DestinationsNavigator
 ) {
     val tabs = listOf(
         TabItem.TeamDetails.Information(teamId, leagueId, navigator),
-        TabItem.TeamDetails.Players(teamId,2022, navigator),
-        TabItem.TeamDetails.Fixtures(uiState.team, navigator),
+        TabItem.TeamDetails.Players(teamId, season, navigator),
+        TabItem.TeamDetails.Fixtures(teamId, season, navigator),
         TabItem.TeamDetails.Injuries(uiState.team, navigator),
         TabItem.TeamDetails.Transfers(uiState.team, navigator)
     )

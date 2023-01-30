@@ -33,7 +33,13 @@ interface FixturesDataSource {
     ): RepositoryResult<List<FixtureItem>>
 
     suspend fun loadFixturesHeadToHead(h2h: String, count: Int): RepositoryResult<List<FixtureItem>>
-    suspend fun loadFixturesByDate(queryMap: Map<String, String>): RepositoryResult<List<FixtureItem>>
+    suspend fun loadFixturesByDate(date: String): RepositoryResult<List<FixtureItem>>
+    suspend fun loadFixturesByDate(
+        date: String,
+        leagueId: Int,
+        season: Int
+    ): RepositoryResult<List<FixtureItem>>
+
     suspend fun loadLastXFixtures(count: Int): RepositoryResult<List<FixtureItem>>
     suspend fun loadFixturesByTeam(
         teamId: Int,
@@ -41,4 +47,5 @@ interface FixturesDataSource {
         count: Int
     ): RepositoryResult<List<FixtureItem>>
 
+    suspend fun loadFixturesByTeam(teamId: Int, season: Int): RepositoryResult<List<FixtureItem>>
 }
