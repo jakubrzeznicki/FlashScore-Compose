@@ -168,7 +168,7 @@ fun TeamDetailsTabs(
 ) {
     val tabs = listOf(
         TabItem.TeamDetails.Information(teamId, leagueId, navigator),
-        TabItem.TeamDetails.Players(uiState.team, navigator),
+        TabItem.TeamDetails.Players(teamId,2022, navigator),
         TabItem.TeamDetails.Fixtures(uiState.team, navigator),
         TabItem.TeamDetails.Injuries(uiState.team, navigator),
         TabItem.TeamDetails.Transfers(uiState.team, navigator)

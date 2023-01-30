@@ -27,6 +27,10 @@ import com.kuba.flashscorecompose.data.league.LeagueDataSource
 import com.kuba.flashscorecompose.data.league.LeagueRepository
 import com.kuba.flashscorecompose.data.league.local.LeagueLocal
 import com.kuba.flashscorecompose.data.league.remote.LeagueRemote
+import com.kuba.flashscorecompose.data.players.PlayersDataSource
+import com.kuba.flashscorecompose.data.players.PlayersRepository
+import com.kuba.flashscorecompose.data.players.local.PlayersLocal
+import com.kuba.flashscorecompose.data.players.remote.PlayersRemote
 import com.kuba.flashscorecompose.data.standings.StandingsDataSource
 import com.kuba.flashscorecompose.data.standings.StandingsRepository
 import com.kuba.flashscorecompose.data.standings.local.StandingsLocal
@@ -48,6 +52,7 @@ import com.kuba.flashscorecompose.standings.viewmodel.StandingsViewModel
 import com.kuba.flashscorecompose.standingsdetails.viewmodel.StandingsDetailsViewModel
 import com.kuba.flashscorecompose.teamdetails.container.viewmodel.TeamDetailsViewModel
 import com.kuba.flashscorecompose.teamdetails.informations.viewmodel.TeamInformationsViewModel
+import com.kuba.flashscorecompose.teamdetails.players.viewmodel.PlayersViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -95,6 +100,7 @@ class KoinModules {
         viewModel { (teamId: Int, leagueId: Int) ->
             TeamInformationsViewModel(teamId, leagueId, get())
         }
+        viewModel { (teamId: Int, season: Int) -> PlayersViewModel(teamId, season, get(), get()) }
     }
 
     private val componentsModule = module {
@@ -142,6 +148,11 @@ class KoinModules {
             val local = TeamLocal(get())
             val remote = TeamRemote(get())
             TeamRepository(local, remote)
+        }
+        single<PlayersDataSource> {
+            val local = PlayersLocal(get())
+            val remote = PlayersRemote(get())
+            PlayersRepository(local, remote)
         }
     }
 

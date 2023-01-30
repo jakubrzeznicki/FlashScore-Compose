@@ -20,6 +20,7 @@
     <string name="no_standings">There are no standings</string>
     <string name="no_team_informations">There are no team informations</string>
     <string name="no_fixtures">There are no fixtures for the day. Please select another day </string>
+    <string name="no_players">There are no players</string>
     <string name="load_data_from_network">Load data from network</string>
     <string name="empty_database">Empty database</string>
     <string name="retry">Retry</string>

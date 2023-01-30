@@ -8,6 +8,6 @@ import kotlinx.coroutines.flow.Flow
  */
 interface PlayersLocalDataSource {
     fun observePlayer(playerId: Int): Flow<PlayerEntity>
-    fun observePlayers(teamId: Int): Flow<List<PlayerEntity>>
+    fun observePlayers(teamId: Int, season: Int): Flow<List<PlayerEntity>>
     suspend fun savePlayers(players: List<PlayerEntity>)
 }

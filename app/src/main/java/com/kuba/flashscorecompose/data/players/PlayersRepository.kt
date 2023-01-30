@@ -1,8 +1,8 @@
 package com.kuba.flashscorecompose.data.players
 
-import com.kuba.flashscorecompose.data.fixtures.lineups.mapper.toPlayer
-import com.kuba.flashscorecompose.data.fixtures.lineups.mapper.toPlayerEntity
 import com.kuba.flashscorecompose.data.players.local.PlayersLocalDataSource
+import com.kuba.flashscorecompose.data.players.mapper.toPlayer
+import com.kuba.flashscorecompose.data.players.mapper.toPlayerEntity
 import com.kuba.flashscorecompose.data.players.model.Player
 import com.kuba.flashscorecompose.data.players.remote.PlayersRemoteDataSource
 import com.kuba.flashscorecompose.utils.RepositoryResult
@@ -24,8 +24,8 @@ class PlayersRepository(
         return local.observePlayer(playerId).map { it.toPlayer() }
     }
 
-    override fun observePlayers(teamId: Int): Flow<List<Player>> {
-        return local.observePlayers(teamId).map { playersEntity ->
+    override fun observePlayers(teamId: Int, season: Int): Flow<List<Player>> {
+        return local.observePlayers(teamId, season).map { playersEntity ->
             playersEntity.map { it.toPlayer() }
         }
     }
@@ -38,7 +38,7 @@ class PlayersRepository(
         val result = remote.loadPlayers(teamId, season)
         return try {
             val players = result.body()?.response?.map { playerWrapperDto ->
-                playerWrapperDto.player.toPlayer(teamId)
+                playerWrapperDto.player.toPlayer(teamId, season)
             }.orEmpty()
             withContext(Dispatchers.IO) {
                 savePlayers(players)
