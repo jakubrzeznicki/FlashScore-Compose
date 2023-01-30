@@ -24,6 +24,9 @@ class CountryRepository(
         local.observeCountries(countryCodes)
             .map { countryEntity -> countryEntity.map { it.toCountry() } }
 
+    override suspend fun getCountries(): List<Country> = local.getCountries().map { it.toCountry() }
+
+
     override fun saveCountries(countries: List<Country>) {
         local.saveCountries(countries.map { it.toCountryEntity() })
     }

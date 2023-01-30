@@ -1,6 +1,7 @@
 package com.kuba.flashscorecompose.data.fixtures.lineups.local.model
 
 import androidx.room.*
+import com.kuba.flashscorecompose.data.players.local.model.PlayerEntity
 import com.kuba.flashscorecompose.data.team.information.local.model.CoachEntity
 import com.kuba.flashscorecompose.data.team.information.local.model.TeamEntity
 

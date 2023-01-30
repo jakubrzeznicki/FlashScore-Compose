@@ -1,4 +1,4 @@
-package com.kuba.flashscorecompose.data.fixtures.lineups.local.model
+package com.kuba.flashscorecompose.data.players.local.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
@@ -11,7 +11,8 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "player")
 data class PlayerEntity(
     @PrimaryKey @ColumnInfo(name = "id") val id: Int,
-    @ColumnInfo(name = "teamId") val teamId: Int,
+    @ColumnInfo(name = "team_id") val teamId: Int,
+    @ColumnInfo(name = "season") val season: Int,
     @ColumnInfo(name = "grid") val grid: String,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "number") val number: Int,

@@ -1,5 +1,6 @@
 package com.kuba.flashscorecompose.data.fixtures.lineups.model
 
+import com.kuba.flashscorecompose.data.players.model.Player
 import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.data.team.information.model.Coach
 

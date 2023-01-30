@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.kuba.flashscorecompose.data.fixtures.lineups.local.model.BirthEntity
+import com.kuba.flashscorecompose.data.players.local.model.BirthEntity
 
 /**
  * Created by jrzeznicki on 04/01/2023.

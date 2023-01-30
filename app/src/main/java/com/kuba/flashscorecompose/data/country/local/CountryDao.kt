@@ -12,6 +12,9 @@ interface CountryDao {
     @Query("SELECT * FROM countries WHERE code IN(:countryCodes)")
     fun observeCountries(countryCodes: List<String>): Flow<List<CountryEntity>>
 
+    @Query("SELECT * FROM countries")
+    suspend fun getCountries(): List<CountryEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveCountries(countries: List<CountryEntity>)
 

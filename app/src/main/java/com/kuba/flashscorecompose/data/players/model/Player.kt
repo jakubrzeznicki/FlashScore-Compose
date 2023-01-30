@@ -1,8 +1,9 @@
-package com.kuba.flashscorecompose.data.fixtures.lineups.model
+package com.kuba.flashscorecompose.data.players.model
 
 data class Player(
     val grid: String,
     val teamId: Int,
+    val season: Int,
     val id: Int,
     val name: String,
     val number: Int,

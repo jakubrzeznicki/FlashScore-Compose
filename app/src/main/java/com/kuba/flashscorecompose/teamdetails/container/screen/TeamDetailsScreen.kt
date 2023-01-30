@@ -1,6 +1,5 @@
 package com.kuba.flashscorecompose.teamdetails.container.screen
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -111,7 +110,7 @@ private fun TeamHeader(team: Team?) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 32.dp),
+            .padding(bottom = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -167,10 +166,9 @@ fun TeamDetailsTabs(
     leagueId: Int,
     navigator: DestinationsNavigator
 ) {
-    Log.d("TEST_LOG", "team1 = ${uiState.team}")
     val tabs = listOf(
         TabItem.TeamDetails.Information(teamId, leagueId, navigator),
-        TabItem.TeamDetails.Players(uiState.team, navigator),
+        TabItem.TeamDetails.Players(teamId,2022, navigator),
         TabItem.TeamDetails.Fixtures(uiState.team, navigator),
         TabItem.TeamDetails.Injuries(uiState.team, navigator),
         TabItem.TeamDetails.Transfers(uiState.team, navigator)

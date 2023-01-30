@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.fixtures.lineups.model.Lineup
-import com.kuba.flashscorecompose.data.fixtures.lineups.model.Player
+import com.kuba.flashscorecompose.data.players.model.Player
 import com.kuba.flashscorecompose.fixturedetails.lineup.model.LineupUiState
 import com.kuba.flashscorecompose.fixturedetails.lineup.viewmodel.LineupViewModel
 import com.kuba.flashscorecompose.ui.component.EmptyState
