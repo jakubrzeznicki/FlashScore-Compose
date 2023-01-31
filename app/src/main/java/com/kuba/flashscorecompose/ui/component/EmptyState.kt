@@ -22,14 +22,13 @@ fun EmptyState(
     content: @Composable (() -> Unit)? = null
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier.padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         content?.invoke()
         Text(
-            modifier = Modifier
-                .padding(8.dp),
+            modifier = Modifier.padding(8.dp),
             text = stringResource(id = textId),
             color = MaterialTheme.colorScheme.inverseOnSurface,
             textAlign = TextAlign.Center

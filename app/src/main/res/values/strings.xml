@@ -44,6 +44,8 @@
     <string name="home">Home</string>
     <string name="away">Away</string>
     <string name="empty_leagues">You have empty leagues</string>
+    <string name="empty_fixture_details">You have empty fixture details</string>
+    <string name="empty_standing_details">You have empty standing details</string>
     <string name="statistics">Statistic</string>
     <string name="lineups">Lineups</string>
     <string name="head_to_head">H2H</string>

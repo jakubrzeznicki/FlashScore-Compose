@@ -28,8 +28,8 @@ class StandingsRepository(
         }
     }
 
-    override suspend fun getStanding(leagueId: Int, season: Int): Standing {
-        return local.getStanding(leagueId, season).toStandings()
+    override fun observeStanding(leagueId: Int, season: Int): Flow<Standing?> {
+        return local.observeStanding(leagueId, season).map { it?.toStandings() }
     }
 
     override suspend fun saveStandings(standings: List<Standing>) {

@@ -8,7 +8,7 @@ data class FixtureInfoDto(
     @SerializedName("id") val id: Int?,
     @SerializedName("referee") val referee: String?,
     @SerializedName("status") val status: StatusDto?,
-    @SerializedName("timestamp") val timestamp: Int?,
+    @SerializedName("timestamp") val timestamp: Long?,
     @SerializedName("timezone") val timezone: String?,
     @SerializedName("venue") val venue: VenueDto?,
     @SerializedName("periods") val periods: PeriodsDto?

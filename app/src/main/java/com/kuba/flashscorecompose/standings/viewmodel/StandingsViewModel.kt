@@ -43,7 +43,7 @@ class StandingsViewModel(
 
     private fun observeCountries() {
         viewModelScope.launch {
-            countryRepository.observeCountries(HomeViewModel.COUNTRY_CODES).collect { countries ->
+            countryRepository.observeCountries(HomeViewModel.COUNTRY_NAMES).collect { countries ->
                 viewModelState.update {
                     it.copy(countries = countries)
                 }
@@ -74,7 +74,7 @@ class StandingsViewModel(
                 viewModelState.update { it.copy(error = StandingsError.EmptyLeague) }
                 return@launch
             }
-            leagues.forEach { league ->
+            leagues.take(5).forEach { league ->
                 refreshStanding(league)
             }
         }

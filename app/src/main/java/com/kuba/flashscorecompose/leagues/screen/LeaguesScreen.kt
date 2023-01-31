@@ -262,8 +262,14 @@ fun LeagueItem(leagueItem: League, onLeagueClick: (League) -> Unit) {
 @Composable
 fun TopBar(context: Context) {
     AppTopBar(
+        modifier = Modifier
+            .height(42.dp)
+            .padding(vertical = 8.dp),
         title = {
-            Text(text = stringResource(id = R.string.leagues), style = FlashScoreTypography.headlineSmall)
+            Text(
+                text = stringResource(id = R.string.leagues),
+                style = FlashScoreTypography.headlineSmall
+            )
         },
         actions = {
             IconButton(
@@ -303,7 +309,7 @@ fun EmptyScreen(onRefreshClick: () -> Unit) {
             Text(
                 text = "Refresh",
                 textAlign = TextAlign.Center,
-                color =  MaterialTheme.colorScheme.onSecondary
+                color = MaterialTheme.colorScheme.onSecondary
             )
         }
     }

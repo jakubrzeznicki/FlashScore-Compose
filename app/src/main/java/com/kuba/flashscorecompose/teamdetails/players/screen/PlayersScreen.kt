@@ -1,5 +1,6 @@
 package com.kuba.flashscorecompose.teamdetails.players.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -98,7 +99,7 @@ fun PlayersListScreen(uiState: PlayersUiState, onRefreshClick: () -> Unit) {
 private fun PlayerCard(playerCountry: PlayerCountry) {
     Card(
         onClick = {},
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.inverseSurface),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier.padding(vertical = 4.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
@@ -106,6 +107,9 @@ private fun PlayerCard(playerCountry: PlayerCountry) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(
+                    color = MaterialTheme.colorScheme.surface
+                )
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {

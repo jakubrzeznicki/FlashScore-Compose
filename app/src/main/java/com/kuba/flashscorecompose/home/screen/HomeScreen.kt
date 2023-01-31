@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -54,6 +55,8 @@ fun HomeScreenRoute(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+    val fixturesScrollState = rememberLazyListState()
+    val countryScrollState = rememberLazyListState()
     val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(key1 = SETUP_HOME_KEY) { viewModel.setup() }
     HomeScreen(
@@ -66,6 +69,8 @@ fun HomeScreenRoute(
         onLeagueClick = { navigator.navigate(LeagueDetailsRouteDestination(it.id, it.season)) },
         onErrorClear = { viewModel.cleanError() },
         snackbarHostState = snackbarHostState,
+        fixturesScrollState = fixturesScrollState,
+        countryScrollState = countryScrollState,
         context = context
     )
 }
@@ -81,9 +86,11 @@ private fun HomeScreen(
     onLeagueClick: (League) -> Unit,
     onErrorClear: () -> Unit,
     snackbarHostState: SnackbarHostState,
+    fixturesScrollState: LazyListState,
+    countryScrollState: LazyListState,
     context: Context
 ) {
-    val scrollState = rememberLazyListState()
+
     Scaffold(
         topBar = { TopBar(context = context) },
         snackbarHost = { FlashScoreSnackbarHost(hostState = snackbarHostState) }
@@ -103,8 +110,8 @@ private fun HomeScreen(
             LazyColumn(
                 Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
-                state = scrollState
+                    .padding(start = 16.dp, end = 16.dp, bottom = 80.dp, top = 16.dp),
+                state = fixturesScrollState
             ) {
                 item {
                     Banner()
@@ -116,7 +123,8 @@ private fun HomeScreen(
                             CountriesWidget(
                                 countries = uiState.countries,
                                 selectedItem = uiState.selectedCountry,
-                                onCountryClick = onCountryClick
+                                onCountryClick = onCountryClick,
+                                state = countryScrollState
                             )
                         }
                         item {
@@ -185,6 +193,9 @@ private fun HomeScreen(
 @Composable
 private fun TopBar(context: Context) {
     AppTopBar(
+        modifier = Modifier
+            .height(42.dp)
+            .padding(vertical = 8.dp),
         title = {
             Text(
                 text = stringResource(id = R.string.live_score),

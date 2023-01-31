@@ -48,7 +48,8 @@ fun FixtureInfoEntity.toFixtureInfo(): FixtureInfo {
         timezone = timezone,
         venue = venue.toVenue(),
         periods = periods.toPeriods(),
-        ""
+        "",
+        isLive = false
     )
 }
 

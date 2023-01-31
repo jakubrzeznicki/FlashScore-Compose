@@ -44,7 +44,7 @@ fun AppTopBar(
         modifier = modifier.padding(horizontal = 8.dp),
         title = title,
         navigationIcon = navigationIcon,
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.background),
+        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.background),
         actions = actions,
         windowInsets = windowInsets,
         scrollBehavior = scrollBehavior

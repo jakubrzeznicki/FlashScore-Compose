@@ -43,6 +43,7 @@ import org.koin.androidx.compose.getViewModel
  */
 
 private const val SETUP_STANDINGS_KEY = "SETUP_STANDINGS_KEY"
+private const val TEAMS = 4
 
 @Destination(route = "standings")
 @Composable
@@ -105,7 +106,7 @@ fun StandingsScreen(
             LazyColumn(
                 Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
+                    .padding(start = 16.dp, end = 16.dp, bottom = 80.dp, top = 16.dp),
                 state = scrollState
             ) {
                 item {
@@ -218,9 +219,16 @@ fun StandingWithLeagueItem(
 fun StandingCard(standingItems: List<StandingItem>) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(
+            modifier = Modifier
+                .background(
+                    color = MaterialTheme.colorScheme.surface
+                )
+                .padding(16.dp),
+        ) {
             StandingHeaderRow()
             Divider(
                 color = MaterialTheme.colorScheme.surface,
@@ -229,7 +237,7 @@ fun StandingCard(standingItems: List<StandingItem>) {
                     .fillMaxWidth(0.5f)
                     .align(Alignment.End)
             )
-            standingItems.take(4).forEach { standingItem ->
+            standingItems.take(TEAMS).forEach { standingItem ->
                 StandingElementRow(standingItem)
                 Divider(
                     color = MaterialTheme.colorScheme.background,
@@ -246,13 +254,17 @@ fun StandingCard(standingItems: List<StandingItem>) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopBar() {
-    AppTopBar(title = {
-        Text(
-            text = stringResource(id = R.string.standings),
-            color = MaterialTheme.colorScheme.onSecondary,
-            style = FlashScoreTypography.headlineSmall
-        )
-    })
+    AppTopBar(
+        modifier = Modifier
+            .height(42.dp)
+            .padding(vertical = 8.dp),
+        title = {
+            Text(
+                text = stringResource(id = R.string.standings),
+                color = MaterialTheme.colorScheme.onSecondary,
+                style = FlashScoreTypography.headlineSmall
+            )
+        })
 }
 
 @Composable

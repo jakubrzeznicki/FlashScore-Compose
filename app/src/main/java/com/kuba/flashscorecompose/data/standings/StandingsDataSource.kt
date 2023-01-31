@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
  */
 interface StandingsDataSource {
     fun observeStandings(leagueIds: List<Int>, season: Int): Flow<List<Standing>>
-    suspend fun getStanding(leagueId: Int, season: Int): Standing
+    fun observeStanding(leagueId: Int, season: Int): Flow<Standing?>
     suspend fun saveStandings(standings: List<Standing>)
     suspend fun loadStandings(leagueId: Int, season: Int): RepositoryResult<List<Standing>>
 }

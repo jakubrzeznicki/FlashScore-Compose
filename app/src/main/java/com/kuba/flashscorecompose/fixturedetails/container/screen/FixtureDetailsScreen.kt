@@ -1,5 +1,6 @@
 package com.kuba.flashscorecompose.fixturedetails.container.screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -24,10 +26,9 @@ import coil.size.Size
 import com.google.accompanist.pager.*
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.Goals
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.Status
 import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.destinations.TeamDetailsRouteDestination
+import com.kuba.flashscorecompose.fixturedetails.container.model.FixtureDetailsError
 import com.kuba.flashscorecompose.fixturedetails.container.model.FixtureDetailsUiState
 import com.kuba.flashscorecompose.fixturedetails.container.viewmodel.FixtureDetailsViewModel
 import com.kuba.flashscorecompose.ui.component.CenterAppTopBar
@@ -64,10 +65,12 @@ fun FixtureDetailsRoute(
         onTeamClick = { team, leagueId, season ->
             navigator.navigate(TeamDetailsRouteDestination(team.id, leagueId, season))
         },
+        onErrorClear = { viewModel.cleanError() },
         snackbarHostState = snackbarHostState
     )
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FixtureDetailsScreen(
@@ -75,17 +78,18 @@ private fun FixtureDetailsScreen(
     uiState: FixtureDetailsUiState,
     navigator: DestinationsNavigator,
     onTeamClick: (Team, Int, Int) -> Unit,
+    onErrorClear: () -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
     Scaffold(
         modifier = modifier,
         topBar = { TopBar(navigator, uiState) },
         snackbarHost = { FlashScoreSnackbarHost(hostState = snackbarHostState) }
-    ) { paddingValues ->
+    ) {
         Column(
             Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(bottom = 80.dp, top = 32.dp)
         ) {
             when (uiState) {
                 is FixtureDetailsUiState.HasData -> {
@@ -99,6 +103,11 @@ private fun FixtureDetailsScreen(
             }
         }
     }
+    ErrorSnackbar(
+        uiState = uiState,
+        onErrorClear = onErrorClear,
+        snackbarHostState = snackbarHostState
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -109,6 +118,9 @@ private fun TopBar(navigator: DestinationsNavigator, uiState: FixtureDetailsUiSt
         else -> EMPTY_TITLE
     }
     CenterAppTopBar(
+        modifier = Modifier
+            .height(42.dp)
+            .padding(vertical = 8.dp),
         navigationIcon = {
             IconButton(
                 modifier = Modifier
@@ -123,11 +135,21 @@ private fun TopBar(navigator: DestinationsNavigator, uiState: FixtureDetailsUiSt
             }
         },
         title = {
-            Text(
-                text = titleText,
-                color = MaterialTheme.colorScheme.onSecondary,
-                style = FlashScoreTypography.headlineSmall
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(0.8f),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+
+                Text(
+                    modifier = Modifier.padding(start = 8.dp),
+                    text = titleText,
+                    color = MaterialTheme.colorScheme.onSecondary,
+                    style = FlashScoreTypography.headlineSmall,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
+                )
+            }
         }
     )
 }
@@ -148,7 +170,7 @@ private fun HeaderMatchInfo(fixtureItem: FixtureItem, onTeamClick: (Team, Int, I
             Modifier.weight(2f),
             onTeamClick
         )
-        TeamInfoScore(fixtureItem.goals, fixtureItem.fixture.status, Modifier.weight(4f))
+        TeamInfoScore(fixtureItem, Modifier.weight(4f))
         TeamInfo(
             team = fixtureItem.awayTeam,
             fixtureItem.league.id,
@@ -214,14 +236,14 @@ private fun TeamInfo(
 }
 
 @Composable
-private fun TeamInfoScore(goals: Goals, status: Status, modifier: Modifier) {
+private fun TeamInfoScore(fixtureItem: FixtureItem, modifier: Modifier) {
     Column(
-        modifier.padding(vertical = 16.dp),
+        modifier.padding(vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "${goals.home} - ${goals.away}",
+            text = "${fixtureItem.goals.home} - ${fixtureItem.goals.away}",
             fontWeight = FontWeight.SemiBold,
             fontSize = 32.sp,
             color = MaterialTheme.colorScheme.onBackground,
@@ -230,16 +252,28 @@ private fun TeamInfoScore(goals: Goals, status: Status, modifier: Modifier) {
         )
         Spacer(modifier = Modifier.size(16.dp))
         Text(
-            text = status.long,
+            modifier = Modifier.padding(bottom = 4.dp),
+            text = fixtureItem.fixture.status.long,
             fontWeight = FontWeight.SemiBold,
             fontSize = 14.sp,
             color = MaterialTheme.colorScheme.onBackground,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
-        Spacer(modifier = Modifier.size(4.dp))
+        if (fixtureItem.fixture.isLive) {
+            Spacer(modifier = Modifier.size(8.dp))
+            Text(
+                text = "${fixtureItem.fixture.status.elapsed}'",
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onBackground,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        Spacer(modifier = Modifier.size(8.dp))
         Text(
-            text = "${status.elapsed}'",
+            text = fixtureItem.fixture.date,
             fontWeight = FontWeight.SemiBold,
             fontSize = 14.sp,
             color = MaterialTheme.colorScheme.onBackground,
@@ -277,5 +311,24 @@ private fun FixtureDetailsTabs(
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Tabs(tabs = tabs, pagerState = pagerState, coroutineScope)
         TabsContent(tabs = tabs, pagerState = pagerState)
+    }
+}
+
+@Composable
+private fun ErrorSnackbar(
+    uiState: FixtureDetailsUiState,
+    onErrorClear: () -> Unit,
+    snackbarHostState: SnackbarHostState
+) {
+    when (uiState.error) {
+        is FixtureDetailsError.NoError -> {}
+        is FixtureDetailsError.EmptyDatabase -> {
+            val errorMessageText = stringResource(id = R.string.empty_fixture_details)
+            val onErrorDismissState by rememberUpdatedState(onErrorClear)
+            LaunchedEffect(errorMessageText) {
+                snackbarHostState.showSnackbar(message = errorMessageText)
+                onErrorDismissState()
+            }
+        }
     }
 }

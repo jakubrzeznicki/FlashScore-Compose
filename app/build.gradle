@@ -151,6 +151,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-pager:0.25.0"
     implementation "com.google.accompanist:accompanist-pager-indicators:0.25.0"
     implementation "com.google.accompanist:accompanist-flowlayout:0.28.0"
+    implementation "com.google.accompanist:accompanist-insets:$accompanistVersion"
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
 

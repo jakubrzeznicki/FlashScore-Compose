@@ -1,7 +1,7 @@
 package com.kuba.flashscorecompose.ui.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -10,7 +10,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.kuba.flashscorecompose.main.NavigationItem
@@ -18,6 +17,7 @@ import com.kuba.flashscorecompose.main.NavigationItem
 /**
  * Created by jrzeznicki on 23/12/2022.
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
     val items = listOf(
@@ -28,7 +28,6 @@ fun BottomNavigationBar(navController: NavHostController) {
     )
     NavigationBar(
         modifier = Modifier.background(
-            shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
             color = MaterialTheme.colorScheme.surface
         ),
         containerColor = Color.Transparent,

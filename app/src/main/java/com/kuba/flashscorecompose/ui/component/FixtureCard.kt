@@ -30,7 +30,7 @@ const val DASH = "-"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FixtureCard(fixtureItem: FixtureItem, onFixtureClick: (FixtureItem) -> Unit) {
+fun FixtureCard(fixtureItem: FixtureItem, onFixtureClick: (FixtureItem) -> Unit = {}) {
     Card(
         onClick = { onFixtureClick(fixtureItem) },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.inverseSurface),
@@ -39,6 +39,9 @@ fun FixtureCard(fixtureItem: FixtureItem, onFixtureClick: (FixtureItem) -> Unit)
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Row(
+            modifier = Modifier.background(
+                color = MaterialTheme.colorScheme.inverseSurface
+            ),
             verticalAlignment = Alignment.CenterVertically
         ) {
             TeamLogos(
