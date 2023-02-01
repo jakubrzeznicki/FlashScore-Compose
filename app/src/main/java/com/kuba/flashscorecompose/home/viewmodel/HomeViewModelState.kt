@@ -36,13 +36,6 @@ data class HomeViewModelState(
                 selectedCountry,
                 countries
             )
-        leagueFixturesDataList.isNotEmpty() ->
-            HomeUiState.HasOnlyFixtures(
-                isLoading,
-                error,
-                searchQuery,
-                filteredLeagueFixtureDataList
-            )
         else -> HomeUiState.NoData(isLoading, error, searchQuery)
     }
 }

@@ -10,16 +10,8 @@ import kotlinx.coroutines.flow.Flow
  * Created by jrzeznicki on 27/01/2023.
  */
 class TeamLocal(private val roomStorage: RoomStorage) : TeamLocalDataSource {
-    override suspend fun getTeam(teamId: Int): TeamEntity {
+    override suspend fun getTeam(teamId: Int): TeamEntity? {
         return roomStorage.getDatabase().teamDao().getTeam(teamId)
-    }
-
-    override suspend fun getVenue(teamId: Int): VenueEntity? {
-        return roomStorage.getDatabase().venueDao().getVenueByTeam(teamId)
-    }
-
-    override suspend fun getCoach(teamId: Int): CoachEntity? {
-        return roomStorage.getDatabase().coachDao().getCoachByTeam(teamId)
     }
 
     override fun observeTeam(teamId: Int): Flow<TeamEntity> {
@@ -43,6 +35,6 @@ class TeamLocal(private val roomStorage: RoomStorage) : TeamLocalDataSource {
     }
 
     override suspend fun saveCoach(coachEntity: CoachEntity) {
-        roomStorage.getDatabase().coachDao().saveCoach(coachEntity)
+        roomStorage.getDatabase().coachDao().upsertCoach(coachEntity)
     }
 }

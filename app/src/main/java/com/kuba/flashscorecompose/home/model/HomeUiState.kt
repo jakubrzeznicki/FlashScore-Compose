@@ -27,13 +27,6 @@ sealed interface HomeUiState {
         val countries: List<Country>
     ) : HomeUiState
 
-    data class HasOnlyFixtures(
-        override val isLoading: Boolean,
-        override val error: HomeError,
-        override val searchQuery: String,
-        val leagueFixturesDataList: List<LeagueFixturesData>
-    ) : HomeUiState
-
     data class NoData(
         override val isLoading: Boolean,
         override val error: HomeError,

@@ -5,10 +5,7 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
@@ -38,6 +35,7 @@ import com.kuba.flashscorecompose.home.viewmodel.HomeViewModel
 import com.kuba.flashscorecompose.ui.component.*
 import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
 
@@ -47,7 +45,8 @@ import org.koin.androidx.compose.getViewModel
 
 private const val SETUP_HOME_KEY = "SETUP_HOME_KEY"
 
-@Destination(route = "home", start = true)
+@RootNavGraph(start = true)
+@Destination
 @Composable
 fun HomeScreenRoute(
     navigator: DestinationsNavigator,
@@ -100,7 +99,6 @@ private fun HomeScreen(
             empty = when (uiState) {
                 is HomeUiState.HasAllData -> false
                 is HomeUiState.HasOnlyCountries -> false
-                is HomeUiState.HasOnlyFixtures -> false
                 is HomeUiState.NoData -> uiState.isLoading
             },
             emptyContent = { FullScreenLoading() },
@@ -110,7 +108,7 @@ private fun HomeScreen(
             LazyColumn(
                 Modifier
                     .fillMaxSize()
-                    .padding(start = 16.dp, end = 16.dp, bottom = 80.dp, top = 16.dp),
+                    .padding(horizontal = 16.dp),
                 state = fixturesScrollState
             ) {
                 item {
@@ -120,14 +118,15 @@ private fun HomeScreen(
                 when (uiState) {
                     is HomeUiState.HasAllData -> {
                         item {
-                            CountriesWidget(
-                                countries = uiState.countries,
-                                selectedItem = uiState.selectedCountry,
-                                onCountryClick = onCountryClick,
-                                state = countryScrollState
-                            )
-                        }
-                        item {
+                            LazyRow(modifier = modifier, state = countryScrollState) {
+                                items( uiState.countries) { country ->
+                                    CountryWidgetCard(
+                                        country = country,
+                                        isSelected = uiState.selectedCountry == country,
+                                        onCountryClick = onCountryClick
+                                    )
+                                }
+                            }
                             Spacer(modifier = Modifier.size(24.dp))
                         }
                         items(items = uiState.leagueFixturesDataList) {
@@ -141,26 +140,20 @@ private fun HomeScreen(
                     }
                     is HomeUiState.HasOnlyCountries -> {
                         item {
-                            CountriesWidget(
-                                countries = uiState.countries,
-                                selectedItem = uiState.selectedCountry,
-                                onCountryClick = onCountryClick
-                            )
+                            LazyRow(modifier = modifier, state = countryScrollState) {
+                                items( uiState.countries) { country ->
+                                    CountryWidgetCard(
+                                        country = country,
+                                        isSelected = uiState.selectedCountry == country,
+                                        onCountryClick = onCountryClick
+                                    )
+                                }
+                            }
                             Spacer(modifier = Modifier.size(24.dp))
                             EmptyState(
                                 modifier = Modifier.fillMaxWidth(),
                                 textId = R.string.no_fixtures_home
                             )
-                        }
-                    }
-                    is HomeUiState.HasOnlyFixtures -> {
-                        items(items = uiState.leagueFixturesDataList) {
-                            FixturesWidget(
-                                leagueFixturesData = it,
-                                onFixtureClick = onFixtureClick,
-                                onLeagueClick = onLeagueClick
-                            )
-                            Spacer(modifier = Modifier.size(24.dp))
                         }
                     }
                     is HomeUiState.NoData -> {
@@ -194,7 +187,7 @@ private fun HomeScreen(
 private fun TopBar(context: Context) {
     AppTopBar(
         modifier = Modifier
-            .height(42.dp)
+            .height(58.dp)
             .padding(vertical = 8.dp),
         title = {
             Text(

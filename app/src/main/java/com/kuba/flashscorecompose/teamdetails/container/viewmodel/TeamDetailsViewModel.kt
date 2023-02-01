@@ -3,6 +3,7 @@ package com.kuba.flashscorecompose.teamdetails.container.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.data.team.information.TeamDataSource
+import com.kuba.flashscorecompose.teamdetails.container.model.TeamDetailsError
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -24,7 +25,17 @@ class TeamDetailsViewModel(private val teamId: Int, private val teamRepository: 
     private fun getTeam() {
         viewModelScope.launch {
             val team = teamRepository.getTeam(teamId)
-            viewModelState.update { it.copy(team = team) }
+            viewModelState.update {
+                if (team != null) {
+                    it.copy(team = team)
+                } else {
+                    it.copy(error = TeamDetailsError.EmptyTeamDetails)
+                }
+            }
         }
+    }
+
+    fun cleanError() {
+        viewModelState.update { it.copy(error = TeamDetailsError.NoError) }
     }
 }

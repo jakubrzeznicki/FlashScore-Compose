@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -26,9 +27,12 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.team.information.model.Team
+import com.kuba.flashscorecompose.teamdetails.container.model.TeamDetailsError
 import com.kuba.flashscorecompose.teamdetails.container.model.TeamDetailsUiState
 import com.kuba.flashscorecompose.teamdetails.container.viewmodel.TeamDetailsViewModel
 import com.kuba.flashscorecompose.ui.component.CenterAppTopBar
+import com.kuba.flashscorecompose.ui.component.EmptyState
+import com.kuba.flashscorecompose.ui.component.FlashScoreSnackbarHost
 import com.kuba.flashscorecompose.ui.component.tabs.ScrollableTabs
 import com.kuba.flashscorecompose.ui.component.tabs.TabItem
 import com.kuba.flashscorecompose.ui.component.tabs.TabsContent
@@ -43,7 +47,7 @@ import org.koin.core.parameter.parametersOf
 
 private const val SETUP_TEAM_DETAILS_KEY = "SETUP_TEAM_DETAILS_KEY"
 
-@Destination(route = "home/teamdetails")
+@Destination
 @Composable
 fun TeamDetailsRoute(
     teamId: Int,
@@ -52,6 +56,7 @@ fun TeamDetailsRoute(
     viewModel: TeamDetailsViewModel = getViewModel { parametersOf(teamId) },
     navigator: DestinationsNavigator
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
     val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(key1 = SETUP_TEAM_DETAILS_KEY) { viewModel.setup() }
     TeamDetailsScreen(
@@ -59,7 +64,9 @@ fun TeamDetailsRoute(
         teamId = teamId,
         leagueId = leagueId,
         season = season,
-        navigator = navigator
+        navigator = navigator,
+        onErrorClear = { viewModel.cleanError() },
+        snackbarHostState = snackbarHostState
     )
 }
 
@@ -72,21 +79,39 @@ fun TeamDetailsScreen(
     teamId: Int,
     leagueId: Int,
     season: Int,
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
+    onErrorClear: () -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
     Scaffold(
         modifier = modifier,
-        topBar = { TopBar(navigator) }
+        topBar = { TopBar(navigator) },
+        snackbarHost = { FlashScoreSnackbarHost(hostState = snackbarHostState) }
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 80.dp, top = 36.dp)
+                .padding(top = 48.dp)
         ) {
-            TeamHeader(uiState.team)
-            TeamDetailsTabs(uiState, teamId, leagueId, season, navigator)
+            when (uiState) {
+                is TeamDetailsUiState.HasData -> {
+                    TeamHeader(uiState.team)
+                    TeamDetailsTabs(uiState.team, teamId, leagueId, season, navigator)
+                }
+                is TeamDetailsUiState.NoData -> {
+                    EmptyState(
+                        modifier = Modifier.fillMaxWidth(),
+                        textId = R.string.no_team_details
+                    )
+                }
+            }
         }
     }
+    ErrorSnackbar(
+        uiState = uiState,
+        onErrorClear = onErrorClear,
+        snackbarHostState = snackbarHostState
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -169,7 +194,7 @@ private fun TeamHeader(team: Team?) {
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun TeamDetailsTabs(
-    uiState: TeamDetailsUiState,
+    team: Team,
     teamId: Int,
     leagueId: Int,
     season: Int,
@@ -179,13 +204,32 @@ fun TeamDetailsTabs(
         TabItem.TeamDetails.Information(teamId, leagueId, navigator),
         TabItem.TeamDetails.Players(teamId, season, navigator),
         TabItem.TeamDetails.Fixtures(teamId, season, navigator),
-        TabItem.TeamDetails.Injuries(uiState.team, navigator),
-        TabItem.TeamDetails.Transfers(uiState.team, navigator)
+        TabItem.TeamDetails.Injuries(team, navigator),
+        TabItem.TeamDetails.Transfers(team, navigator)
     )
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         ScrollableTabs(tabs = tabs, pagerState = pagerState, coroutineScope)
         TabsContent(tabs = tabs, pagerState = pagerState)
+    }
+}
+
+@Composable
+private fun ErrorSnackbar(
+    uiState: TeamDetailsUiState,
+    onErrorClear: () -> Unit,
+    snackbarHostState: SnackbarHostState
+) {
+    when (uiState.error) {
+        is TeamDetailsError.NoError -> {}
+        is TeamDetailsError.EmptyTeamDetails -> {
+            val errorMessageText = stringResource(id = R.string.no_team_details)
+            val onErrorDismissState by rememberUpdatedState(onErrorClear)
+            LaunchedEffect(errorMessageText) {
+                snackbarHostState.showSnackbar(message = errorMessageText)
+                onErrorDismissState()
+            }
+        }
     }
 }

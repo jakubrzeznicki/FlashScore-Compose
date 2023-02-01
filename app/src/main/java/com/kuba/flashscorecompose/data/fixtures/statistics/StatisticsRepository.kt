@@ -1,14 +1,16 @@
 package com.kuba.flashscorecompose.data.fixtures.statistics
 
-import com.kuba.flashscorecompose.data.fixtures.statistics.remote.StatisticsRemoteDataSource
 import com.kuba.flashscorecompose.data.fixtures.statistics.local.StatisticsLocalDataSource
 import com.kuba.flashscorecompose.data.fixtures.statistics.mapper.toStatistics
 import com.kuba.flashscorecompose.data.fixtures.statistics.mapper.toStatisticsEntity
 import com.kuba.flashscorecompose.data.fixtures.statistics.model.Statistics
+import com.kuba.flashscorecompose.data.fixtures.statistics.remote.StatisticsRemoteDataSource
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import com.kuba.flashscorecompose.utils.ResponseStatus
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 
 /**
@@ -40,7 +42,9 @@ class StatisticsRepository(
             val statistics = result.body()?.response?.mapIndexed { index, statisticsTeamDto ->
                 statisticsTeamDto.toStatistics(fixtureId, index == 0)
             }.orEmpty()
-            saveStatistics(statistics = statistics, fixtureId = fixtureId)
+            withContext(Dispatchers.IO) {
+                saveStatistics(statistics = statistics, fixtureId = fixtureId)
+            }
             RepositoryResult.Success(statistics)
         } catch (e: HttpException) {
             RepositoryResult.Error(ResponseStatus().apply {

@@ -31,14 +31,37 @@ class LeagueDetailsViewModel(
     }
 
     fun refresh() {
+        refreshLeague()
         refreshFixtures()
     }
 
     private fun getLeague() {
         viewModelScope.launch {
-            val league = leagueRepository.getLeague(leagueId)
+            leagueRepository.observeLeague(leagueId).collect { league ->
+                if (league == null) {
+                    viewModelState.update { it.copy(error = LeagueDetailsError.EmptyLeague) }
+                    return@collect
+                }
+                viewModelState.update {
+                    it.copy(league = league)
+                }
+            }
+        }
+    }
+
+    private fun refreshLeague() {
+        viewModelState.update { it.copy(isLoading = true) }
+        viewModelScope.launch {
+            val date = viewModelState.value.date
+            val result = leagueRepository.loadLeague(leagueId)
             viewModelState.update {
-                it.copy(league = league)
+                when (result) {
+                    is RepositoryResult.Success -> it.copy(isLoading = false)
+                    is RepositoryResult.Error -> it.copy(
+                        isLoading = false,
+                        error = LeagueDetailsError.RemoteError(result.error)
+                    )
+                }
             }
         }
     }

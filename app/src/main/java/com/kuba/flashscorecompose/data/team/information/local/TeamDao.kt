@@ -17,7 +17,7 @@ interface TeamDao {
     fun observeTeamsByLeague(leagueId: Int): Flow<List<TeamEntity>>
 
     @Query("SELECT * FROM team WHERE id = :teamId")
-    suspend fun getTeam(teamId: Int): TeamEntity
+    suspend fun getTeam(teamId: Int): TeamEntity?
 
     @Query("SELECT * FROM team WHERE id = :teamId")
     fun observeTeam(teamId: Int): Flow<TeamEntity>

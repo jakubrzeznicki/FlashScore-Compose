@@ -1,6 +1,8 @@
 package com.kuba.flashscorecompose.teamdetails.informations.model
 
+import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.team.information.model.Coach
+import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.data.team.information.model.Venue
 
 /**
@@ -13,7 +15,8 @@ interface TeamInformationsUiState {
     data class HasFullData(
         override val isLoading: Boolean,
         override val error: TeamInformationsError,
-        val teamCountry: TeamCountry,
+        val team: Team,
+        val country: Country?,
         val venue: Venue,
         val coach: Coach
     ) : TeamInformationsUiState
@@ -21,15 +24,17 @@ interface TeamInformationsUiState {
     data class HasDataWithoutCoach(
         override val isLoading: Boolean,
         override val error: TeamInformationsError,
-        val teamCountry: TeamCountry,
+        val country: Country?,
+        val team: Team,
         val venue: Venue
     ) : TeamInformationsUiState
 
     data class HasDataWithoutVenueAndCoach(
         override val isLoading: Boolean,
         override val error: TeamInformationsError,
-        val teamCountry: TeamCountry
-    ) : TeamInformationsUiState
+        val team: Team,
+        val country: Country?
+        ) : TeamInformationsUiState
 
     data class NoData(
         override val isLoading: Boolean,

@@ -37,6 +37,7 @@ import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.data.standings.model.StandingItem
 import com.kuba.flashscorecompose.data.team.information.model.Team
+import com.kuba.flashscorecompose.destinations.LeagueDetailsRouteDestination
 import com.kuba.flashscorecompose.destinations.TeamDetailsRouteDestination
 import com.kuba.flashscorecompose.standingsdetails.model.StandingsDetailsError
 import com.kuba.flashscorecompose.standingsdetails.model.StandingsDetailsUiState
@@ -56,7 +57,7 @@ import org.koin.core.parameter.parametersOf
 private const val SETUP_STANDINGS_DETAILS_KEY = "SETUP_STANDINGS_DETAILS_KEY"
 private const val HASZTAG = "#"
 
-@Destination(route = "standings/standingsdetails")
+@Destination
 @Composable
 fun StandingsDetailsRoute(
     leagueId: Int,
@@ -74,6 +75,7 @@ fun StandingsDetailsRoute(
         onTeamClick = {
             navigator.navigate(TeamDetailsRouteDestination(it.id, leagueId, season))
         },
+        onLeagueClick = { navigator.navigate(LeagueDetailsRouteDestination(leagueId, season)) },
         onRefreshClick = { viewModel.refresh() },
         onErrorClear = { viewModel.cleanError() },
         onStandingsFilterClick = { viewModel.filterStandings(it) }
@@ -88,6 +90,7 @@ private fun StandingsDetailsScreen(
     uiState: StandingsDetailsUiState,
     navigator: DestinationsNavigator,
     onTeamClick: (Team) -> Unit,
+    onLeagueClick: () -> Unit,
     onRefreshClick: () -> Unit,
     onErrorClear: () -> Unit,
     onStandingsFilterClick: (FilterChip.Standings) -> Unit
@@ -119,13 +122,13 @@ private fun StandingsDetailsScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(start = 16.dp, end = 16.dp, bottom = 80.dp, top = 16.dp),
+                    .padding(horizontal = 16.dp),
                 state = scrollState
             ) {
                 when (uiState) {
                     is StandingsDetailsUiState.HasData -> {
                         item {
-                            LeagueHeader(uiState.league)
+                            LeagueHeader(uiState.league, onLeagueClick)
                         }
                         item {
                             StandingFilterChips(uiState.standingFilterChip, onStandingsFilterClick)
@@ -180,7 +183,7 @@ private fun StandingsDetailsScreen(
 private fun TopBar(navigator: DestinationsNavigator, league: League) {
     CenterAppTopBar(
         modifier = Modifier
-            .height(42.dp)
+            .height(58.dp)
             .padding(vertical = 8.dp),
         navigationIcon = {
             IconButton(
@@ -227,11 +230,12 @@ private fun TopBar(navigator: DestinationsNavigator, league: League) {
 }
 
 @Composable
-private fun LeagueHeader(league: League) {
+private fun LeagueHeader(league: League, onLeagueClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 16.dp),
+            .padding(bottom = 16.dp)
+            .clickable { onLeagueClick() },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -494,7 +498,7 @@ private fun ErrorSnackbar(
 ) {
     when (val error = uiState.error) {
         is StandingsDetailsError.NoError -> {}
-        is StandingsDetailsError.EmptyDatabase -> {
+        is StandingsDetailsError.EmptyStanding -> {
             val errorMessageText = stringResource(id = R.string.empty_leagues)
             val onErrorDismissState by rememberUpdatedState(onErrorClear)
             LaunchedEffect(errorMessageText) {

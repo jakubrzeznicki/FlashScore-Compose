@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.Flow
 interface CountryDataSource {
     fun observeCountries(countryNames: List<String>): Flow<List<Country>>
     suspend fun getCountries(): List<Country>
-    suspend fun getCountry(countryName: String) : Country
     fun saveCountries(countries: List<Country>)
     suspend fun loadCountries(): RepositoryResult<List<Country>>
 }

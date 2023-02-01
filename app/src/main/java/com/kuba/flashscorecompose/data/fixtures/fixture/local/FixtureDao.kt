@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface FixtureDao {
 
-    @Query("SELECT * FROM fixture WHERE current_round_league_id = :leagueId AND current_round_season = :season AND current_round_round = :round")
+    @Query("SELECT * FROM fixture WHERE league_id = :leagueId AND league_season = :season AND league_round = :round")
     fun observeFixturesFilteredByRound(
         leagueId: Int,
         season: Int,
@@ -23,7 +23,7 @@ interface FixtureDao {
     @Query("SELECT * FROM fixture WHERE h2h = :h2h")
     fun observeFixturesHeadToHead(h2h: String): Flow<List<FixtureEntity>>
 
-    @Query("SELECT * FROM fixture WHERE home_team_id = :teamId OR away_team_id = :teamId AND current_round_season = :season")
+    @Query("SELECT * FROM fixture WHERE home_team_id = :teamId OR away_team_id = :teamId AND league_season = :season")
     fun observeFixturesByTeam(teamId: Int, season: Int): Flow<List<FixtureEntity>>
 
     @Query("SELECT * FROM fixture WHERE date = :date AND league_countryName IN(:countryNames) ORDER BY fixture_info_timestamp")

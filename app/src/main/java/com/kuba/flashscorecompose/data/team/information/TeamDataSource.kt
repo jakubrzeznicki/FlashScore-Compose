@@ -11,9 +11,7 @@ import kotlinx.coroutines.flow.Flow
  * Created by jrzeznicki on 26/01/2023.
  */
 interface TeamDataSource {
-    suspend fun getTeam(teamId: Int): Team
-    suspend fun getVenue(teamId: Int): Venue?
-    suspend fun getCoach(teamId: Int): Coach?
+    suspend fun getTeam(teamId: Int): Team?
     fun observeTeam(teamId: Int): Flow<Team>
     fun observeVenue(teamId: Int): Flow<Venue?>
     fun observeCoach(teamId: Int): Flow<Coach?>

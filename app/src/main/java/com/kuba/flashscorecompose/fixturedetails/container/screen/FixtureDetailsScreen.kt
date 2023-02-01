@@ -49,7 +49,7 @@ import org.koin.core.parameter.parametersOf
 private const val SETUP_FIXTURE_DETAILS_CONTAINER_KEY = "SETUP_FIXTURE_DETAILS_CONTAINER_KEY"
 private const val EMPTY_TITLE = ""
 
-@Destination(route = "home/fixturedetails")
+@Destination
 @Composable
 fun FixtureDetailsRoute(
     fixtureId: Int,
@@ -89,17 +89,19 @@ private fun FixtureDetailsScreen(
         Column(
             Modifier
                 .fillMaxSize()
-                .padding(bottom = 80.dp, top = 32.dp)
+                .padding(top = 32.dp)
         ) {
             when (uiState) {
                 is FixtureDetailsUiState.HasData -> {
                     HeaderMatchInfo(uiState.fixtureItem, onTeamClick)
                     FixtureDetailsTabs(uiState, navigator)
                 }
-                is FixtureDetailsUiState.NoData -> EmptyState(
-                    modifier = Modifier.fillMaxWidth(),
-                    textId = R.string.no_fixture_details
-                )
+                is FixtureDetailsUiState.NoData -> {
+                    EmptyState(
+                        modifier = Modifier.fillMaxWidth(),
+                        textId = R.string.no_fixture_details
+                    )
+                }
             }
         }
     }
@@ -119,7 +121,7 @@ private fun TopBar(navigator: DestinationsNavigator, uiState: FixtureDetailsUiSt
     }
     CenterAppTopBar(
         modifier = Modifier
-            .height(42.dp)
+            .height(58.dp)
             .padding(vertical = 8.dp),
         navigationIcon = {
             IconButton(

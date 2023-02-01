@@ -52,7 +52,7 @@ import java.time.LocalDate
 
 private const val SETUP_LEAGUE_DETAILS_KEY = "SETUP_LEAGUE_DETAILS_KEY"
 
-@Destination(route = "home/leaguedetails")
+@Destination
 @Composable
 fun LeagueDetailsRoute(
     leagueId: Int,
@@ -112,7 +112,7 @@ fun LeagueDetailsScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(start = 16.dp, end = 16.dp, bottom = 80.dp, top = 16.dp),
+                    .padding(horizontal = 16.dp),
                 state = scrollState
             ) {
                 item {
@@ -194,7 +194,7 @@ fun StandingsRow(onStandingClick: () -> Unit) {
     Row(
         modifier = Modifier
             .clickable { onStandingClick() }
-            .padding(top = 16.dp, bottom = 80.dp)
+            .padding(top = 16.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -239,7 +239,7 @@ fun StandingsRow(onStandingClick: () -> Unit) {
 private fun TopBar(navigator: DestinationsNavigator, league: League) {
     CenterAppTopBar(
         modifier = Modifier
-            .height(42.dp)
+            .height(58.dp)
             .padding(vertical = 8.dp),
         navigationIcon = {
             IconButton(
@@ -294,6 +294,14 @@ private fun ErrorSnackbar(
 ) {
     when (val error = uiState.error) {
         is LeagueDetailsError.NoError -> {}
+        is LeagueDetailsError.EmptyLeague -> {
+            val errorMessageText = stringResource(id = R.string.empty_leagues)
+            val onErrorDismissState by rememberUpdatedState(onErrorClear)
+            LaunchedEffect(errorMessageText) {
+                snackbarHostState.showSnackbar(message = errorMessageText)
+                onErrorDismissState()
+            }
+        }
         is LeagueDetailsError.RemoteError -> {
             val errorMessageText =
                 remember(uiState) { error.responseStatus.statusMessage.orEmpty() }

@@ -8,4 +8,5 @@ import retrofit2.Response
  */
 interface LeagueRemoteDataSource {
     suspend fun loadLeagues(countryCode: String): Response<LeagueDataDto>
+    suspend fun loadLeague(leagueId: Int): Response<LeagueDataDto>
 }

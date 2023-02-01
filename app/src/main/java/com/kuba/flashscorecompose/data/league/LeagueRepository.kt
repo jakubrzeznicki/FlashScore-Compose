@@ -29,10 +29,11 @@ class LeagueRepository(
         local.observeLeagues(countryCodes)
             .map { leagueEntity -> leagueEntity.map { it.toLeague() } }
 
+    override fun observeLeague(id: Int): Flow<League?> =
+        local.observeLeague(id).map { it?.toLeague() }
+
     override suspend fun getLeagues(countryNames: List<String>): List<League> =
         local.getLeagues(countryNames).map { it.toLeague() }
-
-    override suspend fun getLeague(id: Int): League = local.getLeagueById(id).toLeague()
 
     override fun saveLeagues(leagues: List<League>) {
         local.saveLeagues(leagues.map { it.toLeagueEntity() })
@@ -43,10 +44,26 @@ class LeagueRepository(
         return try {
             val leagues = result.body()?.response?.mapNotNull { it.league?.toLeague() }.orEmpty()
             withContext(Dispatchers.IO) {
-                local.deleteLeagues(countryCode)
                 saveLeagues(leagues)
             }
             RepositoryResult.Success(leagues)
+        } catch (e: HttpException) {
+            RepositoryResult.Error(ResponseStatus().apply {
+                this.statusMessage = e.message()
+                this.internalStatus = e.code()
+            })
+        }
+    }
+
+    override suspend fun loadLeague(id: Int): RepositoryResult<League> {
+        val result = remote.loadLeague(id)
+        return try {
+            val league =
+                result.body()?.response?.mapNotNull { it.league?.toLeague() }.orEmpty().first()
+            withContext(Dispatchers.IO) {
+                saveLeagues(listOf(league))
+            }
+            RepositoryResult.Success(league)
         } catch (e: HttpException) {
             RepositoryResult.Error(ResponseStatus().apply {
                 this.statusMessage = e.message()

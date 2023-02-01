@@ -8,7 +8,13 @@ import retrofit2.Response
  * Created by jrzeznicki on 10/1/2022
  */
 class LeagueRemote(private val footballApi: FootballApi) : LeagueRemoteDataSource {
-    override suspend fun loadLeagues(countryCode: String): Response<LeagueDataDto> =
-        footballApi.getLeagues(countryCode = countryCode)
+    override suspend fun loadLeagues(countryCode: String): Response<LeagueDataDto> {
+        val queryMap = mapOf(FootballApi.CODE to countryCode)
+        return footballApi.getLeagues(queryMap)
+    }
 
+    override suspend fun loadLeague(leagueId: Int): Response<LeagueDataDto> {
+        val queryMap = mapOf(FootballApi.ID to leagueId.toString())
+        return footballApi.getLeagues(queryMap)
+    }
 }

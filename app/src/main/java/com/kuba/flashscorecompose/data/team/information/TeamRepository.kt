@@ -20,16 +20,8 @@ class TeamRepository(
     private val local: TeamLocalDataSource,
     private val remote: TeamRemoteDataSource
 ) : TeamDataSource {
-    override suspend fun getTeam(teamId: Int): Team {
-        return local.getTeam(teamId).toTeam()
-    }
-
-    override suspend fun getVenue(teamId: Int): Venue? {
-        return local.getVenue(teamId)?.toVenue()
-    }
-
-    override suspend fun getCoach(teamId: Int): Coach? {
-        return local.getCoach(teamId)?.toCoach()
+    override suspend fun getTeam(teamId: Int): Team? {
+        return local.getTeam(teamId)?.toTeam()
     }
 
     override fun observeTeam(teamId: Int): Flow<Team> {
