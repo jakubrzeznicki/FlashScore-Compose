@@ -2,10 +2,6 @@ package com.kuba.flashscorecompose.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -29,29 +25,9 @@ import com.kuba.flashscorecompose.data.country.model.Country
 /**
  * Created by jrzeznicki on 19/01/2023.
  */
-
-@Composable
-fun CountriesWidget(
-    modifier: Modifier = Modifier,
-    countries: List<Country>,
-    onCountryClick: (Country, Boolean) -> Unit,
-    selectedItem: Country,
-    state: LazyListState = rememberLazyListState()
-) {
-    LazyRow(modifier = modifier, state = state) {
-        items(countries) { country ->
-            CountryWidgetCard(
-                country = country,
-                isSelected = selectedItem == country,
-                onCountryClick = onCountryClick
-            )
-        }
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CountryWidgetCard(
+fun CountryWidgetCard(
     country: Country,
     isSelected: Boolean,
     onCountryClick: (Country, Boolean) -> Unit

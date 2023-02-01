@@ -5,7 +5,13 @@ import com.kuba.flashscorecompose.data.team.information.model.Team
 /**
  * Created by jrzeznicki on 26/01/2023.
  */
-data class TeamDetailsUiState(
-    val team: Team?,
-    val leagueId: Int
-)
+interface TeamDetailsUiState {
+    val error: TeamDetailsError
+
+    data class HasData(
+        override val error: TeamDetailsError,
+        val team: Team
+    ) : TeamDetailsUiState
+
+    data class NoData(override val error: TeamDetailsError) : TeamDetailsUiState
+}

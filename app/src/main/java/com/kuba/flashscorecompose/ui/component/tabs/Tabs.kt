@@ -1,15 +1,14 @@
 package com.kuba.flashscorecompose.ui.component.tabs
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -31,7 +30,7 @@ fun Tabs(
     TabRow(
         selectedTabIndex = pagerState.currentPage,
         modifier = Modifier
-            .padding(vertical = 4.dp, horizontal = 8.dp)
+            .requiredHeight(60.dp)
             .clip(RoundedCornerShape(50))
             .padding(1.dp),
         contentColor = MaterialTheme.colorScheme.onSecondary,
@@ -60,8 +59,7 @@ fun ScrollableTabs(
     ScrollableTabRow(
         selectedTabIndex = pagerState.currentPage,
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp, horizontal = 8.dp)
+            .requiredHeight(60.dp)
             .clip(RoundedCornerShape(50))
             .padding(1.dp),
         contentColor = MaterialTheme.colorScheme.onSecondary,
@@ -89,22 +87,15 @@ private fun DetailsTab(
     tab: TabItem,
     index: Int
 ) {
+    val colors = if (pagerState.currentPage == index) {
+        listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary)
+    } else {
+        listOf(Color.Transparent, Color.Transparent)
+    }
     Tab(
-        modifier = if (pagerState.currentPage == index) {
-            Modifier
-                .clip(RoundedCornerShape(50))
-                .background(
-                    brush = Brush.horizontalGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.primary,
-                            MaterialTheme.colorScheme.secondary
-                        )
-                    )
-                )
-        } else {
-            Modifier
-                .clip(RoundedCornerShape(50))
-        },
+        modifier = Modifier
+            .clip(RoundedCornerShape(50))
+            .background(brush = Brush.horizontalGradient(colors = colors)),
         text = { Text(stringResource(id = tab.titleId)) },
         selected = pagerState.currentPage == index,
         onClick = {

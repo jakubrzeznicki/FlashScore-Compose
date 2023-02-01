@@ -7,7 +7,6 @@ import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.fixtures.fixture.remote.FixtureRemoteDataSource
 import com.kuba.flashscorecompose.data.league.mapper.toLeagueEntity
 import com.kuba.flashscorecompose.data.team.information.mapper.toTeamEntity
-import com.kuba.flashscorecompose.data.team.information.mapper.toVenueEntity
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import com.kuba.flashscorecompose.utils.ResponseStatus
 import kotlinx.coroutines.Dispatchers
@@ -101,8 +100,6 @@ class FixturesRepository(
                     .orEmpty())
                 local.saveTeams(fixtureItems?.map { it.awayTeam.toTeamEntity(it.league.id) }
                     .orEmpty())
-                local.saveVenues(fixtureItems?.map { it.fixture.venue.toVenueEntity(it.homeTeam.id) }
-                    .orEmpty())
             }
             RepositoryResult.Success(fixtureItems)
         } catch (e: HttpException) {
@@ -121,13 +118,11 @@ class FixturesRepository(
         return try {
             val fixtureItems = result.body()?.response?.map { it.toFixtureItem(h2h = h2h) }
             withContext(Dispatchers.IO) {
-                local.saveFixtures(fixtureItems?.map { it.toFixtureEntity() }.orEmpty())
+                saveFixtureItem(fixtureItems.orEmpty())
                 local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
                 local.saveTeams(fixtureItems?.map { it.homeTeam.toTeamEntity(it.league.id) }
                     .orEmpty())
                 local.saveTeams(fixtureItems?.map { it.awayTeam.toTeamEntity(it.league.id) }
-                    .orEmpty())
-                local.saveVenues(fixtureItems?.map { it.fixture.venue.toVenueEntity(it.homeTeam.id) }
                     .orEmpty())
             }
             RepositoryResult.Success(fixtureItems)
@@ -144,13 +139,11 @@ class FixturesRepository(
         return try {
             val fixtureItems = result.body()?.response?.map { it.toFixtureItem(date = date) }
             withContext(Dispatchers.IO) {
-                local.saveFixtures(fixtureItems?.map { it.toFixtureEntity() }.orEmpty())
+                saveFixtureItem(fixtureItems.orEmpty())
                 local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
                 local.saveTeams(fixtureItems?.map { it.homeTeam.toTeamEntity(it.league.id) }
                     .orEmpty())
                 local.saveTeams(fixtureItems?.map { it.awayTeam.toTeamEntity(it.league.id) }
-                    .orEmpty())
-                local.saveVenues(fixtureItems?.map { it.fixture.venue.toVenueEntity(it.homeTeam.id) }
                     .orEmpty())
             }
             RepositoryResult.Success(fixtureItems)
@@ -172,13 +165,11 @@ class FixturesRepository(
             val fixtureItems =
                 result.body()?.response?.map { it.toFixtureItem(date = date, season = season) }
             withContext(Dispatchers.IO) {
-                local.saveFixtures(fixtureItems?.map { it.toFixtureEntity() }.orEmpty())
+                saveFixtureItem(fixtureItems.orEmpty())
                 local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
                 local.saveTeams(fixtureItems?.map { it.homeTeam.toTeamEntity(it.league.id) }
                     .orEmpty())
                 local.saveTeams(fixtureItems?.map { it.awayTeam.toTeamEntity(it.league.id) }
-                    .orEmpty())
-                local.saveVenues(fixtureItems?.map { it.fixture.venue.toVenueEntity(it.homeTeam.id) }
                     .orEmpty())
             }
             RepositoryResult.Success(fixtureItems)
@@ -195,13 +186,11 @@ class FixturesRepository(
         return try {
             val fixtureItems = result.body()?.response?.map { it.toFixtureItem() }
             withContext(Dispatchers.IO) {
-                local.saveFixtures(fixtureItems?.map { it.toFixtureEntity() }.orEmpty())
+                saveFixtureItem(fixtureItems.orEmpty())
                 local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
                 local.saveTeams(fixtureItems?.map { it.homeTeam.toTeamEntity(it.league.id) }
                     .orEmpty())
                 local.saveTeams(fixtureItems?.map { it.awayTeam.toTeamEntity(it.league.id) }
-                    .orEmpty())
-                local.saveVenues(fixtureItems?.map { it.fixture.venue.toVenueEntity(it.homeTeam.id) }
                     .orEmpty())
             }
             RepositoryResult.Success(fixtureItems)
@@ -222,13 +211,11 @@ class FixturesRepository(
         return try {
             val fixtureItems = result.body()?.response?.map { it.toFixtureItem(season = season) }
             withContext(Dispatchers.IO) {
-                local.saveFixtures(fixtureItems?.map { it.toFixtureEntity() }.orEmpty())
+                saveFixtureItem(fixtureItems.orEmpty())
                 local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
                 local.saveTeams(fixtureItems?.map { it.homeTeam.toTeamEntity(it.league.id) }
                     .orEmpty())
                 local.saveTeams(fixtureItems?.map { it.awayTeam.toTeamEntity(it.league.id) }
-                    .orEmpty())
-                local.saveVenues(fixtureItems?.map { it.fixture.venue.toVenueEntity(it.homeTeam.id) }
                     .orEmpty())
             }
             RepositoryResult.Success(fixtureItems)
@@ -248,13 +235,11 @@ class FixturesRepository(
         return try {
             val fixtureItems = result.body()?.response?.map { it.toFixtureItem(season = season) }
             withContext(Dispatchers.IO) {
-                local.saveFixtures(fixtureItems?.map { it.toFixtureEntity() }.orEmpty())
+                saveFixtureItem(fixtureItems.orEmpty())
                 local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
                 local.saveTeams(fixtureItems?.map { it.homeTeam.toTeamEntity(it.league.id) }
                     .orEmpty())
                 local.saveTeams(fixtureItems?.map { it.awayTeam.toTeamEntity(it.league.id) }
-                    .orEmpty())
-                local.saveVenues(fixtureItems?.map { it.fixture.venue.toVenueEntity(it.homeTeam.id) }
                     .orEmpty())
             }
             RepositoryResult.Success(fixtureItems)

@@ -37,7 +37,7 @@ class StandingsDetailsViewModel(
         viewModelScope.launch {
             standingsRepository.observeStanding(leagueId, season).collect { standing ->
                 if (standing == null) {
-                    viewModelState.update { it.copy(error = StandingsDetailsError.EmptyDatabase) }
+                    viewModelState.update { it.copy(error = StandingsDetailsError.EmptyStanding) }
                     return@collect
                 }
                 val filteredStandingItems = filterStandingItems(standing.standingItems)

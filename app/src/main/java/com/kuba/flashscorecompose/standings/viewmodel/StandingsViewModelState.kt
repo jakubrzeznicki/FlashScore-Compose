@@ -35,8 +35,6 @@ data class StandingsViewModelState(
                 selectedCountry,
                 countries
             )
-        standings.isNotEmpty() ->
-            StandingsUiState.HasOnlyStandings(isLoading, error, standingsQuery, filteredStandings)
         else -> StandingsUiState.NoData(isLoading, error, standingsQuery)
 
     }

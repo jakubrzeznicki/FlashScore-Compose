@@ -7,6 +7,6 @@ import com.kuba.flashscorecompose.utils.ResponseStatus
  */
 sealed class StandingsDetailsError {
     object NoError : StandingsDetailsError()
-    object EmptyDatabase : StandingsDetailsError()
+    object EmptyStanding : StandingsDetailsError()
     data class RemoteError(val responseStatus: ResponseStatus) : StandingsDetailsError()
 }

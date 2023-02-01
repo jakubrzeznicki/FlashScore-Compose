@@ -24,7 +24,7 @@ interface FootballApi {
     suspend fun getCountries(): Response<CountryDataDto>
 
     @GET("$API_VERSION/$LEAGUES")
-    suspend fun getLeagues(@Query(CODE) countryCode: String): Response<LeagueDataDto>
+    suspend fun getLeagues(@QueryMap queryMap: Map<String, String>): Response<LeagueDataDto>
 
     @GET("$API_VERSION/$FIXTURES/$ROUNDS")
     suspend fun getFixturesCurrentRound(

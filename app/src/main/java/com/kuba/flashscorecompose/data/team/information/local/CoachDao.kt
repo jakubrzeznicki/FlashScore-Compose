@@ -1,9 +1,6 @@
 package com.kuba.flashscorecompose.data.team.information.local
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.kuba.flashscorecompose.data.team.information.local.model.CoachEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -22,11 +19,33 @@ interface CoachDao {
     @Query("SELECT * FROM coach WHERE team_id = :teamId")
     suspend fun getCoachByTeam(teamId: Int): CoachEntity?
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveCoaches(coaches: List<CoachEntity>)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertCoaches(coaches: List<CoachEntity>): List<Long>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveCoach(coach: CoachEntity)
+    @Update(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun updateCoaches(coaches: List<CoachEntity>)
+
+    @Transaction
+    suspend fun upsertCoaches(coaches: List<CoachEntity>) {
+        val ids: List<Long> = insertCoaches(coaches)
+        val updatedCoaches = mutableListOf<CoachEntity>()
+        ids.forEachIndexed { index, id ->
+            if (id == -1L) updatedCoaches.add(coaches[index])
+        }
+        if (updatedCoaches.isNotEmpty()) updateCoaches(updatedCoaches)
+    }
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertCoach(coach: CoachEntity): Long
+
+    @Update(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun updateCoach(coach: CoachEntity)
+
+    @Transaction
+    suspend fun upsertCoach(coach: CoachEntity) {
+        val id: Long = insertCoach(coach)
+        if (id == -1L) updateCoach(coach)
+    }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun deleteCoaches(coaches: List<CoachEntity>)

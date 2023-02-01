@@ -26,9 +26,6 @@ class CountryRepository(
 
     override suspend fun getCountries(): List<Country> = local.getCountries().map { it.toCountry() }
 
-    override suspend fun getCountry(countryName: String): Country =
-        local.getCountry(countryName)?.toCountry() ?: Country.EMPTY_COUNTRY
-
     override fun saveCountries(countries: List<Country>) {
         local.saveCountries(countries.map { it.toCountryEntity() })
     }

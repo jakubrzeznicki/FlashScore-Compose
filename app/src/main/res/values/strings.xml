@@ -14,6 +14,7 @@
     <string name="no_head_to_head">You don\'t have any head to head fixtures</string>
     <string name="no_last_fixtures">There are no last fixtures of both teams or H2H fixtures</string>
     <string name="no_fixture_details">There are no fixture details</string>
+    <string name="no_team_details">There are no team details</string>
     <string name="no_lineups">The match was not started or we don\'t have lineups. Try it again</string>
     <string name="no_loaded_statistics">There was a problem to load statistics. Try it again</string>
     <string name="no_statistics">The match was not started or we don\'t have statistics from this event</string>

@@ -8,13 +8,12 @@ import com.kuba.flashscorecompose.fixturedetails.container.model.FixtureDetailsU
  * Created by jrzeznicki on 10/01/2023.
  */
 data class FixtureDetailsViewModelState(
-    val isLoading: Boolean = false,
     val error: FixtureDetailsError = FixtureDetailsError.NoError,
     val fixtureItem: FixtureItem? = null
 ) {
     fun toUiState(): FixtureDetailsUiState = if (fixtureItem == null) {
-        FixtureDetailsUiState.NoData(isLoading, error)
+        FixtureDetailsUiState.NoData(error)
     } else {
-        FixtureDetailsUiState.HasData(isLoading, error, fixtureItem)
+        FixtureDetailsUiState.HasData(error, fixtureItem)
     }
 }

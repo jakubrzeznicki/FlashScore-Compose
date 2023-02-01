@@ -6,17 +6,12 @@ import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
  * Created by jrzeznicki on 10/01/2023.
  */
 interface FixtureDetailsUiState {
-    val isLoading: Boolean
     val error: FixtureDetailsError
 
     data class HasData(
-        override val isLoading: Boolean,
         override val error: FixtureDetailsError,
         val fixtureItem: FixtureItem
     ) : FixtureDetailsUiState
 
-    data class NoData(
-        override val isLoading: Boolean,
-        override val error: FixtureDetailsError
-    ) : FixtureDetailsUiState
+    data class NoData(override val error: FixtureDetailsError) : FixtureDetailsUiState
 }

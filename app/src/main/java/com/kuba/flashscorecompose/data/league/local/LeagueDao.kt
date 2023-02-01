@@ -22,7 +22,7 @@ interface LeagueDao {
     suspend fun getLeagues(countryNames: List<String>): List<LeagueEntity>
 
     @Query("SELECT * FROM leagues WHERE id = :id")
-    suspend fun getLeagueById(id: Int): LeagueEntity
+    fun getLeagueById(id: Int): Flow<LeagueEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveLeagues(leagues: List<LeagueEntity>)

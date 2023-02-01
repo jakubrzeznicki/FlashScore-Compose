@@ -7,12 +7,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.kuba.flashscorecompose.main.NavigationItem
+import com.kuba.flashscorecompose.NavGraphs
+import com.kuba.flashscorecompose.destinations.*
+import com.kuba.flashscorecompose.main.model.NavigationItem
+import com.ramcosta.composedestinations.navigation.navigate
+import com.ramcosta.composedestinations.navigation.popBackStack
+import com.ramcosta.composedestinations.navigation.popUpTo
+import com.ramcosta.composedestinations.utils.isRouteOnBackStack
 
 /**
  * Created by jrzeznicki on 23/12/2022.
@@ -34,18 +38,16 @@ fun BottomNavigationBar(navController: NavHostController) {
         contentColor = MaterialTheme.colorScheme.inverseOnSurface
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = navBackStackEntry?.destination?.route
+        val currentRoute = navBackStackEntry?.destination
         items.forEach { item ->
+            val isCurrentDestOnBackStack = navController.isRouteOnBackStack(item.direction)
             NavigationBarItem(
                 icon = {
-                    Icon(
-                        painterResource(id = item.icon),
-                        contentDescription = stringResource(id = item.titleId)
-                    )
+                    Icon(item.icon, contentDescription = stringResource(id = item.label))
                 },
-                label = { Text(text = stringResource(id = item.titleId)) },
-                alwaysShowLabel = item.route == currentRoute,
-                selected = currentRoute?.startsWith(item.route) ?: (currentRoute === item.route),
+                label = { Text(text = stringResource(id = item.label)) },
+                alwaysShowLabel = isCurrentDestOnBackStack,
+                selected = isCurrentDestOnBackStack,
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.tertiary,
                     unselectedIconColor = MaterialTheme.colorScheme.inverseOnSurface,
@@ -54,11 +56,13 @@ fun BottomNavigationBar(navController: NavHostController) {
                     indicatorColor = MaterialTheme.colorScheme.surface
                 ),
                 onClick = {
-                    navController.navigate(item.route) {
-                        navController.graph.startDestinationRoute?.let { route ->
-                            popUpTo(route) {
-                                saveState = true
-                            }
+                    if (isCurrentDestOnBackStack) {
+                        navController.popBackStack(item.direction, false)
+                        return@NavigationBarItem
+                    }
+                    navController.navigate(item.direction) {
+                        popUpTo(NavGraphs.root) {
+                            saveState = true
                         }
                         launchSingleTop = true
                         restoreState = true
@@ -67,10 +71,4 @@ fun BottomNavigationBar(navController: NavHostController) {
             )
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun BottomNavigationBarPreview() {
-    //   BottomNavigationBar()
 }

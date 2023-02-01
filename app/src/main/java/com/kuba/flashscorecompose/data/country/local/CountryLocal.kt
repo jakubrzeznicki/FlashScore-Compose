@@ -12,10 +12,6 @@ class CountryLocal(private val roomStorage: RoomStorage) : CountryLocalDataSourc
         return roomStorage.getDatabase().countryDao().observeCountries(countryNames)
     }
 
-    override suspend fun getCountry(countryName: String): CountryEntity? {
-        return roomStorage.getDatabase().countryDao().getCountry(countryName)
-    }
-
     override suspend fun getCountries(): List<CountryEntity> {
         return roomStorage.getDatabase().countryDao().getCountries()
     }

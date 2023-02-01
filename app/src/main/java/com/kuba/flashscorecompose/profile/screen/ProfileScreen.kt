@@ -17,7 +17,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 /**
  * Created by jrzeznicki on 23/12/2022.
  */
-@Destination(route = "profile")
+@Destination
 @Composable
 fun ProfileScreen() {
     Column(

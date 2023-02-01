@@ -2,9 +2,7 @@ package com.kuba.flashscorecompose.standings.screen
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -28,6 +26,7 @@ import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.standings.model.Standing
 import com.kuba.flashscorecompose.data.standings.model.StandingItem
+import com.kuba.flashscorecompose.destinations.LeagueDetailsRouteDestination
 import com.kuba.flashscorecompose.destinations.StandingsDetailsRouteDestination
 import com.kuba.flashscorecompose.standings.model.StandingsError
 import com.kuba.flashscorecompose.standings.model.StandingsUiState
@@ -45,18 +44,22 @@ import org.koin.androidx.compose.getViewModel
 private const val SETUP_STANDINGS_KEY = "SETUP_STANDINGS_KEY"
 private const val TEAMS = 4
 
-@Destination(route = "standings")
+@Destination
 @Composable
 fun StandingsRoute(
     navigator: DestinationsNavigator,
     viewModel: StandingsViewModel = getViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val fixturesScrollState = rememberLazyListState()
+    val countryScrollState = rememberLazyListState()
     val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(key1 = SETUP_STANDINGS_KEY) { viewModel.setup() }
     StandingsScreen(
         uiState = uiState,
         snackbarHostState = snackbarHostState,
+        fixturesScrollState = fixturesScrollState,
+        countryScrollState = countryScrollState,
         onRefreshClick = { viewModel.refresh() },
         onCountryClick = { country, isSelected ->
             viewModel.updateSelectedCountry(country, isSelected)
@@ -69,6 +72,9 @@ fun StandingsRoute(
                 )
             )
         },
+        onLeagueClick = { leagueId, season ->
+            navigator.navigate(LeagueDetailsRouteDestination(leagueId, season))
+        },
         onErrorClear = { viewModel.cleanError() },
         onStandingsQueryChanged = { viewModel.updateStandingsQuery(it) }
     )
@@ -79,14 +85,16 @@ fun StandingsRoute(
 fun StandingsScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
+    fixturesScrollState: LazyListState,
+    countryScrollState: LazyListState,
     uiState: StandingsUiState,
     onRefreshClick: () -> Unit,
     onCountryClick: (Country, Boolean) -> Unit,
     onStandingsClick: (Standing) -> Unit,
+    onLeagueClick: (Int, Int) -> Unit,
     onErrorClear: () -> Unit,
     onStandingsQueryChanged: (String) -> Unit
 ) {
-    val scrollState = rememberLazyListState()
     Scaffold(
         topBar = { TopBar() },
         snackbarHost = { FlashScoreSnackbarHost(hostState = snackbarHostState) }
@@ -96,7 +104,6 @@ fun StandingsScreen(
             empty = when (uiState) {
                 is StandingsUiState.HasAllData -> false
                 is StandingsUiState.HasOnlyCountries -> false
-                is StandingsUiState.HasOnlyStandings -> false
                 is StandingsUiState.NoData -> uiState.isLoading
             },
             emptyContent = { FullScreenLoading() },
@@ -106,8 +113,8 @@ fun StandingsScreen(
             LazyColumn(
                 Modifier
                     .fillMaxSize()
-                    .padding(start = 16.dp, end = 16.dp, bottom = 80.dp, top = 16.dp),
-                state = scrollState
+                    .padding(horizontal = 16.dp),
+                state = fixturesScrollState
             ) {
                 item {
                     SimpleSearchBar(
@@ -138,35 +145,37 @@ fun StandingsScreen(
                 when (uiState) {
                     is StandingsUiState.HasAllData -> {
                         item {
-                            CountriesWidget(
-                                countries = uiState.countries,
-                                onCountryClick = onCountryClick,
-                                selectedItem = uiState.selectedCountry
-                            )
-                        }
-                        item {
+                            LazyRow(modifier = modifier, state = countryScrollState) {
+                                items(uiState.countries) { country ->
+                                    CountryWidgetCard(
+                                        country = country,
+                                        isSelected = uiState.selectedCountry == country,
+                                        onCountryClick = onCountryClick
+                                    )
+                                }
+                            }
                             Spacer(modifier = Modifier.size(24.dp))
                         }
                         items(items = uiState.standings) {
-                            StandingWithLeagueItem(it, onStandingsClick)
+                            StandingWithLeagueItem(it, onStandingsClick, onLeagueClick)
                         }
                     }
                     is StandingsUiState.HasOnlyCountries -> {
                         item {
-                            CountriesWidget(
-                                countries = uiState.countries,
-                                onCountryClick = onCountryClick,
-                                selectedItem = uiState.selectedCountry
-                            )
+                            LazyRow(modifier = modifier, state = countryScrollState) {
+                                items(uiState.countries) { country ->
+                                    CountryWidgetCard(
+                                        country = country,
+                                        isSelected = uiState.selectedCountry == country,
+                                        onCountryClick = onCountryClick
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.size(24.dp))
                             EmptyState(
                                 modifier = Modifier.fillMaxWidth(),
                                 textId = R.string.no_standings
                             )
-                        }
-                    }
-                    is StandingsUiState.HasOnlyStandings -> {
-                        items(items = uiState.standings) {
-                            StandingWithLeagueItem(it, onStandingsClick)
                         }
                     }
                     is StandingsUiState.NoData -> {
@@ -203,14 +212,17 @@ fun StandingsScreen(
 @Composable
 fun StandingWithLeagueItem(
     standing: Standing,
-    onStandingsClick: (Standing) -> Unit
+    onStandingsClick: (Standing) -> Unit,
+    onLeagueClick: (Int, Int) -> Unit
 ) {
     Column(
         Modifier
             .clickable { onStandingsClick(standing) }
             .padding(bottom = 16.dp)
     ) {
-        LeagueHeader(league = standing.league, onLeagueClick = { })
+        LeagueHeader(
+            league = standing.league,
+            onLeagueClick = { onLeagueClick(standing.leagueId, standing.season) })
         StandingCard(standing.standingItems)
     }
 }
@@ -256,7 +268,7 @@ fun StandingCard(standingItems: List<StandingItem>) {
 private fun TopBar() {
     AppTopBar(
         modifier = Modifier
-            .height(42.dp)
+            .height(58.dp)
             .padding(vertical = 8.dp),
         title = {
             Text(

@@ -28,9 +28,10 @@ import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import coil.size.Size
 import com.kuba.flashscorecompose.R
+import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.team.information.model.Coach
+import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.data.team.information.model.Venue
-import com.kuba.flashscorecompose.teamdetails.informations.model.TeamCountry
 import com.kuba.flashscorecompose.teamdetails.informations.model.TeamInformationsUiState
 import com.kuba.flashscorecompose.teamdetails.informations.viewmodel.TeamInformationsViewModel
 import com.kuba.flashscorecompose.ui.component.EmptyState
@@ -89,7 +90,7 @@ fun InformationsScreen(uiState: TeamInformationsUiState, onRefreshClick: () -> U
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSecondary,
                     )
-                    TeamInfoCard(teamCountry = uiState.teamCountry)
+                    TeamInfoCard(team = uiState.team, uiState.country)
                     Spacer(modifier = Modifier.size(16.dp))
                     Text(
                         modifier = Modifier.padding(bottom = 8.dp),
@@ -117,7 +118,7 @@ fun InformationsScreen(uiState: TeamInformationsUiState, onRefreshClick: () -> U
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSecondary,
                     )
-                    TeamInfoCard(teamCountry = uiState.teamCountry)
+                    TeamInfoCard(team = uiState.team, uiState.country)
                     Spacer(modifier = Modifier.size(16.dp))
                     Text(
                         modifier = Modifier.padding(bottom = 8.dp),
@@ -136,7 +137,7 @@ fun InformationsScreen(uiState: TeamInformationsUiState, onRefreshClick: () -> U
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSecondary,
                     )
-                    TeamInfoCard(teamCountry = uiState.teamCountry)
+                    TeamInfoCard(team = uiState.team, uiState.country)
                 }
                 is TeamInformationsUiState.NoData -> {
                     EmptyState(
@@ -152,7 +153,7 @@ fun InformationsScreen(uiState: TeamInformationsUiState, onRefreshClick: () -> U
 }
 
 @Composable
-fun TeamInfoCard(teamCountry: TeamCountry) {
+fun TeamInfoCard(team: Team, country: Country?) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(16.dp),
@@ -169,8 +170,8 @@ fun TeamInfoCard(teamCountry: TeamCountry) {
         ) {
             InfoWithImageRow(
                 labelId = R.string.country,
-                title = teamCountry.team.country,
-                image = teamCountry.country.flag
+                title = team.country,
+                image = country?.flag.orEmpty()
             )
             Spacer(modifier = Modifier.size(16.dp))
             Row(
@@ -181,7 +182,7 @@ fun TeamInfoCard(teamCountry: TeamCountry) {
                 InfoWithIconRow(
                     modifier = Modifier.weight(8f),
                     labelId = R.string.founded,
-                    title = teamCountry.team.founded.toString(),
+                    title = team.founded.toString(),
                     Icons.Default.Foundation
                 )
                 Divider(
@@ -194,7 +195,7 @@ fun TeamInfoCard(teamCountry: TeamCountry) {
                 InfoWithIconRow(
                     modifier = Modifier.weight(8f),
                     labelId = R.string.is_national,
-                    title = teamCountry.team.isNational.toString(),
+                    title = team.isNational.toString(),
                     Icons.Default.Flag
                 )
             }

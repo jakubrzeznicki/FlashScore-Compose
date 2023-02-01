@@ -68,7 +68,9 @@ fun HeadToHeadScreen(
         awayTeam,
         uiState = uiState,
         onRefreshClick = { viewModel.refresh() },
-        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(fixtureId)) }
+        onFixtureClick = { fixtureItem ->
+            navigator.navigate(FixtureDetailsRouteDestination(fixtureItem.id))
+        }
     )
 }
 

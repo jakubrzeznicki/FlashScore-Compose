@@ -5,13 +5,12 @@ import com.kuba.flashscorecompose.data.fixtures.lineups.mapper.toLineup
 import com.kuba.flashscorecompose.data.fixtures.lineups.mapper.toLineupEntity
 import com.kuba.flashscorecompose.data.fixtures.lineups.model.Lineup
 import com.kuba.flashscorecompose.data.fixtures.lineups.remote.LineupsRemoteDataSource
-import com.kuba.flashscorecompose.data.players.mapper.toPlayerEntity
-import com.kuba.flashscorecompose.data.team.information.mapper.toCoachEntity
-import com.kuba.flashscorecompose.data.team.information.mapper.toTeamEntity
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import com.kuba.flashscorecompose.utils.ResponseStatus
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 
 /**
@@ -36,16 +35,9 @@ class LineupsRepository(
         val result = remote.loadLineups(fixtureId = fixtureId)
         return try {
             val lineups = result.body()?.response?.map { it.toLineup(fixtureId) }
-            saveLineups(lineups.orEmpty())
-            local.saveCoaches(lineups?.map { it.coach.toCoachEntity() }.orEmpty())
-            local.saveTeams(lineups?.map { it.team.toTeamEntity(null) }.orEmpty())
-            val startXI = lineups?.map {
-                it.startXI.map { player -> player.toPlayerEntity() }
-            }.orEmpty().flatten()
-            val substitutions = lineups?.map {
-                it.substitutes.map { player -> player.toPlayerEntity() }
-            }.orEmpty().flatten()
-            local.savePlayers(startXI + substitutions)
+            withContext(Dispatchers.IO) {
+                saveLineups(lineups.orEmpty())
+            }
             RepositoryResult.Success(lineups)
         } catch (e: HttpException) {
             RepositoryResult.Error(ResponseStatus().apply {

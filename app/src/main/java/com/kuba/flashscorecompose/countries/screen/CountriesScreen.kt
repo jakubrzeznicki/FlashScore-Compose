@@ -47,7 +47,7 @@ import org.koin.androidx.compose.getViewModel
  */
 private const val SETUP_COUNTRIES_KEY = "SETUP_COUNTRIES_KEY"
 
-@Destination(route = "home/countries")
+@Destination
 @Composable
 fun CountryListScreen(
     navigator: DestinationsNavigator,
