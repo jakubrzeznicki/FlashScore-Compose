@@ -11,8 +11,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -64,18 +62,18 @@ private fun CountryWidgetCard(
         onClick = { onCountryClick(country, isSelected) },
         colors = CardDefaults.cardColors(containerColor = color),
         modifier = Modifier
+            .size(width = 130.dp, height = 150.dp)
             .padding(8.dp)
             .align(Alignment.Center),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-        //.size(width = 115.dp, height = 130.dp)
     ) {
         Column(
             modifier = Modifier
-                .background(color = color)
-                .padding(30.dp),
+                .fillMaxSize()
+                .background(color = color),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween,
+            verticalArrangement = Arrangement.Center,
         ) {
             AsyncImage(
                 modifier = Modifier.size(40.dp),

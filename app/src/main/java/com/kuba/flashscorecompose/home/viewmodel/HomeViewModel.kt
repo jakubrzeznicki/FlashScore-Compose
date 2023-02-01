@@ -44,7 +44,7 @@ class HomeViewModel(
 
     private fun observeCountries() {
         viewModelScope.launch {
-            countryRepository.observeCountries(COUNTRY_CODES).collect { countries ->
+            countryRepository.observeCountries(COUNTRY_NAMES).collect { countries ->
                 viewModelState.update {
                     it.copy(countries = countries)
                 }
@@ -75,7 +75,7 @@ class HomeViewModel(
             } else {
                 TESTING_DATE
             }
-            fixturesRepository.observeFixturesByDate(TESTING_DATE, COUNTRY_NAMES)
+            fixturesRepository.observeFixturesByDate(formattedDate, COUNTRY_NAMES)
                 .collect { fixtures ->
                     val leagueFixturesList = fixtures.toLeagueFixturesData()
                     val filteredLeagueFixturesList = filterFixtureItems(leagueFixturesList)
@@ -134,7 +134,7 @@ class HomeViewModel(
             } else {
                 TESTING_DATE
             }
-            val result = fixturesRepository.loadFixturesByDate(TESTING_DATE)
+            val result = fixturesRepository.loadFixturesByDate(formattedDate)
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
@@ -152,7 +152,6 @@ class HomeViewModel(
     }
 
     companion object {
-        val COUNTRY_CODES = listOf("PL", "DE", "FR", "ES", "IT", "NL", "PT", "TR", "UA", "BE", "GB")
         val COUNTRY_NAMES = listOf(
             "Poland",
             "Deutschland",

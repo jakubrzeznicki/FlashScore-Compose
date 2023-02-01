@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.standings.StandingsDataSource
 import com.kuba.flashscorecompose.data.standings.model.StandingItem
+import com.kuba.flashscorecompose.standingsdetails.model.StandingsDetailsError
 import com.kuba.flashscorecompose.ui.component.chips.FilterChip
+import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -24,19 +26,28 @@ class StandingsDetailsViewModel(
         .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
 
     fun setup() {
-        getStandings()
+        observeStandings()
     }
 
-    private fun getStandings() {
+    fun refresh() {
+        refreshStanding()
+    }
+
+    private fun observeStandings() {
         viewModelScope.launch {
-            val standing = standingsRepository.getStanding(leagueId, season)
-            val filteredStandingItems = filterStandingItems(standing.standingItems)
-            viewModelState.update {
-                it.copy(
-                    league = standing.league,
-                    standingsItems = standing.standingItems,
-                    filteredStandings = filteredStandingItems
-                )
+            standingsRepository.observeStanding(leagueId, season).collect { standing ->
+                if (standing == null) {
+                    viewModelState.update { it.copy(error = StandingsDetailsError.EmptyDatabase) }
+                    return@collect
+                }
+                val filteredStandingItems = filterStandingItems(standing.standingItems)
+                viewModelState.update {
+                    it.copy(
+                        league = standing.league,
+                        standingsItems = standing.standingItems,
+                        filteredStandings = filteredStandingItems
+                    )
+                }
             }
         }
     }
@@ -52,6 +63,22 @@ class StandingsDetailsViewModel(
         }
     }
 
+    private fun refreshStanding() {
+        viewModelState.update { it.copy(isLoading = true) }
+        viewModelScope.launch {
+            val result = standingsRepository.loadStandings(leagueId, season)
+            viewModelState.update {
+                when (result) {
+                    is RepositoryResult.Success -> it.copy(isLoading = false)
+                    is RepositoryResult.Error -> it.copy(
+                        isLoading = false,
+                        error = StandingsDetailsError.RemoteError(result.error)
+                    )
+                }
+            }
+        }
+    }
+
     private fun filterStandingItems(
         standingItems: List<StandingItem> = viewModelState.value.standingsItems,
         standingFilterChip: FilterChip.Standings = viewModelState.value.standingFilterChip
@@ -60,23 +87,48 @@ class StandingsDetailsViewModel(
             is FilterChip.Standings.All -> standingItems.map {
                 it.copy(
                     selectedInformationStanding = it.all,
-                    colorId = getColorId(it.rank)
+                    colorId = getColorId(it.rank),
+                    goalsDiff = it.all.goals.forValue - it.all.goals.against,
+                    points = calculatePoints(it.all.win, it.all.draw)
                 )
             }
-            is FilterChip.Standings.Home -> standingItems.map {
-                it.copy(
-                    selectedInformationStanding = it.home,
-                    colorId = getColorId(it.rank)
-                )
+            is FilterChip.Standings.Home -> {
+                val sortedStandingItems =
+                    standingItems.map { it to calculatePoints(it.home.win, it.home.draw) }
+                        .sortedBy { it.second }.asReversed()
+                sortedStandingItems.mapIndexed { index, standingsWithPoints ->
+                    val standingItem = standingsWithPoints.first
+                    val points = standingsWithPoints.second
+                    standingsWithPoints.first.copy(
+                        selectedInformationStanding = standingItem.home,
+                        colorId = getColorId(index + ONE_POSITION),
+                        goalsDiff = standingItem.home.goals.forValue - standingItem.home.goals.against,
+                        points = points,
+                        rank = index + ONE_POSITION
+                    )
+                }
             }
-            is FilterChip.Standings.Away -> standingItems.map {
-                it.copy(
-                    selectedInformationStanding = it.away,
-                    colorId = getColorId(it.rank)
-                )
+            is FilterChip.Standings.Away -> {
+                val sortedStandingItems =
+                    standingItems.map { it to calculatePoints(it.away.win, it.away.draw) }
+                        .sortedBy { it.second }.asReversed()
+                sortedStandingItems.mapIndexed { index, standingsWithPoints ->
+                    val standingItem = standingsWithPoints.first
+                    val points = standingsWithPoints.second
+                    standingsWithPoints.first.copy(
+                        selectedInformationStanding = standingItem.away,
+                        colorId = getColorId(index + ONE_POSITION),
+                        goalsDiff = standingItem.away.goals.forValue - standingItem.away.goals.against,
+                        points = points,
+                        rank = index + ONE_POSITION
+                    )
+                }
             }
         }
     }
+
+    private fun calculatePoints(wins: Int, draws: Int): Int =
+        wins * WIN_FACTOR + draws * DRAW_FACTOR
 
     private fun getColorId(rank: Int): Int {
         return when (rank) {
@@ -84,5 +136,15 @@ class StandingsDetailsViewModel(
             in 4..5 -> R.color.darkRed
             else -> R.color.black500
         }
+    }
+
+    fun cleanError() {
+        viewModelState.update { it.copy(error = StandingsDetailsError.NoError) }
+    }
+
+    private companion object {
+        const val WIN_FACTOR = 3
+        const val DRAW_FACTOR = 1
+        const val ONE_POSITION = 1
     }
 }

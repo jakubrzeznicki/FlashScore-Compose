@@ -10,7 +10,7 @@ data class FixtureInfoEntity(
     @PrimaryKey @ColumnInfo(name = "id") val id: Int,
     @ColumnInfo(name = "referee") val referee: String,
     @Embedded(prefix = "status_") val status: StatusEntity,
-    @ColumnInfo(name = "timestamp") val timestamp: Int,
+    @ColumnInfo(name = "timestamp") val timestamp: Long,
     @ColumnInfo(name = "timezone") val timezone: String,
     @Embedded(prefix = "venue_") val venue: VenueEntity,
     @Embedded(prefix = "periods_") val periods: PeriodsEntity

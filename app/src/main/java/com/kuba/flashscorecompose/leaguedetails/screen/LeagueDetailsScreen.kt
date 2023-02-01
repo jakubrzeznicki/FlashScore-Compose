@@ -19,18 +19,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import coil.size.Size
-import com.google.relay.compose.BoxScopeInstanceImpl.matchParentSize
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.destinations.FixtureDetailsRouteDestination
 import com.kuba.flashscorecompose.destinations.StandingsDetailsRouteDestination
+import com.kuba.flashscorecompose.leaguedetails.model.LeagueDetailsError
 import com.kuba.flashscorecompose.leaguedetails.model.LeagueDetailsUiState
 import com.kuba.flashscorecompose.leaguedetails.viewmodel.LeagueDetailsViewModel
 import com.kuba.flashscorecompose.ui.component.*
@@ -63,34 +64,30 @@ fun LeagueDetailsRoute(
     val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(key1 = SETUP_LEAGUE_DETAILS_KEY) { viewModel.setup() }
     LeagueDetailsScreen(
-        leagueId,
-        season,
         uiState = uiState,
         snackbarHostState = snackbarHostState,
         navigator = navigator,
         onRefreshClick = { viewModel.refresh() },
         onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.id)) },
         onDateClick = { viewModel.changeDate(it) },
-        onStandingsClick = { leagueIdParam, seasonParam ->
-            navigator.navigate(StandingsDetailsRouteDestination(leagueIdParam, seasonParam))
+        onStandingsClick = {
+            navigator.navigate(StandingsDetailsRouteDestination(leagueId, season))
         },
-        onErrorClick = { viewModel.cleanError() }
+        onErrorClear = { viewModel.cleanError() }
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LeagueDetailsScreen(
-    leagueId: Int,
-    season: Int,
     uiState: LeagueDetailsUiState,
     snackbarHostState: SnackbarHostState,
     navigator: DestinationsNavigator,
     onRefreshClick: () -> Unit,
     onFixtureClick: (FixtureItem) -> Unit,
     onDateClick: (LocalDate) -> Unit,
-    onStandingsClick: (Int, Int) -> Unit,
-    onErrorClick: () -> Unit
+    onStandingsClick: () -> Unit,
+    onErrorClear: () -> Unit
 ) {
     val scrollState = rememberLazyListState()
     Scaffold(
@@ -115,7 +112,7 @@ fun LeagueDetailsScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
+                    .padding(start = 16.dp, end = 16.dp, bottom = 80.dp, top = 16.dp),
                 state = scrollState
             ) {
                 item {
@@ -138,15 +135,17 @@ fun LeagueDetailsScreen(
                     }
                 }
                 item {
-                    StandingsRow(
-                        leagueId = leagueId,
-                        season = season,
-                        onStandingClick = onStandingsClick
-                    )
+                    StandingsRow(onStandingClick = onStandingsClick)
                 }
             }
         }
     }
+    ErrorSnackbar(
+        uiState = uiState,
+        onRefreshClick = onRefreshClick,
+        onErrorClear = onErrorClear,
+        snackbarHostState = snackbarHostState
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -191,11 +190,11 @@ fun DateRow(localDate: LocalDate, onDateClick: (LocalDate) -> Unit) {
 }
 
 @Composable
-fun StandingsRow(leagueId: Int, season: Int, onStandingClick: (Int, Int) -> Unit) {
+fun StandingsRow(onStandingClick: () -> Unit) {
     Row(
         modifier = Modifier
-            .clickable { onStandingClick(leagueId, season) }
-            .padding(top = 16.dp)
+            .clickable { onStandingClick() }
+            .padding(top = 16.dp, bottom = 80.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -239,6 +238,9 @@ fun StandingsRow(leagueId: Int, season: Int, onStandingClick: (Int, Int) -> Unit
 @Composable
 private fun TopBar(navigator: DestinationsNavigator, league: League) {
     CenterAppTopBar(
+        modifier = Modifier
+            .height(42.dp)
+            .padding(vertical = 8.dp),
         navigationIcon = {
             IconButton(
                 modifier = Modifier
@@ -254,14 +256,13 @@ private fun TopBar(navigator: DestinationsNavigator, league: League) {
         },
         title = {
             Row(
-                modifier = Modifier.matchParentSize(),
+                modifier = Modifier.fillMaxWidth(0.8f),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
                 AsyncImage(
                     modifier = Modifier
-                        .size(24.dp)
-                        .padding(end = 4.dp),
+                        .size(24.dp),
                     model = ImageRequest.Builder(LocalContext.current)
                         .decoderFactory(SvgDecoder.Factory())
                         .data(league.logo)
@@ -273,10 +274,42 @@ private fun TopBar(navigator: DestinationsNavigator, league: League) {
                     contentScale = ContentScale.Fit
                 )
                 Text(
+                    modifier = Modifier.padding(start = 8.dp),
                     text = league.name,
                     color = MaterialTheme.colorScheme.onSecondary,
-                    style = FlashScoreTypography.headlineSmall
+                    style = FlashScoreTypography.headlineSmall,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
                 )
             }
         })
+}
+
+@Composable
+private fun ErrorSnackbar(
+    uiState: LeagueDetailsUiState,
+    onRefreshClick: () -> Unit,
+    onErrorClear: () -> Unit,
+    snackbarHostState: SnackbarHostState
+) {
+    when (val error = uiState.error) {
+        is LeagueDetailsError.NoError -> {}
+        is LeagueDetailsError.RemoteError -> {
+            val errorMessageText =
+                remember(uiState) { error.responseStatus.statusMessage.orEmpty() }
+            val retryMessageText = stringResource(id = R.string.retry)
+            val onRefreshPostStates by rememberUpdatedState(onRefreshClick)
+            val onErrorDismissState by rememberUpdatedState(onErrorClear)
+            LaunchedEffect(errorMessageText, retryMessageText) {
+                val snackbarResult = snackbarHostState.showSnackbar(
+                    message = errorMessageText,
+                    actionLabel = retryMessageText
+                )
+                if (snackbarResult == SnackbarResult.ActionPerformed) {
+                    onRefreshPostStates()
+                }
+                onErrorDismissState()
+            }
+        }
+    }
 }

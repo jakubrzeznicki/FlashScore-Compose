@@ -7,8 +7,22 @@ import com.kuba.flashscorecompose.ui.component.chips.FilterChip
 /**
  * Created by jrzeznicki on 19/01/2023.
  */
-data class StandingsDetailsUiState(
-    val league: League,
-    val standingFilterChip: FilterChip.Standings,
-    val standingsItems: List<StandingItem>
-)
+interface StandingsDetailsUiState {
+    val isLoading: Boolean
+    val error: StandingsDetailsError
+    val standingFilterChip: FilterChip.Standings
+
+    data class HasData(
+        override val isLoading: Boolean,
+        override val error: StandingsDetailsError,
+        override val standingFilterChip: FilterChip.Standings,
+        val league: League,
+        val standingsItems: List<StandingItem>
+    ) : StandingsDetailsUiState
+
+    data class NoData(
+        override val isLoading: Boolean,
+        override val error: StandingsDetailsError,
+        override val standingFilterChip: FilterChip.Standings
+    ) : StandingsDetailsUiState
+}

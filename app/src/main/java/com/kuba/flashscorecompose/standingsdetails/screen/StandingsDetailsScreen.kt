@@ -33,15 +33,15 @@ import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import coil.size.Size
-import com.google.relay.compose.BoxScopeInstanceImpl.matchParentSize
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.data.standings.model.StandingItem
 import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.destinations.TeamDetailsRouteDestination
+import com.kuba.flashscorecompose.standingsdetails.model.StandingsDetailsError
 import com.kuba.flashscorecompose.standingsdetails.model.StandingsDetailsUiState
 import com.kuba.flashscorecompose.standingsdetails.viewmodel.StandingsDetailsViewModel
-import com.kuba.flashscorecompose.ui.component.CenterAppTopBar
+import com.kuba.flashscorecompose.ui.component.*
 import com.kuba.flashscorecompose.ui.component.chips.FilterChip
 import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
 import com.ramcosta.composedestinations.annotation.Destination
@@ -65,13 +65,17 @@ fun StandingsDetailsRoute(
     viewModel: StandingsDetailsViewModel = getViewModel { parametersOf(leagueId, season) }
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(key1 = SETUP_STANDINGS_DETAILS_KEY) { viewModel.setup() }
     StandingsDetailsScreen(
         uiState = uiState,
+        snackbarHostState = snackbarHostState,
         navigator = navigator,
         onTeamClick = {
             navigator.navigate(TeamDetailsRouteDestination(it.id, leagueId, season))
         },
+        onRefreshClick = { viewModel.refresh() },
+        onErrorClear = { viewModel.cleanError() },
         onStandingsFilterClick = { viewModel.filterStandings(it) }
     )
 }
@@ -80,50 +84,104 @@ fun StandingsDetailsRoute(
 @Composable
 private fun StandingsDetailsScreen(
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState,
     uiState: StandingsDetailsUiState,
     navigator: DestinationsNavigator,
     onTeamClick: (Team) -> Unit,
+    onRefreshClick: () -> Unit,
+    onErrorClear: () -> Unit,
     onStandingsFilterClick: (FilterChip.Standings) -> Unit
 ) {
     val scrollState = rememberLazyListState()
     Scaffold(
         modifier = modifier,
-        topBar = { TopBar(navigator, uiState.league) }
+        topBar = {
+            TopBar(
+                navigator = navigator,
+                league = when (uiState) {
+                    is StandingsDetailsUiState.HasData -> uiState.league
+                    else -> League.EMPTY_LEAGUE
+                }
+            )
+        },
+        snackbarHost = { FlashScoreSnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues = paddingValues)
-                .padding(16.dp),
-            state = scrollState
+        LoadingContent(
+            modifier = modifier.padding(paddingValues),
+            empty = when (uiState) {
+                is StandingsDetailsUiState.HasData -> false
+                else -> uiState.isLoading
+            },
+            emptyContent = { FullScreenLoading() },
+            loading = uiState.isLoading,
+            onRefresh = onRefreshClick
         ) {
-            item {
-                LeagueHeader(uiState.league)
-            }
-            item {
-                StandingFilterChips(uiState.standingFilterChip, onStandingsFilterClick)
-            }
-            item {
-                StandingHeaderRow()
-                Divider(
-                    color = MaterialTheme.colorScheme.inverseSurface,
-                    thickness = 2.dp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp)
-                )
-            }
-            items(items = uiState.standingsItems) {
-                StandingElementRow(it, onTeamClick)
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(start = 16.dp, end = 16.dp, bottom = 80.dp, top = 16.dp),
+                state = scrollState
+            ) {
+                when (uiState) {
+                    is StandingsDetailsUiState.HasData -> {
+                        item {
+                            LeagueHeader(uiState.league)
+                        }
+                        item {
+                            StandingFilterChips(uiState.standingFilterChip, onStandingsFilterClick)
+                        }
+                        item {
+                            StandingHeaderRow()
+                            Divider(
+                                color = MaterialTheme.colorScheme.inverseSurface,
+                                thickness = 2.dp,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 16.dp)
+                            )
+                        }
+                        items(items = uiState.standingsItems) {
+                            StandingElementRow(it, onTeamClick)
+                        }
+                    }
+                    is StandingsDetailsUiState.NoData -> {
+                        item {
+                            EmptyState(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(),
+                                textId = R.string.no_standings
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .size(128.dp)
+                                        .padding(8.dp),
+                                    painter = painterResource(id = R.drawable.ic_close),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.inverseOnSurface
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
     }
+    ErrorSnackbar(
+        uiState = uiState,
+        onRefreshClick = onRefreshClick,
+        onErrorClear = onErrorClear,
+        snackbarHostState = snackbarHostState
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopBar(navigator: DestinationsNavigator, league: League) {
     CenterAppTopBar(
+        modifier = Modifier
+            .height(42.dp)
+            .padding(vertical = 8.dp),
         navigationIcon = {
             IconButton(
                 modifier = Modifier
@@ -139,14 +197,13 @@ private fun TopBar(navigator: DestinationsNavigator, league: League) {
         },
         title = {
             Row(
-                modifier = Modifier.matchParentSize(),
+                modifier = Modifier.fillMaxWidth(0.8f),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
                 AsyncImage(
                     modifier = Modifier
-                        .size(24.dp)
-                        .padding(end = 4.dp),
+                        .size(24.dp),
                     model = ImageRequest.Builder(LocalContext.current)
                         .decoderFactory(SvgDecoder.Factory())
                         .data(league.countryFlag)
@@ -158,9 +215,12 @@ private fun TopBar(navigator: DestinationsNavigator, league: League) {
                     contentScale = ContentScale.Fit
                 )
                 Text(
+                    modifier = Modifier.padding(start = 8.dp),
                     text = league.countryName,
                     color = MaterialTheme.colorScheme.onSecondary,
-                    style = FlashScoreTypography.headlineSmall
+                    style = FlashScoreTypography.headlineSmall,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
                 )
             }
         })
@@ -171,7 +231,7 @@ private fun LeagueHeader(league: League) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 32.dp),
+            .padding(bottom = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -292,7 +352,7 @@ private fun StandingHeaderRow() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 8.dp),
+            .padding(start = 8.dp, end = 8.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -382,7 +442,7 @@ private fun StandingElementRow(
             modifier = Modifier
                 .weight(5f)
                 .padding(end = 4.dp),
-            text = standingItem.team.name.take(16),
+            text = standingItem.team.name,
             fontSize = 14.sp,
             color = MaterialTheme.colorScheme.onSecondary,
             overflow = TextOverflow.Ellipsis
@@ -391,31 +451,73 @@ private fun StandingElementRow(
             modifier = Modifier.weight(1f),
             text = standingItem.selectedInformationStanding.win.toString(),
             fontSize = 14.sp,
+            textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSecondary
         )
         Text(
             modifier = Modifier.weight(1f),
             text = standingItem.selectedInformationStanding.lose.toString(),
             fontSize = 14.sp,
+            textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSecondary
         )
         Text(
             modifier = Modifier.weight(1f),
             text = standingItem.selectedInformationStanding.draw.toString(),
             fontSize = 14.sp,
+            textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSecondary
         )
         Text(
             modifier = Modifier.weight(1f),
             text = standingItem.goalsDiff.toString(),
             fontSize = 14.sp,
+            textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSecondary
         )
         Text(
             modifier = Modifier.weight(1f),
             text = standingItem.points.toString(),
             fontSize = 14.sp,
+            textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSecondary
         )
+    }
+}
+
+@Composable
+private fun ErrorSnackbar(
+    uiState: StandingsDetailsUiState,
+    onRefreshClick: () -> Unit,
+    onErrorClear: () -> Unit,
+    snackbarHostState: SnackbarHostState
+) {
+    when (val error = uiState.error) {
+        is StandingsDetailsError.NoError -> {}
+        is StandingsDetailsError.EmptyDatabase -> {
+            val errorMessageText = stringResource(id = R.string.empty_leagues)
+            val onErrorDismissState by rememberUpdatedState(onErrorClear)
+            LaunchedEffect(errorMessageText) {
+                snackbarHostState.showSnackbar(message = errorMessageText)
+                onErrorDismissState()
+            }
+        }
+        is StandingsDetailsError.RemoteError -> {
+            val errorMessageText =
+                remember(uiState) { error.responseStatus.statusMessage.orEmpty() }
+            val retryMessageText = stringResource(id = R.string.retry)
+            val onRefreshPostStates by rememberUpdatedState(onRefreshClick)
+            val onErrorDismissState by rememberUpdatedState(onErrorClear)
+            LaunchedEffect(errorMessageText, retryMessageText) {
+                val snackbarResult = snackbarHostState.showSnackbar(
+                    message = errorMessageText,
+                    actionLabel = retryMessageText
+                )
+                if (snackbarResult == SnackbarResult.ActionPerformed) {
+                    onRefreshPostStates()
+                }
+                onErrorDismissState()
+            }
+        }
     }
 }

@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.Flow
  * Created by jrzeznicki on 9/9/2022
  */
 class CountryLocal(private val roomStorage: RoomStorage) : CountryLocalDataSource {
-    override fun observeCountries(countryCodes: List<String>): Flow<List<CountryEntity>> {
-        return roomStorage.getDatabase().countryDao().observeCountries(countryCodes)
+    override fun observeCountries(countryNames: List<String>): Flow<List<CountryEntity>> {
+        return roomStorage.getDatabase().countryDao().observeCountries(countryNames)
     }
 
     override suspend fun getCountry(countryName: String): CountryEntity? {

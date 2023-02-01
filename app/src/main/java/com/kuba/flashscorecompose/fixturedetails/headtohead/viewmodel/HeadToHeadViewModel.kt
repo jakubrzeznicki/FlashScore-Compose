@@ -9,8 +9,7 @@ import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.Instant
-import java.time.LocalDateTime
-import java.util.*
+import java.time.ZoneId
 
 /**
  * Created by jrzeznicki on 14/01/2023.
@@ -108,12 +107,10 @@ class HeadToHeadViewModel(
 
     private fun List<FixtureItem>.updateYear(): List<FixtureItem> {
         return map { fixtureItem ->
-            val formattedDate = LocalDateTime.ofInstant(
-                Instant.ofEpochMilli(fixtureItem.fixture.timestamp.toLong()),
-                TimeZone.getDefault().toZoneId()
-            )
-            val year = formattedDate.year.toString()
-            fixtureItem.copy(fixture = fixtureItem.fixture.copy(year = year))
+            val dateTime = Instant.ofEpochSecond(fixtureItem.fixture.timestamp)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime()
+            fixtureItem.copy(fixture = fixtureItem.fixture.copy(year = dateTime.year.toString()))
         }
     }
 

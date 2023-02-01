@@ -50,11 +50,12 @@ fun FixtureInfoDto.toFixtureInfo(teamId: Int?): FixtureInfo {
         id = id ?: 0,
         referee = referee.orEmpty(),
         status = status?.toStatus() ?: Status.EMPTY_STATUS,
-        timestamp = timestamp ?: 0,
+        timestamp = timestamp ?: 0L,
         timezone = timezone.orEmpty(),
         venue = venue?.toVenue(teamId) ?: Venue.EMPTY_VENUE,
         periods = periods?.toPeriods() ?: Periods.EMPTY_PERIODS,
-        year = ""
+        year = "",
+        isLive = false
     )
 }
 

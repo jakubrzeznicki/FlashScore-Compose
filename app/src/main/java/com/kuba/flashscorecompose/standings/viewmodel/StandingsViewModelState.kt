@@ -18,7 +18,7 @@ data class StandingsViewModelState(
     val countries: List<Country> = emptyList()
 ) {
     fun toUiState(): StandingsUiState = when {
-        standings.isNotEmpty() && countries.isNotEmpty() ->
+        filteredStandings.isNotEmpty() && countries.isNotEmpty() ->
             StandingsUiState.HasAllData(
                 isLoading,
                 error,
@@ -36,7 +36,7 @@ data class StandingsViewModelState(
                 countries
             )
         standings.isNotEmpty() ->
-            StandingsUiState.HasOnlyStandings(isLoading, error, standingsQuery, standings)
+            StandingsUiState.HasOnlyStandings(isLoading, error, standingsQuery, filteredStandings)
         else -> StandingsUiState.NoData(isLoading, error, standingsQuery)
 
     }

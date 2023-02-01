@@ -284,7 +284,7 @@ fun PlayerItem(player: Player, onPlayerClick: (Player) -> Unit) {
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 11.sp,
                 color = MaterialTheme.colorScheme.onSecondary,
-                maxLines = 1,
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
         }

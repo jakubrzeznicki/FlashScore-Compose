@@ -1,5 +1,6 @@
 package com.kuba.flashscorecompose.teamdetails.container.screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -62,6 +63,7 @@ fun TeamDetailsRoute(
     )
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeamDetailsScreen(
@@ -75,11 +77,11 @@ fun TeamDetailsScreen(
     Scaffold(
         modifier = modifier,
         topBar = { TopBar(navigator) }
-    ) { paddingValues ->
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(bottom = 80.dp, top = 36.dp)
         ) {
             TeamHeader(uiState.team)
             TeamDetailsTabs(uiState, teamId, leagueId, season, navigator)
@@ -91,6 +93,9 @@ fun TeamDetailsScreen(
 @Composable
 private fun TopBar(navigator: DestinationsNavigator) {
     CenterAppTopBar(
+        modifier = Modifier
+            .height(42.dp)
+            .padding(vertical = 8.dp),
         navigationIcon = {
             IconButton(
                 modifier = Modifier

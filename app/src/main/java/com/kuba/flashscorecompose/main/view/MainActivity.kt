@@ -4,12 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.kuba.flashscorecompose.NavGraphs
@@ -59,7 +57,6 @@ class MainActivity : ComponentActivity() {
     ) {
         val navHostEngine: NavHostEngine = rememberNavHostEngine()
         DestinationsNavHost(
-            modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
             navGraph = NavGraphs.root,
             engine = navHostEngine,
             navController = navHostController,

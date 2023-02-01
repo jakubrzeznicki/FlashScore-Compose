@@ -2,6 +2,8 @@ package com.kuba.flashscorecompose.ui.component
 
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -9,17 +11,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 
 /**
  * Created by jrzeznicki on 19/01/2023.
  */
 @OptIn(ExperimentalMaterial3Api::class)
+@Preview
 @Composable
 fun SimpleSearchBar(
     modifier: Modifier = Modifier,
-    label: String,
-    query: String,
-    onQueryChange: (String) -> Unit,
+    label: String = "Label",
+    query: String = "Query",
+    onQueryChange: (String) -> Unit = {},
     leadingIcon: @Composable (() -> Unit)? = null,
     isEnabled: Boolean = true
 ) {
@@ -29,6 +33,17 @@ fun SimpleSearchBar(
         value = query,
         onValueChange = { onQueryChange(it) },
         leadingIcon = leadingIcon,
+        trailingIcon = {
+            if (query.isNotEmpty()) {
+                IconButton(onClick = { onQueryChange("") }) {
+                    Icon(
+                        imageVector = Icons.Default.Clear,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.inverseOnSurface
+                    )
+                }
+            }
+        },
         label = { Text(text = label) },
         textStyle = MaterialTheme.typography.titleMedium,
         singleLine = true,
@@ -39,7 +54,7 @@ fun SimpleSearchBar(
         ),
         colors = TextFieldDefaults.textFieldColors(
             textColor = MaterialTheme.colorScheme.onBackground,
-            containerColor =  MaterialTheme.colorScheme.surface,
+            containerColor = MaterialTheme.colorScheme.surface,
             focusedIndicatorColor = Color.Transparent,
             focusedLabelColor = MaterialTheme.colorScheme.onBackground,
             cursorColor = MaterialTheme.colorScheme.onBackground,
