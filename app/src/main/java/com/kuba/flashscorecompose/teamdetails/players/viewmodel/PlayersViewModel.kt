@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.data.country.CountryDataSource
 import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.players.PlayersDataSource
+import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.teamdetails.players.model.PlayerCountry
 import com.kuba.flashscorecompose.teamdetails.players.model.PlayersError
 import com.kuba.flashscorecompose.utils.RepositoryResult
@@ -15,7 +16,7 @@ import kotlinx.coroutines.launch
  * Created by jrzeznicki on 29/01/2023.
  */
 class PlayersViewModel(
-    private val teamId: Int,
+    private val team: Team,
     private val season: Int,
     private val playersRepository: PlayersDataSource,
     private val countryRepository: CountryDataSource
@@ -37,7 +38,7 @@ class PlayersViewModel(
     private fun observePlayers() {
         viewModelScope.launch {
             val countries = countryRepository.getCountries()
-            playersRepository.observePlayers(teamId, season).collect { players ->
+            playersRepository.observePlayers(team.id, season).collect { players ->
                 viewModelState.update {
                     val playerCountry = players.map { player ->
                         PlayerCountry(
@@ -54,7 +55,7 @@ class PlayersViewModel(
     private fun refreshPlayers() {
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            val result = playersRepository.loadPlayers(teamId, season)
+            val result = playersRepository.loadPlayers(team, season)
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)

@@ -14,8 +14,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -26,7 +24,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
-import coil.size.Size
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.team.information.model.Coach
@@ -34,9 +31,7 @@ import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.data.team.information.model.Venue
 import com.kuba.flashscorecompose.teamdetails.informations.model.TeamInformationsUiState
 import com.kuba.flashscorecompose.teamdetails.informations.viewmodel.TeamInformationsViewModel
-import com.kuba.flashscorecompose.ui.component.EmptyState
-import com.kuba.flashscorecompose.ui.component.FullScreenLoading
-import com.kuba.flashscorecompose.ui.component.LoadingContent
+import com.kuba.flashscorecompose.ui.component.*
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
@@ -51,9 +46,10 @@ private const val TEAM_INFROMATIONS_KEY = "TEAM_INFROMATIONS_KEY"
 fun TeamInformationsScreen(
     teamId: Int,
     leagueId: Int,
+    season: Int,
     navigator: DestinationsNavigator,
     viewModel: TeamInformationsViewModel = getViewModel {
-        parametersOf(teamId, leagueId)
+        parametersOf(teamId, leagueId, season)
     }
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -168,7 +164,7 @@ fun TeamInfoCard(team: Team, country: Country?) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            InfoWithImageRow(
+            InfoRowWithImage(
                 labelId = R.string.country,
                 title = team.country,
                 image = country?.flag.orEmpty()
@@ -179,7 +175,7 @@ fun TeamInfoCard(team: Team, country: Country?) {
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                InfoWithIconRow(
+                InfoRowWithIcon(
                     modifier = Modifier.weight(8f),
                     labelId = R.string.founded,
                     title = team.founded.toString(),
@@ -192,90 +188,13 @@ fun TeamInfoCard(team: Team, country: Country?) {
                         .height(40.dp)
                         .width(1.dp)
                 )
-                InfoWithIconRow(
+                InfoRowWithIcon(
                     modifier = Modifier.weight(8f),
                     labelId = R.string.is_national,
                     title = team.isNational.toString(),
                     Icons.Default.Flag
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun InfoWithIconRow(modifier: Modifier, labelId: Int, title: String, icon: ImageVector) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Icon(
-            modifier = Modifier
-                .size(40.dp)
-                .padding(end = 8.dp),
-            imageVector = icon,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onBackground
-        )
-        Column {
-            Text(
-                text = stringResource(id = labelId),
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-            Text(
-                text = title,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.inverseOnSurface,
-            )
-        }
-    }
-}
-
-@Composable
-private fun InfoWithImageRow(title: String, labelId: Int, image: String) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        AsyncImage(
-            modifier = Modifier
-                .clip(RoundedCornerShape(16.dp))
-                .size(50.dp)
-                .padding(end = 8.dp),
-            model = ImageRequest.Builder(LocalContext.current)
-                .decoderFactory(SvgDecoder.Factory())
-                .data(image)
-                .size(Size.ORIGINAL)
-                .crossfade(true)
-                .build(),
-            placeholder = painterResource(id = R.drawable.ic_launcher_background),
-            contentDescription = null,
-            contentScale = ContentScale.Fit
-        )
-        Divider(
-            color = MaterialTheme.colorScheme.inverseOnSurface,
-            thickness = 2.dp,
-            modifier = Modifier
-                .height(40.dp)
-                .width(1.dp)
-        )
-        Column(modifier = Modifier.padding(start = 16.dp)) {
-            Text(
-                text = stringResource(id = labelId),
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSecondary,
-            )
-            Text(
-                text = title,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.inverseOnSurface,
-            )
         }
     }
 }
@@ -296,7 +215,7 @@ fun VenueInfoCard(venue: Venue) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            InfoWithIconRow(
+            InfoRowWithIcon(
                 modifier = Modifier.weight(8f),
                 labelId = R.string.name,
                 title = venue.name,
@@ -308,7 +227,7 @@ fun VenueInfoCard(venue: Venue) {
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                InfoWithIconRow(
+                InfoRowWithIcon(
                     modifier = Modifier.weight(8f),
                     labelId = R.string.city,
                     title = venue.city,
@@ -321,7 +240,7 @@ fun VenueInfoCard(venue: Venue) {
                         .height(40.dp)
                         .width(1.dp)
                 )
-                InfoWithIconRow(
+                InfoRowWithIcon(
                     modifier = Modifier.weight(8f),
                     labelId = R.string.address,
                     title = venue.address,
@@ -334,7 +253,7 @@ fun VenueInfoCard(venue: Venue) {
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                InfoWithIconRow(
+                InfoRowWithIcon(
                     modifier = Modifier.weight(8f),
                     labelId = R.string.capacity,
                     title = venue.capacity.toString(),
@@ -347,7 +266,7 @@ fun VenueInfoCard(venue: Venue) {
                         .height(40.dp)
                         .width(1.dp)
                 )
-                InfoWithIconRow(
+                InfoRowWithIcon(
                     modifier = Modifier.weight(8f),
                     labelId = R.string.surface,
                     title = venue.surface,
@@ -364,7 +283,7 @@ fun VenueInfoCard(venue: Venue) {
                     .data(venue.image)
                     .crossfade(true)
                     .build(),
-                placeholder = painterResource(id = R.drawable.ic_launcher_background),
+                placeholder = painterResource(id = R.drawable.ic_close),
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth
             )
@@ -393,7 +312,7 @@ fun CoachInfoCard(coach: Coach) {
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                InfoWithIconRow(
+                InfoRowWithIcon(
                     modifier = Modifier.weight(8f),
                     labelId = R.string.first_name,
                     title = coach.firstname,
@@ -406,7 +325,7 @@ fun CoachInfoCard(coach: Coach) {
                         .height(40.dp)
                         .width(1.dp)
                 )
-                InfoWithIconRow(
+                InfoRowWithIcon(
                     modifier = Modifier.weight(8f),
                     labelId = R.string.last_name,
                     title = coach.lastname,
@@ -419,7 +338,7 @@ fun CoachInfoCard(coach: Coach) {
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                InfoWithIconRow(
+                InfoRowWithIcon(
                     modifier = Modifier.weight(8f),
                     labelId = R.string.age,
                     title = coach.age.toString(),
@@ -432,7 +351,7 @@ fun CoachInfoCard(coach: Coach) {
                         .height(40.dp)
                         .width(1.dp)
                 )
-                InfoWithIconRow(
+                InfoRowWithIcon(
                     modifier = Modifier.weight(8f),
                     labelId = R.string.nationality,
                     title = coach.nationality,
@@ -445,7 +364,7 @@ fun CoachInfoCard(coach: Coach) {
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                InfoWithIconRow(
+                InfoRowWithIcon(
                     modifier = Modifier.weight(8f),
                     labelId = R.string.height,
                     title = coach.height,
@@ -458,7 +377,7 @@ fun CoachInfoCard(coach: Coach) {
                         .height(40.dp)
                         .width(1.dp)
                 )
-                InfoWithIconRow(
+                InfoRowWithIcon(
                     modifier = Modifier.weight(8f),
                     labelId = R.string.weight,
                     title = coach.weight,

@@ -24,8 +24,8 @@ class TeamRepository(
         return local.getTeam(teamId)?.toTeam()
     }
 
-    override fun observeTeam(teamId: Int): Flow<Team> {
-        return local.observeTeam(teamId).map { it.toTeam() }
+    override fun observeTeam(teamId: Int): Flow<Team?> {
+        return local.observeTeam(teamId).map { it?.toTeam() }
     }
 
     override fun observeVenue(teamId: Int): Flow<Venue?> {
@@ -36,8 +36,26 @@ class TeamRepository(
         return local.observeCoach(teamId).map { it?.toCoach() }
     }
 
-    override suspend fun saveTeam(team: Team, leagueId: Int) {
-        return local.saveTeam(team.toTeamEntity(leagueId))
+    override fun observeTeams(): Flow<List<Team>> {
+        return local.observeTeams().map { teamEntities ->
+            teamEntities.map { it.toTeam() }
+        }
+    }
+
+    override fun observeVenues(): Flow<List<Venue>> {
+        return local.observeVenues().map { venueEntities ->
+            venueEntities.map { it.toVenue() }
+        }
+    }
+
+    override fun observeCoaches(): Flow<List<Coach>> {
+        return local.observeCoaches().map { coachEntities ->
+            coachEntities.map { it.toCoach() }
+        }
+    }
+
+    override suspend fun saveTeam(team: Team, leagueId: Int, season: Int) {
+        return local.saveTeam(team.toTeamEntity(leagueId, season))
     }
 
     override suspend fun saveVenue(venue: Venue) {
@@ -50,7 +68,8 @@ class TeamRepository(
 
     override suspend fun loadTeamInformation(
         teamId: Int,
-        leagueId: Int
+        leagueId: Int,
+        season: Int
     ): RepositoryResult<TeamWithVenue> {
         val result = remote.loadTeamInformation(teamId)
         return try {
@@ -58,10 +77,10 @@ class TeamRepository(
             val team = teamResponseData?.team
             val venue = teamResponseData?.venue
             val teamWithVenue = TeamWithVenue(
-                team = team?.toTeam() ?: Team.EMPTY_TEAM,
+                team = team?.toTeam(leagueId, season) ?: Team.EMPTY_TEAM,
                 venue = venue?.toVenue(teamId) ?: Venue.EMPTY_VENUE
             )
-            saveTeam(team?.toTeam() ?: Team.EMPTY_TEAM, leagueId)
+            saveTeam(team?.toTeam(leagueId, season) ?: Team.EMPTY_TEAM, leagueId, season)
             saveVenue(venue?.toVenue(teamId) ?: Venue.EMPTY_VENUE)
             RepositoryResult.Success(teamWithVenue)
         } catch (e: HttpException) {

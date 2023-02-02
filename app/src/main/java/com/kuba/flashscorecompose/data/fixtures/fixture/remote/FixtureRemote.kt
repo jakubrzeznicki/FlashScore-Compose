@@ -67,4 +67,9 @@ class FixtureRemote(private val footballApi: FootballApi) : FixtureRemoteDataSou
         )
         return footballApi.getFixtures(queryMap)
     }
+
+    override suspend fun loadFixturesLive(): Response<FixtureDataDto> {
+        val queryMap = mapOf(FootballApi.LIVE to FootballApi.ALL)
+        return footballApi.getFixtures(queryMap)
+    }
 }

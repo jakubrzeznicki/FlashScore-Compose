@@ -15,6 +15,9 @@ interface VenueDao {
     @Query("SELECT * FROM venue WHERE team_id = :teamId")
     fun observeVenueByTeam(teamId: Int): Flow<VenueEntity?>
 
+    @Query("SELECT * FROM venue")
+    fun observeVenues(): Flow<List<VenueEntity>>
+
     @Query("SELECT * FROM venue WHERE team_id = :teamId")
     suspend fun getVenueByTeam(teamId: Int): VenueEntity?
 

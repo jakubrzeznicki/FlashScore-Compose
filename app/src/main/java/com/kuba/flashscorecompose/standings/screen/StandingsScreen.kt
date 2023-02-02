@@ -268,7 +268,7 @@ fun StandingCard(standingItems: List<StandingItem>) {
 private fun TopBar() {
     AppTopBar(
         modifier = Modifier
-            .height(58.dp)
+            .height(48.dp)
             .padding(vertical = 8.dp),
         title = {
             Text(
@@ -351,7 +351,7 @@ private fun StandingElementRow(standingItem: StandingItem) {
                 .size(Size.ORIGINAL)
                 .crossfade(true)
                 .build(),
-            placeholder = painterResource(id = R.drawable.ic_launcher_background),
+            placeholder = painterResource(id = R.drawable.ic_close),
             contentDescription = null,
             contentScale = ContentScale.Fit
         )

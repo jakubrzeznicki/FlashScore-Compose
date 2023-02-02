@@ -10,9 +10,12 @@ import kotlinx.coroutines.flow.Flow
  */
 interface TeamLocalDataSource {
     suspend fun getTeam(teamId: Int): TeamEntity?
-    fun observeTeam(teamId: Int): Flow<TeamEntity>
+    fun observeTeam(teamId: Int): Flow<TeamEntity?>
     fun observeVenue(teamId: Int): Flow<VenueEntity?>
     fun observeCoach(teamId: Int): Flow<CoachEntity?>
+    fun observeTeams(): Flow<List<TeamEntity>>
+    fun observeVenues(): Flow<List<VenueEntity>>
+    fun observeCoaches(): Flow<List<CoachEntity>>
     suspend fun saveTeam(teamEntity: TeamEntity)
     suspend fun saveVenue(venueEntity: VenueEntity)
     suspend fun saveCoach(coachEntity: CoachEntity)

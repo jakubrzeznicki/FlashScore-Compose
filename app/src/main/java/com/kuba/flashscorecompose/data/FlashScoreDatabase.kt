@@ -38,7 +38,7 @@ import com.kuba.flashscorecompose.data.team.information.local.model.VenueEntity
         FixtureInfoEntity::class, TeamEntity::class, VenueEntity::class,
         CoachEntity::class, PlayerEntity::class, StatisticsEntity::class, LineupEntity::class,
         FixtureEntity::class, StandingsEntity::class],
-    version = 26
+    version = 28
 )
 @TypeConverters(
     StatisticsDataConverter::class,

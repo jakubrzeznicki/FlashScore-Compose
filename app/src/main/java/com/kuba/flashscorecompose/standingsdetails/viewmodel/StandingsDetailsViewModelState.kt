@@ -14,6 +14,8 @@ data class StandingsDetailsViewModelState(
     val error: StandingsDetailsError = StandingsDetailsError.NoError,
     val league: League = League.EMPTY_LEAGUE,
     val standingFilterChip: FilterChip.Standings = FilterChip.Standings.All,
+    val standingFilterChips: List<FilterChip.Standings> =
+        listOf(FilterChip.Standings.All, FilterChip.Standings.Home, FilterChip.Standings.Away),
     val standingsItems: List<StandingItem> = emptyList(),
     val filteredStandings: List<StandingItem> = emptyList()
 ) {
@@ -22,10 +24,11 @@ data class StandingsDetailsViewModelState(
             isLoading,
             error,
             standingFilterChip,
+            standingFilterChips,
             league,
             filteredStandings
         )
     } else {
-        StandingsDetailsUiState.NoData(isLoading, error, standingFilterChip)
+        StandingsDetailsUiState.NoData(isLoading, error, standingFilterChip, standingFilterChips)
     }
 }

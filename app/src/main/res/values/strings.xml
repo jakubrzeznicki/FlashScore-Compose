@@ -15,13 +15,17 @@
     <string name="no_last_fixtures">There are no last fixtures of both teams or H2H fixtures</string>
     <string name="no_fixture_details">There are no fixture details</string>
     <string name="no_team_details">There are no team details</string>
+    <string name="no_player_details">There are no player details</string>
     <string name="no_lineups">The match was not started or we don\'t have lineups. Try it again</string>
     <string name="no_loaded_statistics">There was a problem to load statistics. Try it again</string>
     <string name="no_statistics">The match was not started or we don\'t have statistics from this event</string>
     <string name="no_standings">There are no standings</string>
     <string name="no_team_informations">There are no team informations</string>
+    <string name="no_teams">There are no teams</string>
     <string name="no_fixtures">There are no fixtures for the day. Please select another day </string>
     <string name="no_players">There are no players</string>
+    <string name="no_coaches">There are no coaches</string>
+    <string name="no_venues">There are no venues</string>
     <string name="load_data_from_network">Load data from network</string>
     <string name="empty_database">Empty database</string>
     <string name="retry">Retry</string>
@@ -33,6 +37,7 @@
     <string name="formation">Formation</string>
     <string name="see_all">See All</string>
     <string name="search_standings">Search your competition...</string>
+    <string name="search_all">Search all data...</string>
     <string name="standings">Standings</string>
     <string name="team">Team</string>
     <string name="played_short">P</string>
@@ -45,6 +50,7 @@
     <string name="home">Home</string>
     <string name="away">Away</string>
     <string name="empty_leagues">You have empty leagues</string>
+    <string name="empty_player_details">You have empty player details</string>
     <string name="empty_fixture_details">You have empty fixture details</string>
     <string name="empty_standing_details">You have empty standing details</string>
     <string name="statistics">Statistic</string>
@@ -54,6 +60,7 @@
     <string name="players">Players</string>
     <string name="informations">Informations</string>
     <string name="info">Info</string>
+    <string name="details">Details</string>
     <string name="venue">Venue</string>
     <string name="coach">Coach</string>
     <string name="injuries">Injuries</string>
@@ -71,10 +78,15 @@
     <string name="age">Age</string>
     <string name="birth">Birth</string>
     <string name="nationality">Nationality</string>
+    <string name="injured">Injured?</string>
     <string name="height">Height</string>
     <string name="weight">Weight</string>
     <string name="is_national">Is National?</string>
     <string name="upcoming">Upcoming</string>
     <string name="played">Played</string>
     <string name="live">Live</string>
+    <string name="venues">Venues</string>
+    <string name="teams">Teams</string>
+    <string name="coaches">Coaches</string>
+    <string name="favorites">Favorites</string>
 </resources>

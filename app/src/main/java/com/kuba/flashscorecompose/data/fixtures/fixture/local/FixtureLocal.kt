@@ -48,6 +48,10 @@ class FixtureLocal(private val roomStorage: RoomStorage) : FixtureLocalDataSourc
         return roomStorage.getDatabase().fixtureDao().observeXLastFixtures(count, countryNames)
     }
 
+    override fun observeFixturesLive(): Flow<List<FixtureEntity>> {
+        return roomStorage.getDatabase().fixtureDao().observeFixturesLive()
+    }
+
     override suspend fun getFixture(fixtureId: Int): FixtureEntity? {
         return roomStorage.getDatabase().fixtureDao().getFixture(fixtureId)
     }

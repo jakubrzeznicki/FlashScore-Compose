@@ -4,6 +4,7 @@ import com.kuba.flashscorecompose.data.league.mapper.toLeagueEntity
 import com.kuba.flashscorecompose.data.standings.local.StandingsLocalDataSource
 import com.kuba.flashscorecompose.data.standings.mapper.toStandings
 import com.kuba.flashscorecompose.data.standings.mapper.toStandingsEntity
+import com.kuba.flashscorecompose.data.standings.model.LeagueSeason
 import com.kuba.flashscorecompose.data.standings.model.Standing
 import com.kuba.flashscorecompose.data.standings.remote.StandingsRemoteDataSource
 import com.kuba.flashscorecompose.data.team.information.mapper.toTeamEntity
@@ -48,10 +49,13 @@ class StandingsRepository(
             withContext(Dispatchers.IO) {
                 saveStandings(standings = standings)
                 local.saveLeagues(standings.map { it.league.toLeagueEntity() })
-                val standingItemsWithLeague = standings.map { it.leagueId to it.standingItems }
+                val leagueSeason = LeagueSeason(leagueId, season)
+                val standingItemsWithLeague = standings.map { leagueSeason to it.standingItems }
                 standingItemsWithLeague.forEach {
                     val teams =
-                        it.second.map { standingItem -> standingItem.team.toTeamEntity(it.first) }
+                        it.second.map { standingItem ->
+                            standingItem.team.toTeamEntity(it.first.leagueId, it.first.season)
+                        }
                     local.saveTeams(teams)
                 }
             }

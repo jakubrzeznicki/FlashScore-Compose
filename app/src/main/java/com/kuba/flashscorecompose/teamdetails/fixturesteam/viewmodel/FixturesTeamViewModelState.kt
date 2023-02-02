@@ -13,11 +13,19 @@ data class FixturesTeamViewModelState(
     val error: FixturesTeamError = FixturesTeamError.NoError,
     val fixtures: List<FixtureItem> = emptyList(),
     val filteredFixtures: List<FixtureItem> = emptyList(),
-    val fixtureFilterChip: FilterChip.Fixtures = FilterChip.Fixtures.Played
+    val fixtureFilterChip: FilterChip.Fixtures = FilterChip.Fixtures.Played,
+    val fixtureFilterChips: List<FilterChip.Fixtures> =
+        listOf(FilterChip.Fixtures.Played, FilterChip.Fixtures.Live, FilterChip.Fixtures.Upcoming),
 ) {
     fun toUiState(): FixturesTeamUiState = if (fixtures.isNotEmpty()) {
-        FixturesTeamUiState.HasData(isLoading, error, fixtureFilterChip, filteredFixtures)
+        FixturesTeamUiState.HasData(
+            isLoading,
+            error,
+            fixtureFilterChip,
+            fixtureFilterChips,
+            filteredFixtures
+        )
     } else {
-        FixturesTeamUiState.NoData(isLoading, error, fixtureFilterChip)
+        FixturesTeamUiState.NoData(isLoading, error, fixtureFilterChip, fixtureFilterChips)
     }
 }

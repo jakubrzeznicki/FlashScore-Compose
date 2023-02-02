@@ -1,28 +1,15 @@
 package com.kuba.flashscorecompose.teamdetails.container.screen
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import android.util.Log
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import coil.decode.SvgDecoder
-import coil.request.ImageRequest
-import coil.size.Size
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
 import com.kuba.flashscorecompose.R
@@ -33,6 +20,7 @@ import com.kuba.flashscorecompose.teamdetails.container.viewmodel.TeamDetailsVie
 import com.kuba.flashscorecompose.ui.component.CenterAppTopBar
 import com.kuba.flashscorecompose.ui.component.EmptyState
 import com.kuba.flashscorecompose.ui.component.FlashScoreSnackbarHost
+import com.kuba.flashscorecompose.ui.component.HeaderDetailsWithImage
 import com.kuba.flashscorecompose.ui.component.tabs.ScrollableTabs
 import com.kuba.flashscorecompose.ui.component.tabs.TabItem
 import com.kuba.flashscorecompose.ui.component.tabs.TabsContent
@@ -95,7 +83,7 @@ fun TeamDetailsScreen(
         ) {
             when (uiState) {
                 is TeamDetailsUiState.HasData -> {
-                    TeamHeader(uiState.team)
+                    HeaderDetailsWithImage(uiState.team.name, uiState.team.logo)
                     TeamDetailsTabs(uiState.team, teamId, leagueId, season, navigator)
                 }
                 is TeamDetailsUiState.NoData -> {
@@ -138,71 +126,19 @@ private fun TopBar(navigator: DestinationsNavigator) {
     )
 }
 
-@Composable
-private fun TeamHeader(team: Team?) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Box(
-            modifier = Modifier
-                .background(shape = CircleShape, color = MaterialTheme.colorScheme.surface)
-                .border(
-                    width = 2.dp,
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.inverseSurface
-                )
-                .size(112.dp)
-        ) {
-            AsyncImage(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .size(90.dp)
-                    .padding(12.dp),
-                model = ImageRequest.Builder(LocalContext.current)
-                    .decoderFactory(SvgDecoder.Factory())
-                    .data(team?.logo)
-                    .size(Size.ORIGINAL)
-                    .crossfade(true)
-                    .build(),
-                placeholder = painterResource(id = R.drawable.ic_launcher_background),
-                contentDescription = null,
-                contentScale = ContentScale.Fit
-            )
-        }
-        Spacer(modifier = Modifier.size(16.dp))
-        Text(
-            text = team?.name.orEmpty(),
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 24.sp,
-            color = MaterialTheme.colorScheme.onSecondary,
-            textAlign = TextAlign.Center
-        )
-        Text(
-            text = team?.country.orEmpty(),
-            fontWeight = FontWeight.Normal,
-            fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.inverseOnSurface,
-            textAlign = TextAlign.Center
-        )
-    }
-}
-
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun TeamDetailsTabs(
+private fun TeamDetailsTabs(
     team: Team,
     teamId: Int,
     leagueId: Int,
     season: Int,
     navigator: DestinationsNavigator
 ) {
+    Log.d("TEST_LOG", "Team in teamdetails = $team")
     val tabs = listOf(
-        TabItem.TeamDetails.Information(teamId, leagueId, navigator),
-        TabItem.TeamDetails.Players(teamId, season, navigator),
+        TabItem.TeamDetails.Information(teamId, leagueId, season, navigator),
+        TabItem.TeamDetails.Players(team, season, navigator),
         TabItem.TeamDetails.Fixtures(teamId, season, navigator),
         TabItem.TeamDetails.Injuries(team, navigator),
         TabItem.TeamDetails.Transfers(team, navigator)

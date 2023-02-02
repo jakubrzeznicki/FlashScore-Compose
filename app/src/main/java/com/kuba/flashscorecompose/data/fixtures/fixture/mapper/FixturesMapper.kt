@@ -55,7 +55,9 @@ fun FixtureInfo.toFixtureInfoEntity(teamId: Int?): FixtureInfoEntity {
         timestamp = timestamp,
         timezone = timezone,
         venue = venue.toVenueEntity(teamId),
-        periods = periods.toPeriodsEntity()
+        periods = periods.toPeriodsEntity(),
+        isLive = isLive,
+        isStarted = isStarted
     )
 }
 
@@ -74,7 +76,7 @@ fun FixtureItem.toFixtureEntity(): FixtureEntity {
         goals = goals.toGoalsEntity(),
         league = league.toLeagueEntity(),
         score = score.toScoreEntity(),
-        homeTeam = homeTeam.toTeamEntity(league.id),
-        awayTeam = awayTeam.toTeamEntity(league.id)
+        homeTeam = homeTeam.toTeamEntity(league.id, league.season),
+        awayTeam = awayTeam.toTeamEntity(league.id, league.season)
     )
 }

@@ -36,10 +36,7 @@ class FixtureDetailsViewModel(
                         .atZone(ZoneId.systemDefault())
                         .toLocalDateTime()
                     val formattedDate = dateTime.format(PATTERN)
-                    val isLive =
-                        fixtureItem.fixture.periods.second == 0 && fixtureItem.fixture.periods.first != 0
-                    val updatedFixtureInfo =
-                        fixtureItem.fixture.copy(date = formattedDate, isLive = isLive)
+                    val updatedFixtureInfo = fixtureItem.fixture.copy(date = formattedDate)
                     it.copy(fixtureItem = fixtureItem.copy(fixture = updatedFixtureInfo))
                 } else {
                     it.copy(error = FixtureDetailsError.EmptyDatabase)

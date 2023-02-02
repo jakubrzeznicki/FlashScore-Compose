@@ -26,7 +26,7 @@ class LeagueDetailsViewModel(
         .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
 
     fun setup() {
-        getLeague()
+        observeLeague()
         observeFixtures()
     }
 
@@ -35,7 +35,7 @@ class LeagueDetailsViewModel(
         refreshFixtures()
     }
 
-    private fun getLeague() {
+    private fun observeLeague() {
         viewModelScope.launch {
             leagueRepository.observeLeague(leagueId).collect { league ->
                 if (league == null) {
@@ -52,7 +52,6 @@ class LeagueDetailsViewModel(
     private fun refreshLeague() {
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            val date = viewModelState.value.date
             val result = leagueRepository.loadLeague(leagueId)
             viewModelState.update {
                 when (result) {

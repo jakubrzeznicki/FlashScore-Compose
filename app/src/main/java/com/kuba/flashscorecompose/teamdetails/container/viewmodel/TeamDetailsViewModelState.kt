@@ -11,7 +11,7 @@ data class TeamDetailsViewModelState(
     val error: TeamDetailsError = TeamDetailsError.NoError,
     val team: Team? = Team.EMPTY_TEAM,
 ) {
-    fun toUiState(): TeamDetailsUiState = if (team != null) {
+    fun toUiState(): TeamDetailsUiState = if (team != null && team != Team.EMPTY_TEAM) {
         TeamDetailsUiState.HasData(error, team)
     } else {
         TeamDetailsUiState.NoData(error)

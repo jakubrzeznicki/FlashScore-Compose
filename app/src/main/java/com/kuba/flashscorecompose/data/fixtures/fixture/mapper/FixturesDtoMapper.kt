@@ -55,7 +55,8 @@ fun FixtureInfoDto.toFixtureInfo(teamId: Int?): FixtureInfo {
         venue = venue?.toVenue(teamId) ?: Venue.EMPTY_VENUE,
         periods = periods?.toPeriods() ?: Periods.EMPTY_PERIODS,
         year = "",
-        isLive = false
+        isLive = isLive(periods?.toPeriods() ?: Periods.EMPTY_PERIODS),
+        isStarted = !isNotStarted(status?.short.orEmpty())
     )
 }
 
@@ -75,7 +76,16 @@ fun FixtureDto.toFixtureItem(
         goals = goals?.toGoals() ?: Goals.EMPTY_GOALS,
         league = league?.toLeague() ?: League.EMPTY_LEAGUE,
         score = score?.toScore() ?: Score.EMPTY_SCORE,
-        homeTeam = teams?.home?.toTeam() ?: Team.EMPTY_TEAM,
-        awayTeam = teams?.away?.toTeam() ?: Team.EMPTY_TEAM
+        homeTeam = teams?.home?.toTeam(league?.id ?: 0, season ?: 0) ?: Team.EMPTY_TEAM,
+        awayTeam = teams?.away?.toTeam(league?.id ?: 0, season ?: 0) ?: Team.EMPTY_TEAM,
     )
+}
+
+private fun isNotStarted(shortStatus: String): Boolean {
+    return shortStatus == FixtureStatus.NS.status || shortStatus == FixtureStatus.PST.status
+            || shortStatus == FixtureStatus.SUSP.status || shortStatus == FixtureStatus.TBD.status
+}
+
+private fun isLive(periods: Periods): Boolean {
+    return periods.second == 0 && periods.first != 0
 }

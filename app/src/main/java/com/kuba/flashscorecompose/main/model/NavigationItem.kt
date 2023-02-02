@@ -20,7 +20,7 @@ sealed class NavigationItem(
 ) {
     object Home : NavigationItem(HomeScreenRouteDestination, Icons.Filled.Home, R.string.home)
     object Explore :
-        NavigationItem(ExploreScreenDestination, Icons.Filled.TravelExplore, R.string.explore)
+        NavigationItem(ExploreRouteDestination, Icons.Filled.TravelExplore, R.string.explore)
 
     object Standings :
         NavigationItem(StandingsRouteDestination, Icons.Filled.Leaderboard, R.string.standings)

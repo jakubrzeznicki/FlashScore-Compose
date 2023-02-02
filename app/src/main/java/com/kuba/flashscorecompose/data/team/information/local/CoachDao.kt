@@ -11,7 +11,10 @@ import kotlinx.coroutines.flow.Flow
 interface CoachDao {
 
     @Query("SELECT * FROM coach WHERE id = :coachId")
-    fun observeCoach(coachId: Int): Flow<CoachEntity>
+    fun observeCoach(coachId: Int): Flow<CoachEntity?>
+
+    @Query("SELECT * FROM coach")
+    fun observeCoaches(): Flow<List<CoachEntity>>
 
     @Query("SELECT * FROM coach WHERE team_id = :teamId")
     fun observeCoachByTeam(teamId: Int): Flow<CoachEntity?>

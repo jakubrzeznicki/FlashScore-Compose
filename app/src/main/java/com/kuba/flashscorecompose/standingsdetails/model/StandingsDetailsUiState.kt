@@ -11,11 +11,13 @@ interface StandingsDetailsUiState {
     val isLoading: Boolean
     val error: StandingsDetailsError
     val standingFilterChip: FilterChip.Standings
+    val standingFilterChips: List<FilterChip.Standings>
 
     data class HasData(
         override val isLoading: Boolean,
         override val error: StandingsDetailsError,
         override val standingFilterChip: FilterChip.Standings,
+        override val standingFilterChips: List<FilterChip.Standings>,
         val league: League,
         val standingsItems: List<StandingItem>
     ) : StandingsDetailsUiState
@@ -23,6 +25,7 @@ interface StandingsDetailsUiState {
     data class NoData(
         override val isLoading: Boolean,
         override val error: StandingsDetailsError,
-        override val standingFilterChip: FilterChip.Standings
+        override val standingFilterChip: FilterChip.Standings,
+        override val standingFilterChips: List<FilterChip.Standings>
     ) : StandingsDetailsUiState
 }

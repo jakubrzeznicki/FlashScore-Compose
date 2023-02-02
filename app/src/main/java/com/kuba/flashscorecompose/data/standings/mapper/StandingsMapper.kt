@@ -28,11 +28,11 @@ fun Standing.toStandingsEntity(): StandingsEntity {
         league = league.toLeagueEntity(),
         leagueId = leagueId,
         season = season,
-        standings = standingItems.map { it.toStandingItemEntity(leagueId) }
+        standings = standingItems.map { it.toStandingItemEntity(leagueId, season) }
     )
 }
 
-fun StandingItem.toStandingItemEntity(leagueId: Int): StandingItemEntity {
+fun StandingItem.toStandingItemEntity(leagueId: Int, season: Int): StandingItemEntity {
     return StandingItemEntity(
         all = all.toInformationStandingEntity(),
         away = away.toInformationStandingEntity(),
@@ -44,7 +44,7 @@ fun StandingItem.toStandingItemEntity(leagueId: Int): StandingItemEntity {
         points = points,
         rank = rank,
         status = status,
-        team = team.toTeamEntity(leagueId),
+        team = team.toTeamEntity(leagueId, season),
         update = update
     )
 }
@@ -119,11 +119,13 @@ fun StandingsDto.toStandings(): Standing {
         ),
         leagueId = id ?: 0,
         season = season ?: 0,
-        standingItems = standings.flatMap { it?.map { it.toStandingItem() }.orEmpty() }
+        standingItems = standings.flatMap {
+            it?.map { it.toStandingItem(id ?: 0, season ?: 0) }.orEmpty()
+        }
     )
 }
 
-fun StandingItemDto.toStandingItem(): StandingItem {
+fun StandingItemDto.toStandingItem(leagueId: Int, season: Int): StandingItem {
     return StandingItem(
         all = all?.toInformationStanding() ?: InformationStanding.EMPTY_INFORMATION_STANDING,
         away = away?.toInformationStanding() ?: InformationStanding.EMPTY_INFORMATION_STANDING,
@@ -137,7 +139,7 @@ fun StandingItemDto.toStandingItem(): StandingItem {
         points = points ?: 0,
         rank = rank ?: 0,
         status = status.orEmpty(),
-        team = team?.toTeam() ?: Team.EMPTY_TEAM,
+        team = team?.toTeam(leagueId, season) ?: Team.EMPTY_TEAM,
         update = update.orEmpty()
     )
 }

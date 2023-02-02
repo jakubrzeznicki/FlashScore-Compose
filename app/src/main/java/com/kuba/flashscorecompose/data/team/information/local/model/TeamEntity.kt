@@ -18,5 +18,6 @@ data class TeamEntity(
     @ColumnInfo(name = "country") val country: String,
     @ColumnInfo(name = "is_national") val isNational: Boolean,
     @Embedded(prefix = "colors_") val colors: ColorsEntity,
-    @ColumnInfo(name = "league_id") val leagueId: Int
+    @ColumnInfo(name = "league_id") val leagueId: Int,
+    @ColumnInfo(name = "season") val season: Int
 )

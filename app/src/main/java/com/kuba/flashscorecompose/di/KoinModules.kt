@@ -38,7 +38,9 @@ import com.kuba.flashscorecompose.data.standings.remote.StandingsRemote
 import com.kuba.flashscorecompose.data.team.information.TeamDataSource
 import com.kuba.flashscorecompose.data.team.information.TeamRepository
 import com.kuba.flashscorecompose.data.team.information.local.TeamLocal
+import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.data.team.information.remote.TeamRemote
+import com.kuba.flashscorecompose.explore.viewmodel.ExploreViewModel
 import com.kuba.flashscorecompose.fixturedetails.container.viewmodel.FixtureDetailsViewModel
 import com.kuba.flashscorecompose.fixturedetails.headtohead.viewmodel.HeadToHeadViewModel
 import com.kuba.flashscorecompose.fixturedetails.lineup.viewmodel.LineupViewModel
@@ -48,6 +50,7 @@ import com.kuba.flashscorecompose.leaguedetails.viewmodel.LeagueDetailsViewModel
 import com.kuba.flashscorecompose.leagues.viewmodel.LeaguesViewModel
 import com.kuba.flashscorecompose.network.uuidsource.UuidData
 import com.kuba.flashscorecompose.network.uuidsource.UuidSource
+import com.kuba.flashscorecompose.playerdetails.viewmodel.PlayerDetailsViewModel
 import com.kuba.flashscorecompose.standings.viewmodel.StandingsViewModel
 import com.kuba.flashscorecompose.standingsdetails.viewmodel.StandingsDetailsViewModel
 import com.kuba.flashscorecompose.teamdetails.container.viewmodel.TeamDetailsViewModel
@@ -98,11 +101,13 @@ class KoinModules {
             )
         }
         viewModel { (teamId: Int) -> TeamDetailsViewModel(teamId, get()) }
-        viewModel { (teamId: Int, leagueId: Int) ->
-            TeamInformationsViewModel(teamId, leagueId, get(), get())
+        viewModel { (teamId: Int, leagueId: Int, season: Int) ->
+            TeamInformationsViewModel(teamId, leagueId, season, get(), get())
         }
-        viewModel { (teamId: Int, season: Int) -> PlayersViewModel(teamId, season, get(), get()) }
+        viewModel { (team: Team, season: Int) -> PlayersViewModel(team, season, get(), get()) }
         viewModel { (teamId: Int, season: Int) -> FixturesTeamViewModel(teamId, season, get()) }
+        viewModel { (playerId: Int) -> PlayerDetailsViewModel(playerId, get()) }
+        viewModel { ExploreViewModel(get(), get(), get(), get()) }
     }
 
     private val componentsModule = module {
