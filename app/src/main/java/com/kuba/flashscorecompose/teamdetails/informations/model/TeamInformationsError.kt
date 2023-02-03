@@ -7,5 +7,6 @@ import com.kuba.flashscorecompose.utils.ResponseStatus
  */
 sealed class TeamInformationsError {
     object NoError : TeamInformationsError()
+    object EmptyTeam : TeamInformationsError()
     data class RemoteError(val responseStatus: ResponseStatus) : TeamInformationsError()
 }

@@ -6,6 +6,9 @@ import com.kuba.flashscorecompose.data.players.model.Birth
 import com.kuba.flashscorecompose.data.players.model.Player
 import com.kuba.flashscorecompose.data.players.remote.model.BirthDto
 import com.kuba.flashscorecompose.data.players.remote.model.PlayerDto
+import com.kuba.flashscorecompose.data.team.information.mapper.toTeam
+import com.kuba.flashscorecompose.data.team.information.mapper.toTeamEntity
+import com.kuba.flashscorecompose.data.team.information.model.Team
 
 /**
  * Created by jrzeznicki on 29/01/2023.
@@ -32,7 +35,7 @@ fun PlayerEntity.toPlayer(): Player {
         weight = weight,
         injured = injured,
         photo = photo,
-        teamId = teamId,
+        team = team.toTeam(),
         season = season
     )
 }
@@ -40,7 +43,7 @@ fun PlayerEntity.toPlayer(): Player {
 fun Player.toPlayerEntity(): PlayerEntity {
     return PlayerEntity(
         grid = grid,
-        teamId = teamId,
+        team = team.toTeamEntity(),
         season = season,
         id = id,
         name = name,
@@ -64,11 +67,34 @@ fun Birth.toBirthEntity(): BirthEntity {
 }
 
 
-fun PlayerDto.toPlayer(teamId: Int, season: Int = 2022): Player {
+fun PlayerDto.toPlayer(team: Team, season: Int): Player {
     return Player(
         grid = grid.orEmpty(),
-        teamId = teamId,
+        team = team,
         season = season,
+        id = id ?: 0,
+        name = name.orEmpty(),
+        number = number ?: 0,
+        pos = pos.orEmpty(),
+        firstname = firstname.orEmpty(),
+        lastname = lastname.orEmpty(),
+        age = age ?: 0,
+        position = position.orEmpty(),
+        birth = birth?.toBirth() ?: Birth.EMPTY_BIRTH,
+        nationality = nationality.orEmpty(),
+        height = height.orEmpty(),
+        weight = weight.orEmpty(),
+        injured = injured ?: false,
+        photo = photo.orEmpty()
+    )
+}
+
+
+fun PlayerDto.toPlayer(): Player {
+    return Player(
+        grid = grid.orEmpty(),
+        team = Team.EMPTY_TEAM,
+        season = 0,
         id = id ?: 0,
         name = name.orEmpty(),
         number = number ?: 0,

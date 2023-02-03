@@ -56,21 +56,22 @@ sealed class TabItem(var icon: ImageVector, var titleId: Int, var screen: Compos
         class Information(
             teamId: Int,
             leagueId: Int,
+            season: Int,
             navigator: DestinationsNavigator
         ) : TabItem(
             Icons.Default.Info,
             R.string.informations,
-            { TeamInformationsScreen(teamId, leagueId, navigator) }
+            { TeamInformationsScreen(teamId, leagueId,season, navigator) }
         )
 
         class Players(
-            teamId: Int,
+            team: Team,
             season: Int,
             navigator: DestinationsNavigator
         ) : TabItem(
             Icons.Default.Info,
             R.string.players,
-            { PlayersScreen(teamId = teamId, season = season, navigator = navigator) }
+            { PlayersScreen(team = team, season = season, navigator = navigator) }
         )
 
         class Fixtures(

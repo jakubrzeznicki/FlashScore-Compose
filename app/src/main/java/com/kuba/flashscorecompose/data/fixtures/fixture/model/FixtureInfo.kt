@@ -15,7 +15,8 @@ data class FixtureInfo(
     val venue: Venue,
     val periods: Periods,
     val year: String,
-    val isLive: Boolean
+    val isLive: Boolean,
+    val isStarted: Boolean
 ) : Parcelable{
     companion object {
         val EMPTY_FIXTURE_INFO =
@@ -29,6 +30,7 @@ data class FixtureInfo(
                 Venue.EMPTY_VENUE,
                 Periods.EMPTY_PERIODS,
                 "",
+                false,
                 false
             )
     }

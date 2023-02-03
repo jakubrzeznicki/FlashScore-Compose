@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 class TeamInformationsViewModel(
     private val teamId: Int,
     private val leagueId: Int,
+    private val season: Int,
     private val teamRepository: TeamDataSource,
     private val countryRepository: CountryDataSource
 ) : ViewModel() {
@@ -33,6 +34,10 @@ class TeamInformationsViewModel(
     private fun observeTeam() {
         viewModelScope.launch {
             teamRepository.observeTeam(teamId).collect { team ->
+                if (team == null) {
+                    viewModelState.update { it.copy(error = TeamInformationsError.EmptyTeam) }
+                    return@collect
+                }
                 observeCountry(team.country)
                 viewModelState.update {
                     it.copy(team = team)
@@ -77,7 +82,7 @@ class TeamInformationsViewModel(
     private fun refreshTeamInformation() {
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            val result = teamRepository.loadTeamInformation(teamId, leagueId)
+            val result = teamRepository.loadTeamInformation(teamId, leagueId, season)
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)

@@ -35,6 +35,9 @@ interface FixtureDao {
     @Query("SELECT * FROM fixture WHERE league_countryName IN(:countryNames) ORDER BY fixture_info_timestamp LIMIT :count")
     fun observeXLastFixtures(count: Int, countryNames: List<String>): Flow<List<FixtureEntity>>
 
+    @Query("SELECT * FROM fixture WHERE fixture_info_is_live = 1")
+    fun observeFixturesLive(): Flow<List<FixtureEntity>>
+
     @Query("SELECT * FROM fixture WHERE fixture_info_id = :fixtureId")
     suspend fun getFixture(fixtureId: Int): FixtureEntity?
 

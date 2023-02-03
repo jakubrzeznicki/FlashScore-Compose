@@ -8,12 +8,16 @@ import kotlinx.coroutines.flow.Flow
  * Created by jrzeznicki on 29/01/2023.
  */
 class PlayersLocal(private val roomStorage: RoomStorage) : PlayersLocalDataSource {
-    override fun observePlayer(playerId: Int): Flow<PlayerEntity> {
+    override fun observePlayer(playerId: Int): Flow<PlayerEntity?> {
         return roomStorage.getDatabase().playerDao().observePlayer(playerId)
     }
 
     override fun observePlayers(teamId: Int, season: Int): Flow<List<PlayerEntity>> {
         return roomStorage.getDatabase().playerDao().observePlayers(teamId, season)
+    }
+
+    override fun observePlayers(): Flow<List<PlayerEntity>> {
+        return roomStorage.getDatabase().playerDao().observePlayers()
     }
 
     override suspend fun savePlayers(players: List<PlayerEntity>) {

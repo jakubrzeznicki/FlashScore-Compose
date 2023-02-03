@@ -88,5 +88,7 @@ interface FootballApi {
         const val STANDINGS = "standings"
         const val COACHS = "coachs"
         const val PLAYERS = "players"
+        const val LIVE = "live"
+        const val ALL = "all"
     }
 }

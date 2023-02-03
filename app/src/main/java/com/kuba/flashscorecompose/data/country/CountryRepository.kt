@@ -21,8 +21,14 @@ class CountryRepository(
     private val remote: CountryRemoteDataSource
 ) : CountryDataSource {
     override fun observeCountries(countryNames: List<String>): Flow<List<Country>> =
-        local.observeCountries(countryNames)
-            .map { countryEntity -> countryEntity.map { it.toCountry() } }
+        local.observeCountries(countryNames).map { countryEntity ->
+            countryEntity.map { it.toCountry() }
+        }
+
+    override fun observeCountries(): Flow<List<Country>> =
+        local.observeCountries().map { countryEntity ->
+            countryEntity.map { it.toCountry() }
+        }
 
     override suspend fun getCountries(): List<Country> = local.getCountries().map { it.toCountry() }
 

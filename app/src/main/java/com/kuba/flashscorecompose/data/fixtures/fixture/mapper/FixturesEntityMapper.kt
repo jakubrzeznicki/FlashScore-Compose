@@ -49,7 +49,8 @@ fun FixtureInfoEntity.toFixtureInfo(): FixtureInfo {
         venue = venue.toVenue(),
         periods = periods.toPeriods(),
         "",
-        isLive = false
+        isLive = isLive,
+        isStarted = isStarted
     )
 }
 

@@ -243,7 +243,7 @@ fun LeagueItem(leagueItem: League, onLeagueClick: (League) -> Unit) {
                 .size(Size.ORIGINAL)
                 .crossfade(true)
                 .build(),
-            placeholder = painterResource(id = R.drawable.ic_launcher_background),
+            placeholder = painterResource(id = R.drawable.ic_close),
             contentDescription = null,
             contentScale = ContentScale.Crop
         )

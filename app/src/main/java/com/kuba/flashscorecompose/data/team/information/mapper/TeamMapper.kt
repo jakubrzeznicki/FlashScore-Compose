@@ -30,7 +30,9 @@ fun TeamEntity.toTeam(): Team {
         founded = founded,
         country = country,
         isNational = isNational,
-        colors = colors.toColors()
+        colors = colors.toColors(),
+        leagueId = leagueId,
+        season = season
     )
 }
 
@@ -63,7 +65,7 @@ fun CoachEntity.toCoach(): Coach {
     )
 }
 
-fun Team.toTeamEntity(leagueId: Int?): TeamEntity {
+fun Team.toTeamEntity(leagueId: Int, season: Int): TeamEntity {
     return TeamEntity(
         id = id,
         logo = logo,
@@ -75,7 +77,25 @@ fun Team.toTeamEntity(leagueId: Int?): TeamEntity {
         country = country,
         isNational = false,
         colors = colors.toColorsEntity(),
-        leagueId = leagueId ?: 0
+        leagueId = leagueId,
+        season = season
+    )
+}
+
+fun Team.toTeamEntity(): TeamEntity {
+    return TeamEntity(
+        id = id,
+        logo = logo,
+        name = name,
+        isWinner = isWinner,
+        isHome = false,
+        code = code,
+        founded = founded,
+        country = country,
+        isNational = false,
+        colors = colors.toColorsEntity(),
+        leagueId = leagueId,
+        season = season
     )
 }
 
@@ -121,6 +141,22 @@ fun Coach.toCoachEntity(): CoachEntity {
     )
 }
 
+fun TeamDto.toTeam(leagueId: Int, season: Int): Team {
+    return Team(
+        id = id ?: 0,
+        logo = logo.orEmpty(),
+        name = name.orEmpty(),
+        isWinner = winner ?: false,
+        code = code.orEmpty(),
+        founded = founded ?: 0,
+        country = country.orEmpty(),
+        isNational = national ?: false,
+        colors = colors?.toColors() ?: Colors.EMPTY_COLORS,
+        leagueId = leagueId,
+        season = season
+    )
+}
+
 fun TeamDto.toTeam(): Team {
     return Team(
         id = id ?: 0,
@@ -131,7 +167,9 @@ fun TeamDto.toTeam(): Team {
         founded = founded ?: 0,
         country = country.orEmpty(),
         isNational = national ?: false,
-        colors = colors?.toColors() ?: Colors.EMPTY_COLORS
+        colors = colors?.toColors() ?: Colors.EMPTY_COLORS,
+        leagueId = 0,
+        season = 0
     )
 }
 

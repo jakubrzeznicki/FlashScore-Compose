@@ -13,5 +13,7 @@ data class FixtureInfoEntity(
     @ColumnInfo(name = "timestamp") val timestamp: Long,
     @ColumnInfo(name = "timezone") val timezone: String,
     @Embedded(prefix = "venue_") val venue: VenueEntity,
-    @Embedded(prefix = "periods_") val periods: PeriodsEntity
+    @Embedded(prefix = "periods_") val periods: PeriodsEntity,
+    @ColumnInfo(name = "is_live") val isLive: Boolean,
+    @ColumnInfo(name = "is_started") val isStarted: Boolean
 )

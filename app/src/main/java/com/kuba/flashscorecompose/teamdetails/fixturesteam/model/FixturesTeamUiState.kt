@@ -10,17 +10,20 @@ interface FixturesTeamUiState {
     val isLoading: Boolean
     val error: FixturesTeamError
     val fixtureFilterChip: FilterChip.Fixtures
+    val fixtureFilterChips: List<FilterChip.Fixtures>
 
     data class HasData(
         override val isLoading: Boolean,
         override val error: FixturesTeamError,
         override val fixtureFilterChip: FilterChip.Fixtures,
+        override val fixtureFilterChips: List<FilterChip.Fixtures>,
         val fixtureItems: List<FixtureItem>
     ) : FixturesTeamUiState
 
     data class NoData(
         override val isLoading: Boolean,
         override val error: FixturesTeamError,
-        override val fixtureFilterChip: FilterChip.Fixtures
+        override val fixtureFilterChip: FilterChip.Fixtures,
+        override val fixtureFilterChips: List<FilterChip.Fixtures>
     ) : FixturesTeamUiState
 }

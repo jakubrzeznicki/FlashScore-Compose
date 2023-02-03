@@ -107,7 +107,7 @@ fun LogoWithBackground(logo: String, modifier: Modifier) {
                 .size(Size.ORIGINAL)
                 .crossfade(true)
                 .build(),
-            placeholder = painterResource(id = R.drawable.ic_launcher_background),
+            placeholder = painterResource(id = R.drawable.ic_close),
             contentDescription = null,
             contentScale = ContentScale.Fit
         )
@@ -116,21 +116,22 @@ fun LogoWithBackground(logo: String, modifier: Modifier) {
 
 @Composable
 fun FixtureDetails(modifier: Modifier, fixtureItem: FixtureItem) {
+    val isNotStarted = !fixtureItem.fixture.isStarted
     Row(modifier = modifier) {
         FixtureDetailsColumn(
             modifier = Modifier.weight(6f),
             firstLine = fixtureItem.homeTeam.name,
-            secondLine = fixtureItem.goals.home.toString()
+            secondLine = if (isNotStarted) "" else fixtureItem.goals.home.toString()
         )
         FixtureDetailsColumn(
             modifier = Modifier.weight(2f),
             firstLine = VERSUS,
-            secondLine = DASH
+            secondLine = if (isNotStarted) "" else DASH
         )
         FixtureDetailsColumn(
             modifier = Modifier.weight(6f),
             firstLine = fixtureItem.awayTeam.name,
-            secondLine = fixtureItem.goals.away.toString()
+            secondLine = if (isNotStarted) "" else fixtureItem.goals.away.toString()
         )
     }
 }

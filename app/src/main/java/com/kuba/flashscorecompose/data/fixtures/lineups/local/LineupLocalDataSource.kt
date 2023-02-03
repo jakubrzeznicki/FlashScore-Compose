@@ -12,8 +12,5 @@ import kotlinx.coroutines.flow.Flow
 interface LineupLocalDataSource {
     fun observeLineups(fixtureId: Int): Flow<List<LineupEntity>>
     suspend fun saveLineups(lineups: List<LineupEntity>)
-    suspend fun saveCoaches(coaches: List<CoachEntity>)
-    suspend fun saveTeams(teams: List<TeamEntity>)
-    suspend fun savePlayers(players: List<PlayerEntity>)
     fun deleteLineups(fixtureId: Int)
 }
