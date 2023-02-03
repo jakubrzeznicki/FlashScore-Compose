@@ -4,12 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesDataSource
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
+import com.kuba.flashscorecompose.fixturedetails.headtohead.model.FixtureItemStyle
 import com.kuba.flashscorecompose.fixturedetails.headtohead.model.HeadToHeadError
+import com.kuba.flashscorecompose.fixturedetails.headtohead.model.ScoreStyle
+import com.kuba.flashscorecompose.fixturedetails.headtohead.model.StyledFixtureItem
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.time.Instant
-import java.time.ZoneId
 
 /**
  * Created by jrzeznicki on 14/01/2023.
@@ -45,7 +46,8 @@ class HeadToHeadViewModel(
         viewModelScope.launch {
             fixturesRepository.observeFixturesHeadToHead(TEAM_TO_TEAM(homeTeamId, awayTeamId))
                 .collect { fixtures ->
-                    viewModelState.update { it.copy(h2hFixtures = fixtures.updateYear()) }
+                    val styledFixtureItems = fixtures.mapToStyledFixtureItems()
+                    viewModelState.update { it.copy(h2hFixtures = styledFixtureItems) }
                 }
         }
     }
@@ -54,7 +56,10 @@ class HeadToHeadViewModel(
         viewModelScope.launch {
             fixturesRepository.observeFixturesByTeam(homeTeamId, season)
                 .collect { fixtures ->
-                    viewModelState.update { it.copy(homeTeamFixtures = fixtures.updateYear()) }
+                    val styledFixtureItems = fixtures.mapToStyledFixtureItems()
+                    viewModelState.update {
+                        it.copy(homeTeamFixtures = styledFixtureItems)
+                    }
                 }
         }
     }
@@ -63,8 +68,9 @@ class HeadToHeadViewModel(
         viewModelScope.launch {
             fixturesRepository.observeFixturesByTeam(awayTeamId, season)
                 .collect { fixtures ->
+                    val styledFixtureItems = fixtures.mapToStyledFixtureItems()
                     viewModelState.update {
-                        it.copy(awayTeamFixtures = fixtures.updateYear())
+                        it.copy(awayTeamFixtures = styledFixtureItems)
                     }
                 }
         }
@@ -105,12 +111,18 @@ class HeadToHeadViewModel(
         }
     }
 
-    private fun List<FixtureItem>.updateYear(): List<FixtureItem> {
+    private fun List<FixtureItem>.mapToStyledFixtureItems(): List<StyledFixtureItem> {
         return map { fixtureItem ->
-            val dateTime = Instant.ofEpochSecond(fixtureItem.fixture.timestamp)
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime()
-            fixtureItem.copy(fixture = fixtureItem.fixture.copy(year = dateTime.year.toString()))
+            StyledFixtureItem(
+                fixtureItem = fixtureItem,
+                fixtureItemStyle = when {
+                    fixtureItem.goals.home > fixtureItem.goals.away ->
+                        FixtureItemStyle(ScoreStyle.Win, ScoreStyle.Lose)
+                    fixtureItem.goals.home < fixtureItem.goals.away ->
+                        FixtureItemStyle(ScoreStyle.Lose, ScoreStyle.Win)
+                    else -> FixtureItemStyle(ScoreStyle.Draw, ScoreStyle.Draw)
+                }
+            )
         }
     }
 

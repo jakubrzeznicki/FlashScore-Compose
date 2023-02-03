@@ -43,7 +43,6 @@ class StandingsDetailsViewModel(
                 val filteredStandingItems = filterStandingItems(standing.standingItems)
                 viewModelState.update {
                     it.copy(
-                        league = standing.league,
                         standingsItems = standing.standingItems,
                         filteredStandings = filteredStandingItems
                     )

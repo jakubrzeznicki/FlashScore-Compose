@@ -6,6 +6,8 @@ import com.kuba.flashscorecompose.data.country.CountryDataSource
 import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesDataSource
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
+import com.kuba.flashscorecompose.data.league.LeagueDataSource
+import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.data.players.PlayersDataSource
 import com.kuba.flashscorecompose.data.team.information.TeamDataSource
 import com.kuba.flashscorecompose.data.team.information.model.Venue
@@ -26,7 +28,8 @@ class ExploreViewModel(
     private val fixturesRepository: FixturesDataSource,
     private val teamRepository: TeamDataSource,
     private val playersRepository: PlayersDataSource,
-    private val countryRepository: CountryDataSource
+    private val countryRepository: CountryDataSource,
+    private val leagueRepository: LeagueDataSource
 ) : ViewModel() {
     private val viewModelState = MutableStateFlow(ExploreViewModelState())
     val uiState = viewModelState
@@ -43,32 +46,15 @@ class ExploreViewModel(
     }
 
     fun refresh() {
-        refreshCountries()
         refreshFixtures()
     }
 
     private fun observeCountries() {
         viewModelScope.launch {
-            countryRepository.observeCountries().collect { countries ->
-                val filteredCountries = filterCountries(countries)
+            leagueRepository.observeLeagues().collect { leagues ->
+                val filteredLeagues = filterLeagues(leagues)
                 viewModelState.update {
-                    it.copy(countries = countries, filteredCountries = filteredCountries)
-                }
-            }
-        }
-    }
-
-    private fun refreshCountries() {
-        viewModelState.update { it.copy(isLoading = true) }
-        viewModelScope.launch {
-            val result = countryRepository.loadCountries()
-            viewModelState.update {
-                when (result) {
-                    is RepositoryResult.Success -> it.copy(isLoading = false)
-                    is RepositoryResult.Error -> it.copy(
-                        isLoading = false,
-                        error = ExploreError.RemoteError(result.error)
-                    )
+                    it.copy(leagues = leagues, filteredLeagues = filteredLeagues)
                 }
             }
         }
@@ -195,9 +181,9 @@ class ExploreViewModel(
                     val filteredCoaches = filterCoaches(query = newQuery)
                     it.copy(filteredCoaches = filteredCoaches, exploreQuery = newQuery)
                 }
-                is FilterChip.Explore.Countries -> {
-                    val filteredCountries = filterCountries(query = newQuery)
-                    it.copy(filteredCountries = filteredCountries, exploreQuery = newQuery)
+                is FilterChip.Explore.Leagues -> {
+                    val filteredCountries = filterLeagues(query = newQuery)
+                    it.copy(filteredLeagues = filteredCountries, exploreQuery = newQuery)
                 }
             }
         }
@@ -238,11 +224,11 @@ class ExploreViewModel(
         }
     }
 
-    private fun filterCountries(
-        countries: List<Country> = viewModelState.value.countries,
+    private fun filterLeagues(
+        leagues: List<League> = viewModelState.value.leagues,
         query: String = viewModelState.value.exploreQuery
-    ): List<Country> {
-        return countries.filter { it.name.containsQuery(query) }
+    ): List<League> {
+        return leagues.filter { it.name.containsQuery(query) || it.countryName.containsQuery(query) }
     }
 
     private fun filterCoaches(

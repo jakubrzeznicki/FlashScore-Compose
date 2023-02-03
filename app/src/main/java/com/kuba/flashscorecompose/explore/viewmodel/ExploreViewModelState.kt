@@ -1,7 +1,7 @@
 package com.kuba.flashscorecompose.explore.viewmodel
 
-import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
+import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.data.team.information.model.Venue
 import com.kuba.flashscorecompose.explore.model.CoachCountry
 import com.kuba.flashscorecompose.explore.model.ExploreError
@@ -25,7 +25,7 @@ data class ExploreViewModelState(
             FilterChip.Explore.Players,
             FilterChip.Explore.Coaches,
             FilterChip.Explore.Venues,
-            FilterChip.Explore.Countries
+            FilterChip.Explore.Leagues
         ),
     val liveFixtures: List<FixtureItem> = emptyList(),
     val favoriteFixtures: List<FixtureItem> = emptyList(),
@@ -40,8 +40,8 @@ data class ExploreViewModelState(
     val filteredVenues: List<Venue> = emptyList(),
     val coaches: List<CoachCountry> = emptyList(),
     val filteredCoaches: List<CoachCountry> = emptyList(),
-    val countries: List<Country> = emptyList(),
-    val filteredCountries: List<Country> = emptyList()
+    val leagues: List<League> = emptyList(),
+    val filteredLeagues: List<League> = emptyList()
 ) {
     fun toUiState(): ExploreUiState = when (exploreFilterChip) {
         is FilterChip.Explore.Fixtures -> {
@@ -183,18 +183,18 @@ data class ExploreViewModelState(
                 )
             }
         }
-        is FilterChip.Explore.Countries -> {
+        is FilterChip.Explore.Leagues -> {
             when {
-                filteredCountries.isNotEmpty() ->
-                    ExploreUiState.Countries.HasFullData(
+                filteredLeagues.isNotEmpty() ->
+                    ExploreUiState.Leagues.HasFullData(
                         isLoading,
                         error,
                         exploreFilterChip,
                         exploreQuery,
                         exploreFilterChips,
-                        filteredCountries
+                        filteredLeagues
                     )
-                else -> ExploreUiState.Countries.NoData(
+                else -> ExploreUiState.Leagues.NoData(
                     isLoading,
                     error,
                     exploreFilterChip,

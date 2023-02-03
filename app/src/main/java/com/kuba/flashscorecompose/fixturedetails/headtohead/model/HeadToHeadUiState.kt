@@ -1,7 +1,5 @@
 package com.kuba.flashscorecompose.fixturedetails.headtohead.model
 
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
-
 /**
  * Created by jrzeznicki on 14/01/2023.
  */
@@ -12,9 +10,9 @@ interface HeadToHeadUiState {
     data class HasData(
         override val isLoading: Boolean,
         override val error: HeadToHeadError,
-        val homeTeamFixtures: List<FixtureItem>,
-        val awayTeamFixtures: List<FixtureItem>,
-        val h2hFixtures: List<FixtureItem>
+        val homeTeamFixtures: List<StyledFixtureItem>,
+        val awayTeamFixtures: List<StyledFixtureItem>,
+        val h2hFixtures: List<StyledFixtureItem>
     ) : HeadToHeadUiState
 
     data class NoData(

@@ -41,7 +41,7 @@ fun FixturesTeamScreen(
     LaunchedEffect(key1 = SETUP_FIXTURES_TEAM_KEY) { viewModel.setup() }
     FixturesTeamListScreen(
         uiState = uiState,
-        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.id)) },
+        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it)) },
         onFixturesFilterClick = { viewModel.filterFixtures(it as FilterChip.Fixtures) },
         onRefreshClick = { viewModel.refresh() }
     )
@@ -68,7 +68,7 @@ fun FixturesTeamListScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(vertical = 16.dp),
+                .padding(vertical = 8.dp),
             state = scrollState
         ) {
             when (uiState) {
@@ -88,7 +88,7 @@ fun FixturesTeamListScreen(
                     item {
                         EmptyState(
                             modifier = Modifier.fillMaxWidth(),
-                            textId = R.string.no_fixtures
+                            textId = R.string.no_fixtures_team
                         )
                     }
                 }
@@ -106,7 +106,7 @@ fun FixturesFilterChips(
     FlowRow(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 24.dp)
+            .padding(bottom = 8.dp)
     ) {
         fixturesFilterChips.forEach {
             CustomFilterChip(

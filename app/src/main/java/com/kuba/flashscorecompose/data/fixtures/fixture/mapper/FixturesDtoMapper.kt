@@ -8,6 +8,9 @@ import com.kuba.flashscorecompose.data.team.information.mapper.toTeam
 import com.kuba.flashscorecompose.data.team.information.mapper.toVenue
 import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.data.team.information.model.Venue
+import com.kuba.flashscorecompose.utils.format
+import com.kuba.flashscorecompose.utils.formatTimestampToLocalDateTime
+import java.time.LocalDateTime
 
 /**
  * Created by jrzeznicki on 03/01/2023.
@@ -45,16 +48,21 @@ fun ColorsDto.toColors(): Colors {
 }
 
 fun FixtureInfoDto.toFixtureInfo(teamId: Int?): FixtureInfo {
+    val dateTime = timestamp?.formatTimestampToLocalDateTime() ?: LocalDateTime.now()
+    val formattedDate = dateTime.format(FixtureInfo.FORMATTED_DATE_PATTERN)
+    val shortDate = dateTime.format(FixtureInfo.SHORT_DATE_PATTERN)
     return FixtureInfo(
-        date = date.orEmpty(),
         id = id ?: 0,
+        date = date.orEmpty(),
+        year = dateTime.year,
+        shortDate = shortDate,
+        formattedDate = formattedDate,
         referee = referee.orEmpty(),
         status = status?.toStatus() ?: Status.EMPTY_STATUS,
         timestamp = timestamp ?: 0L,
         timezone = timezone.orEmpty(),
         venue = venue?.toVenue(teamId) ?: Venue.EMPTY_VENUE,
         periods = periods?.toPeriods() ?: Periods.EMPTY_PERIODS,
-        year = "",
         isLive = isLive(periods?.toPeriods() ?: Periods.EMPTY_PERIODS),
         isStarted = !isNotStarted(status?.short.orEmpty())
     )
@@ -63,15 +71,13 @@ fun FixtureInfoDto.toFixtureInfo(teamId: Int?): FixtureInfo {
 fun FixtureDto.toFixtureItem(
     season: Int? = null,
     round: String? = null,
-    h2h: String? = null,
-    date: String? = null
+    h2h: String? = null
 ): FixtureItem {
     return FixtureItem(
         id = fixture?.id ?: 0,
         season = season ?: league?.season ?: 0,
         round = round ?: league?.round.orEmpty(),
         h2h = h2h ?: "${teams?.home?.id ?: 0}-${teams?.away?.id ?: 0}",
-        date = date ?: fixture?.date.orEmpty(),
         fixture = fixture?.toFixtureInfo(teams?.home?.id) ?: FixtureInfo.EMPTY_FIXTURE_INFO,
         goals = goals?.toGoals() ?: Goals.EMPTY_GOALS,
         league = league?.toLeague() ?: League.EMPTY_LEAGUE,

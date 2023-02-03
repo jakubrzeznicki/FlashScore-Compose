@@ -25,8 +25,8 @@ class PlayersRepository(
         return local.observePlayer(playerId).map { it?.toPlayer() }
     }
 
-    override fun observePlayers(team: Int, season: Int): Flow<List<Player>> {
-        return local.observePlayers(team, season).map { playerEntities ->
+    override fun observePlayers(teamId: Int, season: Int): Flow<List<Player>> {
+        return local.observePlayers(teamId, season).map { playerEntities ->
             playerEntities.map { it.toPlayer() }
         }
     }
@@ -43,6 +43,24 @@ class PlayersRepository(
 
     override suspend fun loadPlayers(team: Team, season: Int): RepositoryResult<List<Player>> {
         val result = remote.loadPlayers(team.id, season)
+        return try {
+            val players = result.body()?.response?.map { playerWrapperDto ->
+                playerWrapperDto.player.toPlayer(team, season)
+            }.orEmpty()
+            withContext(Dispatchers.IO) {
+                savePlayers(players)
+            }
+            RepositoryResult.Success(players)
+        } catch (e: HttpException) {
+            RepositoryResult.Error(ResponseStatus().apply {
+                statusMessage = e.message()
+                internalStatus = e.code()
+            })
+        }
+    }
+
+    override suspend fun loadPlayer(id: Int, team: Team, season: Int): RepositoryResult<List<Player>> {
+        val result = remote.loadPlayers(id, team.season)
         return try {
             val players = result.body()?.response?.map { playerWrapperDto ->
                 playerWrapperDto.player.toPlayer(team, season)

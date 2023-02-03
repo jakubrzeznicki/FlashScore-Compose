@@ -59,10 +59,7 @@ interface FootballApi {
     suspend fun getCoachByTeam(@Query(TEAM) teamId: Int): Response<CoachDataDto>
 
     @GET("$API_VERSION/$PLAYERS")
-    suspend fun getPlayersByTeam(
-        @Query(TEAM) teamId: Int,
-        @Query(SEASON) season: Int
-    ): Response<PlayersDataDto>
+    suspend fun getPlayers(@QueryMap queryMap: Map<String, String>): Response<PlayersDataDto>
 
     companion object {
         const val API_VERSION = "v3"

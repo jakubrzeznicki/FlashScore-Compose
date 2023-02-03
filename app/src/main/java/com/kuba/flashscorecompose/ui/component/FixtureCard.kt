@@ -3,6 +3,8 @@ package com.kuba.flashscorecompose.ui.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -10,7 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,7 +34,11 @@ const val DASH = "-"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FixtureCard(fixtureItem: FixtureItem, onFixtureClick: (FixtureItem) -> Unit = {}) {
+fun FixtureCard(
+    fixtureItem: FixtureItem,
+    onFixtureClick: (FixtureItem) -> Unit,
+    onFavoriteClick: (FixtureItem) -> Unit = {}
+) {
     Card(
         onClick = { onFixtureClick(fixtureItem) },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.inverseSurface),
@@ -39,21 +47,27 @@ fun FixtureCard(fixtureItem: FixtureItem, onFixtureClick: (FixtureItem) -> Unit 
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Row(
-            modifier = Modifier.background(
-                color = MaterialTheme.colorScheme.inverseSurface
-            ),
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier
+                .background(
+                    color = MaterialTheme.colorScheme.inverseSurface
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
         ) {
-            TeamLogos(
+            Column(
                 modifier = Modifier
                     .weight(3f)
                     .padding(horizontal = 8.dp),
-                fixtureItem = fixtureItem
-            )
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                TeamLogos(fixtureItem = fixtureItem)
+                FixtureDateInfo(formattedDate = fixtureItem.fixture.formattedDate)
+            }
             FixtureDetails(
                 modifier = Modifier
                     .weight(7f)
-                    .padding(end = 4.dp),
+                    .padding(end = 4.dp, top = 4.dp, bottom = 4.dp),
                 fixtureItem = fixtureItem
             )
             FixtureStatus(
@@ -63,16 +77,18 @@ fun FixtureCard(fixtureItem: FixtureItem, onFixtureClick: (FixtureItem) -> Unit 
                         shape = RoundedCornerShape(topEnd = 16.dp, bottomEnd = 16.dp),
                         color = MaterialTheme.colorScheme.surface
                     )
-                    .size(70.dp),
-                fixtureItem = fixtureItem
+                    .size(72.dp)
+                    .padding(vertical = 4.dp),
+                fixtureItem = fixtureItem,
+                onFavoriteClick = onFavoriteClick
             )
         }
     }
 }
 
 @Composable
-fun TeamLogos(modifier: Modifier, fixtureItem: FixtureItem) {
-    Row(modifier = modifier) {
+fun TeamLogos(fixtureItem: FixtureItem) {
+    Row(modifier = Modifier.padding(bottom = 4.dp)) {
         LogoWithBackground(
             logo = fixtureItem.homeTeam.logo,
             modifier = Modifier
@@ -80,7 +96,7 @@ fun TeamLogos(modifier: Modifier, fixtureItem: FixtureItem) {
                     shape = RoundedCornerShape(30.dp),
                     color = MaterialTheme.colorScheme.surface
                 )
-                .size(36.dp)
+                .size(32.dp)
         )
         LogoWithBackground(
             logo = fixtureItem.awayTeam.logo,
@@ -89,7 +105,7 @@ fun TeamLogos(modifier: Modifier, fixtureItem: FixtureItem) {
                     shape = RoundedCornerShape(30.dp),
                     color = MaterialTheme.colorScheme.surface
                 )
-                .size(36.dp)
+                .size(32.dp)
         )
     }
 }
@@ -115,63 +131,135 @@ fun LogoWithBackground(logo: String, modifier: Modifier) {
 }
 
 @Composable
-fun FixtureDetails(modifier: Modifier, fixtureItem: FixtureItem) {
-    val isNotStarted = !fixtureItem.fixture.isStarted
-    Row(modifier = modifier) {
-        FixtureDetailsColumn(
-            modifier = Modifier.weight(6f),
-            firstLine = fixtureItem.homeTeam.name,
-            secondLine = if (isNotStarted) "" else fixtureItem.goals.home.toString()
-        )
-        FixtureDetailsColumn(
-            modifier = Modifier.weight(2f),
-            firstLine = VERSUS,
-            secondLine = if (isNotStarted) "" else DASH
-        )
-        FixtureDetailsColumn(
-            modifier = Modifier.weight(6f),
-            firstLine = fixtureItem.awayTeam.name,
-            secondLine = if (isNotStarted) "" else fixtureItem.goals.away.toString()
-        )
-    }
+fun FixtureDateInfo(formattedDate: String) {
+    Text(
+        text = formattedDate,
+        fontWeight = FontWeight.Normal,
+        fontSize = 10.sp,
+        color = MaterialTheme.colorScheme.inverseOnSurface,
+        overflow = TextOverflow.Ellipsis,
+        maxLines = 2,
+        textAlign = TextAlign.Center
+    )
 }
 
 @Composable
-fun FixtureDetailsColumn(modifier: Modifier, firstLine: String, secondLine: String) {
+fun FixtureDetails(modifier: Modifier, fixtureItem: FixtureItem) {
+    val isNotStarted = !fixtureItem.fixture.isStarted
+    val isLive = fixtureItem.fixture.isLive
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = firstLine,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.onSecondary,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1
-        )
-        Text(
-            text = secondLine,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.onSecondary,
-        )
+        Row(
+            modifier = Modifier.padding(bottom = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            FixtureDetailsColumn(
+                modifier = Modifier.weight(6f),
+                fixtureItem.homeTeam.name,
+                secondLine = fixtureItem.goals.home.toString(),
+                isNotStarted
+            )
+            FixtureDetailsColumn(
+                modifier = Modifier.weight(2f),
+                firstLine = VERSUS,
+                secondLine = DASH,
+                isNotStarted
+            )
+            FixtureDetailsColumn(
+                modifier = Modifier.weight(6f),
+                fixtureItem.awayTeam.name,
+                secondLine = fixtureItem.goals.away.toString(),
+                isNotStarted
+            )
+        }
+        if (isNotStarted) {
+            Text(
+                text = stringResource(id = R.string.match_not_started),
+                fontWeight = FontWeight.Normal,
+                fontSize = 10.sp,
+                color = MaterialTheme.colorScheme.inverseOnSurface,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
+            )
+        }
+        if (isLive) {
+            val liveMinuteLabel = stringResource(id = R.string.live_minute)
+            Text(
+                text = "$liveMinuteLabel: ${fixtureItem.fixture.status.elapsed}'",
+                fontWeight = FontWeight.Normal,
+                fontSize = 10.sp,
+                color = MaterialTheme.colorScheme.error,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
+            )
+        }
     }
 }
 
 @Composable
-fun FixtureStatus(modifier: Modifier, fixtureItem: FixtureItem) {
-    Row(
+fun FixtureDetailsColumn(
+    modifier: Modifier,
+    firstLine: String,
+    secondLine: String,
+    isNotStarted: Boolean = false
+) {
+    Column(
         modifier = modifier,
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            text = firstLine,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 12.sp,
+            color = MaterialTheme.colorScheme.onSecondary,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+            textAlign = TextAlign.Center
+        )
+        if (!isNotStarted) {
+            Text(
+                text = secondLine,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onSecondary,
+            )
+        }
+    }
+}
+
+@Composable
+fun FixtureStatus(
+    modifier: Modifier,
+    fixtureItem: FixtureItem,
+    onFavoriteClick: (FixtureItem) -> Unit
+) {
+    val isLive = fixtureItem.fixture.isLive
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceEvenly
     ) {
         Text(
             text = fixtureItem.fixture.status.short,
             fontWeight = FontWeight.SemiBold,
             fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.onSecondary,
+            color = if (isLive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSecondary,
         )
+        IconButton(
+            modifier = Modifier.size(24.dp),
+            onClick = { onFavoriteClick(fixtureItem) }
+        ) {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                imageVector = Icons.Outlined.StarBorder,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSecondary
+            )
+        }
     }
 }

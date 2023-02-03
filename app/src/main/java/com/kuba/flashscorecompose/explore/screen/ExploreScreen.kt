@@ -1,49 +1,29 @@
 package com.kuba.flashscorecompose.explore.screen
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.*
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import coil.decode.SvgDecoder
-import coil.request.ImageRequest
-import coil.size.Size
 import com.google.accompanist.flowlayout.FlowMainAxisAlignment
 import com.google.accompanist.flowlayout.FlowRow
-import com.google.relay.compose.BoxScopeInstanceImpl.align
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
-import com.kuba.flashscorecompose.data.team.information.model.Venue
-import com.kuba.flashscorecompose.destinations.FixtureDetailsRouteDestination
-import com.kuba.flashscorecompose.destinations.LeaguesListScreenDestination
-import com.kuba.flashscorecompose.destinations.PlayerDetailsRouteDestination
-import com.kuba.flashscorecompose.destinations.TeamDetailsRouteDestination
-import com.kuba.flashscorecompose.explore.model.CoachCountry
+import com.kuba.flashscorecompose.data.league.model.League
+import com.kuba.flashscorecompose.destinations.*
 import com.kuba.flashscorecompose.explore.model.ExploreError
 import com.kuba.flashscorecompose.explore.model.ExploreUiState
 import com.kuba.flashscorecompose.explore.model.TeamCountry
@@ -77,11 +57,11 @@ fun ExploreRoute(
         uiState = uiState,
         snackbarHostState = snackbarHostState,
         onRefreshClick = { viewModel.refresh() },
-        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.id)) },
+        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it)) },
         onTeamClick = {
             navigator.navigate(
                 TeamDetailsRouteDestination(
-                    it.team.id,
+                    it.team,
                     it.team.leagueId,
                     it.team.season
                 )
@@ -92,11 +72,12 @@ fun ExploreRoute(
                 PlayerDetailsRouteDestination(
                     it.player.id,
                     it.country.flag,
-                    it.player.team
+                    it.player.team,
+                    it.player.season
                 )
             )
         },
-        onCountryClick = { LeaguesListScreenDestination(it) },
+        onLeagueClick = { navigator.navigate(LeagueDetailsRouteDestination(it)) },
         onExploreQueryChanged = { viewModel.updateExploreQuery(it) },
         onExploreChipClick = { viewModel.changeExploreView(it as FilterChip.Explore) },
         onErrorClear = { viewModel.cleanError() }
@@ -113,7 +94,7 @@ fun ExploreScreen(
     onFixtureClick: (FixtureItem) -> Unit,
     onTeamClick: (TeamCountry) -> Unit,
     onPlayerClick: (PlayerCountry) -> Unit,
-    onCountryClick: (String) -> Unit,
+    onLeagueClick: (League) -> Unit,
     onExploreQueryChanged: (String) -> Unit,
     onExploreChipClick: (FilterChip) -> Unit,
     onErrorClear: () -> Unit
@@ -130,13 +111,20 @@ fun ExploreScreen(
                 is ExploreUiState.Players.NoData -> uiState.isLoading
                 is ExploreUiState.Venues.NoData -> uiState.isLoading
                 is ExploreUiState.Coaches.NoData -> uiState.isLoading
-                is ExploreUiState.Countries.NoData -> uiState.isLoading
+                is ExploreUiState.Leagues.NoData -> uiState.isLoading
                 else -> false
             },
             emptyContent = { FullScreenLoading() },
             loading = uiState.isLoading,
             onRefresh = onRefreshClick
         ) {
+            val scrollEmptyStateState = rememberScrollState()
+            val fixturesLazyListState = rememberLazyListState()
+            val teamsLazyListState = rememberLazyListState()
+            val playersLazyListState = rememberLazyListState()
+            val coachesLazyListState = rememberLazyListState()
+            val venuesLazyGridState = rememberLazyGridState()
+            val leaguesLazyListState = rememberLazyListState()
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -173,22 +161,21 @@ fun ExploreScreen(
                 )
                 when (uiState) {
                     is ExploreUiState.Fixtures.HasFullData -> {
-                        FixturesListWithHeader(
-                            fixtures = uiState.favoriteFixtures,
-                            color = YellowCorn,
-                            textId = R.string.favorites,
-                            onFixtureClick = onFixtureClick
-                        )
-                        FixturesListWithHeader(
+                        FixturesDoubleListWithHeader(
                             fixtures = uiState.liveFixtures,
+                            favoriteFixtures = uiState.favoriteFixtures,
+                            state = fixturesLazyListState,
                             color = RedDark,
+                            favoriteColor = YellowCorn,
                             textId = R.string.live_score,
+                            favoriteTextId = R.string.favorites,
                             onFixtureClick = onFixtureClick
                         )
                     }
                     is ExploreUiState.Fixtures.HasOnlyLiveFixtures -> {
                         FixturesListWithHeader(
                             fixtures = uiState.liveFixtures,
+                            state = fixturesLazyListState,
                             color = RedDark,
                             textId = R.string.live_score,
                             onFixtureClick = onFixtureClick
@@ -197,45 +184,51 @@ fun ExploreScreen(
                     is ExploreUiState.Fixtures.HasOnlyFavoriteFixtures -> {
                         FixturesListWithHeader(
                             fixtures = uiState.favoriteFixtures,
+                            state = fixturesLazyListState,
                             color = YellowCorn,
                             textId = R.string.favorites,
                             onFixtureClick = onFixtureClick
                         )
                     }
                     is ExploreUiState.Fixtures.NoData -> {
-                        EmptyState(
+                        Column(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight(),
-                            textId = R.string.no_fixtures
+                                .fillMaxSize()
+                                .verticalScroll(scrollEmptyStateState)
                         ) {
-                            Icon(
+                            EmptyState(
                                 modifier = Modifier
-                                    .size(128.dp)
-                                    .padding(8.dp),
-                                painter = painterResource(id = R.drawable.ic_close),
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.inverseOnSurface
-                            )
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(),
+                                textId = R.string.no_fixtures_live
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .size(128.dp)
+                                        .padding(8.dp),
+                                    painter = painterResource(id = R.drawable.ic_close),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.inverseOnSurface
+                                )
+                            }
                         }
                     }
                     is ExploreUiState.Teams.HasFullData -> {
-                        TeamsListWithHeader(
-                            teams = uiState.favoriteTeams,
-                            color = YellowCorn,
-                            textId = R.string.favorites,
-                            onTeamClick = onTeamClick
-                        )
-                        TeamsListWithHeader(
+                        TeamsDoubleListWithHeader(
                             teams = uiState.teams,
+                            favoriteTeams = uiState.favoriteTeams,
+                            state = teamsLazyListState,
                             color = MaterialTheme.colorScheme.onSecondary,
+                            favoriteColor = YellowCorn,
                             textId = R.string.teams,
+                            favoriteTextId = R.string.favorites,
                             onTeamClick = onTeamClick
                         )
                     }
                     is ExploreUiState.Teams.HasWithoutFavorite -> {
                         TeamsListWithHeader(
                             teams = uiState.teams,
+                            state = teamsLazyListState,
                             color = MaterialTheme.colorScheme.onSecondary,
                             textId = R.string.teams,
                             onTeamClick = onTeamClick
@@ -259,16 +252,14 @@ fun ExploreScreen(
                         }
                     }
                     is ExploreUiState.Players.HasFullData -> {
-                        PlayersListWithHeader(
-                            players = uiState.favoritePlayers,
-                            color = YellowCorn,
-                            textId = R.string.favorites,
-                            onPlayerClick = onPlayerClick
-                        )
-                        PlayersListWithHeader(
+                        PlayersDoubleListWithHeader(
                             players = uiState.players,
+                            favoritePlayers = uiState.favoritePlayers,
+                            state = playersLazyListState,
                             color = MaterialTheme.colorScheme.onSecondary,
-                            textId = R.string.players,
+                            favoriteColor = YellowCorn,
+                            textId = R.string.favorites,
+                            favoriteTextId = R.string.favorites,
                             onPlayerClick = onPlayerClick
                         )
                     }
@@ -276,6 +267,7 @@ fun ExploreScreen(
                         PlayersListWithHeader(
                             players = uiState.players,
                             color = MaterialTheme.colorScheme.onSecondary,
+                            state = playersLazyListState,
                             textId = R.string.players,
                             onPlayerClick = onPlayerClick
                         )
@@ -300,6 +292,7 @@ fun ExploreScreen(
                     is ExploreUiState.Coaches.HasFullData -> {
                         CoachesListWithHeader(
                             coaches = uiState.coaches,
+                            state = coachesLazyListState,
                             color = MaterialTheme.colorScheme.onSecondary,
                             textId = R.string.coaches,
                             onCoachClick = { }
@@ -323,10 +316,9 @@ fun ExploreScreen(
                         }
                     }
                     is ExploreUiState.Venues.HasFullData -> {
-                        VenuesListWithHeader(
+                        VenuesList(
                             venues = uiState.venue,
-                            color = MaterialTheme.colorScheme.onSecondary,
-                            textId = R.string.venues,
+                            state = venuesLazyGridState,
                             onVenueClick = { }
                         )
                     }
@@ -336,6 +328,32 @@ fun ExploreScreen(
                                 .fillMaxWidth()
                                 .fillMaxHeight(),
                             textId = R.string.no_venues
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(128.dp)
+                                    .padding(8.dp),
+                                painter = painterResource(id = R.drawable.ic_close),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.inverseOnSurface
+                            )
+                        }
+                    }
+                    is ExploreUiState.Leagues.HasFullData -> {
+                        LeagueListWithHeader(
+                            leagues = uiState.leagues,
+                            state = leaguesLazyListState,
+                            color = MaterialTheme.colorScheme.onSecondary,
+                            textId = R.string.leagues,
+                            onLeagueClick = onLeagueClick
+                        )
+                    }
+                    is ExploreUiState.Leagues.NoData -> {
+                        EmptyState(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight(),
+                            textId = R.string.no_leagues
                         ) {
                             Icon(
                                 modifier = Modifier
@@ -439,171 +457,6 @@ private fun FilterExploreChip(
         ),
         onClick = { onStateChanged(exploreFilterChip) }
     )
-}
-
-@Composable
-fun FixturesListWithHeader(
-    fixtures: List<FixtureItem>,
-    color: Color,
-    textId: Int,
-    onFixtureClick: (FixtureItem) -> Unit
-) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        item {
-            Text(
-                modifier = Modifier.padding(bottom = 8.dp),
-                text = stringResource(id = textId),
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 14.sp,
-                color = color,
-            )
-        }
-        items(items = fixtures) {
-            FixtureCard(fixtureItem = it, onFixtureClick = onFixtureClick)
-        }
-    }
-}
-
-@Composable
-fun TeamsListWithHeader(
-    teams: List<TeamCountry>,
-    color: Color,
-    textId: Int,
-    onTeamClick: (TeamCountry) -> Unit
-) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        item {
-            Text(
-                modifier = Modifier.padding(bottom = 8.dp),
-                text = stringResource(id = textId),
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 14.sp,
-                color = color,
-            )
-        }
-        items(items = teams) {
-            TeamCard(teamCountry = it, onTeamClick = onTeamClick)
-        }
-    }
-}
-
-@Composable
-fun PlayersListWithHeader(
-    players: List<PlayerCountry>,
-    color: Color,
-    textId: Int,
-    onPlayerClick: (PlayerCountry) -> Unit
-) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        item {
-            Text(
-                modifier = Modifier.padding(bottom = 8.dp),
-                text = stringResource(id = textId),
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 14.sp,
-                color = color,
-            )
-        }
-        items(items = players) {
-            PlayerCard(playerCountry = it, onPlayerClick = onPlayerClick)
-        }
-    }
-}
-
-@Composable
-fun CoachesListWithHeader(
-    coaches: List<CoachCountry>,
-    color: Color,
-    textId: Int,
-    onCoachClick: (CoachCountry) -> Unit
-) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        item {
-            Text(
-                modifier = Modifier.padding(bottom = 8.dp),
-                text = stringResource(id = textId),
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 14.sp,
-                color = color,
-            )
-        }
-        items(items = coaches) {
-            CoachCard(coachCountry = it, onCoachClick = {})
-        }
-    }
-}
-
-@Composable
-fun VenuesListWithHeader(
-    venues: List<Venue>,
-    color: Color,
-    textId: Int,
-    onVenueClick: (Venue) -> Unit
-) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = Modifier.fillMaxSize()
-    ) {
-        items(items = venues) {
-            VenueCard(venue = it, onVenueClick = onVenueClick)
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview
-@Composable
-fun VenueCard(venue: Venue = Venue.EMPTY_VENUE, onVenueClick: (Venue) -> Unit = {}) {
-    Card(
-        onClick = { onVenueClick(venue) },
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        modifier = Modifier
-            .size(width = 140.dp, height = 160.dp)
-            .padding(8.dp)
-            .align(Alignment.Center),
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = MaterialTheme.colorScheme.surface)
-                .padding(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            AsyncImage(
-                modifier = Modifier.size(100.dp),
-                model = ImageRequest
-                    .Builder(LocalContext.current)
-                    .decoderFactory(SvgDecoder.Factory())
-                    .data(venue.image)
-                    .size(Size.ORIGINAL)
-                    .crossfade(true)
-                    .build(),
-                placeholder = painterResource(id = R.drawable.ic_close),
-                contentDescription = null,
-                contentScale = ContentScale.Fit
-            )
-            Spacer(modifier = Modifier.size(8.dp))
-            Text(
-                text = venue.name,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.onSecondary,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-    }
 }
 
 @Composable

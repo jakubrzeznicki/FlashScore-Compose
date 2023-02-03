@@ -1,7 +1,7 @@
 package com.kuba.flashscorecompose.explore.model
 
-import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
+import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.data.team.information.model.Venue
 import com.kuba.flashscorecompose.teamdetails.players.model.PlayerCountry
 import com.kuba.flashscorecompose.ui.component.chips.FilterChip
@@ -151,14 +151,14 @@ interface ExploreUiState {
         ) : ExploreUiState
     }
 
-    sealed class Countries {
+    sealed class Leagues {
         data class HasFullData(
             override val isLoading: Boolean,
             override val error: ExploreError,
             override val exploreFilterChip: FilterChip.Explore,
             override val exploreQuery: String,
             override val exploreFilterChips: List<FilterChip.Explore>,
-            val countries: List<Country>
+            val leagues: List<League>
         ) : ExploreUiState
 
         data class NoData(

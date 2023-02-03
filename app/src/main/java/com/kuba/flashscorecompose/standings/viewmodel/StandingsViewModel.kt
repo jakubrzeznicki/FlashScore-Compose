@@ -74,7 +74,7 @@ class StandingsViewModel(
                 viewModelState.update { it.copy(error = StandingsError.EmptyLeague) }
                 return@launch
             }
-            leagues.take(5).forEach { league ->
+            leagues.filter { league -> LEAGUES.any { league.name == it } }.forEach { league ->
                 refreshStanding(league)
             }
         }
@@ -156,5 +156,20 @@ class StandingsViewModel(
 
     private companion object {
         const val EMPTY = ""
+        val LEAGUES = listOf(
+            "Premier League",
+            "Championship",
+            "Ligue 1",
+            "Ligue 2",
+            "Eredivisie",
+            "Ekstraklasa",
+            "I Liga",
+            "Primeira Liga",
+            "La Liga",
+            "Bundesliga",
+            "2. Bundesliga",
+            "Serie A",
+            "Serie B",
+        )
     }
 }

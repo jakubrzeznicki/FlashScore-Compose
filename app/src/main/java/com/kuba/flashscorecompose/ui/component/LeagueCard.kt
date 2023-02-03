@@ -21,7 +21,7 @@ import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import coil.size.Size
 import com.kuba.flashscorecompose.R
-import com.kuba.flashscorecompose.teamdetails.players.model.PlayerCountry
+import com.kuba.flashscorecompose.data.league.model.League
 
 /**
  * Created by jrzeznicki on 02/02/2023.
@@ -29,11 +29,9 @@ import com.kuba.flashscorecompose.teamdetails.players.model.PlayerCountry
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlayerCard(
-    playerCountry: PlayerCountry, onPlayerClick: (PlayerCountry) -> Unit
-) {
+fun LeagueCard(league: League, onLeagueClick: (League) -> Unit) {
     Card(
-        onClick = { onPlayerClick(playerCountry) },
+        onClick = { onLeagueClick(league) },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier.padding(vertical = 4.dp),
@@ -49,19 +47,19 @@ fun PlayerCard(
             AsyncImage(
                 modifier = Modifier
                     .clip(CircleShape)
-                    .size(50.dp),
+                    .size(40.dp),
                 model = ImageRequest.Builder(LocalContext.current)
                     .decoderFactory(SvgDecoder.Factory())
-                    .data(playerCountry.player.photo)
+                    .data(league.logo)
                     .crossfade(true)
                     .build(),
                 placeholder = painterResource(id = R.drawable.ic_close),
                 contentDescription = null,
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Fit
             )
             Column(modifier = Modifier.padding(horizontal = 8.dp)) {
                 Text(
-                    text = "${playerCountry.player.firstname} ${playerCountry.player.lastname}",
+                    text = league.name,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onSecondary,
@@ -78,7 +76,7 @@ fun PlayerCard(
                             .size(18.dp),
                         model = ImageRequest.Builder(LocalContext.current)
                             .decoderFactory(SvgDecoder.Factory())
-                            .data(playerCountry.country.flag)
+                            .data(league.countryFlag)
                             .size(Size.ORIGINAL)
                             .crossfade(true)
                             .build(),
@@ -88,7 +86,7 @@ fun PlayerCard(
                     )
                     Text(
                         modifier = Modifier.padding(start = 4.dp),
-                        text = playerCountry.country.name,
+                        text = league.countryName,
                         fontWeight = FontWeight.Normal,
                         fontSize = 13.sp,
                         color = MaterialTheme.colorScheme.inverseOnSurface,

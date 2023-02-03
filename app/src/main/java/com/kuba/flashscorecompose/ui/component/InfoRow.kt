@@ -106,8 +106,9 @@ fun InfoRowWithImage(title: String, labelId: Int, image: String) {
 }
 
 @Composable
-fun SimpleInfoRowWithImage(title: String, labelId: Int, image: String) {
+fun SimpleInfoRowWithImage(modifier: Modifier,title: String, labelId: Int, image: String) {
     Row(
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
@@ -115,7 +116,7 @@ fun SimpleInfoRowWithImage(title: String, labelId: Int, image: String) {
             modifier = Modifier
                 .clip(RoundedCornerShape(16.dp))
                 .size(40.dp)
-                .padding(end = 8.dp),
+                .padding(end = 4.dp),
             model = ImageRequest.Builder(LocalContext.current)
                 .decoderFactory(SvgDecoder.Factory())
                 .data(image)

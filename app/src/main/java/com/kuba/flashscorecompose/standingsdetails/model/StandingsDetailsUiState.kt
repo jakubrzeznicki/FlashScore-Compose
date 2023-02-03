@@ -1,6 +1,5 @@
 package com.kuba.flashscorecompose.standingsdetails.model
 
-import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.data.standings.model.StandingItem
 import com.kuba.flashscorecompose.ui.component.chips.FilterChip
 
@@ -18,7 +17,6 @@ interface StandingsDetailsUiState {
         override val error: StandingsDetailsError,
         override val standingFilterChip: FilterChip.Standings,
         override val standingFilterChips: List<FilterChip.Standings>,
-        val league: League,
         val standingsItems: List<StandingItem>
     ) : StandingsDetailsUiState
 

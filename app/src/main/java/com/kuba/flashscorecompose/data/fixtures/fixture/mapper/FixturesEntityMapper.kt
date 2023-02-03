@@ -41,6 +41,9 @@ fun GoalsEntity.toGoals(): Goals {
 fun FixtureInfoEntity.toFixtureInfo(): FixtureInfo {
     return FixtureInfo(
         date = date,
+        formattedDate = formattedDate,
+        shortDate = shortDate,
+        year = year,
         id = id,
         referee = referee,
         status = status.toStatus(),
@@ -48,7 +51,6 @@ fun FixtureInfoEntity.toFixtureInfo(): FixtureInfo {
         timezone = timezone,
         venue = venue.toVenue(),
         periods = periods.toPeriods(),
-        "",
         isLive = isLive,
         isStarted = isStarted
     )
@@ -60,7 +62,6 @@ fun FixtureEntity.toFixtureItem(): FixtureItem {
         season = currentRound.season,
         round = currentRound.round,
         h2h = h2h,
-        date = date,
         fixture = fixture.toFixtureInfo(),
         goals = goals.toGoals(),
         league = league.toLeague(),

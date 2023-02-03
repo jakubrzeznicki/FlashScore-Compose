@@ -1,6 +1,6 @@
 package com.kuba.flashscorecompose.fixturedetails.headtohead.viewmodel
 
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
+import com.kuba.flashscorecompose.fixturedetails.headtohead.model.StyledFixtureItem
 import com.kuba.flashscorecompose.fixturedetails.headtohead.model.HeadToHeadError
 import com.kuba.flashscorecompose.fixturedetails.headtohead.model.HeadToHeadUiState
 
@@ -10,9 +10,9 @@ import com.kuba.flashscorecompose.fixturedetails.headtohead.model.HeadToHeadUiSt
 data class HeadToHeadViewModelState(
     val isLoading: Boolean = false,
     val error: HeadToHeadError = HeadToHeadError.NoError,
-    val homeTeamFixtures: List<FixtureItem> = emptyList(),
-    val awayTeamFixtures: List<FixtureItem> = emptyList(),
-    val h2hFixtures: List<FixtureItem> = emptyList()
+    val homeTeamFixtures: List<StyledFixtureItem> = emptyList(),
+    val awayTeamFixtures: List<StyledFixtureItem> = emptyList(),
+    val h2hFixtures:List<StyledFixtureItem> = emptyList()
 ) {
     fun toUiState(): HeadToHeadUiState =
         if (h2hFixtures.isNotEmpty() || homeTeamFixtures.isNotEmpty() || awayTeamFixtures.isNotEmpty()) {
