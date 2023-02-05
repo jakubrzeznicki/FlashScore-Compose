@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "322077523128",
+    "project_id": "flashscorecompose",
+    "storage_bucket": "flashscorecompose.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:322077523128:android:9e4a460791ef97702a084d",
+        "android_client_info": {
+          "package_name": "com.kuba.flashscorecompose"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "322077523128-9a7p551a6ivkin0bkn8dqkvbkuicupuk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvd06LOyFUz8FFf2MN330y0Cr66ss_WPM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "322077523128-9a7p551a6ivkin0bkn8dqkvbkuicupuk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

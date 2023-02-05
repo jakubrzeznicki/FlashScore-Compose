@@ -6,6 +6,7 @@ plugins {
     id 'kotlin-parcelize'
     id 'com.google.devtools.ksp' version '1.7.0-1.0.6'
     id 'com.google.relay'
+    id 'com.google.gms.google-services'
 }
 
 kotlin {
@@ -161,6 +162,11 @@ dependencies {
     //Calendar Dialog
     implementation 'com.maxkeppeler.sheets-compose-dialogs:core:1.0.3' // necessary
     implementation 'com.maxkeppeler.sheets-compose-dialogs:calendar:1.0.3'
+
+    //Firebase
+    implementation platform('com.google.firebase:firebase-bom:31.2.0')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-auth-ktx'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
