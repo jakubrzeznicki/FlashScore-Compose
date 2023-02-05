@@ -20,12 +20,16 @@
     <string name="no_loaded_statistics">There was a problem to load statistics. Try it again</string>
     <string name="no_statistics">The match was not started or we don\'t have statistics from this event</string>
     <string name="no_standings">There are no standings</string>
+    <string name="no_standing_details">There are no standing details</string>
     <string name="no_team_informations">There are no team informations</string>
     <string name="no_teams">There are no teams</string>
+    <string name="no_fixtures_team">There are no fixtures for this team. </string>
     <string name="no_fixtures">There are no fixtures for the day. Please select another day </string>
+    <string name="no_fixtures_live">There are no live fixtures.</string>
     <string name="no_players">There are no players</string>
     <string name="no_coaches">There are no coaches</string>
     <string name="no_venues">There are no venues</string>
+    <string name="no_leagues">There are no leagues</string>
     <string name="load_data_from_network">Load data from network</string>
     <string name="empty_database">Empty database</string>
     <string name="retry">Retry</string>
@@ -89,4 +93,6 @@
     <string name="teams">Teams</string>
     <string name="coaches">Coaches</string>
     <string name="favorites">Favorites</string>
+    <string name="match_not_started">Match was not started</string>
+    <string name="live_minute">Live minute</string>
 </resources>

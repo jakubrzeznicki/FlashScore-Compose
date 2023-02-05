@@ -12,6 +12,9 @@ import kotlinx.coroutines.flow.Flow
  */
 @Dao
 interface LeagueDao {
+    @Query("SELECT * FROM leagues")
+    fun observeLeagues(): Flow<List<LeagueEntity>>
+
     @Query("SELECT * FROM leagues WHERE countryCode = :countryCode")
     fun observeLeagues(countryCode: String): Flow<List<LeagueEntity>>
 

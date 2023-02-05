@@ -14,4 +14,5 @@ interface PlayersDataSource {
     fun observePlayers(): Flow<List<Player>>
     suspend fun savePlayers(players: List<Player>)
     suspend fun loadPlayers(team: Team, season: Int): RepositoryResult<List<Player>>
+    suspend fun loadPlayer(id: Int, team: Team, season: Int): RepositoryResult<List<Player>>
 }

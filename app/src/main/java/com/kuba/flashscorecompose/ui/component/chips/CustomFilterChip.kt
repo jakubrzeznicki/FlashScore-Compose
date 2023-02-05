@@ -40,7 +40,6 @@ fun CustomFilterChip(
             Text(
                 text = stringResource(id = filterChip.textId),
                 fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSecondary,
                 fontWeight = FontWeight.SemiBold,
                 textAlign = TextAlign.Center
             )

@@ -6,10 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -55,24 +52,22 @@ private const val SETUP_LEAGUE_DETAILS_KEY = "SETUP_LEAGUE_DETAILS_KEY"
 @Destination
 @Composable
 fun LeagueDetailsRoute(
-    leagueId: Int,
-    season: Int,
+    league: League,
     navigator: DestinationsNavigator,
-    viewModel: LeagueDetailsViewModel = getViewModel { parametersOf(leagueId, season) }
+    viewModel: LeagueDetailsViewModel = getViewModel { parametersOf(league) }
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(key1 = SETUP_LEAGUE_DETAILS_KEY) { viewModel.setup() }
     LeagueDetailsScreen(
         uiState = uiState,
+        league = league,
         snackbarHostState = snackbarHostState,
         navigator = navigator,
         onRefreshClick = { viewModel.refresh() },
-        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.id)) },
+        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it)) },
         onDateClick = { viewModel.changeDate(it) },
-        onStandingsClick = {
-            navigator.navigate(StandingsDetailsRouteDestination(leagueId, season))
-        },
+        onStandingsClick = { navigator.navigate(StandingsDetailsRouteDestination(league)) },
         onErrorClear = { viewModel.cleanError() }
     )
 }
@@ -81,6 +76,7 @@ fun LeagueDetailsRoute(
 @Composable
 fun LeagueDetailsScreen(
     uiState: LeagueDetailsUiState,
+    league: League,
     snackbarHostState: SnackbarHostState,
     navigator: DestinationsNavigator,
     onRefreshClick: () -> Unit,
@@ -94,7 +90,7 @@ fun LeagueDetailsScreen(
         topBar = {
             TopBar(
                 navigator = navigator,
-                league = uiState.league
+                league = league
             )
         },
         snackbarHost = { FlashScoreSnackbarHost(hostState = snackbarHostState) }
@@ -175,12 +171,12 @@ fun DateRow(localDate: LocalDate, onDateClick: (LocalDate) -> Unit) {
         )
         IconButton(
             modifier = Modifier
-                .padding(horizontal = 12.dp)
-                .size(32.dp),
+                .padding(horizontal = 4.dp)
+                .size(24.dp),
             onClick = { calendarState.show() }
         ) {
             Icon(
-                modifier = Modifier.size(32.dp),
+                modifier = Modifier.size(24.dp),
                 imageVector = Icons.Default.CalendarMonth,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSecondary
@@ -201,11 +197,11 @@ fun StandingsRow(onStandingClick: () -> Unit) {
         IconButton(
             modifier = Modifier
                 .padding(end = 12.dp)
-                .size(32.dp),
-            onClick = { }
+                .size(24.dp),
+            onClick = { onStandingClick() }
         ) {
             Icon(
-                modifier = Modifier.size(32.dp),
+                modifier = Modifier.size(24.dp),
                 imageVector = Icons.Default.List,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSecondary
@@ -213,7 +209,7 @@ fun StandingsRow(onStandingClick: () -> Unit) {
         }
         Text(
             modifier = Modifier.weight(1f),
-            text = stringResource(id = R.string.standing),
+            text = stringResource(id = R.string.standings),
             fontWeight = FontWeight.SemiBold,
             fontSize = 16.sp,
             color = MaterialTheme.colorScheme.onSecondary,
@@ -221,12 +217,12 @@ fun StandingsRow(onStandingClick: () -> Unit) {
         IconButton(
             modifier = Modifier
                 .padding(end = 4.dp)
-                .size(32.dp),
-            onClick = { }
+                .size(24.dp),
+            onClick = { onStandingClick() }
         ) {
             Icon(
-                modifier = Modifier.size(32.dp),
-                imageVector = Icons.Default.ArrowForward,
+                modifier = Modifier.size(24.dp),
+                imageVector = Icons.Default.ChevronRight,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSecondary
             )
@@ -294,14 +290,6 @@ private fun ErrorSnackbar(
 ) {
     when (val error = uiState.error) {
         is LeagueDetailsError.NoError -> {}
-        is LeagueDetailsError.EmptyLeague -> {
-            val errorMessageText = stringResource(id = R.string.empty_leagues)
-            val onErrorDismissState by rememberUpdatedState(onErrorClear)
-            LaunchedEffect(errorMessageText) {
-                snackbarHostState.showSnackbar(message = errorMessageText)
-                onErrorDismissState()
-            }
-        }
         is LeagueDetailsError.RemoteError -> {
             val errorMessageText =
                 remember(uiState) { error.responseStatus.statusMessage.orEmpty() }

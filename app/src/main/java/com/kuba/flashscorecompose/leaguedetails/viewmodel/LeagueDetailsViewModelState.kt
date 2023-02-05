@@ -1,7 +1,6 @@
 package com.kuba.flashscorecompose.leaguedetails.viewmodel
 
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
-import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.leaguedetails.model.LeagueDetailsError
 import com.kuba.flashscorecompose.leaguedetails.model.LeagueDetailsUiState
 import java.time.LocalDate
@@ -13,7 +12,6 @@ data class LeagueDetailsViewModelState(
     val isLoading: Boolean = false,
     val error: LeagueDetailsError = LeagueDetailsError.NoError,
     val date: LocalDate = LocalDate.now(),
-    val league: League = League.EMPTY_LEAGUE,
     val fixtureItems: List<FixtureItem> = emptyList(),
     val filteredFixtureItems: List<FixtureItem> = emptyList(),
 ) {
@@ -22,7 +20,6 @@ data class LeagueDetailsViewModelState(
             isLoading = isLoading,
             error = error,
             date = date,
-            league = league,
             fixtureItems = filteredFixtureItems
         )
     } else {
@@ -30,7 +27,6 @@ data class LeagueDetailsViewModelState(
             isLoading = isLoading,
             error = error,
             date = date,
-            league = league
         )
     }
 }

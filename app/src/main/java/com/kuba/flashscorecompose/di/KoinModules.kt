@@ -26,6 +26,7 @@ import com.kuba.flashscorecompose.data.fixtures.statistics.remote.StatisticsRemo
 import com.kuba.flashscorecompose.data.league.LeagueDataSource
 import com.kuba.flashscorecompose.data.league.LeagueRepository
 import com.kuba.flashscorecompose.data.league.local.LeagueLocal
+import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.data.league.remote.LeagueRemote
 import com.kuba.flashscorecompose.data.players.PlayersDataSource
 import com.kuba.flashscorecompose.data.players.PlayersRepository
@@ -41,7 +42,6 @@ import com.kuba.flashscorecompose.data.team.information.local.TeamLocal
 import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.data.team.information.remote.TeamRemote
 import com.kuba.flashscorecompose.explore.viewmodel.ExploreViewModel
-import com.kuba.flashscorecompose.fixturedetails.container.viewmodel.FixtureDetailsViewModel
 import com.kuba.flashscorecompose.fixturedetails.headtohead.viewmodel.HeadToHeadViewModel
 import com.kuba.flashscorecompose.fixturedetails.lineup.viewmodel.LineupViewModel
 import com.kuba.flashscorecompose.fixturedetails.statistics.viewmodel.StatisticsViewModel
@@ -53,7 +53,6 @@ import com.kuba.flashscorecompose.network.uuidsource.UuidSource
 import com.kuba.flashscorecompose.playerdetails.viewmodel.PlayerDetailsViewModel
 import com.kuba.flashscorecompose.standings.viewmodel.StandingsViewModel
 import com.kuba.flashscorecompose.standingsdetails.viewmodel.StandingsDetailsViewModel
-import com.kuba.flashscorecompose.teamdetails.container.viewmodel.TeamDetailsViewModel
 import com.kuba.flashscorecompose.teamdetails.fixturesteam.viewmodel.FixturesTeamViewModel
 import com.kuba.flashscorecompose.teamdetails.informations.viewmodel.TeamInformationsViewModel
 import com.kuba.flashscorecompose.teamdetails.players.viewmodel.PlayersViewModel
@@ -71,7 +70,6 @@ class KoinModules {
         viewModel { HomeViewModel(get(), get(), get()) }
         viewModel { CountriesViewModel(get()) }
         viewModel { (countryCode: String) -> LeaguesViewModel(countryCode, get(), get()) }
-        viewModel { (fixtureId: Int) -> FixtureDetailsViewModel(fixtureId, get()) }
         viewModel { (fixtureId: Int, leagueId: Int, round: String, season: Int) ->
             StatisticsViewModel(fixtureId, leagueId, round, season, get(), get())
         }
@@ -92,22 +90,21 @@ class KoinModules {
                 get()
             )
         }
-        viewModel { (leagueId: Int, season: Int) ->
-            LeagueDetailsViewModel(
-                leagueId,
-                season,
-                get(),
-                get()
-            )
-        }
-        viewModel { (teamId: Int) -> TeamDetailsViewModel(teamId, get()) }
-        viewModel { (teamId: Int, leagueId: Int, season: Int) ->
-            TeamInformationsViewModel(teamId, leagueId, season, get(), get())
+        viewModel { (league: League) -> LeagueDetailsViewModel(league, get()) }
+        viewModel { (team: Team, leagueId: Int, season: Int) ->
+            TeamInformationsViewModel(team, leagueId, season, get(), get())
         }
         viewModel { (team: Team, season: Int) -> PlayersViewModel(team, season, get(), get()) }
         viewModel { (teamId: Int, season: Int) -> FixturesTeamViewModel(teamId, season, get()) }
-        viewModel { (playerId: Int) -> PlayerDetailsViewModel(playerId, get()) }
-        viewModel { ExploreViewModel(get(), get(), get(), get()) }
+        viewModel { (playerId: Int, team: Team, season: Int) ->
+            PlayerDetailsViewModel(
+                playerId,
+                team,
+                season,
+                get()
+            )
+        }
+        viewModel { ExploreViewModel(get(), get(), get(), get(), get()) }
     }
 
     private val componentsModule = module {

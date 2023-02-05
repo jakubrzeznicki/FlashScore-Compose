@@ -64,8 +64,8 @@ fun HomeScreenRoute(
         onCountryClick = { country, isSelected ->
             viewModel.updateSelectedCountry(country, isSelected)
         },
-        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixture.id)) },
-        onLeagueClick = { navigator.navigate(LeagueDetailsRouteDestination(it.id, it.season)) },
+        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it)) },
+        onLeagueClick = { navigator.navigate(LeagueDetailsRouteDestination(it)) },
         onErrorClear = { viewModel.cleanError() },
         snackbarHostState = snackbarHostState,
         fixturesScrollState = fixturesScrollState,
@@ -89,7 +89,6 @@ private fun HomeScreen(
     countryScrollState: LazyListState,
     context: Context
 ) {
-
     Scaffold(
         topBar = { TopBar(context = context) },
         snackbarHost = { FlashScoreSnackbarHost(hostState = snackbarHostState) }
@@ -119,7 +118,7 @@ private fun HomeScreen(
                     is HomeUiState.HasAllData -> {
                         item {
                             LazyRow(modifier = modifier, state = countryScrollState) {
-                                items( uiState.countries) { country ->
+                                items(uiState.countries) { country ->
                                     CountryWidgetCard(
                                         country = country,
                                         isSelected = uiState.selectedCountry == country,
@@ -127,7 +126,7 @@ private fun HomeScreen(
                                     )
                                 }
                             }
-                            Spacer(modifier = Modifier.size(24.dp))
+                            Spacer(modifier = Modifier.size(8.dp))
                         }
                         items(items = uiState.leagueFixturesDataList) {
                             FixturesWidget(
@@ -135,13 +134,13 @@ private fun HomeScreen(
                                 onFixtureClick = onFixtureClick,
                                 onLeagueClick = onLeagueClick
                             )
-                            Spacer(modifier = Modifier.size(24.dp))
+                            Spacer(modifier = Modifier.size(8.dp))
                         }
                     }
                     is HomeUiState.HasOnlyCountries -> {
                         item {
                             LazyRow(modifier = modifier, state = countryScrollState) {
-                                items( uiState.countries) { country ->
+                                items(uiState.countries) { country ->
                                     CountryWidgetCard(
                                         country = country,
                                         isSelected = uiState.selectedCountry == country,

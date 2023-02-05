@@ -9,13 +9,14 @@ import com.kuba.flashscorecompose.playerdetails.model.PlayerDetailsUiState
  * Created by jrzeznicki on 01/02/2023.
  */
 data class PlayerDetailsViewModelState(
+    val isLoading: Boolean = false,
     val error: PlayerDetailsError = PlayerDetailsError.NoError,
     val country: Country? = Country.EMPTY_COUNTRY,
     val player: Player? = Player.EMPTY_PLAYER
 ) {
     fun toUiState(): PlayerDetailsUiState = if (player != null) {
-        PlayerDetailsUiState.HasData(error, country, player)
+        PlayerDetailsUiState.HasData(isLoading, error, country, player)
     } else {
-        PlayerDetailsUiState.NoData(error)
+        PlayerDetailsUiState.NoData(isLoading, error)
     }
 }

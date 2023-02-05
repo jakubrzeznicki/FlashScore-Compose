@@ -8,4 +8,5 @@ import retrofit2.Response
  */
 interface PlayersRemoteDataSource {
     suspend fun loadPlayers(teamId: Int, season: Int): Response<PlayersDataDto>
+    suspend fun loadPlayer(id: Int, season: Int): Response<PlayersDataDto>
 }

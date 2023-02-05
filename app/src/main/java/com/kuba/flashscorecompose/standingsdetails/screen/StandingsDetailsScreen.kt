@@ -54,22 +54,22 @@ private const val HASZTAG = "#"
 @Destination
 @Composable
 fun StandingsDetailsRoute(
-    leagueId: Int,
-    season: Int,
+    league: League,
     navigator: DestinationsNavigator,
-    viewModel: StandingsDetailsViewModel = getViewModel { parametersOf(leagueId, season) }
+    viewModel: StandingsDetailsViewModel = getViewModel { parametersOf(league.id, league.season) }
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(key1 = SETUP_STANDINGS_DETAILS_KEY) { viewModel.setup() }
     StandingsDetailsScreen(
         uiState = uiState,
+        league = league,
         snackbarHostState = snackbarHostState,
         navigator = navigator,
         onTeamClick = {
-            navigator.navigate(TeamDetailsRouteDestination(it.id, leagueId, season))
+            navigator.navigate(TeamDetailsRouteDestination(it, league.id, league.season))
         },
-        onLeagueClick = { navigator.navigate(LeagueDetailsRouteDestination(leagueId, season)) },
+        onLeagueClick = { navigator.navigate(LeagueDetailsRouteDestination(league)) },
         onRefreshClick = { viewModel.refresh() },
         onErrorClear = { viewModel.cleanError() },
         onStandingsFilterClick = { viewModel.filterStandings(it as FilterChip.Standings) }
@@ -82,6 +82,7 @@ private fun StandingsDetailsScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
     uiState: StandingsDetailsUiState,
+    league: League,
     navigator: DestinationsNavigator,
     onTeamClick: (Team) -> Unit,
     onLeagueClick: () -> Unit,
@@ -95,10 +96,7 @@ private fun StandingsDetailsScreen(
         topBar = {
             TopBar(
                 navigator = navigator,
-                league = when (uiState) {
-                    is StandingsDetailsUiState.HasData -> uiState.league
-                    else -> League.EMPTY_LEAGUE
-                }
+                league = league
             )
         },
         snackbarHost = { FlashScoreSnackbarHost(hostState = snackbarHostState) }
@@ -123,8 +121,8 @@ private fun StandingsDetailsScreen(
                     is StandingsDetailsUiState.HasData -> {
                         item {
                             HeaderDetailsWithImage(
-                                uiState.league.name,
-                                uiState.league.logo,
+                                league.name,
+                                league.logo,
                                 onLeagueClick
                             )
                         }
@@ -142,7 +140,7 @@ private fun StandingsDetailsScreen(
                                 thickness = 2.dp,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(bottom = 16.dp)
+                                    .padding(bottom = 8.dp)
                             )
                         }
                         items(items = uiState.standingsItems) {
@@ -155,7 +153,7 @@ private fun StandingsDetailsScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .fillMaxHeight(),
-                                textId = R.string.no_standings
+                                textId = R.string.no_standing_details
                             ) {
                                 Icon(
                                     modifier = Modifier
@@ -185,7 +183,7 @@ private fun StandingsDetailsScreen(
 private fun TopBar(navigator: DestinationsNavigator, league: League) {
     CenterAppTopBar(
         modifier = Modifier
-            .height(58.dp)
+            .height(48.dp)
             .padding(vertical = 8.dp),
         navigationIcon = {
             IconButton(
@@ -240,7 +238,7 @@ private fun StandingFilterChips(
     FlowRow(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 24.dp)
+            .padding(bottom = 8.dp)
     ) {
         standingFilerChips.forEach {
             CustomFilterChip(

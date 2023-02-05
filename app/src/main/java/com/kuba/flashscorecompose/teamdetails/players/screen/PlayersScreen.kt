@@ -1,6 +1,5 @@
 package com.kuba.flashscorecompose.teamdetails.players.screen
 
-import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -34,18 +33,24 @@ private const val PLAYERS_KEY = "PLAYERS_KEY"
 
 @Composable
 fun PlayersScreen(
-    team: Team, // chyba jest pusty, jak przekazemy sam id to jest git
+    team: Team,
     season: Int,
     navigator: DestinationsNavigator,
     viewModel: PlayersViewModel = getViewModel { parametersOf(team, season) }
 ) {
-    Log.d("TEST_LOG", "Team in playerscreen = $team")
     val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(key1 = PLAYERS_KEY) { viewModel.setup() }
     PlayersListScreen(
         uiState = uiState,
         onPlayerClick = {
-            navigator.navigate(PlayerDetailsRouteDestination(it.player.id, it.country.flag, team))
+            navigator.navigate(
+                PlayerDetailsRouteDestination(
+                    it.player.id,
+                    it.country.flag,
+                    it.player.team,
+                    it.player.season
+                )
+            )
         },
         onRefreshClick = { viewModel.refresh() }
     )
@@ -70,7 +75,7 @@ fun PlayersListScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(vertical = 16.dp),
+                .padding(vertical = 8.dp),
             state = scrollState
         ) {
             when (uiState) {

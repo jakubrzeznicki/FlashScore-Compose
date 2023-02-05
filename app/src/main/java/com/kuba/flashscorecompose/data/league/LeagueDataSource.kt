@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
  * Created by jrzeznicki on 10/3/2022
  */
 interface LeagueDataSource {
+    fun observeLeagues(): Flow<List<League>>
     fun observeLeagues(countryCode: String): Flow<List<League>>
     fun observeLeagues(countryCodes: List<String>): Flow<List<League>>
     fun observeLeague(id: Int): Flow<League?>

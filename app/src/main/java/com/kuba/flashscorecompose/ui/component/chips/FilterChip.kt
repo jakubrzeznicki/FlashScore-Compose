@@ -34,6 +34,6 @@ sealed class FilterChip(open val textId: Int, open val icon: ImageVector) {
         object Players : Explore(R.string.players, Icons.Filled.Groups2)
         object Coaches : Explore(R.string.coaches, Icons.Filled.EmojiPeople)
         object Venues : Explore(R.string.venues, Icons.Filled.Stadium)
-        object Countries : Explore(R.string.countries, Icons.Filled.Flag)
+        object Leagues : Explore(R.string.leagues, Icons.Filled.Flag)
     }
 }

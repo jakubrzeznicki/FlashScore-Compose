@@ -154,14 +154,13 @@ class HomeViewModel(
     companion object {
         val COUNTRY_NAMES = listOf(
             "Poland",
-            "Deutschland",
+            "Germany",
             "France",
             "Spain",
             "Netherlands",
             "Portugal",
             "Turkey",
-            "Ukraine",
-            "Belgium",
+            "Italy",
             "England"
         )
         const val DATE_FORMAT = "yyy-MM-dd"

@@ -24,6 +24,7 @@ import coil.request.ImageRequest
 import coil.size.Size
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.country.model.Country
+import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.data.standings.model.Standing
 import com.kuba.flashscorecompose.data.standings.model.StandingItem
 import com.kuba.flashscorecompose.destinations.LeagueDetailsRouteDestination
@@ -65,16 +66,9 @@ fun StandingsRoute(
             viewModel.updateSelectedCountry(country, isSelected)
         },
         onStandingsClick = {
-            navigator.navigate(
-                StandingsDetailsRouteDestination(
-                    leagueId = it.leagueId,
-                    season = it.season
-                )
-            )
+            navigator.navigate(StandingsDetailsRouteDestination(league = it.league))
         },
-        onLeagueClick = { leagueId, season ->
-            navigator.navigate(LeagueDetailsRouteDestination(leagueId, season))
-        },
+        onLeagueClick = { navigator.navigate(LeagueDetailsRouteDestination(it)) },
         onErrorClear = { viewModel.cleanError() },
         onStandingsQueryChanged = { viewModel.updateStandingsQuery(it) }
     )
@@ -91,7 +85,7 @@ fun StandingsScreen(
     onRefreshClick: () -> Unit,
     onCountryClick: (Country, Boolean) -> Unit,
     onStandingsClick: (Standing) -> Unit,
-    onLeagueClick: (Int, Int) -> Unit,
+    onLeagueClick: (League) -> Unit,
     onErrorClear: () -> Unit,
     onStandingsQueryChanged: (String) -> Unit
 ) {
@@ -110,58 +104,65 @@ fun StandingsScreen(
             loading = uiState.isLoading,
             onRefresh = onRefreshClick
         ) {
-            LazyColumn(
-                Modifier
+            val scrollState = rememberScrollState()
+            Column(
+                modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp),
-                state = fixturesScrollState
+                    .padding(horizontal = 16.dp)
             ) {
-                item {
-                    SimpleSearchBar(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(color = MaterialTheme.colorScheme.surface)
-                            .border(
-                                shape = RoundedCornerShape(16.dp),
-                                border = BorderStroke(
-                                    width = 2.dp,
-                                    color = MaterialTheme.colorScheme.inverseSurface
-                                ),
+                SimpleSearchBar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(color = MaterialTheme.colorScheme.surface)
+                        .border(
+                            shape = RoundedCornerShape(16.dp),
+                            border = BorderStroke(
+                                width = 2.dp,
+                                color = MaterialTheme.colorScheme.inverseSurface
                             ),
-                        label = stringResource(id = R.string.search_standings),
-                        query = uiState.standingsQuery,
-                        onQueryChange = onStandingsQueryChanged,
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.inverseOnSurface
-                            )
-                        }
-                    )
-                    Spacer(modifier = Modifier.size(28.dp))
-                }
+                        ),
+                    label = stringResource(id = R.string.search_standings),
+                    query = uiState.standingsQuery,
+                    onQueryChange = onStandingsQueryChanged,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.inverseOnSurface
+                        )
+                    }
+                )
+                Spacer(modifier = Modifier.size(16.dp))
                 when (uiState) {
                     is StandingsUiState.HasAllData -> {
-                        item {
-                            LazyRow(modifier = modifier, state = countryScrollState) {
-                                items(uiState.countries) { country ->
-                                    CountryWidgetCard(
-                                        country = country,
-                                        isSelected = uiState.selectedCountry == country,
-                                        onCountryClick = onCountryClick
-                                    )
+                        LazyColumn(
+                            Modifier.fillMaxSize(),
+                            state = fixturesScrollState
+                        ) {
+                            item {
+                                LazyRow(modifier = modifier, state = countryScrollState) {
+                                    items(uiState.countries) { country ->
+                                        CountryWidgetCard(
+                                            country = country,
+                                            isSelected = uiState.selectedCountry == country,
+                                            onCountryClick = onCountryClick
+                                        )
+                                    }
                                 }
+                                Spacer(modifier = Modifier.size(16.dp))
                             }
-                            Spacer(modifier = Modifier.size(24.dp))
-                        }
-                        items(items = uiState.standings) {
-                            StandingWithLeagueItem(it, onStandingsClick, onLeagueClick)
+                            items(items = uiState.standings) {
+                                StandingWithLeagueItem(it, onStandingsClick, onLeagueClick)
+                            }
                         }
                     }
                     is StandingsUiState.HasOnlyCountries -> {
-                        item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(scrollState)
+                        ) {
                             LazyRow(modifier = modifier, state = countryScrollState) {
                                 items(uiState.countries) { country ->
                                     CountryWidgetCard(
@@ -179,7 +180,11 @@ fun StandingsScreen(
                         }
                     }
                     is StandingsUiState.NoData -> {
-                        item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(scrollState)
+                        ) {
                             EmptyState(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -213,7 +218,7 @@ fun StandingsScreen(
 fun StandingWithLeagueItem(
     standing: Standing,
     onStandingsClick: (Standing) -> Unit,
-    onLeagueClick: (Int, Int) -> Unit
+    onLeagueClick: (League) -> Unit
 ) {
     Column(
         Modifier
@@ -222,7 +227,7 @@ fun StandingWithLeagueItem(
     ) {
         LeagueHeader(
             league = standing.league,
-            onLeagueClick = { onLeagueClick(standing.leagueId, standing.season) })
+            onLeagueClick = { onLeagueClick(standing.league) })
         StandingCard(standing.standingItems)
     }
 }
@@ -236,14 +241,12 @@ fun StandingCard(standingItems: List<StandingItem>) {
     ) {
         Column(
             modifier = Modifier
-                .background(
-                    color = MaterialTheme.colorScheme.surface
-                )
+                .background(color = MaterialTheme.colorScheme.surface)
                 .padding(16.dp),
         ) {
             StandingHeaderRow()
             Divider(
-                color = MaterialTheme.colorScheme.surface,
+                color = MaterialTheme.colorScheme.inverseSurface,
                 thickness = 2.dp,
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
@@ -252,7 +255,7 @@ fun StandingCard(standingItems: List<StandingItem>) {
             standingItems.take(TEAMS).forEach { standingItem ->
                 StandingElementRow(standingItem)
                 Divider(
-                    color = MaterialTheme.colorScheme.background,
+                    color = MaterialTheme.colorScheme.inverseSurface,
                     thickness = 2.dp,
                     modifier = Modifier
                         .fillMaxWidth(0.5f)

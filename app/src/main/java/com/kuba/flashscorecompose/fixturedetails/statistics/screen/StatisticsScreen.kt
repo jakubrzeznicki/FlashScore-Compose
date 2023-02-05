@@ -59,7 +59,7 @@ fun StatisticsScreen(
     StatisticsList(
         uiState = uiState,
         onRefreshClick = { viewModel.refresh() },
-        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.id)) })
+        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it)) })
 }
 
 @Composable
@@ -82,7 +82,7 @@ fun StatisticsList(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(vertical = 16.dp),
+                .padding(vertical = 8.dp),
             state = scrollState,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -146,26 +146,26 @@ private fun StatisticDetailRow(homeValue: String, awayValue: String, stat: Strin
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp, horizontal = 32.dp),
+            .padding(vertical = 4.dp, horizontal = 32.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         Alignment.CenterVertically
     ) {
         Text(
             text = homeValue,
-            fontSize = 16.sp,
+            fontSize = 14.sp,
             color = MaterialTheme.colorScheme.onSecondary,
             textAlign = TextAlign.Center
         )
         Text(
             text = stat,
             fontWeight = FontWeight.SemiBold,
-            fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.onBackground,
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.inverseOnSurface,
             textAlign = TextAlign.Center
         )
         Text(
             text = awayValue,
-            fontSize = 16.sp,
+            fontSize = 14.sp,
             color = MaterialTheme.colorScheme.onSecondary,
             textAlign = TextAlign.Center
         )

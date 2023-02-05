@@ -153,7 +153,7 @@ class FixturesRepository(
     override suspend fun loadFixturesByDate(date: String): RepositoryResult<List<FixtureItem>> {
         val result = remote.loadFixturesByDate(date)
         return try {
-            val fixtureItems = result.body()?.response?.map { it.toFixtureItem(date = date) }
+            val fixtureItems = result.body()?.response?.map { it.toFixtureItem() }
             withContext(Dispatchers.IO) {
                 saveFixtureItem(fixtureItems.orEmpty())
                 local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
@@ -181,7 +181,7 @@ class FixturesRepository(
         val result = remote.loadFixturesByDate(date)
         return try {
             val fixtureItems =
-                result.body()?.response?.map { it.toFixtureItem(date = date, season = season) }
+                result.body()?.response?.map { it.toFixtureItem(season = season) }
             withContext(Dispatchers.IO) {
                 saveFixtureItem(fixtureItems.orEmpty())
                 local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())

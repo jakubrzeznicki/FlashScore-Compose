@@ -49,6 +49,9 @@ fun Colors.toColorsEntity(): ColorsEntity {
 fun FixtureInfo.toFixtureInfoEntity(teamId: Int?): FixtureInfoEntity {
     return FixtureInfoEntity(
         date = date,
+        formattedDate = formattedDate,
+        shortDate = shortDate,
+        year = year,
         id = id,
         referee = referee,
         status = status.toStatusEntity(),
@@ -71,7 +74,6 @@ fun FixtureItem.toFixtureEntity(): FixtureEntity {
             league.round
         ),
         h2h = h2h,
-        date = date,
         fixture = fixture.toFixtureInfoEntity(homeTeam.id),
         goals = goals.toGoalsEntity(),
         league = league.toLeagueEntity(),

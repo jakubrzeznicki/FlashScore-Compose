@@ -3,7 +3,7 @@ package com.kuba.flashscorecompose.ui.component
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,7 +32,7 @@ import com.kuba.flashscorecompose.data.league.model.League
 fun LeagueHeader(league: League, onLeagueClick: (League) -> Unit) {
     Row(
         modifier = Modifier
-            .padding(top = 8.dp, bottom = 24.dp)
+            .padding(top = 8.dp, bottom = 16.dp)
             .clickable { onLeagueClick(league) }
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -69,11 +69,14 @@ fun LeagueHeader(league: League, onLeagueClick: (League) -> Unit) {
                 )
             }
         }
-        IconButton(modifier = Modifier
-            .padding(horizontal = 12.dp)
-            .size(16.dp), onClick = { }) {
+        IconButton(
+            onClick = { onLeagueClick(league) },
+            modifier = Modifier
+                .padding(horizontal = 12.dp)
+                .size(24.dp)
+        ) {
             Icon(
-                imageVector = Icons.Filled.ArrowForward,
+                imageVector = Icons.Filled.ChevronRight,
                 contentDescription = "",
                 tint = MaterialTheme.colorScheme.onSecondary
             )

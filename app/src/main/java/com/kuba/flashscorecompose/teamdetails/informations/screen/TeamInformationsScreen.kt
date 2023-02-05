@@ -3,6 +3,7 @@ package com.kuba.flashscorecompose.teamdetails.informations.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -14,6 +15,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -24,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
+import coil.size.Size
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.team.information.model.Coach
@@ -40,20 +43,20 @@ import org.koin.core.parameter.parametersOf
  * Created by jrzeznicki on 27/01/2023.
  */
 
-private const val TEAM_INFROMATIONS_KEY = "TEAM_INFROMATIONS_KEY"
+private const val TEAM_INFORMATIONS_KEY = "TEAM_INFORMATIONS_KEY"
 
 @Composable
 fun TeamInformationsScreen(
-    teamId: Int,
+    team: Team,
     leagueId: Int,
     season: Int,
     navigator: DestinationsNavigator,
     viewModel: TeamInformationsViewModel = getViewModel {
-        parametersOf(teamId, leagueId, season)
+        parametersOf(team, leagueId, season)
     }
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    LaunchedEffect(key1 = TEAM_INFROMATIONS_KEY) { viewModel.setup() }
+    LaunchedEffect(key1 = TEAM_INFORMATIONS_KEY) { viewModel.setup() }
     InformationsScreen(uiState = uiState, onRefreshClick = { viewModel.refresh() })
 }
 
@@ -149,7 +152,7 @@ fun InformationsScreen(uiState: TeamInformationsUiState, onRefreshClick: () -> U
 }
 
 @Composable
-fun TeamInfoCard(team: Team, country: Country?) {
+fun TeamInfoCard(team: Team, country: Country) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(16.dp),
@@ -167,7 +170,7 @@ fun TeamInfoCard(team: Team, country: Country?) {
             InfoRowWithImage(
                 labelId = R.string.country,
                 title = team.country,
-                image = country?.flag.orEmpty()
+                image = country.flag
             )
             Spacer(modifier = Modifier.size(16.dp))
             Row(
@@ -307,6 +310,21 @@ fun CoachInfoCard(coach: Coach) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            AsyncImage(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .size(50.dp),
+                model = ImageRequest.Builder(LocalContext.current)
+                    .decoderFactory(SvgDecoder.Factory())
+                    .data(coach.photo)
+                    .size(Size.ORIGINAL)
+                    .crossfade(true)
+                    .build(),
+                placeholder = painterResource(id = R.drawable.ic_close),
+                contentDescription = null,
+                contentScale = ContentScale.Fit
+            )
+            Spacer(modifier = Modifier.size(16.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround,

@@ -3,7 +3,9 @@ package com.kuba.flashscorecompose.teamdetails.informations.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.data.country.CountryDataSource
+import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.team.information.TeamDataSource
+import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.teamdetails.informations.model.TeamInformationsError
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
@@ -13,7 +15,7 @@ import kotlinx.coroutines.launch
  * Created by jrzeznicki on 27/01/2023.
  */
 class TeamInformationsViewModel(
-    private val teamId: Int,
+    private val team: Team,
     private val leagueId: Int,
     private val season: Int,
     private val teamRepository: TeamDataSource,
@@ -30,33 +32,29 @@ class TeamInformationsViewModel(
         observeVenue()
     }
 
+    fun refresh() {
+        refreshTeamInformation()
+        refreshCoach()
+    }
 
     private fun observeTeam() {
         viewModelScope.launch {
-            teamRepository.observeTeam(teamId).collect { team ->
+            teamRepository.observeTeam(team.id).collect { team ->
                 if (team == null) {
                     viewModelState.update { it.copy(error = TeamInformationsError.EmptyTeam) }
                     return@collect
                 }
-                observeCountry(team.country)
+                val country = countryRepository.getCountry(team.country)
                 viewModelState.update {
-                    it.copy(team = team)
+                    it.copy(team = team, country = country ?: Country.EMPTY_COUNTRY)
                 }
-            }
-        }
-    }
-
-    private fun observeCountry(name: String) {
-        viewModelScope.launch {
-            countryRepository.observeCountries(listOf(name)).collect { countries ->
-                viewModelState.update { it.copy(country = countries.firstOrNull()) }
             }
         }
     }
 
     private fun observeCoach() {
         viewModelScope.launch {
-            teamRepository.observeCoach(teamId).collect { coach ->
+            teamRepository.observeCoach(team.id).collect { coach ->
                 viewModelState.update {
                     it.copy(coach = coach)
                 }
@@ -66,7 +64,7 @@ class TeamInformationsViewModel(
 
     private fun observeVenue() {
         viewModelScope.launch {
-            teamRepository.observeVenue(teamId).collect { venue ->
+            teamRepository.observeVenue(team.id).collect { venue ->
                 viewModelState.update {
                     it.copy(venue = venue)
                 }
@@ -74,15 +72,10 @@ class TeamInformationsViewModel(
         }
     }
 
-    fun refresh() {
-        refreshTeamInformation()
-        refreshCoach()
-    }
-
     private fun refreshTeamInformation() {
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            val result = teamRepository.loadTeamInformation(teamId, leagueId, season)
+            val result = teamRepository.loadTeamInformation(team.id, leagueId, season)
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
@@ -98,7 +91,7 @@ class TeamInformationsViewModel(
     private fun refreshCoach() {
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            val result = teamRepository.loadCoach(teamId)
+            val result = teamRepository.loadCoach(team.id)
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)

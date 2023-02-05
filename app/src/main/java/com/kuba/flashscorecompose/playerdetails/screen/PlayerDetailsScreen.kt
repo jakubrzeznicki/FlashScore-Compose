@@ -3,7 +3,9 @@ package com.kuba.flashscorecompose.playerdetails.screen
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -21,6 +23,7 @@ import com.kuba.flashscorecompose.playerdetails.model.PlayerDetailsError
 import com.kuba.flashscorecompose.playerdetails.model.PlayerDetailsUiState
 import com.kuba.flashscorecompose.playerdetails.viewmodel.PlayerDetailsViewModel
 import com.kuba.flashscorecompose.ui.component.*
+import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
@@ -37,8 +40,9 @@ fun PlayerDetailsRoute(
     playerId: Int,
     countryLogo: String,
     team: Team,
+    season: Int,
     navigator: DestinationsNavigator,
-    viewModel: PlayerDetailsViewModel = getViewModel { parametersOf(playerId, countryLogo) }
+    viewModel: PlayerDetailsViewModel = getViewModel { parametersOf(playerId, team, season) }
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -49,6 +53,7 @@ fun PlayerDetailsRoute(
         countryLogo = countryLogo,
         snackbarHostState = snackbarHostState,
         navigator = navigator,
+        onRefreshClick = { viewModel.refresh() },
         onErrorClear = { viewModel.cleanError() },
     )
 }
@@ -62,49 +67,71 @@ fun PlayerDetailsScreen(
     countryLogo: String,
     snackbarHostState: SnackbarHostState,
     navigator: DestinationsNavigator,
+    onRefreshClick: () -> Unit,
     onErrorClear: () -> Unit
 ) {
     Scaffold(
-        topBar = { TopBar(navigator) },
+        topBar = {
+            TopBar(
+                navigator = navigator,
+                title = when (uiState) {
+                    is PlayerDetailsUiState.HasData -> uiState.player.name
+                    else -> ""
+                }
+            )
+        },
         snackbarHost = { FlashScoreSnackbarHost(hostState = snackbarHostState) }
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 48.dp, start = 16.dp, end =  16.dp)
+        val scrollState = rememberScrollState()
+        LoadingContent(
+            modifier = Modifier.padding(top = 36.dp, start = 16.dp, end = 16.dp),
+            empty = when (uiState) {
+                is PlayerDetailsUiState.HasData -> false
+                else -> uiState.isLoading
+            },
+            emptyContent = { FullScreenLoading() },
+            loading = uiState.isLoading,
+            onRefresh = onRefreshClick
         ) {
-            when (uiState) {
-                is PlayerDetailsUiState.HasData -> {
-                    HeaderDetailsWithImage(uiState.player.name, uiState.player.photo)
-                    Text(
-                        modifier = Modifier.padding(bottom = 8.dp),
-                        text = stringResource(id = R.string.info),
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSecondary,
-                    )
-                    TeamInfoCard(uiState.player, countryLogo, team)
-                    Spacer(modifier = Modifier.size(16.dp))
-                    Text(
-                        modifier = Modifier.padding(bottom = 8.dp),
-                        text = stringResource(id = R.string.details),
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSecondary,
-                    )
-                    PlayerDetailsInfoCard(player = uiState.player)
-                }
-                is PlayerDetailsUiState.NoData -> {
-                    EmptyState(
-                        modifier = Modifier.fillMaxWidth(),
-                        textId = R.string.no_team_details
-                    )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
+            ) {
+                when (uiState) {
+                    is PlayerDetailsUiState.HasData -> {
+                        HeaderDetails(uiState.player.photo)
+                        Text(
+                            modifier = Modifier.padding(bottom = 8.dp),
+                            text = stringResource(id = R.string.info),
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onSecondary,
+                        )
+                        TeamInfoCard(uiState.player, countryLogo, team)
+                        Spacer(modifier = Modifier.size(16.dp))
+                        Text(
+                            modifier = Modifier.padding(bottom = 8.dp),
+                            text = stringResource(id = R.string.details),
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onSecondary,
+                        )
+                        PlayerDetailsInfoCard(player = uiState.player)
+                    }
+                    is PlayerDetailsUiState.NoData -> {
+                        EmptyState(
+                            modifier = Modifier.fillMaxWidth(),
+                            textId = R.string.no_player_details
+                        )
+                    }
                 }
             }
         }
     }
     ErrorSnackbar(
         uiState = uiState,
+        onRefreshClick = onRefreshClick,
         onErrorClear = onErrorClear,
         snackbarHostState = snackbarHostState
     )
@@ -112,7 +139,7 @@ fun PlayerDetailsScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TopBar(navigator: DestinationsNavigator) {
+private fun TopBar(navigator: DestinationsNavigator, title: String) {
     CenterAppTopBar(
         modifier = Modifier
             .height(42.dp)
@@ -130,7 +157,13 @@ private fun TopBar(navigator: DestinationsNavigator) {
                 )
             }
         },
-        title = {}
+        title = {
+            Text(
+                text = title,
+                color = MaterialTheme.colorScheme.onSecondary,
+                style = FlashScoreTypography.headlineSmall
+            )
+        }
     )
 }
 
@@ -156,6 +189,7 @@ fun TeamInfoCard(player: Player, countryLogo: String, team: Team) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 SimpleInfoRowWithImage(
+                    modifier = Modifier.weight(10f),
                     labelId = R.string.country,
                     title = player.nationality,
                     image = countryLogo
@@ -168,6 +202,7 @@ fun TeamInfoCard(player: Player, countryLogo: String, team: Team) {
                         .width(1.dp)
                 )
                 SimpleInfoRowWithImage(
+                    modifier = Modifier.weight(10f),
                     labelId = R.string.team,
                     title = team.name,
                     image = team.logo
@@ -275,16 +310,34 @@ fun PlayerDetailsInfoCard(player: Player) {
 @Composable
 private fun ErrorSnackbar(
     uiState: PlayerDetailsUiState,
+    onRefreshClick: () -> Unit,
     onErrorClear: () -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
-    when (uiState.error) {
+    when (val error = uiState.error) {
         is PlayerDetailsError.NoError -> {}
         is PlayerDetailsError.EmptyPlayer -> {
             val errorMessageText = stringResource(id = R.string.empty_player_details)
             val onErrorDismissState by rememberUpdatedState(onErrorClear)
             LaunchedEffect(errorMessageText) {
                 snackbarHostState.showSnackbar(message = errorMessageText)
+                onErrorDismissState()
+            }
+        }
+        is PlayerDetailsError.RemoteError -> {
+            val errorMessageText =
+                remember(uiState) { error.responseStatus.statusMessage.orEmpty() }
+            val retryMessageText = stringResource(id = R.string.retry)
+            val onRefreshPostStates by rememberUpdatedState(onRefreshClick)
+            val onErrorDismissState by rememberUpdatedState(onErrorClear)
+            LaunchedEffect(errorMessageText, retryMessageText) {
+                val snackbarResult = snackbarHostState.showSnackbar(
+                    message = errorMessageText,
+                    actionLabel = retryMessageText
+                )
+                if (snackbarResult == SnackbarResult.ActionPerformed) {
+                    onRefreshPostStates()
+                }
                 onErrorDismissState()
             }
         }

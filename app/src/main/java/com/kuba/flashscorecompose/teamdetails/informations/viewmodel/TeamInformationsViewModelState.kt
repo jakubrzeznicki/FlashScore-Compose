@@ -14,7 +14,7 @@ data class TeamInformationsViewModelState(
     val isLoading: Boolean = false,
     val error: TeamInformationsError = TeamInformationsError.NoError,
     val team: Team? = Team.EMPTY_TEAM,
-    val country: Country? = Country.EMPTY_COUNTRY,
+    val country: Country = Country.EMPTY_COUNTRY,
     val venue: Venue? = Venue.EMPTY_VENUE,
     val coach: Coach? = Coach.EMPTY_COACH
 ) {

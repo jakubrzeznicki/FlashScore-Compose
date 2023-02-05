@@ -1,6 +1,5 @@
 package com.kuba.flashscorecompose.standingsdetails.viewmodel
 
-import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.data.standings.model.StandingItem
 import com.kuba.flashscorecompose.standingsdetails.model.StandingsDetailsError
 import com.kuba.flashscorecompose.standingsdetails.model.StandingsDetailsUiState
@@ -12,7 +11,6 @@ import com.kuba.flashscorecompose.ui.component.chips.FilterChip
 data class StandingsDetailsViewModelState(
     val isLoading: Boolean = false,
     val error: StandingsDetailsError = StandingsDetailsError.NoError,
-    val league: League = League.EMPTY_LEAGUE,
     val standingFilterChip: FilterChip.Standings = FilterChip.Standings.All,
     val standingFilterChips: List<FilterChip.Standings> =
         listOf(FilterChip.Standings.All, FilterChip.Standings.Home, FilterChip.Standings.Away),
@@ -25,7 +23,6 @@ data class StandingsDetailsViewModelState(
             error,
             standingFilterChip,
             standingFilterChips,
-            league,
             filteredStandings
         )
     } else {

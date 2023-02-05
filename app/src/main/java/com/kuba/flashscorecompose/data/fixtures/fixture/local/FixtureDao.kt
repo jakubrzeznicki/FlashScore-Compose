@@ -26,7 +26,7 @@ interface FixtureDao {
     @Query("SELECT * FROM fixture WHERE home_team_id = :teamId OR away_team_id = :teamId AND league_season = :season")
     fun observeFixturesByTeam(teamId: Int, season: Int): Flow<List<FixtureEntity>>
 
-    @Query("SELECT * FROM fixture WHERE date = :date AND league_countryName IN(:countryNames) ORDER BY fixture_info_timestamp")
+    @Query("SELECT * FROM fixture WHERE fixture_info_short_date = :date AND league_countryName IN(:countryNames) ORDER BY fixture_info_timestamp")
     fun observeFixturesByDate(date: String, countryNames: List<String>): Flow<List<FixtureEntity>>
 
     @Query("SELECT * FROM fixture WHERE league_id = :leagueId")

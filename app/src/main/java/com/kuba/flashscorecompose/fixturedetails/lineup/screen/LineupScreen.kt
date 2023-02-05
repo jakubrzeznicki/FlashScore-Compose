@@ -28,6 +28,7 @@ import coil.size.Size
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.fixtures.lineups.model.Lineup
 import com.kuba.flashscorecompose.data.players.model.Player
+import com.kuba.flashscorecompose.destinations.PlayerDetailsRouteDestination
 import com.kuba.flashscorecompose.fixturedetails.lineup.model.LineupUiState
 import com.kuba.flashscorecompose.fixturedetails.lineup.viewmodel.LineupViewModel
 import com.kuba.flashscorecompose.ui.component.EmptyState
@@ -47,6 +48,7 @@ private const val LINEUP_KEYS = "LINEUP_KEY"
 @Composable
 fun LineupScreen(
     fixtureId: Int,
+    season: Int,
     navigator: DestinationsNavigator,
     viewModel: LineupViewModel = getViewModel { parametersOf(fixtureId) }
 ) {
@@ -55,7 +57,16 @@ fun LineupScreen(
     LineupList(
         uiState = uiState,
         onRefreshClick = { viewModel.refresh() },
-        onPlayerClick = { },
+        onPlayerClick = {
+            navigator.navigate(
+                PlayerDetailsRouteDestination(
+                    it.id,
+                    it.team.logo,
+                    it.team,
+                    season
+                )
+            )
+        },
         onLineupClick = { viewModel.changeSelectedLineup(it) }
     )
 }
@@ -80,13 +91,13 @@ private fun LineupList(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(scrollState)
-                .padding(vertical = 16.dp),
+                .padding(vertical = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             when (uiState) {
                 is LineupUiState.HasData -> {
                     FormationInfoRow(uiState.selectedLineup.formation)
-                    LineupButtons(
+                    LineupChips(
                         lineups = uiState.lineups,
                         selectedLineup = uiState.selectedLineup,
                         onLineupClick = onLineupClick
@@ -109,14 +120,14 @@ private fun FormationInfoRow(formation: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 8.dp, bottom = 24.dp),
+            .padding(bottom = 8.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             modifier = Modifier.padding(end = 8.dp),
             text = stringResource(id = R.string.formation),
-            fontSize = 20.sp,
+            fontSize = 16.sp,
             color = MaterialTheme.colorScheme.onSecondary,
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center
@@ -124,14 +135,14 @@ private fun FormationInfoRow(formation: String) {
         Text(
             text = "($formation)",
             fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.onBackground,
+            color = MaterialTheme.colorScheme.inverseOnSurface,
             textAlign = TextAlign.Center
         )
     }
 }
 
 @Composable
-private fun LineupButtons(
+private fun LineupChips(
     lineups: List<Lineup>,
     selectedLineup: Lineup,
     onLineupClick: (Lineup) -> Unit
@@ -172,7 +183,6 @@ private fun LineupChip(
             Text(
                 text = lineup.team.name,
                 fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSecondary,
                 fontWeight = FontWeight.SemiBold,
                 textAlign = TextAlign.Center
             )
@@ -206,7 +216,7 @@ fun LineupFieldImage(lineup: Lineup, onPlayerClick: (Player) -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 16.dp)
+            .padding(top = 8.dp)
             .clip(RoundedCornerShape(32.dp))
             .padding(top = 8.dp),
         contentAlignment = Alignment.TopCenter
@@ -239,7 +249,7 @@ fun PlayersGrid(onPlayerClick: (Player) -> Unit, playersWithPosition: Map<Int, L
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
                 formationLine.forEach { player ->
-                    PlayerItem(player = player, onPlayerClick)
+                    PlayerLineupItem(player = player, onPlayerClick)
                 }
             }
         }
@@ -247,17 +257,17 @@ fun PlayersGrid(onPlayerClick: (Player) -> Unit, playersWithPosition: Map<Int, L
 }
 
 @Composable
-fun PlayerItem(player: Player, onPlayerClick: (Player) -> Unit) {
+fun PlayerLineupItem(player: Player, onPlayerClick: (Player) -> Unit) {
     Column(
         Modifier.clickable { onPlayerClick(player) },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
             modifier = Modifier
-                .background(shape = RoundedCornerShape(24.dp), color = GreenLight)
+                .background(shape = CircleShape, color = GreenLight)
                 .border(
                     width = 1.dp,
-                    shape = RoundedCornerShape(24.dp),
+                    shape = CircleShape,
                     color = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.3f)
                 )
                 .size(32.dp),
@@ -273,16 +283,17 @@ fun PlayerItem(player: Player, onPlayerClick: (Player) -> Unit) {
         Spacer(modifier = Modifier.size(4.dp))
         Box(
             modifier = Modifier
+                .padding(2.dp)
                 .wrapContentWidth()
                 .clip(RoundedCornerShape(4.dp))
                 .background(color = GreenDark),
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = player.name.take(14),
-                modifier = Modifier.padding(3.dp),
+                text = player.name,
+                modifier = Modifier.padding(2.dp),
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 11.sp,
+                fontSize = 10.sp,
                 color = MaterialTheme.colorScheme.onSecondary,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis

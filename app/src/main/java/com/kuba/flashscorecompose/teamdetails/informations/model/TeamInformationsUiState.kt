@@ -16,7 +16,7 @@ interface TeamInformationsUiState {
         override val isLoading: Boolean,
         override val error: TeamInformationsError,
         val team: Team,
-        val country: Country?,
+        val country: Country,
         val venue: Venue,
         val coach: Coach
     ) : TeamInformationsUiState
@@ -24,7 +24,7 @@ interface TeamInformationsUiState {
     data class HasDataWithoutCoach(
         override val isLoading: Boolean,
         override val error: TeamInformationsError,
-        val country: Country?,
+        val country: Country,
         val team: Team,
         val venue: Venue
     ) : TeamInformationsUiState
@@ -33,7 +33,7 @@ interface TeamInformationsUiState {
         override val isLoading: Boolean,
         override val error: TeamInformationsError,
         val team: Team,
-        val country: Country?
+        val country: Country
         ) : TeamInformationsUiState
 
     data class NoData(
