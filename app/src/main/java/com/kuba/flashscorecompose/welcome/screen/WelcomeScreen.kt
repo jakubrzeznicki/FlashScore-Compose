@@ -59,7 +59,7 @@ fun WelcomeRoute(
 
 @Composable
 fun WelcomeScreen(
-    uiState: WelcomeUiState = WelcomeUiState(error = WelcomeError.NoError),
+    uiState: WelcomeUiState,
     onSignInClick: () -> Unit = {},
     onSignUpClick: () -> Unit = {},
     onSignInAsGuest: () -> Unit = {}
@@ -68,7 +68,8 @@ fun WelcomeScreen(
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .wrapContentWidth(align = Alignment.CenterHorizontally)
+            .wrapContentWidth(align = Alignment.CenterHorizontally),
+        color = MaterialTheme.colorScheme.background
     ) {
         val scrollState = rememberScrollState()
         when (uiState.error) {
@@ -219,6 +220,6 @@ fun BasicButton(@StringRes text: Int, modifier: Modifier, action: () -> Unit) {
 @Composable
 fun WelcomeScreenPreview() {
     FlashScoreComposeTheme {
-        WelcomeScreen()
+       // WelcomeScreen()
     }
 }

@@ -1,4 +1,4 @@
-package com.kuba.flashscorecompose.account.model
+package com.kuba.flashscorecompose.data.authentication.model
 
 /**
  * Created by jrzeznicki on 05/02/2023.

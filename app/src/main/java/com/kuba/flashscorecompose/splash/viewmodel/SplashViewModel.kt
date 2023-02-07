@@ -1,18 +1,24 @@
 package com.kuba.flashscorecompose.splash.viewmodel
 
 import android.util.Log
-import com.kuba.flashscorecompose.account.service.AccountService
-import com.kuba.flashscorecompose.account.service.LogService
-import com.kuba.flashscorecompose.main.viewmodel.FlashScoreViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.kuba.flashscorecompose.data.authentication.AuthenticationDataSource
 
 /**
  * Created by jrzeznicki on 06/02/2023.
  */
-class SplashViewModel(private val accountService: AccountService, logService: LogService) :
-    FlashScoreViewModel(logService) {
+class SplashViewModel(private val authenticationRepository: AuthenticationDataSource) :
+    ViewModel() {
+    var authState: Boolean = false
+
+    init {
+        authState = getAuthState().value
+    }
+
 
     fun onAppStart(openHomeScreen: () -> Unit, openWelcomeScreen: () -> Unit) {
-        if (accountService.hasUser) {
+        if (!authState) {
             Log.d("TEST_LOG", "Has user - true")
             openHomeScreen()
         } else {
@@ -20,4 +26,6 @@ class SplashViewModel(private val accountService: AccountService, logService: Lo
             openWelcomeScreen()
         }
     }
+
+    private fun getAuthState() = authenticationRepository.getAuthState(viewModelScope)
 }

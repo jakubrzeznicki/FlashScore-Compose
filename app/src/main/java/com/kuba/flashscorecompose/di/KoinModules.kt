@@ -2,13 +2,13 @@ package com.kuba.flashscorecompose.di
 
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.kuba.flashscorecompose.account.service.AccountService
-import com.kuba.flashscorecompose.account.service.DefaultAccountService
 import com.kuba.flashscorecompose.account.service.DefaultLogService
 import com.kuba.flashscorecompose.account.service.LogService
 import com.kuba.flashscorecompose.countries.viewmodel.CountriesViewModel
 import com.kuba.flashscorecompose.data.LocalRoomStorage
 import com.kuba.flashscorecompose.data.RoomStorage
+import com.kuba.flashscorecompose.data.authentication.AuthenticationDataSource
+import com.kuba.flashscorecompose.data.authentication.AuthenticationRepository
 import com.kuba.flashscorecompose.data.country.CountryDataSource
 import com.kuba.flashscorecompose.data.country.CountryRepository
 import com.kuba.flashscorecompose.data.country.local.CountryLocal
@@ -115,10 +115,10 @@ class KoinModules {
             )
         }
         viewModel { ExploreViewModel(get(), get(), get(), get(), get()) }
-        viewModel { SignInViewModel(get(), get()) }
-        viewModel { SignUpViewModel(get(), get()) }
-        viewModel { WelcomeViewModel(get(), get()) }
-        viewModel { SplashViewModel(get(), get()) }
+        viewModel { SignInViewModel(get()) }
+        viewModel { SignUpViewModel(get()) }
+        viewModel { WelcomeViewModel(get()) }
+        viewModel { SplashViewModel(get()) }
     }
 
     private val componentsModule = module {
@@ -172,6 +172,10 @@ class KoinModules {
             val remote = PlayersRemote(get())
             PlayersRepository(local, remote)
         }
+        single<AuthenticationDataSource> {
+            val auth = Firebase.auth
+            AuthenticationRepository(auth, get())
+        }
     }
 
     private val storageModule = module {
@@ -181,10 +185,6 @@ class KoinModules {
     }
 
     private val serviceModule = module {
-        single<AccountService> {
-            val auth = Firebase.auth
-            DefaultAccountService(auth)
-        }
         single<LogService> {
             DefaultLogService()
         }

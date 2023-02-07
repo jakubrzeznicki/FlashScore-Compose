@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -11,25 +13,24 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.destinations.SignUpRouteDestination
 import com.kuba.flashscorecompose.destinations.WelcomeRouteDestination
-import com.kuba.flashscorecompose.signin.screen.SignInScreen
+import com.kuba.flashscorecompose.signup.model.SignUpError
 import com.kuba.flashscorecompose.signup.model.SignUpUiState
 import com.kuba.flashscorecompose.signup.viewmodel.SignUpViewModel
-import com.kuba.flashscorecompose.ui.component.CenterAppTopBar
-import com.kuba.flashscorecompose.ui.component.EmailField
-import com.kuba.flashscorecompose.ui.component.NormalPasswordField
-import com.kuba.flashscorecompose.ui.component.RepeatPasswordField
+import com.kuba.flashscorecompose.ui.component.*
 import com.kuba.flashscorecompose.ui.theme.FlashScoreComposeTheme
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import org.koin.androidx.compose.getViewModel
 
 /**
@@ -43,14 +44,16 @@ fun SignUpRoute(
     viewModel: SignUpViewModel = getViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val scope = rememberCoroutineScope()
+    val focusManager = LocalFocusManager.current
     SignUpScreen(
         uiState = uiState,
         navigator = navigator,
-        scope = scope,
+        focusManager = focusManager,
         onEmailChange = { viewModel.onEmailChange(it) },
         onPasswordChange = { viewModel.onPasswordChange(it) },
         onRepeatPasswordChange = { viewModel.onRepeatPasswordChange(it) },
+        togglePasswordVisibility = { viewModel.togglePasswordVisibility() },
+        toggleRepeatPasswordVisibility = { viewModel.toggleRepeatPasswordVisibility() },
         onSignUpClick = {
             viewModel.onSignUpClick {
                 navigator.navigate(WelcomeRouteDestination()) {
@@ -68,11 +71,13 @@ fun SignUpRoute(
 private fun SignUpScreen(
     modifier: Modifier = Modifier,
     navigator: DestinationsNavigator? = null,
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
-    uiState: SignUpUiState = SignUpUiState(email = "kermit@gmail.com", "Jurek123", "Jurek123"),
+    uiState: SignUpUiState,
+    focusManager: FocusManager,
     onEmailChange: (String) -> Unit = {},
     onPasswordChange: (String) -> Unit = {},
     onRepeatPasswordChange: (String) -> Unit = {},
+    togglePasswordVisibility: () -> Unit = {},
+    toggleRepeatPasswordVisibility: () -> Unit = {},
     onSignUpClick: () -> Unit = {},
     onErrorClear: () -> Unit = {}
 ) {
@@ -81,34 +86,72 @@ private fun SignUpScreen(
     ) {
         val scrollState = rememberScrollState()
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(top = 48.dp, start = 32.dp, end = 32.dp)
                 .verticalScroll(scrollState)
         ) {
-            val focusRequester = remember { FocusRequester() }
-            EmailField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(4.dp),
+            EmailTextField(
                 value = uiState.email,
-                onNewValue = onEmailChange
+                onValueChange = onEmailChange,
+                errorMessage = when (uiState.error) {
+                    is SignUpError.InvalidEmail -> stringResource(id = uiState.error.messageId)
+                    else -> null
+                },
+                onKeyBoardAction = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }
             )
             Spacer(modifier = Modifier.height(16.dp))
-            NormalPasswordField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(4.dp),
+            PasswordTextField(
+                labelId = R.string.password,
                 value = uiState.password,
-                onNewValue = onPasswordChange
+                onValueChange = onPasswordChange,
+                trailingIcon = {
+                    ToggleTextVisibilityTrailingButton(
+                        onClick = togglePasswordVisibility,
+                        isVisible = uiState.isPasswordVisible
+                    )
+                },
+                errorMessage = when (uiState.error) {
+                    is SignUpError.InvalidPassword -> stringResource(id = uiState.error.messageId)
+                    is SignUpError.NotMatchesPassword -> stringResource(id = uiState.error.messageId)
+                    else -> null
+                },
+                hideText = !uiState.isPasswordVisible,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }
+                )
             )
             Spacer(modifier = Modifier.height(16.dp))
-            RepeatPasswordField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(4.dp),
+            PasswordTextField(
+                labelId = R.string.repeat_password,
                 value = uiState.repeatPassword,
-                onNewValue = onRepeatPasswordChange
+                onValueChange = onRepeatPasswordChange,
+                trailingIcon = {
+                    ToggleTextVisibilityTrailingButton(
+                        onClick = toggleRepeatPasswordVisibility,
+                        isVisible = uiState.isRepeatPasswordVisible
+                    )
+                },
+                errorMessage = when (uiState.error) {
+                    is SignUpError.InvalidPassword -> stringResource(id = uiState.error.messageId)
+                    is SignUpError.NotMatchesPassword -> stringResource(id = uiState.error.messageId)
+                    else -> null
+                },
+                hideText = !uiState.isRepeatPasswordVisible,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
+                        onSignUpClick()
+                    }
+                )
             )
             Spacer(modifier = Modifier.height(16.dp))
             Button(
@@ -126,13 +169,11 @@ private fun SignUpScreen(
                     text = stringResource(id = R.string.create_account)
                 )
             }
+            if (uiState.error is SignUpError.AuthenticationError) {
+                TextFieldError(uiState.error.responseStatus.statusMessage.orEmpty())
+            }
         }
     }
-//    ErrorSnackbar(
-//        snackbarHostState = snackbarHostState,
-//        onDismiss = { snackbarHostState.currentSnackbarData?.dismiss() },
-//        modifier = Modifier.align(Alignment.BottomCenter)
-//    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -158,18 +199,6 @@ private fun TopBar(navigator: DestinationsNavigator?) {
         title = {
         }
     )
-}
-
-@Composable
-fun TextFieldError(textError: String) {
-    Row(modifier = Modifier.fillMaxWidth()) {
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(
-            text = textError,
-            modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.error
-        )
-    }
 }
 
 @Composable
@@ -211,6 +240,6 @@ fun ErrorSnackbar(
 @Composable
 fun SignInScreenPreview() {
     FlashScoreComposeTheme {
-        SignInScreen()
+        //  SignInScreen()
     }
 }

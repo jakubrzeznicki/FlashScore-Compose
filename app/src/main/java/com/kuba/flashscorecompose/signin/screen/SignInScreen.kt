@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -11,25 +13,28 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.destinations.HomeScreenRouteDestination
 import com.kuba.flashscorecompose.destinations.SignInRouteDestination
+import com.kuba.flashscorecompose.signin.model.SignInError
 import com.kuba.flashscorecompose.signin.model.SignInUiState
 import com.kuba.flashscorecompose.signin.viewmodel.SignInViewModel
 import com.kuba.flashscorecompose.ui.component.CenterAppTopBar
-import com.kuba.flashscorecompose.ui.component.EmailField
-import com.kuba.flashscorecompose.ui.component.NormalPasswordField
+import com.kuba.flashscorecompose.ui.component.EmailTextField
+import com.kuba.flashscorecompose.ui.component.PasswordTextField
+import com.kuba.flashscorecompose.ui.component.ToggleTextVisibilityTrailingButton
 import com.kuba.flashscorecompose.ui.theme.FlashScoreComposeTheme
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 
 /**
@@ -43,13 +48,15 @@ fun SignInRoute(
     viewModel: SignInViewModel = getViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val scope = rememberCoroutineScope()
+    val focusManager = LocalFocusManager.current
     SignInScreen(
         uiState = uiState,
         navigator = navigator,
-        scope = scope,
+        focusManager = focusManager,
         onEmailChange = { viewModel.onEmailChange(it) },
         onPasswordChange = { viewModel.onPasswordChange(it) },
+        togglePasswordVisibility = { viewModel.togglePasswordVisibility() },
+        toggleKeepLogged = { viewModel.toggleKeepLogged() },
         onSignInClick = {
             viewModel.onSignInClick {
                 navigator.navigate(HomeScreenRouteDestination()) {
@@ -68,10 +75,12 @@ fun SignInRoute(
 fun SignInScreen(
     modifier: Modifier = Modifier,
     navigator: DestinationsNavigator? = null,
-    scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
-    uiState: SignInUiState = SignInUiState(email = "kermit@gmail.com", "Jurek123"),
+    focusManager: FocusManager,
+    uiState: SignInUiState,
     onEmailChange: (String) -> Unit = {},
     onPasswordChange: (String) -> Unit = {},
+    togglePasswordVisibility: () -> Unit = {},
+    toggleKeepLogged: () -> Unit = {},
     onSignInClick: () -> Unit = {},
     onForgetPasswordClick: () -> Unit = {},
     onErrorClear: () -> Unit = {}
@@ -81,27 +90,46 @@ fun SignInScreen(
     ) {
         val scrollState = rememberScrollState()
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(top = 48.dp, start = 32.dp, end = 32.dp)
                 .verticalScroll(scrollState)
         ) {
-            val focusRequester = remember { FocusRequester() }
-            EmailField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(4.dp),
+            EmailTextField(
                 value = uiState.email,
-                // state = uiState.emailTextFieldState,
-                onNewValue = onEmailChange
+                onValueChange = onEmailChange,
+                errorMessage = when (uiState.error) {
+                    is SignInError.InvalidEmail -> stringResource(id = uiState.error.messageId)
+                    else -> null
+                },
+                onKeyBoardAction = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }
             )
             Spacer(modifier = Modifier.height(16.dp))
-            NormalPasswordField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(4.dp),
+            PasswordTextField(
+                labelId = R.string.password,
                 value = uiState.password,
-                onNewValue = onPasswordChange
+                onValueChange = onPasswordChange,
+                trailingIcon = {
+                    ToggleTextVisibilityTrailingButton(
+                        onClick = togglePasswordVisibility,
+                        isVisible = uiState.isPasswordVisible
+                    )
+                },
+                errorMessage = when (uiState.error) {
+                    is SignInError.BlankPassword -> stringResource(id = uiState.error.messageId)
+                    else -> null
+                },
+                hideText = !uiState.isPasswordVisible,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
+                        onSignInClick()
+                    }
+                )
             )
             Spacer(modifier = Modifier.height(16.dp))
             Button(
@@ -111,25 +139,20 @@ fun SignInScreen(
                     containerColor = MaterialTheme.colorScheme.tertiary,
                     contentColor = MaterialTheme.colorScheme.onTertiary
                 ),
-                shape = RoundedCornerShape(16.dp)
-                // enabled = emailState.isValid && passwordState.isValid
+                shape = RoundedCornerShape(16.dp),
+                //enabled = uiState.
             ) {
                 Text(
                     modifier = Modifier.padding(vertical = 12.dp),
                     text = stringResource(id = R.string.sign_in)
                 )
             }
+            if (uiState.error is SignInError.AuthenticationError) {
+                TextFieldError(uiState.error.responseStatus.statusMessage.orEmpty())
+            }
             Spacer(modifier = Modifier.height(16.dp))
             TextButton(
-                onClick = {
-                    onForgetPasswordClick()
-                    scope.launch {
-//                        snackbarHostState.showSnackbar(
-//                            message = snackbarErrorText,
-//                            actionLabel = snackbarActionLabel
-//                        )
-                    }
-                },
+                onClick = { onForgetPasswordClick() },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Companion.Transparent,
@@ -140,11 +163,6 @@ fun SignInScreen(
             }
         }
     }
-//    ErrorSnackbar(
-//        snackbarHostState = snackbarHostState,
-//        onDismiss = { snackbarHostState.currentSnackbarData?.dismiss() },
-//        modifier = Modifier.align(Alignment.BottomCenter)
-//    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -224,6 +242,6 @@ fun ErrorSnackbar(
 @Composable
 fun SignInScreenPreview() {
     FlashScoreComposeTheme {
-        SignInScreen()
+        //SignInScreen()
     }
 }

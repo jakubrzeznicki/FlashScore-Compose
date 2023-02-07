@@ -110,9 +110,10 @@
     <string name="email_error">Please insert a valid email.</string>
     <string name="sign_in">Sign In</string>
     <string name="login_details">Enter your login details</string>
-    <string name="forgot_password">Forgot password? Click to get recovery email</string>
+    <string name="forgot_password">Forgot password?</string>
     <string name="recovery_email_sent">Check your inbox for the recovery email.</string>
     <string name="empty_password_error">Password cannot be empty.</string>
+    <string name="logged_as_guest">Successfully logged as guest.</string>
 
     <!-- SignUpScreen -->
     <string name="sign_up">Sign Up</string>
