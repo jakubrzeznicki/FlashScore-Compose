@@ -33,6 +33,7 @@ import com.kuba.flashscorecompose.standings.model.StandingsError
 import com.kuba.flashscorecompose.standings.model.StandingsUiState
 import com.kuba.flashscorecompose.standings.viewmodel.StandingsViewModel
 import com.kuba.flashscorecompose.ui.component.*
+import com.kuba.flashscorecompose.ui.component.snackbar.FlashScoreSnackbarHost
 import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator

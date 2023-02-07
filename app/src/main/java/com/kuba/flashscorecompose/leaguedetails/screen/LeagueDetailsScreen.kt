@@ -32,6 +32,7 @@ import com.kuba.flashscorecompose.leaguedetails.model.LeagueDetailsError
 import com.kuba.flashscorecompose.leaguedetails.model.LeagueDetailsUiState
 import com.kuba.flashscorecompose.leaguedetails.viewmodel.LeagueDetailsViewModel
 import com.kuba.flashscorecompose.ui.component.*
+import com.kuba.flashscorecompose.ui.component.snackbar.FlashScoreSnackbarHost
 import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import com.maxkeppeler.sheets.calendar.CalendarDialog

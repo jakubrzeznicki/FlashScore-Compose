@@ -28,14 +28,15 @@ import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.destinations.FixtureDetailsRouteDestination
 import com.kuba.flashscorecompose.destinations.LeagueDetailsRouteDestination
+import com.kuba.flashscorecompose.destinations.WelcomeRouteDestination
 import com.kuba.flashscorecompose.home.model.HomeError
 import com.kuba.flashscorecompose.home.model.HomeUiState
 import com.kuba.flashscorecompose.home.model.LeagueFixturesData
 import com.kuba.flashscorecompose.home.viewmodel.HomeViewModel
 import com.kuba.flashscorecompose.ui.component.*
+import com.kuba.flashscorecompose.ui.component.snackbar.FlashScoreSnackbarHost
 import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
 
@@ -45,7 +46,6 @@ import org.koin.androidx.compose.getViewModel
 
 private const val SETUP_HOME_KEY = "SETUP_HOME_KEY"
 
-@RootNavGraph(start = true)
 @Destination
 @Composable
 fun HomeScreenRoute(
@@ -60,6 +60,7 @@ fun HomeScreenRoute(
     LaunchedEffect(key1 = SETUP_HOME_KEY) { viewModel.setup() }
     HomeScreen(
         uiState = uiState,
+        navigator = navigator,
         onRefreshClick = { viewModel.refresh() },
         onCountryClick = { country, isSelected ->
             viewModel.updateSelectedCountry(country, isSelected)
@@ -79,6 +80,7 @@ fun HomeScreenRoute(
 private fun HomeScreen(
     modifier: Modifier = Modifier,
     uiState: HomeUiState,
+    navigator: DestinationsNavigator,
     onRefreshClick: () -> Unit,
     onCountryClick: (Country, Boolean) -> Unit,
     onFixtureClick: (FixtureItem) -> Unit,
@@ -90,7 +92,7 @@ private fun HomeScreen(
     context: Context
 ) {
     Scaffold(
-        topBar = { TopBar(context = context) },
+        topBar = { TopBar(context = context, navigator = navigator) },
         snackbarHost = { FlashScoreSnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
         LoadingContent(
@@ -183,7 +185,7 @@ private fun HomeScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TopBar(context: Context) {
+private fun TopBar(context: Context, navigator: DestinationsNavigator) {
     AppTopBar(
         modifier = Modifier
             .height(58.dp)
@@ -202,6 +204,7 @@ private fun TopBar(context: Context) {
                     .size(24.dp),
                 onClick = {
                     Toast.makeText(context, R.string.search, Toast.LENGTH_SHORT).show()
+                       navigator.navigate(WelcomeRouteDestination())
                 }) {
                 Icon(
                     imageVector = Icons.Filled.Search,

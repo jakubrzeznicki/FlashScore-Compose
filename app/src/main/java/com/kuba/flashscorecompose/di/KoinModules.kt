@@ -1,5 +1,11 @@
 package com.kuba.flashscorecompose.di
 
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import com.kuba.flashscorecompose.account.service.AccountService
+import com.kuba.flashscorecompose.account.service.DefaultAccountService
+import com.kuba.flashscorecompose.account.service.DefaultLogService
+import com.kuba.flashscorecompose.account.service.LogService
 import com.kuba.flashscorecompose.countries.viewmodel.CountriesViewModel
 import com.kuba.flashscorecompose.data.LocalRoomStorage
 import com.kuba.flashscorecompose.data.RoomStorage
@@ -51,11 +57,15 @@ import com.kuba.flashscorecompose.leagues.viewmodel.LeaguesViewModel
 import com.kuba.flashscorecompose.network.uuidsource.UuidData
 import com.kuba.flashscorecompose.network.uuidsource.UuidSource
 import com.kuba.flashscorecompose.playerdetails.viewmodel.PlayerDetailsViewModel
+import com.kuba.flashscorecompose.signin.viewmodel.SignInViewModel
+import com.kuba.flashscorecompose.signup.viewmodel.SignUpViewModel
+import com.kuba.flashscorecompose.splash.viewmodel.SplashViewModel
 import com.kuba.flashscorecompose.standings.viewmodel.StandingsViewModel
 import com.kuba.flashscorecompose.standingsdetails.viewmodel.StandingsDetailsViewModel
 import com.kuba.flashscorecompose.teamdetails.fixturesteam.viewmodel.FixturesTeamViewModel
 import com.kuba.flashscorecompose.teamdetails.informations.viewmodel.TeamInformationsViewModel
 import com.kuba.flashscorecompose.teamdetails.players.viewmodel.PlayersViewModel
+import com.kuba.flashscorecompose.welcome.viewmodel.WelcomeViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -105,6 +115,10 @@ class KoinModules {
             )
         }
         viewModel { ExploreViewModel(get(), get(), get(), get(), get()) }
+        viewModel { SignInViewModel(get(), get()) }
+        viewModel { SignUpViewModel(get(), get()) }
+        viewModel { WelcomeViewModel(get(), get()) }
+        viewModel { SplashViewModel(get(), get()) }
     }
 
     private val componentsModule = module {
@@ -166,11 +180,22 @@ class KoinModules {
         }
     }
 
+    private val serviceModule = module {
+        single<AccountService> {
+            val auth = Firebase.auth
+            DefaultAccountService(auth)
+        }
+        single<LogService> {
+            DefaultLogService()
+        }
+    }
+
     fun getAllModules() = listOf(
         componentsModule,
         storageModule,
         networkModule,
         repositoryModule,
-        viewModelsModule
+        viewModelsModule,
+        serviceModule
     )
 }

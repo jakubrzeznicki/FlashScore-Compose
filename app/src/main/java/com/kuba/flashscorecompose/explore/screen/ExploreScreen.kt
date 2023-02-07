@@ -31,6 +31,7 @@ import com.kuba.flashscorecompose.explore.viewmodel.ExploreViewModel
 import com.kuba.flashscorecompose.teamdetails.players.model.PlayerCountry
 import com.kuba.flashscorecompose.ui.component.*
 import com.kuba.flashscorecompose.ui.component.chips.FilterChip
+import com.kuba.flashscorecompose.ui.component.snackbar.FlashScoreSnackbarHost
 import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
 import com.kuba.flashscorecompose.ui.theme.RedDark
 import com.kuba.flashscorecompose.ui.theme.YellowCorn

@@ -1,7 +1,6 @@
 package com.kuba.flashscorecompose.ui.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -11,7 +10,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.kuba.flashscorecompose.NavGraphs
-import com.kuba.flashscorecompose.destinations.*
 import com.kuba.flashscorecompose.main.model.NavigationItem
 import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.navigation.popBackStack
@@ -21,15 +19,8 @@ import com.ramcosta.composedestinations.utils.isRouteOnBackStack
 /**
  * Created by jrzeznicki on 23/12/2022.
  */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun BottomNavigationBar(navController: NavHostController) {
-    val items = listOf(
-        NavigationItem.Home,
-        NavigationItem.Explore,
-        NavigationItem.Standings,
-        NavigationItem.Profile
-    )
+fun BottomNavigationBar(tabs: List<NavigationItem>, navController: NavHostController) {
     NavigationBar(
         modifier = Modifier.background(
             color = MaterialTheme.colorScheme.surface
@@ -39,13 +30,13 @@ fun BottomNavigationBar(navController: NavHostController) {
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination
-        items.forEach { item ->
-            val isCurrentDestOnBackStack = navController.isRouteOnBackStack(item.direction)
+        tabs.forEach { tab ->
+            val isCurrentDestOnBackStack = navController.isRouteOnBackStack(tab.direction)
             NavigationBarItem(
                 icon = {
-                    Icon(item.icon, contentDescription = stringResource(id = item.label))
+                    Icon(tab.icon, contentDescription = stringResource(id = tab.label))
                 },
-                label = { Text(text = stringResource(id = item.label)) },
+                label = { Text(text = stringResource(id = tab.label)) },
                 alwaysShowLabel = isCurrentDestOnBackStack,
                 selected = isCurrentDestOnBackStack,
                 colors = NavigationBarItemDefaults.colors(
@@ -57,10 +48,10 @@ fun BottomNavigationBar(navController: NavHostController) {
                 ),
                 onClick = {
                     if (isCurrentDestOnBackStack) {
-                        navController.popBackStack(item.direction, false)
+                        navController.popBackStack(tab.direction, false)
                         return@NavigationBarItem
                     }
-                    navController.navigate(item.direction) {
+                    navController.navigate(tab.direction) {
                         popUpTo(NavGraphs.root) {
                             saveState = true
                         }
