@@ -7,6 +7,7 @@ plugins {
     id 'com.google.devtools.ksp' version '1.7.0-1.0.6'
     id 'com.google.relay'
     id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 }
 
 kotlin {
@@ -165,8 +166,10 @@ dependencies {
 
     //Firebase
     implementation platform('com.google.firebase:firebase-bom:31.2.0')
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-auth-ktx'
+    implementation 'com.google.firebase:firebase-perf-ktx'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

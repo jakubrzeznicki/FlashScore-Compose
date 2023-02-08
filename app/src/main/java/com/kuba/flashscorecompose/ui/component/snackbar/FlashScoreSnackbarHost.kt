@@ -1,4 +1,4 @@
-package com.kuba.flashscorecompose.ui.component
+package com.kuba.flashscorecompose.ui.component.snackbar
 
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.widthIn

@@ -24,6 +24,7 @@ import com.ramcosta.composedestinations.spec.Route
 @Composable
 fun NavigationScaffold(
     startRoute: Route,
+    snackbarHost:  @Composable () -> Unit,
     navController: NavHostController,
     bottomBar: @Composable (Destination) -> Unit,
     content: @Composable (PaddingValues) -> Unit,
@@ -37,6 +38,7 @@ fun NavigationScaffold(
         sheetShape = RoundedCornerShape(16.dp)
     ) {
         Scaffold(
+            snackbarHost = snackbarHost,
             bottomBar = { bottomBar(destination) },
             containerColor = MaterialTheme.colorScheme.background,
             contentColor = MaterialTheme.colorScheme.onSecondary,

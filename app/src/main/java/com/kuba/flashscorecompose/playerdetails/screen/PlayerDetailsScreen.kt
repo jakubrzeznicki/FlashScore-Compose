@@ -23,6 +23,7 @@ import com.kuba.flashscorecompose.playerdetails.model.PlayerDetailsError
 import com.kuba.flashscorecompose.playerdetails.model.PlayerDetailsUiState
 import com.kuba.flashscorecompose.playerdetails.viewmodel.PlayerDetailsViewModel
 import com.kuba.flashscorecompose.ui.component.*
+import com.kuba.flashscorecompose.ui.component.snackbar.FlashScoreSnackbarHost
 import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator

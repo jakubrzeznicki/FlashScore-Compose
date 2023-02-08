@@ -24,9 +24,8 @@ interface ExploreUiState {
             override val exploreQuery: String,
             override val exploreFilterChips: List<FilterChip.Explore>,
             val liveFixtures: List<FixtureItem>,
-            val favoriteFixtures: List<FixtureItem>,
-
-            ) : ExploreUiState
+            val favoriteFixtures: List<FixtureItem>
+        ) : ExploreUiState
 
         data class HasOnlyLiveFixtures(
             override val isLoading: Boolean,
