@@ -16,7 +16,6 @@ class SplashViewModel(private val authenticationRepository: AuthenticationDataSo
         authState = getAuthState().value
     }
 
-
     fun onAppStart(openHomeScreen: () -> Unit, openWelcomeScreen: () -> Unit) {
         if (!authState) {
             Log.d("TEST_LOG", "Has user - true")

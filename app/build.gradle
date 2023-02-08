@@ -84,6 +84,8 @@ android {
 }
 
 dependencies {
+    //DataStore
+    implementation 'androidx.datastore:datastore-preferences:1.0.0'
 
     // Kotlin Coroutines
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1'

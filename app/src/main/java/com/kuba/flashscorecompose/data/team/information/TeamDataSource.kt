@@ -21,6 +21,14 @@ interface TeamDataSource {
     suspend fun saveTeam(team: Team, leagueId: Int, season: Int)
     suspend fun saveVenue(venue: Venue)
     suspend fun saveCoach(coach: Coach)
-    suspend fun loadTeamInformation(teamId: Int, leagueId: Int, season: Int): RepositoryResult<TeamWithVenue>
+    suspend fun saveTeams(teams: List<Team>)
+    suspend fun saveVenues(venues: List<Venue>)
+    suspend fun loadTeamInformation(
+        teamId: Int,
+        leagueId: Int,
+        season: Int
+    ): RepositoryResult<TeamWithVenue>
+
     suspend fun loadCoach(teamId: Int): RepositoryResult<Coach>
+    suspend fun loadTeamsByCountry(countryName: String): RepositoryResult<List<TeamWithVenue>>
 }

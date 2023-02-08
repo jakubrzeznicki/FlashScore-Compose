@@ -55,15 +55,23 @@ class TeamRepository(
     }
 
     override suspend fun saveTeam(team: Team, leagueId: Int, season: Int) {
-        return local.saveTeam(team.toTeamEntity(leagueId, season))
+        local.saveTeam(team.toTeamEntity(leagueId, season))
     }
 
     override suspend fun saveVenue(venue: Venue) {
-        return local.saveVenue(venue.toVenueEntity())
+        local.saveVenue(venue.toVenueEntity())
     }
 
     override suspend fun saveCoach(coach: Coach) {
-        return local.saveCoach(coach.toCoachEntity())
+        local.saveCoach(coach.toCoachEntity())
+    }
+
+    override suspend fun saveTeams(teams: List<Team>) {
+        local.saveTeams(teams.map { it.toTeamEntity() })
+    }
+
+    override suspend fun saveVenues(venues: List<Venue>) {
+        local.saveVenues(venues.map { it.toVenueEntity() })
     }
 
     override suspend fun loadTeamInformation(
@@ -97,6 +105,27 @@ class TeamRepository(
             val coach = result.body()?.response?.firstOrNull()?.toCoach(teamId) ?: Coach.EMPTY_COACH
             saveCoach(coach)
             RepositoryResult.Success(coach)
+        } catch (e: HttpException) {
+            RepositoryResult.Error(ResponseStatus().apply {
+                statusMessage = e.message()
+                internalStatus = e.code()
+            })
+        }
+    }
+
+    override suspend fun loadTeamsByCountry(countryName: String): RepositoryResult<List<TeamWithVenue>> {
+        val result = remote.loadTeamsByCountry(countryName)
+        return try {
+            val teamResponseData = result.body()?.response
+            val teamWIthVenues = teamResponseData?.map {
+                TeamWithVenue(
+                    team = it.team.toTeam(),
+                    venue = it.venue.toVenue(it.team.id)
+                )
+            }
+            saveTeams(teamWIthVenues?.map { it.team }.orEmpty())
+            saveVenues(teamWIthVenues?.map { it.venue }.orEmpty())
+            RepositoryResult.Success(teamWIthVenues)
         } catch (e: HttpException) {
             RepositoryResult.Error(ResponseStatus().apply {
                 statusMessage = e.message()

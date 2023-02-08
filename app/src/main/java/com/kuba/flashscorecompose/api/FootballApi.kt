@@ -53,7 +53,7 @@ interface FootballApi {
     ): Response<StandingsDataDto>
 
     @GET("$API_VERSION/$TEAMS")
-    suspend fun getTeamInformation(@Query(ID) teamId: Int): Response<TeamDataDto>
+    suspend fun getTeams(@QueryMap queryMap: Map<String, String>): Response<TeamDataDto>
 
     @GET("$API_VERSION/$COACHS")
     suspend fun getCoachByTeam(@Query(TEAM) teamId: Int): Response<CoachDataDto>
@@ -64,6 +64,7 @@ interface FootballApi {
     companion object {
         const val API_VERSION = "v3"
         const val COUNTRIES = "countries"
+        const val COUNTRY = "country"
         const val LEAGUES = "leagues"
         const val CODE = "code"
         const val CURRENT = "current"
