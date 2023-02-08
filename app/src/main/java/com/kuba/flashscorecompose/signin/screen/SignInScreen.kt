@@ -28,10 +28,7 @@ import com.kuba.flashscorecompose.destinations.SignInRouteDestination
 import com.kuba.flashscorecompose.signin.model.SignInError
 import com.kuba.flashscorecompose.signin.model.SignInUiState
 import com.kuba.flashscorecompose.signin.viewmodel.SignInViewModel
-import com.kuba.flashscorecompose.ui.component.CenterAppTopBar
-import com.kuba.flashscorecompose.ui.component.EmailTextField
-import com.kuba.flashscorecompose.ui.component.PasswordTextField
-import com.kuba.flashscorecompose.ui.component.ToggleTextVisibilityTrailingButton
+import com.kuba.flashscorecompose.ui.component.*
 import com.kuba.flashscorecompose.ui.theme.FlashScoreComposeTheme
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -48,6 +45,7 @@ fun SignInRoute(
     viewModel: SignInViewModel = getViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val isOnBoardingCompleted by viewModel.isOnBoardingCompleted.collectAsState()
     val focusManager = LocalFocusManager.current
     SignInScreen(
         uiState = uiState,
@@ -58,11 +56,18 @@ fun SignInRoute(
         togglePasswordVisibility = { viewModel.togglePasswordVisibility() },
         toggleKeepLogged = { viewModel.toggleKeepLogged() },
         onSignInClick = {
-            viewModel.onSignInClick {
-                navigator.navigate(HomeScreenRouteDestination()) {
-                    popUpTo(SignInRouteDestination.route) { inclusive = true }
+            viewModel.onSignInClick(
+                openScreen = {
+                    val direction = if (isOnBoardingCompleted) {
+                        HomeScreenRouteDestination
+                    } else {
+                        SignInRouteDestination
+                    }
+                    navigator.navigate(direction) {
+                        popUpTo(SignInRouteDestination.route) { inclusive = true }
+                    }
                 }
-            }
+            )
         },
         onForgetPasswordClick = { viewModel.onForgotPasswordClick() },
         onErrorClear = {},

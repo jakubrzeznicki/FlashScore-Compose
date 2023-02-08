@@ -123,4 +123,16 @@
     <string name="create_account">Create account</string>
     <string name="password_error">Your password should have at least six digits and include one digit, one lower case letter and one upper case letter.</string>
     <string name="password_match_error">Passwords do not match.</string>
+
+    <!-- OnBoardingScreen -->
+    <string name="what_favorite">What is your \nfavorite %s?</string>
+    <string name="on_boarding_subtitle">You can choose more than one</string>
+    <string name="question_count">\u00A0of %d</string>
+    <string name="close">Close</string>
+    <string name="next">Next</string>
+    <string name="done">Done</string>
+    <string name="previous">Previous</string>
+    <string name="skip">Skip</string>
+    <string name="team_on_boarding">team</string>
+    <string name="player">player</string>
 </resources>

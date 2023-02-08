@@ -47,6 +47,10 @@ import com.kuba.flashscorecompose.data.team.information.TeamRepository
 import com.kuba.flashscorecompose.data.team.information.local.TeamLocal
 import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.data.team.information.remote.TeamRemote
+import com.kuba.flashscorecompose.data.user.UserDataSource
+import com.kuba.flashscorecompose.data.user.UserRepository
+import com.kuba.flashscorecompose.data.user.preferences.DefaultUserDataStore
+import com.kuba.flashscorecompose.data.user.preferences.UserDataStore
 import com.kuba.flashscorecompose.explore.viewmodel.ExploreViewModel
 import com.kuba.flashscorecompose.fixturedetails.headtohead.viewmodel.HeadToHeadViewModel
 import com.kuba.flashscorecompose.fixturedetails.lineup.viewmodel.LineupViewModel
@@ -56,6 +60,7 @@ import com.kuba.flashscorecompose.leaguedetails.viewmodel.LeagueDetailsViewModel
 import com.kuba.flashscorecompose.leagues.viewmodel.LeaguesViewModel
 import com.kuba.flashscorecompose.network.uuidsource.UuidData
 import com.kuba.flashscorecompose.network.uuidsource.UuidSource
+import com.kuba.flashscorecompose.onboarding.viewmodel.OnBoardingViewModel
 import com.kuba.flashscorecompose.playerdetails.viewmodel.PlayerDetailsViewModel
 import com.kuba.flashscorecompose.signin.viewmodel.SignInViewModel
 import com.kuba.flashscorecompose.signup.viewmodel.SignUpViewModel
@@ -115,10 +120,11 @@ class KoinModules {
             )
         }
         viewModel { ExploreViewModel(get(), get(), get(), get(), get()) }
-        viewModel { SignInViewModel(get()) }
+        viewModel { SignInViewModel(get(), get()) }
         viewModel { SignUpViewModel(get()) }
         viewModel { WelcomeViewModel(get()) }
         viewModel { SplashViewModel(get()) }
+        viewModel { OnBoardingViewModel(get(), get(), get()) }
     }
 
     private val componentsModule = module {
@@ -176,11 +182,17 @@ class KoinModules {
             val auth = Firebase.auth
             AuthenticationRepository(auth, get())
         }
+        single<UserDataSource> {
+            UserRepository(get())
+        }
     }
 
     private val storageModule = module {
         single<RoomStorage> {
             LocalRoomStorage(androidApplication())
+        }
+        single<UserDataStore> {
+            DefaultUserDataStore(get())
         }
     }
 
@@ -193,6 +205,7 @@ class KoinModules {
     fun getAllModules() = listOf(
         componentsModule,
         storageModule,
+        dataStoreModule,
         networkModule,
         repositoryModule,
         viewModelsModule,

@@ -19,4 +19,6 @@ interface TeamLocalDataSource {
     suspend fun saveTeam(teamEntity: TeamEntity)
     suspend fun saveVenue(venueEntity: VenueEntity)
     suspend fun saveCoach(coachEntity: CoachEntity)
+    suspend fun saveTeams(teamEntities: List<TeamEntity>)
+    suspend fun saveVenues(venueEntities: List<VenueEntity>)
 }

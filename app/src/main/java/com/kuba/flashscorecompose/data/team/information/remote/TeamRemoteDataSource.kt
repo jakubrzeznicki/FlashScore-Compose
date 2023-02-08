@@ -10,4 +10,5 @@ import retrofit2.Response
 interface TeamRemoteDataSource {
     suspend fun loadTeamInformation(teamId: Int): Response<TeamDataDto>
     suspend fun loadCoach(teamId: Int): Response<CoachDataDto>
+    suspend fun loadTeamsByCountry(countryName: String): Response<TeamDataDto>
 }

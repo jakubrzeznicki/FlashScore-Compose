@@ -49,4 +49,12 @@ class TeamLocal(private val roomStorage: RoomStorage) : TeamLocalDataSource {
     override suspend fun saveCoach(coachEntity: CoachEntity) {
         roomStorage.getDatabase().coachDao().upsertCoach(coachEntity)
     }
+
+    override suspend fun saveTeams(teamEntities: List<TeamEntity>) {
+        roomStorage.getDatabase().teamDao().saveTeams(teamEntities)
+    }
+
+    override suspend fun saveVenues(venueEntities: List<VenueEntity>) {
+        roomStorage.getDatabase().venueDao().saveVenue(venueEntities)
+    }
 }
