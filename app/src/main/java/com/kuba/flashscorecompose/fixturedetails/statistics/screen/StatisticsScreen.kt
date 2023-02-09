@@ -63,7 +63,7 @@ fun StatisticsScreen(
 }
 
 @Composable
-fun StatisticsList(
+private fun StatisticsList(
     uiState: StatisticsUiState,
     onRefreshClick: () -> Unit,
     onFixtureClick: (FixtureItem) -> Unit

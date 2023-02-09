@@ -1,7 +1,6 @@
 package com.kuba.flashscorecompose.ui.component
 
 
-import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,6 +21,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.kuba.flashscorecompose.R
+import com.kuba.flashscorecompose.profile.details.model.ProfileItem
 
 /**
  * Created by jrzeznicki on 06/02/2023.
@@ -102,6 +102,64 @@ fun PasswordTextField(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+fun ProfileTextField(
+    modifier: Modifier = Modifier,
+    @StringRes labelId: Int,
+    profileItem: ProfileItem,
+    onValueChange: (ProfileItem) -> Unit,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    hideText: Boolean = false,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default
+) {
+    Column(modifier = modifier) {
+        val visualTransformation =
+            if (hideText) PasswordVisualTransformation() else VisualTransformation.None
+        OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = profileItem.value,
+            onValueChange = {
+                when (profileItem) {
+                    is ProfileItem.Name -> onValueChange(ProfileItem.Name(it))
+                    is ProfileItem.Email -> onValueChange(ProfileItem.Email(it))
+                    is ProfileItem.Phone -> onValueChange(ProfileItem.Phone(it))
+                    is ProfileItem.Address -> onValueChange(ProfileItem.Address(it))
+                }
+            },
+            textStyle = MaterialTheme.typography.bodyMedium,
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                textColor = MaterialTheme.colorScheme.inverseOnSurface,
+                cursorColor = MaterialTheme.colorScheme.inverseOnSurface,
+                focusedBorderColor = MaterialTheme.colorScheme.tertiary,
+                focusedLeadingIconColor = MaterialTheme.colorScheme.tertiary,
+                focusedLabelColor = MaterialTheme.colorScheme.tertiary,
+                focusedTrailingIconColor = MaterialTheme.colorScheme.tertiary,
+                placeholderColor = MaterialTheme.colorScheme.inverseOnSurface,
+                unfocusedLabelColor = MaterialTheme.colorScheme.inverseOnSurface,
+                unfocusedBorderColor = MaterialTheme.colorScheme.inverseOnSurface,
+                unfocusedLeadingIconColor = MaterialTheme.colorScheme.inverseOnSurface,
+                unfocusedTrailingIconColor = MaterialTheme.colorScheme.inverseOnSurface,
+                errorLeadingIconColor = MaterialTheme.colorScheme.error
+            ),
+            label = {
+                Text(
+                    text = stringResource(id = labelId),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            },
+            shape = RoundedCornerShape(16.dp),
+            leadingIcon = leadingIcon,
+            trailingIcon = trailingIcon,
+            visualTransformation = visualTransformation,
+            keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 private fun CustomTextField(
     modifier: Modifier = Modifier,
     @StringRes labelId: Int,
@@ -150,7 +208,6 @@ private fun CustomTextField(
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions
         )
-        Log.d("TEST_LOG", "error message = ${errorMessage.orEmpty()}")
         errorMessage?.let {
             TextFieldError(it)
         }

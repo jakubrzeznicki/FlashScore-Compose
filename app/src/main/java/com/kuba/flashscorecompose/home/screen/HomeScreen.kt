@@ -28,7 +28,7 @@ import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.destinations.FixtureDetailsRouteDestination
 import com.kuba.flashscorecompose.destinations.LeagueDetailsRouteDestination
-import com.kuba.flashscorecompose.destinations.WelcomeRouteDestination
+import com.kuba.flashscorecompose.destinations.SplashScreenDestination
 import com.kuba.flashscorecompose.home.model.HomeError
 import com.kuba.flashscorecompose.home.model.HomeUiState
 import com.kuba.flashscorecompose.home.model.LeagueFixturesData
@@ -188,7 +188,7 @@ private fun HomeScreen(
 private fun TopBar(context: Context, navigator: DestinationsNavigator) {
     AppTopBar(
         modifier = Modifier
-            .height(58.dp)
+            .height(48.dp)
             .padding(vertical = 8.dp),
         title = {
             Text(
@@ -204,7 +204,7 @@ private fun TopBar(context: Context, navigator: DestinationsNavigator) {
                     .size(24.dp),
                 onClick = {
                     Toast.makeText(context, R.string.search, Toast.LENGTH_SHORT).show()
-                       navigator.navigate(WelcomeRouteDestination())
+                       navigator.navigate(SplashScreenDestination())
                 }) {
                 Icon(
                     imageVector = Icons.Filled.Search,

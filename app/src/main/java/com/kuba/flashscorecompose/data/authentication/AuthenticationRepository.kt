@@ -1,8 +1,10 @@
 package com.kuba.flashscorecompose.data.authentication
 
+import android.net.Uri
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.kuba.flashscorecompose.account.service.LogService
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import com.kuba.flashscorecompose.utils.ResponseStatus
@@ -122,6 +124,61 @@ class AuthenticationRepository(
         return try {
             if (firebaseAuth.currentUser!!.isAnonymous) firebaseAuth.currentUser!!.delete()
             firebaseAuth.signOut()
+            RepositoryResult.Success(true)
+        } catch (e: Exception) {
+            logService.logNonFatalCrash(e)
+            RepositoryResult.Error(ResponseStatus().apply {
+                statusMessage = e.message
+                internalStatus = e.hashCode()
+            })
+        }
+    }
+
+    override suspend fun updateName(name: String): RepositoryResult<Boolean> {
+        return try {
+            val request = UserProfileChangeRequest.Builder().setDisplayName(name).build()
+            firebaseAuth.currentUser!!.updateProfile(request).await()
+            RepositoryResult.Success(true)
+        } catch (e: Exception) {
+            logService.logNonFatalCrash(e)
+            RepositoryResult.Error(ResponseStatus().apply {
+                statusMessage = e.message
+                internalStatus = e.hashCode()
+            })
+        }
+    }
+
+    override suspend fun updatePhotoUrl(photoUri: Uri?): RepositoryResult<Boolean> {
+        return try {
+            val request =
+                UserProfileChangeRequest.Builder().setPhotoUri(photoUri ?: Uri.EMPTY).build()
+            firebaseAuth.currentUser!!.updateProfile(request).await()
+            RepositoryResult.Success(true)
+        } catch (e: Exception) {
+            logService.logNonFatalCrash(e)
+            RepositoryResult.Error(ResponseStatus().apply {
+                statusMessage = e.message
+                internalStatus = e.hashCode()
+            })
+        }
+    }
+
+    override suspend fun updateEmail(email: String): RepositoryResult<Boolean> {
+        return try {
+            firebaseAuth.currentUser!!.updateEmail(email).await()
+            RepositoryResult.Success(true)
+        } catch (e: Exception) {
+            logService.logNonFatalCrash(e)
+            RepositoryResult.Error(ResponseStatus().apply {
+                statusMessage = e.message
+                internalStatus = e.hashCode()
+            })
+        }
+    }
+
+    override suspend fun updatePassword(password: String): RepositoryResult<Boolean> {
+        return try {
+            firebaseAuth.currentUser!!.updatePassword(password).await()
             RepositoryResult.Success(true)
         } catch (e: Exception) {
             logService.logNonFatalCrash(e)

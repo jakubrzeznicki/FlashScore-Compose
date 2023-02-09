@@ -7,7 +7,6 @@
     <string name="text_banner">Liverpool UEFA Champion League Celebration</string>
     <string name="text_second_banner">Yesterday, 06.30 PM</string>
     <string name="explore">Explore</string>
-    <string name="profile">Profile</string>
     <string name="refresh">Refresh</string>
     <string name="no_fixtures_and_countries">You don\'t have any fixtures and countries</string>
     <string name="no_fixtures_home">There are no fixtures</string>
@@ -135,4 +134,22 @@
     <string name="skip">Skip</string>
     <string name="team_on_boarding">team</string>
     <string name="player">player</string>
+
+    <!-- ProfileScreen -->
+    <string name="profile">Profile</string>
+    <string name="my_profile">My Profile</string>
+    <string name="activity">Activity</string>
+    <string name="settings">Settings</string>
+    <string name="phone">Phone</string>
+    <string name="photo">photo</string>
+    <string name="successfully_updated_name">Successfully updated name</string>
+    <string name="error_updated_name">There was a problem to update name</string>
+    <string name="successfully_updated_photo">Successfully updated photo</string>
+    <string name="error_updated_photo">There was a problem to update photo</string>
+    <string name="successfully_updated_email">Successfully updated email</string>
+    <string name="error_updated_email">There was a problem to update email</string>
+    <string name="successfully_updated_password">Successfully updated password</string>
+    <string name="error_updated_password">There was a problem to update password</string>
+    <string name="successfully_updated_address">Successfully updated address</string>
+    <string name="successfully_updated_phone">Successfully updated phone</string>
 </resources>

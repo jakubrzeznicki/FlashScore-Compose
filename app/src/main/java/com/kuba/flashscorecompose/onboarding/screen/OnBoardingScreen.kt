@@ -478,7 +478,6 @@ private fun NavigationButtons(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview
 private fun PreviewTeamCard() {
