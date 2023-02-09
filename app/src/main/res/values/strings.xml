@@ -152,4 +152,6 @@
     <string name="error_updated_password">There was a problem to update password</string>
     <string name="successfully_updated_address">Successfully updated address</string>
     <string name="successfully_updated_phone">Successfully updated phone</string>
+    <string name="permission_granted">Permission Granted</string>
+    <string name="permission_denied">Permission Denied</string>
 </resources>

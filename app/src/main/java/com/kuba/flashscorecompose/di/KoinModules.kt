@@ -129,7 +129,7 @@ class KoinModules {
         viewModel { WelcomeViewModel(get(), get()) }
         viewModel { SplashViewModel(get()) }
         viewModel { OnBoardingViewModel(get(), get(), get()) }
-        viewModel { ProfileViewModel(get()) }
+        viewModel { ProfileViewModel(get(), get()) }
         viewModel { (user: User) -> ProfileDetailsViewModel(user, get(), get()) }
     }
 

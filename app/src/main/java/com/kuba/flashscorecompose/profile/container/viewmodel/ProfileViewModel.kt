@@ -37,12 +37,12 @@ class ProfileViewModel(
         }
     }
 
-    private fun updatePhoto(photoUri: Uri?) {
+    fun updatePhoto(photoUri: Uri) {
         viewModelScope.launch {
             when (val result = authenticationRepository.updatePhotoUrl(photoUri = photoUri)) {
                 is RepositoryResult.Success -> {
                     SnackbarManager.showMessage(R.string.successfully_updated_photo)
-                    userRepository.saveUser(viewModelState.value.user)
+                    userRepository.saveUser(viewModelState.value.user.copy(photoUri = photoUri.toString()))
                 }
                 is RepositoryResult.Error -> {
                     val message = result.error.statusMessage?.let { statusMessage ->

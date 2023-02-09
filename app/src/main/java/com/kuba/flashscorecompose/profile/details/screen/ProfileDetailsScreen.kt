@@ -27,7 +27,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuba.flashscorecompose.R
@@ -36,7 +35,6 @@ import com.kuba.flashscorecompose.profile.details.model.ProfileDetailsUiState
 import com.kuba.flashscorecompose.profile.details.model.ProfileItem
 import com.kuba.flashscorecompose.profile.details.viewmodel.ProfileDetailsViewModel
 import com.kuba.flashscorecompose.ui.component.ProfileTextField
-import com.kuba.flashscorecompose.ui.theme.FlashScoreComposeTheme
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -314,20 +312,5 @@ private fun ProfileItemIcon(
                 tint = MaterialTheme.colorScheme.onSecondary
             )
         }
-    }
-}
-
-@Preview
-@Composable
-private fun DefaultProfileItem() {
-    FlashScoreComposeTheme {
-//        ProfileItem(
-//            modifier = Modifier.fillMaxWidth(),
-//            value = "Kermin",
-//            isEditing = true,
-//            onValueChange = {},
-//            onItemClick = {},
-//            onDoneClick = {}
-//        )
     }
 }

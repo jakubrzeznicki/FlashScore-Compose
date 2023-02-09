@@ -1,7 +1,6 @@
 package com.kuba.flashscorecompose.ui.component.snackbar
 
 import android.content.res.Resources
-import android.util.Log
 import androidx.annotation.StringRes
 import com.kuba.flashscorecompose.R
 
@@ -16,10 +15,7 @@ sealed class SnackbarMessage {
         fun SnackbarMessage.toMessage(resources: Resources): String {
             return when (this) {
                 is StringSnackbar -> this.message
-                is ResourceSnackbar -> {
-                    Log.d("TEST_LOG", "this.message-= ${this.message}")
-                    resources.getString(this.message)
-                }
+                is ResourceSnackbar -> resources.getString(this.message)
             }
         }
 
