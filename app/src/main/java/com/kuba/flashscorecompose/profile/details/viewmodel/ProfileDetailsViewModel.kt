@@ -21,8 +21,8 @@ class ProfileDetailsViewModel(
     private val user: User,
     private val userRepository: UserDataSource,
     private val authenticationRepository: AuthenticationDataSource
-) :
-    ViewModel() {
+) : ViewModel() {
+
     private val viewModelState = MutableStateFlow(ProfileDetailsViewModelState())
     val uiState = viewModelState
         .map { it.toUiState() }

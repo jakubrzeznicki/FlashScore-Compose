@@ -66,6 +66,7 @@ import com.kuba.flashscorecompose.onboarding.viewmodel.OnBoardingViewModel
 import com.kuba.flashscorecompose.playerdetails.viewmodel.PlayerDetailsViewModel
 import com.kuba.flashscorecompose.profile.container.viewmodel.ProfileViewModel
 import com.kuba.flashscorecompose.profile.details.viewmodel.ProfileDetailsViewModel
+import com.kuba.flashscorecompose.profile.settings.viewmodel.ProfileSettingsViewModel
 import com.kuba.flashscorecompose.signin.viewmodel.SignInViewModel
 import com.kuba.flashscorecompose.signup.viewmodel.SignUpViewModel
 import com.kuba.flashscorecompose.splash.viewmodel.SplashViewModel
@@ -131,6 +132,7 @@ class KoinModules {
         viewModel { OnBoardingViewModel(get(), get(), get()) }
         viewModel { ProfileViewModel(get(), get()) }
         viewModel { (user: User) -> ProfileDetailsViewModel(user, get(), get()) }
+        viewModel { (userId: String) -> ProfileSettingsViewModel(userId, get(), get()) }
     }
 
     private val componentsModule = module {
