@@ -1,4 +1,4 @@
-package com.kuba.flashscorecompose.data.user.local.preferences
+package com.kuba.flashscorecompose.data.userpreferences.local.preferences
 
 import android.util.Log
 import androidx.datastore.core.DataStore

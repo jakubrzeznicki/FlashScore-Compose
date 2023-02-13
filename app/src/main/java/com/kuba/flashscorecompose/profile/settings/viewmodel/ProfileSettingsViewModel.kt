@@ -5,10 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.authentication.AuthenticationDataSource
 import com.kuba.flashscorecompose.data.user.UserDataSource
+import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
 import com.kuba.flashscorecompose.profile.settings.model.ProfileSettingsItem
 import com.kuba.flashscorecompose.signup.model.SignUpError
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import com.kuba.flashscorecompose.utils.isValidPassword
 import com.kuba.flashscorecompose.utils.passwordMatches
@@ -21,6 +24,7 @@ import kotlinx.coroutines.launch
 class ProfileSettingsViewModel(
     private val userId: String,
     private val userRepository: UserDataSource,
+    private val userPreferencesRepository: UserPreferencesDataSource,
     private val authenticationRepository: AuthenticationDataSource
 ) : ViewModel() {
 
@@ -75,7 +79,7 @@ class ProfileSettingsViewModel(
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             if (!password.isValidPassword()) {
-                SnackbarManager.showMessage(R.string.password_error)
+                SnackbarManager.showMessage(R.string.password_error, SnackbarMessageType.Error)
                 viewModelState.update {
                     it.copy(
                         error = SignUpError.InvalidPassword(R.string.password_error),
@@ -85,7 +89,10 @@ class ProfileSettingsViewModel(
                 return@launch
             }
             if (!password.passwordMatches(uiState.value.repeatPassword)) {
-                SnackbarManager.showMessage(R.string.password_match_error)
+                SnackbarManager.showMessage(
+                    R.string.password_match_error,
+                    SnackbarMessageType.Error
+                )
                 viewModelState.update {
                     it.copy(
                         error = SignUpError.NotMatchesPassword(R.string.password_match_error),
@@ -97,19 +104,16 @@ class ProfileSettingsViewModel(
             viewModelState.update {
                 when (val result = authenticationRepository.updatePassword(password)) {
                     is RepositoryResult.Success -> {
-                        SnackbarMessage.ResourceSnackbar(R.string.successfully_updated_password)
+                        SnackbarMessage.ResourceSnackbar(
+                            R.string.successfully_updated_password,
+                            SnackbarMessageType.Success
+                        )
                         it.copy(isLoading = false)
                     }
                     is RepositoryResult.Error -> {
-                        val message = result.error.statusMessage?.let { statusMessage ->
-                            SnackbarMessage.StringSnackbar(statusMessage)
-                        } ?: SnackbarMessage.ResourceSnackbar(R.string.error_updated_password)
-                        SnackbarManager.showMessage(message)
+                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
                         it.copy(
-                            error = SignUpError.AuthenticationError(
-                                result.error,
-                                R.string.error_updated_password
-                            ),
+                            error = SignUpError.AuthenticationError(result.error),
                             isLoading = false
                         )
                     }
@@ -119,35 +123,51 @@ class ProfileSettingsViewModel(
     }
 
     fun onSignOutClick(restartApp: () -> Unit) {
+        viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            when (val result = authenticationRepository.signOut()) {
-                is RepositoryResult.Success -> {
-                    SnackbarManager.showMessage(R.string.successfully_signed_out)
-                    restartApp()
-                }
-                is RepositoryResult.Error -> {
-                    val message = result.error.statusMessage?.let { statusMessage ->
-                        SnackbarMessage.StringSnackbar(statusMessage)
-                    } ?: SnackbarMessage.ResourceSnackbar(R.string.error_signed_out)
-                    SnackbarManager.showMessage(message)
+            viewModelState.update {
+                when (val result = authenticationRepository.signOut()) {
+                    is RepositoryResult.Success -> {
+                        SnackbarManager.showMessage(
+                            R.string.successfully_signed_out,
+                            SnackbarMessageType.Success
+                        )
+                        restartApp()
+                        it.copy(isLoading = false)
+                    }
+                    is RepositoryResult.Error -> {
+                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        it.copy(
+                            error = SignUpError.AuthenticationError(result.error),
+                            isLoading = false
+                        )
+                    }
                 }
             }
         }
     }
 
     fun onDeleteAccountClick(restartApp: () -> Unit) {
+        viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            when (val result = authenticationRepository.deleteAccount()) {
-                is RepositoryResult.Success -> {
-                    SnackbarManager.showMessage(R.string.account_deleted)
-                    userRepository.deleteUser(userId)
-                    restartApp()
-                }
-                is RepositoryResult.Error -> {
-                    val message = result.error.statusMessage?.let { statusMessage ->
-                        SnackbarMessage.StringSnackbar(statusMessage)
-                    } ?: SnackbarMessage.ResourceSnackbar(R.string.error_account_deleted)
-                    SnackbarManager.showMessage(message)
+            viewModelState.update {
+                when (val result = authenticationRepository.deleteAccount()) {
+                    is RepositoryResult.Success -> {
+                        SnackbarManager.showMessage(
+                            R.string.account_deleted,
+                            SnackbarMessageType.Success
+                        )
+                        userRepository.deleteUser(userId)
+                        restartApp()
+                        it.copy(isLoading = false)
+                    }
+                    is RepositoryResult.Error -> {
+                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        it.copy(
+                            error = SignUpError.AuthenticationError(result.error),
+                            isLoading = false
+                        )
+                    }
                 }
             }
         }
@@ -155,7 +175,7 @@ class ProfileSettingsViewModel(
 
     private fun observeUser() {
         viewModelScope.launch {
-            val currentUserId = userRepository.getCurrentUserId()
+            val currentUserId = userPreferencesRepository.getCurrentUserId()
             userRepository.observeUser(currentUserId).collect { user ->
                 viewModelState.update { it.copy(user = user) }
             }

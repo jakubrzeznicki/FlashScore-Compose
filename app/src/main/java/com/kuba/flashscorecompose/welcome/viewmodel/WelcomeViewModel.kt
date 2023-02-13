@@ -6,10 +6,11 @@ import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.authentication.AuthenticationDataSource
 import com.kuba.flashscorecompose.data.user.UserDataSource
 import com.kuba.flashscorecompose.data.user.model.User
+import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
-import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
-import com.kuba.flashscorecompose.welcome.model.WelcomeError
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -18,7 +19,8 @@ import kotlinx.coroutines.launch
  */
 class WelcomeViewModel(
     private val authenticationRepository: AuthenticationDataSource,
-    private val userRepository: UserDataSource
+    private val userRepository: UserDataSource,
+    private val userPreferencesRepository: UserPreferencesDataSource
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(WelcomeViewModelState())
@@ -27,6 +29,7 @@ class WelcomeViewModel(
         .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
 
     fun createAnonymousAccount(openHomeScreen: () -> Unit, openOnBoardingScreen: () -> Unit) {
+        viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             viewModelState.update {
                 when (val result = authenticationRepository.createAnonymousAccount()) {
@@ -37,28 +40,28 @@ class WelcomeViewModel(
                             id = currentUserId,
                             name = currentUser?.displayName.orEmpty(),
                             email = currentUser?.email.orEmpty(),
-                            password = "",
                             phone = currentUser?.phoneNumber.orEmpty(),
                             isAnonymous = currentUser?.isAnonymous ?: false
                         )
-                        userRepository.saveCurrentUserId(currentUserId, isKeepLogged = false)
                         userRepository.saveUser(user)
-                        SnackbarManager.showMessage(R.string.logged_as_guest) //dać iny kolor tego snackbara
-                        if (userRepository.getIsOnBoardingCompleted()) openHomeScreen() else openOnBoardingScreen()
+                        userPreferencesRepository.saveCurrentUserId(
+                            currentUserId,
+                            isKeepLogged = false
+                        )
+                        SnackbarManager.showMessage(
+                            R.string.logged_as_guest,
+                            SnackbarMessageType.Success
+                        )
+                        if (userPreferencesRepository.getIsOnBoardingCompleted() == true) {
+                            openHomeScreen()
+                        } else {
+                            openOnBoardingScreen()
+                        }
                         it.copy(isLoading = false)
                     }
                     is RepositoryResult.Error -> {
-                        val message = result.error.statusMessage?.let { statusMessage ->
-                            SnackbarMessage.StringSnackbar(statusMessage)
-                        } ?: SnackbarMessage.ResourceSnackbar(R.string.generic_error)
-                        SnackbarManager.showMessage(message)
-                        it.copy(
-                            error = WelcomeError.AuthenticationError(
-                                result.error,
-                                R.string.generic_error
-                            ),
-                            isLoading = false
-                        )
+                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        it.copy(isLoading = false)
                     }
                 }
             }

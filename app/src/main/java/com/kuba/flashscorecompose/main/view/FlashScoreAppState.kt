@@ -3,12 +3,14 @@ package com.kuba.flashscorecompose.main.view
 import android.content.res.Resources
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.kuba.flashscorecompose.main.model.NavigationItem
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessage.Companion.toMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.ramcosta.composedestinations.spec.NavHostEngine
 import com.ramcosta.composedestinations.utils.route
 import kotlinx.coroutines.CoroutineScope
@@ -23,13 +25,15 @@ class FlashScoreAppState(
     val engine: NavHostEngine,
     val navController: NavHostController,
     val snackbarHostState: SnackbarHostState,
-    private val snackbarManager: SnackbarManager,
+    val snackbarMessageType: MutableState<SnackbarMessageType>,
+    val snackbarManager: SnackbarManager,
     private val resources: Resources,
     coroutineScope: CoroutineScope
 ) {
     init {
         coroutineScope.launch {
             snackbarManager.snackbarMessages.filterNotNull().collect { snackbarMessage ->
+                snackbarMessageType.value = snackbarMessage.type
                 val text = snackbarMessage.toMessage(resources)
                 snackbarHostState.showSnackbar(text)
             }

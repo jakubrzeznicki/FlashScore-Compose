@@ -10,6 +10,8 @@ import com.kuba.flashscorecompose.data.standings.StandingsDataSource
 import com.kuba.flashscorecompose.data.standings.model.Standing
 import com.kuba.flashscorecompose.home.viewmodel.HomeViewModel
 import com.kuba.flashscorecompose.standings.model.StandingsError
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import com.kuba.flashscorecompose.utils.containsQuery
 import kotlinx.coroutines.flow.*
@@ -58,10 +60,13 @@ class StandingsViewModel(
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
-                    is RepositoryResult.Error -> it.copy(
-                        isLoading = false,
-                        error = StandingsError.RemoteError(result.error)
-                    )
+                    is RepositoryResult.Error -> {
+                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        it.copy(
+                            isLoading = false,
+                            error = StandingsError.RemoteError(result.error)
+                        )
+                    }
                 }
             }
         }
@@ -87,10 +92,13 @@ class StandingsViewModel(
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
-                    is RepositoryResult.Error -> it.copy(
-                        isLoading = false,
-                        error = StandingsError.RemoteError(result.error)
-                    )
+                    is RepositoryResult.Error -> {
+                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        it.copy(
+                            isLoading = false,
+                            error = StandingsError.RemoteError(result.error)
+                        )
+                    }
                 }
             }
         }
@@ -148,10 +156,6 @@ class StandingsViewModel(
                         &&
                         (it.league.countryName == countryName || it.league.countryCode == countryCode)
             }
-    }
-
-    fun cleanError() {
-        viewModelState.update { it.copy(error = StandingsError.NoError) }
     }
 
     private companion object {

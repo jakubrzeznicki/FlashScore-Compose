@@ -2,7 +2,6 @@ package com.kuba.flashscorecompose.splash.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.data.authentication.AuthenticationDataSource
 
 /**
@@ -10,14 +9,9 @@ import com.kuba.flashscorecompose.data.authentication.AuthenticationDataSource
  */
 class SplashViewModel(private val authenticationRepository: AuthenticationDataSource) :
     ViewModel() {
-    var authState: Boolean = false
-
-    init {
-        authState = getAuthState().value
-    }
 
     fun onAppStart(openHomeScreen: () -> Unit, openWelcomeScreen: () -> Unit) {
-        if (!authState) {
+        if (authenticationRepository.hasUser) {
             Log.d("TEST_LOG", "Has user - true")
             openHomeScreen()
         } else {
@@ -25,6 +19,4 @@ class SplashViewModel(private val authenticationRepository: AuthenticationDataSo
             openWelcomeScreen()
         }
     }
-
-    private fun getAuthState() = authenticationRepository.getAuthState(viewModelScope)
 }

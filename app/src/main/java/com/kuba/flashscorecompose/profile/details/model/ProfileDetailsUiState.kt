@@ -7,6 +7,7 @@ import com.kuba.flashscorecompose.data.user.model.User
  * Created by jrzeznicki on 08/02/2023.
  */
 data class ProfileDetailsUiState(
+    val isLoading: Boolean,
     val user: User,
     val isNameExpanded: Boolean,
     val isEmailExpanded: Boolean,

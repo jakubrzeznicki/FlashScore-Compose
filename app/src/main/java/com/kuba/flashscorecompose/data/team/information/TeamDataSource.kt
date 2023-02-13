@@ -15,6 +15,7 @@ interface TeamDataSource {
     fun observeTeam(teamId: Int): Flow<Team?>
     fun observeVenue(teamId: Int): Flow<Venue?>
     fun observeCoach(teamId: Int): Flow<Coach?>
+    fun observeFavoriteTeams(ids: List<Int>): Flow<List<Team>>
     fun observeTeams(): Flow<List<Team>>
     fun observeVenues(): Flow<List<Venue>>
     fun observeCoaches(): Flow<List<Coach>>

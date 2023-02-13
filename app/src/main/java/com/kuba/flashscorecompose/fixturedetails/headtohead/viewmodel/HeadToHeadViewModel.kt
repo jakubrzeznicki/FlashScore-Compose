@@ -8,6 +8,8 @@ import com.kuba.flashscorecompose.fixturedetails.headtohead.model.FixtureItemSty
 import com.kuba.flashscorecompose.fixturedetails.headtohead.model.HeadToHeadError
 import com.kuba.flashscorecompose.fixturedetails.headtohead.model.ScoreStyle
 import com.kuba.flashscorecompose.fixturedetails.headtohead.model.StyledFixtureItem
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -86,10 +88,13 @@ class HeadToHeadViewModel(
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
-                    is RepositoryResult.Error -> it.copy(
-                        isLoading = false,
-                        error = HeadToHeadError.RemoteError(result.error)
-                    )
+                    is RepositoryResult.Error -> {
+                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        it.copy(
+                            isLoading = false,
+                            error = HeadToHeadError.RemoteError(result.error)
+                        )
+                    }
                 }
             }
         }
@@ -102,10 +107,13 @@ class HeadToHeadViewModel(
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
-                    is RepositoryResult.Error -> it.copy(
-                        isLoading = false,
-                        error = HeadToHeadError.RemoteError(result.error)
-                    )
+                    is RepositoryResult.Error -> {
+                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        it.copy(
+                            isLoading = false,
+                            error = HeadToHeadError.RemoteError(result.error)
+                        )
+                    }
                 }
             }
         }

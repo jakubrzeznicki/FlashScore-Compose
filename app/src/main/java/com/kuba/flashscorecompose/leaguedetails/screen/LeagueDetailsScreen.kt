@@ -28,11 +28,9 @@ import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.destinations.FixtureDetailsRouteDestination
 import com.kuba.flashscorecompose.destinations.StandingsDetailsRouteDestination
-import com.kuba.flashscorecompose.leaguedetails.model.LeagueDetailsError
 import com.kuba.flashscorecompose.leaguedetails.model.LeagueDetailsUiState
 import com.kuba.flashscorecompose.leaguedetails.viewmodel.LeagueDetailsViewModel
 import com.kuba.flashscorecompose.ui.component.*
-import com.kuba.flashscorecompose.ui.component.snackbar.FlashScoreSnackbarHost
 import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
@@ -58,18 +56,15 @@ fun LeagueDetailsRoute(
     viewModel: LeagueDetailsViewModel = getViewModel { parametersOf(league) }
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(key1 = SETUP_LEAGUE_DETAILS_KEY) { viewModel.setup() }
     LeagueDetailsScreen(
         uiState = uiState,
         league = league,
-        snackbarHostState = snackbarHostState,
         navigator = navigator,
         onRefreshClick = { viewModel.refresh() },
         onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it)) },
         onDateClick = { viewModel.changeDate(it) },
-        onStandingsClick = { navigator.navigate(StandingsDetailsRouteDestination(league)) },
-        onErrorClear = { viewModel.cleanError() }
+        onStandingsClick = { navigator.navigate(StandingsDetailsRouteDestination(league)) }
     )
 }
 
@@ -78,13 +73,11 @@ fun LeagueDetailsRoute(
 fun LeagueDetailsScreen(
     uiState: LeagueDetailsUiState,
     league: League,
-    snackbarHostState: SnackbarHostState,
     navigator: DestinationsNavigator,
     onRefreshClick: () -> Unit,
     onFixtureClick: (FixtureItem) -> Unit,
     onDateClick: (LocalDate) -> Unit,
     onStandingsClick: () -> Unit,
-    onErrorClear: () -> Unit
 ) {
     val scrollState = rememberLazyListState()
     Scaffold(
@@ -93,8 +86,7 @@ fun LeagueDetailsScreen(
                 navigator = navigator,
                 league = league
             )
-        },
-        snackbarHost = { FlashScoreSnackbarHost(hostState = snackbarHostState) }
+        }
     ) { paddingValues ->
         LoadingContent(
             modifier = Modifier.padding(paddingValues),
@@ -137,12 +129,6 @@ fun LeagueDetailsScreen(
             }
         }
     }
-    ErrorSnackbar(
-        uiState = uiState,
-        onRefreshClick = onRefreshClick,
-        onErrorClear = onErrorClear,
-        snackbarHostState = snackbarHostState
-    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -280,33 +266,4 @@ private fun TopBar(navigator: DestinationsNavigator, league: League) {
                 )
             }
         })
-}
-
-@Composable
-private fun ErrorSnackbar(
-    uiState: LeagueDetailsUiState,
-    onRefreshClick: () -> Unit,
-    onErrorClear: () -> Unit,
-    snackbarHostState: SnackbarHostState
-) {
-    when (val error = uiState.error) {
-        is LeagueDetailsError.NoError -> {}
-        is LeagueDetailsError.RemoteError -> {
-            val errorMessageText =
-                remember(uiState) { error.responseStatus.statusMessage.orEmpty() }
-            val retryMessageText = stringResource(id = R.string.retry)
-            val onRefreshPostStates by rememberUpdatedState(onRefreshClick)
-            val onErrorDismissState by rememberUpdatedState(onErrorClear)
-            LaunchedEffect(errorMessageText, retryMessageText) {
-                val snackbarResult = snackbarHostState.showSnackbar(
-                    message = errorMessageText,
-                    actionLabel = retryMessageText
-                )
-                if (snackbarResult == SnackbarResult.ActionPerformed) {
-                    onRefreshPostStates()
-                }
-                onErrorDismissState()
-            }
-        }
-    }
 }

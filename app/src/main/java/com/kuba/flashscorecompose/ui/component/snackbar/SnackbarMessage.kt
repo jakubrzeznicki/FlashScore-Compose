@@ -2,14 +2,18 @@ package com.kuba.flashscorecompose.ui.component.snackbar
 
 import android.content.res.Resources
 import androidx.annotation.StringRes
-import com.kuba.flashscorecompose.R
 
 /**
  * Created by jrzeznicki on 05/02/2023.
  */
-sealed class SnackbarMessage {
-    class StringSnackbar(val message: String) : SnackbarMessage()
-    class ResourceSnackbar(@StringRes val message: Int) : SnackbarMessage()
+sealed class SnackbarMessage(open val type: SnackbarMessageType) {
+    class StringSnackbar(
+        val message: String,
+        override val type: SnackbarMessageType
+    ) : SnackbarMessage(type)
+
+    class ResourceSnackbar(@StringRes val message: Int, override val type: SnackbarMessageType) :
+        SnackbarMessage(type)
 
     companion object {
         fun SnackbarMessage.toMessage(resources: Resources): String {
@@ -17,12 +21,6 @@ sealed class SnackbarMessage {
                 is StringSnackbar -> this.message
                 is ResourceSnackbar -> resources.getString(this.message)
             }
-        }
-
-        fun Throwable.toSnackbarMessage(): SnackbarMessage {
-            val message = this.message.orEmpty()
-            return if (message.isNotBlank()) StringSnackbar(message)
-            else ResourceSnackbar(R.string.generic_error)
         }
     }
 }

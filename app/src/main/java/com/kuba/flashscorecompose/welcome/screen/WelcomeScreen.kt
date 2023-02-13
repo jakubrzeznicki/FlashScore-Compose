@@ -1,6 +1,5 @@
 package com.kuba.flashscorecompose.welcome.screen
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -17,7 +16,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuba.flashscorecompose.R
@@ -25,8 +23,8 @@ import com.kuba.flashscorecompose.destinations.HomeScreenRouteDestination
 import com.kuba.flashscorecompose.destinations.OnBoardingRputeDestination
 import com.kuba.flashscorecompose.destinations.SignInRouteDestination
 import com.kuba.flashscorecompose.destinations.SignUpRouteDestination
-import com.kuba.flashscorecompose.ui.theme.FlashScoreComposeTheme
-import com.kuba.flashscorecompose.welcome.model.WelcomeError
+import com.kuba.flashscorecompose.signup.model.SignUpType
+import com.kuba.flashscorecompose.ui.component.CircularProgressBar
 import com.kuba.flashscorecompose.welcome.model.WelcomeUiState
 import com.kuba.flashscorecompose.welcome.viewmodel.WelcomeViewModel
 import com.ramcosta.composedestinations.annotation.Destination
@@ -46,7 +44,7 @@ fun WelcomeRoute(
     WelcomeScreen(
         uiState = uiState,
         onSignInClick = { navigator.navigate(SignInRouteDestination()) },
-        onSignUpClick = { navigator.navigate(SignUpRouteDestination()) },
+        onSignUpClick = { SignUpRouteDestination(SignUpType.New) },
         onSignInAsGuest = {
             viewModel.createAnonymousAccount(
                 openHomeScreen = {
@@ -79,39 +77,28 @@ fun WelcomeScreen(
         color = MaterialTheme.colorScheme.background
     ) {
         val scrollState = rememberScrollState()
-        when (uiState.error) {
-            is WelcomeError.NoError -> {
-                Column(
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 32.dp, end = 32.dp)
+                    .verticalScroll(scrollState),
+            ) {
+                Branding()
+                SignInSignUpButtons(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 32.dp, end = 32.dp)
-                        .verticalScroll(scrollState),
-                ) {
-                    Branding()
-                    SignInSignUpButtons(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 48.dp, bottom = 16.dp),
-                        onSignInClick = onSignInClick,
-                        onSignUpClick = onSignUpClick
-                    )
-                    SignInAsGuest(
-                        onSignInAsGuest = onSignInAsGuest,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
+                        .padding(top = 48.dp, bottom = 16.dp),
+                    onSignInClick = onSignInClick,
+                    onSignUpClick = onSignUpClick
+                )
+                SignInAsGuest(
+                    onSignInAsGuest = onSignInAsGuest,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
-            is WelcomeError.AuthenticationError -> {
-                Text(text = stringResource(R.string.generic_error))
-                BasicButton(
-                    R.string.try_again,
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp, 8.dp)
-                ) { onSignInAsGuest() }
-            }
+            CircularProgressBar(uiState.isLoading)
         }
-
     }
 }
 
@@ -205,28 +192,5 @@ fun SignInAsGuest(
         ) {
             Text(text = stringResource(id = R.string.sign_in_guest))
         }
-    }
-}
-
-@Composable
-fun BasicButton(@StringRes text: Int, modifier: Modifier, action: () -> Unit) {
-    Button(
-        onClick = action,
-        modifier = modifier,
-        colors =
-        ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary
-        )
-    ) {
-        Text(text = stringResource(text), fontSize = 16.sp)
-    }
-}
-
-@Preview
-@Composable
-fun WelcomeScreenPreview() {
-    FlashScoreComposeTheme {
-        // WelcomeScreen()
     }
 }

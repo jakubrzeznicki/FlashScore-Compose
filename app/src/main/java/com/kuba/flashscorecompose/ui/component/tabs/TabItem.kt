@@ -106,9 +106,7 @@ sealed class TabItem(var icon: ImageVector, var titleId: Int, var screen: Compos
     }
 
     sealed interface Profile {
-        class Details(user: User) :
-            TabItem(Icons.Default.Info, R.string.my_profile, { ProfileDetailsScreen(user = user) })
-
+        class Details : TabItem(Icons.Default.Info, R.string.my_profile, { ProfileDetailsScreen() })
         class Activity(user: User) : TabItem(Icons.Default.LocalActivity, R.string.activity, { })
         class Settings(user: User, navigator: DestinationsNavigator) :
             TabItem(

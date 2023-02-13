@@ -7,6 +7,8 @@ import com.kuba.flashscorecompose.data.standings.StandingsDataSource
 import com.kuba.flashscorecompose.data.standings.model.StandingItem
 import com.kuba.flashscorecompose.standingsdetails.model.StandingsDetailsError
 import com.kuba.flashscorecompose.ui.component.chips.FilterChip
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -69,10 +71,13 @@ class StandingsDetailsViewModel(
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
-                    is RepositoryResult.Error -> it.copy(
-                        isLoading = false,
-                        error = StandingsDetailsError.RemoteError(result.error)
-                    )
+                    is RepositoryResult.Error -> {
+                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        it.copy(
+                            isLoading = false,
+                            error = StandingsDetailsError.RemoteError(result.error)
+                        )
+                    }
                 }
             }
         }
@@ -135,10 +140,6 @@ class StandingsDetailsViewModel(
             in 4..5 -> R.color.darkRed
             else -> R.color.black500
         }
-    }
-
-    fun cleanError() {
-        viewModelState.update { it.copy(error = StandingsDetailsError.NoError) }
     }
 
     private companion object {

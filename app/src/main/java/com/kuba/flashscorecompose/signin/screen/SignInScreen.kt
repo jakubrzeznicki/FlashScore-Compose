@@ -20,7 +20,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.destinations.HomeScreenRouteDestination
@@ -29,11 +28,7 @@ import com.kuba.flashscorecompose.destinations.SignInRouteDestination
 import com.kuba.flashscorecompose.signin.model.SignInError
 import com.kuba.flashscorecompose.signin.model.SignInUiState
 import com.kuba.flashscorecompose.signin.viewmodel.SignInViewModel
-import com.kuba.flashscorecompose.ui.component.CenterAppTopBar
-import com.kuba.flashscorecompose.ui.component.EmailTextField
-import com.kuba.flashscorecompose.ui.component.PasswordTextField
-import com.kuba.flashscorecompose.ui.component.ToggleTextVisibilityTrailingButton
-import com.kuba.flashscorecompose.ui.theme.FlashScoreComposeTheme
+import com.kuba.flashscorecompose.ui.component.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
@@ -72,8 +67,7 @@ fun SignInRoute(
                 }
             )
         },
-        onForgetPasswordClick = { viewModel.onForgotPasswordClick() },
-        onErrorClear = {},
+        onForgetPasswordClick = { viewModel.onForgotPasswordClick() }
     )
 }
 
@@ -90,85 +84,86 @@ fun SignInScreen(
     togglePasswordVisibility: () -> Unit = {},
     toggleKeepLogged: () -> Unit = {},
     onSignInClick: () -> Unit = {},
-    onForgetPasswordClick: () -> Unit = {},
-    onErrorClear: () -> Unit = {}
+    onForgetPasswordClick: () -> Unit = {}
 ) {
     Scaffold(
         topBar = { TopBar(navigator = navigator) }
     ) {
         val scrollState = rememberScrollState()
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(top = 48.dp, start = 32.dp, end = 32.dp)
-                .verticalScroll(scrollState)
-        ) {
-            EmailTextField(
-                value = uiState.email,
-                onValueChange = onEmailChange,
-                errorMessage = when (uiState.error) {
-                    is SignInError.InvalidEmail -> stringResource(id = uiState.error.messageId)
-                    else -> null
-                },
-                onKeyBoardAction = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            PasswordTextField(
-                labelId = R.string.password,
-                value = uiState.password,
-                onValueChange = onPasswordChange,
-                trailingIcon = {
-                    ToggleTextVisibilityTrailingButton(
-                        onClick = togglePasswordVisibility,
-                        isVisible = uiState.isPasswordVisible
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(top = 48.dp, start = 32.dp, end = 32.dp)
+                    .verticalScroll(scrollState)
+            ) {
+                EmailTextField(
+                    value = uiState.email,
+                    onValueChange = onEmailChange,
+                    errorMessage = when (uiState.error) {
+                        is SignInError.InvalidEmail -> stringResource(id = uiState.error.messageId)
+                        else -> null
+                    },
+                    onKeyBoardAction = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                PasswordTextField(
+                    labelId = R.string.password,
+                    value = uiState.password,
+                    onValueChange = onPasswordChange,
+                    trailingIcon = {
+                        ToggleTextVisibilityTrailingButton(
+                            onClick = togglePasswordVisibility,
+                            isVisible = uiState.isPasswordVisible
+                        )
+                    },
+                    errorMessage = when (uiState.error) {
+                        is SignInError.BlankPassword -> stringResource(id = uiState.error.messageId)
+                        else -> null
+                    },
+                    hideText = !uiState.isPasswordVisible,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            focusManager.clearFocus()
+                            onSignInClick()
+                        }
                     )
-                },
-                errorMessage = when (uiState.error) {
-                    is SignInError.BlankPassword -> stringResource(id = uiState.error.messageId)
-                    else -> null
-                },
-                hideText = !uiState.isPasswordVisible,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus()
-                        onSignInClick()
-                    }
                 )
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = { onSignInClick() },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.tertiary,
-                    contentColor = MaterialTheme.colorScheme.onTertiary
-                ),
-                shape = RoundedCornerShape(16.dp),
-                //enabled = uiState.
-            ) {
-                Text(
-                    modifier = Modifier.padding(vertical = 12.dp),
-                    text = stringResource(id = R.string.sign_in)
-                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = { onSignInClick() },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.tertiary,
+                        contentColor = MaterialTheme.colorScheme.onTertiary
+                    ),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Text(
+                        modifier = Modifier.padding(vertical = 12.dp),
+                        text = stringResource(id = R.string.sign_in)
+                    )
+                }
+                if (uiState.error is SignInError.AuthenticationError) {
+                    TextFieldError(uiState.error.responseStatus.statusMessage.orEmpty())
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                TextButton(
+                    onClick = { onForgetPasswordClick() },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Companion.Transparent,
+                        contentColor = MaterialTheme.colorScheme.onSecondary
+                    )
+                ) {
+                    Text(text = stringResource(id = R.string.forgot_password))
+                }
             }
-            if (uiState.error is SignInError.AuthenticationError) {
-                TextFieldError(uiState.error.responseStatus.statusMessage.orEmpty())
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            TextButton(
-                onClick = { onForgetPasswordClick() },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Companion.Transparent,
-                    contentColor = MaterialTheme.colorScheme.onSecondary
-                )
-            ) {
-                Text(text = stringResource(id = R.string.forgot_password))
-            }
+            CircularProgressBar(uiState.isLoading)
         }
     }
 }
@@ -193,63 +188,6 @@ private fun TopBar(navigator: DestinationsNavigator?) {
                 )
             }
         },
-        title = {
-        }
+        title = {}
     )
-}
-
-
-@Composable
-fun TextFieldError(textError: String) {
-    Row(modifier = Modifier.fillMaxWidth()) {
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(
-            text = textError,
-            modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.error
-        )
-    }
-}
-
-@Composable
-fun ErrorSnackbar(
-    snackbarHostState: SnackbarHostState,
-    modifier: Modifier = Modifier,
-    onDismiss: () -> Unit = { }
-) {
-    SnackbarHost(
-        hostState = snackbarHostState,
-        snackbar = { data ->
-            Snackbar(
-                modifier = Modifier.padding(16.dp),
-                content = {
-                    Text(
-                        text = data.visuals.message,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                },
-                action = {
-                    data.visuals.actionLabel?.let {
-                        TextButton(onClick = onDismiss) {
-                            Text(
-                                text = stringResource(id = R.string.dismiss),
-                                color = MaterialTheme.colorScheme.inversePrimary
-                            )
-                        }
-                    }
-                }
-            )
-        },
-        modifier = modifier
-            .fillMaxWidth()
-            .wrapContentHeight(Alignment.Bottom)
-    )
-}
-
-@Preview
-@Composable
-fun SignInScreenPreview() {
-    FlashScoreComposeTheme {
-        //SignInScreen()
-    }
 }

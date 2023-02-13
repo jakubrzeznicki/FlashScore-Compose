@@ -1,4 +1,4 @@
-package com.kuba.flashscorecompose.data.user.local.preferences
+package com.kuba.flashscorecompose.data.userpreferences.local.preferences
 
 /**
  * Created by jrzeznicki on 08/02/2023.

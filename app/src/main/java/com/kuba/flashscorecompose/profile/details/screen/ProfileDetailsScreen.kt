@@ -30,13 +30,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuba.flashscorecompose.R
-import com.kuba.flashscorecompose.data.user.model.User
 import com.kuba.flashscorecompose.profile.details.model.ProfileDetailsUiState
 import com.kuba.flashscorecompose.profile.details.model.ProfileItem
 import com.kuba.flashscorecompose.profile.details.viewmodel.ProfileDetailsViewModel
+import com.kuba.flashscorecompose.ui.component.CircularProgressBar
 import com.kuba.flashscorecompose.ui.component.ProfileTextField
 import org.koin.androidx.compose.getViewModel
-import org.koin.core.parameter.parametersOf
 
 /**
  * Created by jrzeznicki on 08/02/2023.
@@ -45,10 +44,7 @@ import org.koin.core.parameter.parametersOf
 private const val PROFILE_DETAILS_KEY = "PROFILE_DETAILS_KEY"
 
 @Composable
-fun ProfileDetailsScreen(
-    user: User,
-    viewModel: ProfileDetailsViewModel = getViewModel { parametersOf(user) }
-) {
+fun ProfileDetailsScreen(viewModel: ProfileDetailsViewModel = getViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val focusManager = LocalFocusManager.current
     LaunchedEffect(key1 = PROFILE_DETAILS_KEY) { viewModel.setup() }
@@ -70,56 +66,59 @@ private fun DetailsScreen(
     clearFocus: () -> Unit
 ) {
     val scrollState = rememberScrollState()
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(vertical = 16.dp)
-    ) {
-        ProfileItemWithDivider(
-            isExpanded = uiState.isNameExpanded,
-            icon = Icons.Filled.Person,
-            label = R.string.name,
-            profileItem = ProfileItem.Name(value = uiState.user.name),
-            keyboardType = KeyboardType.Text,
-            onValueChange = onValueChange,
-            onItemClick = onItemClick,
-            onDoneClick = onDoneClick,
-            clearFocus = clearFocus
-        )
-        ProfileItemWithDivider(
-            isExpanded = uiState.isEmailExpanded,
-            icon = Icons.Filled.Mail,
-            label = R.string.email,
-            profileItem = ProfileItem.Email(value = uiState.user.email),
-            keyboardType = KeyboardType.Email,
-            onValueChange = onValueChange,
-            onItemClick = onItemClick,
-            onDoneClick = onDoneClick,
-            clearFocus = clearFocus
-        )
-        ProfileItemWithDivider(
-            isExpanded = uiState.isPhoneExpanded,
-            icon = Icons.Filled.Call,
-            label = R.string.phone,
-            profileItem = ProfileItem.Phone(value = uiState.user.phone),
-            keyboardType = KeyboardType.Phone,
-            onValueChange = onValueChange,
-            onItemClick = onItemClick,
-            onDoneClick = onDoneClick,
-            clearFocus = clearFocus
-        )
-        ProfileItemWithDivider(
-            isExpanded = uiState.isAddressExpanded,
-            icon = Icons.Filled.LocationOn,
-            label = R.string.address,
-            profileItem = ProfileItem.Address(value = uiState.user.address),
-            keyboardType = KeyboardType.Text,
-            onValueChange = onValueChange,
-            onItemClick = onItemClick,
-            onDoneClick = onDoneClick,
-            clearFocus = clearFocus
-        )
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .padding(vertical = 16.dp)
+        ) {
+            ProfileItemWithDivider(
+                isExpanded = uiState.isNameExpanded,
+                icon = Icons.Filled.Person,
+                label = R.string.name,
+                profileItem = ProfileItem.Name(value = uiState.user.name),
+                keyboardType = KeyboardType.Text,
+                onValueChange = onValueChange,
+                onItemClick = onItemClick,
+                onDoneClick = onDoneClick,
+                clearFocus = clearFocus
+            )
+            ProfileItemWithDivider(
+                isExpanded = uiState.isEmailExpanded,
+                icon = Icons.Filled.Mail,
+                label = R.string.email,
+                profileItem = ProfileItem.Email(value = uiState.user.email),
+                keyboardType = KeyboardType.Email,
+                onValueChange = onValueChange,
+                onItemClick = onItemClick,
+                onDoneClick = onDoneClick,
+                clearFocus = clearFocus
+            )
+            ProfileItemWithDivider(
+                isExpanded = uiState.isPhoneExpanded,
+                icon = Icons.Filled.Call,
+                label = R.string.phone,
+                profileItem = ProfileItem.Phone(value = uiState.user.phone),
+                keyboardType = KeyboardType.Phone,
+                onValueChange = onValueChange,
+                onItemClick = onItemClick,
+                onDoneClick = onDoneClick,
+                clearFocus = clearFocus
+            )
+            ProfileItemWithDivider(
+                isExpanded = uiState.isAddressExpanded,
+                icon = Icons.Filled.LocationOn,
+                label = R.string.address,
+                profileItem = ProfileItem.Address(value = uiState.user.address),
+                keyboardType = KeyboardType.Text,
+                onValueChange = onValueChange,
+                onItemClick = onItemClick,
+                onDoneClick = onDoneClick,
+                clearFocus = clearFocus
+            )
+        }
+        CircularProgressBar(uiState.isLoading)
     }
 }
 

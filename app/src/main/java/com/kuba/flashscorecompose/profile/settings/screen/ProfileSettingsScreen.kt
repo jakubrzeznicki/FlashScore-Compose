@@ -40,6 +40,8 @@ import com.kuba.flashscorecompose.profile.settings.model.ProfileSettingsItem
 import com.kuba.flashscorecompose.profile.settings.model.ProfileSettingsUiState
 import com.kuba.flashscorecompose.profile.settings.viewmodel.ProfileSettingsViewModel
 import com.kuba.flashscorecompose.signup.model.SignUpError
+import com.kuba.flashscorecompose.signup.model.SignUpType
+import com.kuba.flashscorecompose.ui.component.CircularProgressBar
 import com.kuba.flashscorecompose.ui.component.PasswordTextField
 import com.kuba.flashscorecompose.ui.component.TextFieldError
 import com.kuba.flashscorecompose.ui.component.ToggleTextVisibilityTrailingButton
@@ -71,7 +73,7 @@ fun ProfileSettingsScreen(
         toggleRepeatPasswordVisibility = { viewModel.toggleRepeatPasswordVisibility() },
         onCardClick = { viewModel.onCardClick(it) },
         onSignInClick = { navigator.navigate(SignInRouteDestination()) },
-        onSignUpClick = { navigator.navigate(SignUpRouteDestination()) },
+        onSignUpClick = { navigator.navigate(SignUpRouteDestination(SignUpType.Anonymous)) },
         onDeleteAccountClick = {
             viewModel.onDeleteAccountClick {
                 navigator.navigate(WelcomeRouteDestination()) {
@@ -110,120 +112,123 @@ private fun SettingsScreen(
     showSignOutDialog: (Boolean) -> Unit
 ) {
     val scrollState = rememberScrollState()
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(vertical = 16.dp)
-    ) {
-        Card(
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-            shape = RoundedCornerShape(16.dp),
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .padding(vertical = 16.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .background(color = MaterialTheme.colorScheme.surface)
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+            Card(
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                shape = RoundedCornerShape(16.dp),
             ) {
-                if (uiState.user.isAnonymous) {
-                    OutlinedButton(
-                        onClick = onSignInClick,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp, bottom = 8.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.8f),
-                            contentColor = MaterialTheme.colorScheme.onSecondary
+                Column(
+                    modifier = Modifier
+                        .background(color = MaterialTheme.colorScheme.surface)
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if (uiState.user.isAnonymous) {
+                        OutlinedButton(
+                            onClick = onSignInClick,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp, bottom = 8.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.8f),
+                                contentColor = MaterialTheme.colorScheme.onSecondary
+                            )
+                        ) {
+                            Text(text = stringResource(id = R.string.sign_in))
+                        }
+                        OutlinedButton(
+                            onClick = onSignUpClick,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp, bottom = 16.dp),
+                            border = BorderStroke(
+                                width = 2.dp,
+                                color = MaterialTheme.colorScheme.tertiary
+                            ),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = Color.Transparent,
+                                contentColor = MaterialTheme.colorScheme.onSecondary
+                            )
+                        ) {
+                            Text(text = stringResource(id = R.string.create_account))
+                        }
+                    } else {
+                        PasswordCard(
+                            uiState = uiState,
+                            focusManager = focusManager,
+                            onPasswordChange = onPasswordChange,
+                            onRepeatPasswordChange = onRepeatPasswordChange,
+                            togglePasswordVisibility = togglePasswordVisibility,
+                            toggleRepeatPasswordVisibility = toggleRepeatPasswordVisibility,
+                            onCardClick = onCardClick,
+                            onSaveClick = onSavePasswordClick
                         )
-                    ) {
-                        Text(text = stringResource(id = R.string.sign_in))
-                    }
-                    OutlinedButton(
-                        onClick = onSignUpClick,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp, bottom = 16.dp),
-                        border = BorderStroke(
-                            width = 2.dp,
-                            color = MaterialTheme.colorScheme.tertiary
-                        ),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = Color.Transparent,
-                            contentColor = MaterialTheme.colorScheme.onSecondary
+                        Divider(
+                            color = MaterialTheme.colorScheme.inverseSurface,
+                            thickness = 2.dp,
+                            modifier = Modifier
+                                .fillMaxWidth(0.8f)
+                                .align(Alignment.CenterHorizontally)
                         )
-                    ) {
-                        Text(text = stringResource(id = R.string.create_account))
-                    }
-                } else {
-                    PasswordCard(
-                        uiState = uiState,
-                        focusManager = focusManager,
-                        onPasswordChange = onPasswordChange,
-                        onRepeatPasswordChange = onRepeatPasswordChange,
-                        togglePasswordVisibility = togglePasswordVisibility,
-                        toggleRepeatPasswordVisibility = toggleRepeatPasswordVisibility,
-                        onCardClick = onCardClick,
-                        onSaveClick = onSavePasswordClick
-                    )
-                    Divider(
-                        color = MaterialTheme.colorScheme.inverseSurface,
-                        thickness = 2.dp,
-                        modifier = Modifier
-                            .fillMaxWidth(0.8f)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    OutlinedButton(
-                        onClick = { showSignOutDialog(true) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp, bottom = 8.dp),
-                    ) {
-                        Text(text = stringResource(id = R.string.sign_out))
-                    }
-                    if (uiState.shouldShowConfirmSignOutDialog) {
-                        InformationDialog(
-                            titleId = R.string.sign_out_title,
-                            textId = R.string.sign_out_description,
-                            confirmButtonTextId = R.string.sign_out,
-                            confirmButtonAction = onSignOutClick,
-                            dismissAction = showSignOutDialog
+                        OutlinedButton(
+                            onClick = { showSignOutDialog(true) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 16.dp, bottom = 8.dp),
+                        ) {
+                            Text(text = stringResource(id = R.string.sign_out))
+                        }
+                        if (uiState.shouldShowConfirmSignOutDialog) {
+                            InformationDialog(
+                                titleId = R.string.sign_out_title,
+                                textId = R.string.sign_out_description,
+                                confirmButtonTextId = R.string.sign_out,
+                                confirmButtonAction = onSignOutClick,
+                                dismissAction = showSignOutDialog
+                            )
+                        }
+                        Spacer(modifier = Modifier.size(8.dp))
+                        Divider(
+                            color = MaterialTheme.colorScheme.inverseSurface,
+                            thickness = 2.dp,
+                            modifier = Modifier
+                                .fillMaxWidth(0.8f)
+                                .align(Alignment.CenterHorizontally)
                         )
-                    }
-                    Spacer(modifier = Modifier.size(8.dp))
-                    Divider(
-                        color = MaterialTheme.colorScheme.inverseSurface,
-                        thickness = 2.dp,
-                        modifier = Modifier
-                            .fillMaxWidth(0.8f)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    OutlinedButton(
-                        onClick = { showDeleteAccountDialog(true) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp, bottom = 8.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = MaterialTheme.colorScheme.error.copy(alpha = 0.7f),
-                            contentColor = MaterialTheme.colorScheme.onSecondary
-                        )
-                    ) {
-                        Text(text = stringResource(id = R.string.delete_account))
-                    }
-                    if (uiState.shouldShowConfirmDeleteAccountDialog) {
-                        InformationDialog(
-                            titleId = R.string.delete_account_title,
-                            textId = R.string.delete_account_description,
-                            confirmButtonTextId = R.string.delete_account,
-                            confirmButtonAction = onDeleteAccountClick,
-                            dismissAction = showDeleteAccountDialog
-                        )
+                        OutlinedButton(
+                            onClick = { showDeleteAccountDialog(true) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 16.dp, bottom = 8.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = MaterialTheme.colorScheme.error.copy(alpha = 0.7f),
+                                contentColor = MaterialTheme.colorScheme.onSecondary
+                            )
+                        ) {
+                            Text(text = stringResource(id = R.string.delete_account))
+                        }
+                        if (uiState.shouldShowConfirmDeleteAccountDialog) {
+                            InformationDialog(
+                                titleId = R.string.delete_account_title,
+                                textId = R.string.delete_account_description,
+                                confirmButtonTextId = R.string.delete_account,
+                                confirmButtonAction = onDeleteAccountClick,
+                                dismissAction = showDeleteAccountDialog
+                            )
+                        }
                     }
                 }
             }
         }
+        CircularProgressBar(uiState.isLoading)
     }
 }
 
@@ -279,7 +284,7 @@ fun PasswordCard(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             PasswordTextField(
-                labelId = R.string.password,
+                labelId = R.string.new_password,
                 value = uiState.password,
                 onValueChange = onPasswordChange,
                 trailingIcon = {
@@ -304,7 +309,7 @@ fun PasswordCard(
             )
             Spacer(modifier = Modifier.height(8.dp))
             PasswordTextField(
-                labelId = R.string.repeat_password,
+                labelId = R.string.repeat_new_password,
                 value = uiState.repeatPassword,
                 onValueChange = onRepeatPasswordChange,
                 trailingIcon = {

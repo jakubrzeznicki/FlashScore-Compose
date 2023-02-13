@@ -1,15 +1,15 @@
 package com.kuba.flashscorecompose.profile.details.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.authentication.AuthenticationDataSource
 import com.kuba.flashscorecompose.data.user.UserDataSource
-import com.kuba.flashscorecompose.data.user.model.User
+import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
 import com.kuba.flashscorecompose.profile.details.model.ProfileItem
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
-import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -18,8 +18,8 @@ import kotlinx.coroutines.launch
  * Created by jrzeznicki on 08/02/2023.
  */
 class ProfileDetailsViewModel(
-    private val user: User,
     private val userRepository: UserDataSource,
+    private val userPreferencesRepository: UserPreferencesDataSource,
     private val authenticationRepository: AuthenticationDataSource
 ) : ViewModel() {
 
@@ -47,8 +47,8 @@ class ProfileDetailsViewModel(
         when (profileItem) {
             is ProfileItem.Name -> updateName(profileItem.value)
             is ProfileItem.Email -> updateEmail(profileItem.value)
-            is ProfileItem.Phone -> updatePhone(profileItem.value)
-            is ProfileItem.Address -> updateAddress(profileItem.value)
+            is ProfileItem.Phone -> updatePhone()
+            is ProfileItem.Address -> updateAddress()
         }
     }
 
@@ -64,58 +64,73 @@ class ProfileDetailsViewModel(
     }
 
     private fun updateName(name: String) {
+        viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            when (val result = authenticationRepository.updateName(name = name)) {
-                is RepositoryResult.Success -> {
-                    SnackbarManager.showMessage(R.string.successfully_updated_name)
-                    userRepository.saveUser(viewModelState.value.user) // zmienic na update kazdego pola osobno
-                }
-                is RepositoryResult.Error -> {
-                    val message = result.error.statusMessage?.let { statusMessage ->
-                        SnackbarMessage.StringSnackbar(statusMessage)
-                    } ?: SnackbarMessage.ResourceSnackbar(R.string.error_updated_name)
-                    SnackbarManager.showMessage(message)
+            viewModelState.update {
+                when (val result = authenticationRepository.updateName(name = name)) {
+                    is RepositoryResult.Success -> {
+                        SnackbarManager.showMessage(
+                            R.string.successfully_updated_name,
+                            SnackbarMessageType.Success
+                        )
+                        userRepository.saveUser(viewModelState.value.user)
+                        it.copy(isLoading = false)
+                    }
+                    is RepositoryResult.Error -> {
+                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        it.copy(isLoading = false)
+                    }
                 }
             }
         }
     }
 
     private fun updateEmail(email: String) {
+        viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            when (val result = authenticationRepository.updateEmail(email = email)) {
-                is RepositoryResult.Success -> {
-                    SnackbarManager.showMessage(R.string.successfully_updated_email)
-                    userRepository.saveUser(viewModelState.value.user) // zmienic na update kazdego pola osobno
-                }
-                is RepositoryResult.Error -> {
-                    val message = result.error.statusMessage?.let { statusMessage ->
-                        SnackbarMessage.StringSnackbar(statusMessage)
-                    } ?: SnackbarMessage.ResourceSnackbar(R.string.error_updated_email)
-                    SnackbarManager.showMessage(message)
+            viewModelState.update {
+                when (val result = authenticationRepository.updateEmail(email = email)) {
+                    is RepositoryResult.Success -> {
+                        SnackbarManager.showMessage(
+                            R.string.successfully_updated_email,
+                            SnackbarMessageType.Success
+                        )
+                        userRepository.saveUser(viewModelState.value.user)
+                        it.copy(isLoading = false)
+                    }
+                    is RepositoryResult.Error -> {
+                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        it.copy(isLoading = false)
+                    }
                 }
             }
         }
     }
 
-    private fun updateAddress(address: String) {
+    private fun updateAddress() {
         viewModelScope.launch {
-            SnackbarManager.showMessage(R.string.successfully_updated_address)
-            userRepository.saveUser(viewModelState.value.user) // zmienic na update kazdego pola osobno
+            SnackbarManager.showMessage(
+                R.string.successfully_updated_address,
+                SnackbarMessageType.Success
+            )
+            userRepository.saveUser(viewModelState.value.user)
         }
     }
 
-    private fun updatePhone(phone: String) {
+    private fun updatePhone() {
         viewModelScope.launch {
-            SnackbarManager.showMessage(R.string.successfully_updated_phone)
-            userRepository.saveUser(viewModelState.value.user) // zmienic na update kazdego pola osobno
+            SnackbarManager.showMessage(
+                R.string.successfully_updated_phone,
+                SnackbarMessageType.Success
+            )
+            userRepository.saveUser(viewModelState.value.user)
         }
     }
 
     private fun observeUser() {
         viewModelScope.launch {
-            val currentUserId = userRepository.getCurrentUserId()
+            val currentUserId = userPreferencesRepository.getCurrentUserId()
             userRepository.observeUser(currentUserId).collect { user ->
-                Log.d("TEST_LOG", "observe user - $user")
                 viewModelState.update { it.copy(user = user) }
             }
         }

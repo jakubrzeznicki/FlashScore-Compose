@@ -6,8 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.authentication.AuthenticationDataSource
 import com.kuba.flashscorecompose.data.user.UserDataSource
+import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
-import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -17,6 +19,7 @@ import kotlinx.coroutines.launch
  */
 class ProfileViewModel(
     private val userRepository: UserDataSource,
+    private val userPreferencesRepository: UserPreferencesDataSource,
     private val authenticationRepository: AuthenticationDataSource
 ) : ViewModel() {
     private val viewModelState = MutableStateFlow(ProfileViewModelState())
@@ -30,7 +33,7 @@ class ProfileViewModel(
 
     private fun observeUser() {
         viewModelScope.launch {
-            val currentUserId = userRepository.getCurrentUserId()
+            val currentUserId = userPreferencesRepository.getCurrentUserId()
             userRepository.observeUser(currentUserId).collect { user ->
                 viewModelState.update { it.copy(user = user) }
             }
@@ -38,17 +41,23 @@ class ProfileViewModel(
     }
 
     fun updatePhoto(photoUri: Uri) {
+        viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            when (val result = authenticationRepository.updatePhotoUrl(photoUri = photoUri)) {
-                is RepositoryResult.Success -> {
-                    SnackbarManager.showMessage(R.string.successfully_updated_photo)
-                    userRepository.saveUser(viewModelState.value.user.copy(photoUri = photoUri.toString()))
-                }
-                is RepositoryResult.Error -> {
-                    val message = result.error.statusMessage?.let { statusMessage ->
-                        SnackbarMessage.StringSnackbar(statusMessage)
-                    } ?: SnackbarMessage.ResourceSnackbar(R.string.error_updated_photo)
-                    SnackbarManager.showMessage(message)
+            viewModelState.update {
+                when (val result = authenticationRepository.updatePhotoUrl(photoUri = photoUri)) {
+                    is RepositoryResult.Success -> {
+                        SnackbarManager.showMessage(
+                            R.string.successfully_updated_photo,
+                            SnackbarMessageType.Success
+                        )
+                        userRepository.saveUser(viewModelState.value.user.copy(photoUri = photoUri.toString()))
+                        it.copy(isLoading = false)
+
+                    }
+                    is RepositoryResult.Error -> {
+                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        it.copy(isLoading = false)
+                    }
                 }
             }
         }

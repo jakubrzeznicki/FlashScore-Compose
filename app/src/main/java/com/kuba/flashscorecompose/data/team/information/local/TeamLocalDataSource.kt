@@ -14,6 +14,7 @@ interface TeamLocalDataSource {
     fun observeVenue(teamId: Int): Flow<VenueEntity?>
     fun observeCoach(teamId: Int): Flow<CoachEntity?>
     fun observeTeams(): Flow<List<TeamEntity>>
+    fun observeFavoriteTeams(ids: List<Int>): Flow<List<TeamEntity>>
     fun observeVenues(): Flow<List<VenueEntity>>
     fun observeCoaches(): Flow<List<CoachEntity>>
     suspend fun saveTeam(teamEntity: TeamEntity)

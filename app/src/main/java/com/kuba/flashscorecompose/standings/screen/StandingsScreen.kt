@@ -29,11 +29,9 @@ import com.kuba.flashscorecompose.data.standings.model.Standing
 import com.kuba.flashscorecompose.data.standings.model.StandingItem
 import com.kuba.flashscorecompose.destinations.LeagueDetailsRouteDestination
 import com.kuba.flashscorecompose.destinations.StandingsDetailsRouteDestination
-import com.kuba.flashscorecompose.standings.model.StandingsError
 import com.kuba.flashscorecompose.standings.model.StandingsUiState
 import com.kuba.flashscorecompose.standings.viewmodel.StandingsViewModel
 import com.kuba.flashscorecompose.ui.component.*
-import com.kuba.flashscorecompose.ui.component.snackbar.FlashScoreSnackbarHost
 import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -55,11 +53,9 @@ fun StandingsRoute(
     val uiState by viewModel.uiState.collectAsState()
     val fixturesScrollState = rememberLazyListState()
     val countryScrollState = rememberLazyListState()
-    val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(key1 = SETUP_STANDINGS_KEY) { viewModel.setup() }
     StandingsScreen(
         uiState = uiState,
-        snackbarHostState = snackbarHostState,
         fixturesScrollState = fixturesScrollState,
         countryScrollState = countryScrollState,
         onRefreshClick = { viewModel.refresh() },
@@ -70,7 +66,6 @@ fun StandingsRoute(
             navigator.navigate(StandingsDetailsRouteDestination(league = it.league))
         },
         onLeagueClick = { navigator.navigate(LeagueDetailsRouteDestination(it)) },
-        onErrorClear = { viewModel.cleanError() },
         onStandingsQueryChanged = { viewModel.updateStandingsQuery(it) }
     )
 }
@@ -79,7 +74,6 @@ fun StandingsRoute(
 @Composable
 fun StandingsScreen(
     modifier: Modifier = Modifier,
-    snackbarHostState: SnackbarHostState,
     fixturesScrollState: LazyListState,
     countryScrollState: LazyListState,
     uiState: StandingsUiState,
@@ -87,12 +81,10 @@ fun StandingsScreen(
     onCountryClick: (Country, Boolean) -> Unit,
     onStandingsClick: (Standing) -> Unit,
     onLeagueClick: (League) -> Unit,
-    onErrorClear: () -> Unit,
     onStandingsQueryChanged: (String) -> Unit
 ) {
     Scaffold(
-        topBar = { TopBar() },
-        snackbarHost = { FlashScoreSnackbarHost(hostState = snackbarHostState) }
+        topBar = { TopBar() }
     ) { paddingValues ->
         LoadingContent(
             modifier = modifier.padding(paddingValues),
@@ -207,12 +199,6 @@ fun StandingsScreen(
             }
         }
     }
-    ErrorSnackbar(
-        uiState = uiState,
-        onRefreshClick = onRefreshClick,
-        onErrorClear = onErrorClear,
-        snackbarHostState = snackbarHostState
-    )
 }
 
 @Composable
@@ -404,42 +390,5 @@ private fun StandingElementRow(standingItem: StandingItem) {
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSecondary
         )
-    }
-}
-
-@Composable
-private fun ErrorSnackbar(
-    uiState: StandingsUiState,
-    onRefreshClick: () -> Unit,
-    onErrorClear: () -> Unit,
-    snackbarHostState: SnackbarHostState
-) {
-    when (val error = uiState.error) {
-        is StandingsError.NoError -> {}
-        is StandingsError.EmptyLeague -> {
-            val errorMessageText = stringResource(id = R.string.empty_leagues)
-            val onErrorDismissState by rememberUpdatedState(onErrorClear)
-            LaunchedEffect(errorMessageText) {
-                snackbarHostState.showSnackbar(message = errorMessageText)
-                onErrorDismissState()
-            }
-        }
-        is StandingsError.RemoteError -> {
-            val errorMessageText =
-                remember(uiState) { error.responseStatus.statusMessage.orEmpty() }
-            val retryMessageText = stringResource(id = R.string.retry)
-            val onRefreshPostStates by rememberUpdatedState(onRefreshClick)
-            val onErrorDismissState by rememberUpdatedState(onErrorClear)
-            LaunchedEffect(errorMessageText, retryMessageText) {
-                val snackbarResult = snackbarHostState.showSnackbar(
-                    message = errorMessageText,
-                    actionLabel = retryMessageText
-                )
-                if (snackbarResult == SnackbarResult.ActionPerformed) {
-                    onRefreshPostStates()
-                }
-                onErrorDismissState()
-            }
-        }
     }
 }
