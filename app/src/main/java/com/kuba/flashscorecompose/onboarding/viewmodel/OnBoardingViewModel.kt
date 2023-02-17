@@ -27,7 +27,11 @@ class OnBoardingViewModel(
     private val viewModelState = MutableStateFlow(OnBoardingViewModelState())
     val uiState = viewModelState
         .map { it.toUiState() }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5_000),
+            viewModelState.value.toUiState()
+        )
 
     fun setup() {
         observeTeams()
@@ -168,7 +172,8 @@ class OnBoardingViewModel(
                 userId = userId,
                 isOnBoardingCompleted = true,
                 favoriteTeamIds = favoriteTeamIds,
-                favoritePlayerIds = favoritePlayerIds
+                favoritePlayerIds = favoritePlayerIds,
+                favoriteFixtureIds = emptyList()
             )
             userPreferencesRepository.saveUserPreferences(userPreferences)
         }

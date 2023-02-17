@@ -30,6 +30,7 @@ import com.kuba.flashscorecompose.data.team.information.local.model.CoachEntity
 import com.kuba.flashscorecompose.data.team.information.local.model.TeamEntity
 import com.kuba.flashscorecompose.data.team.information.local.model.VenueEntity
 import com.kuba.flashscorecompose.data.user.local.UserDao
+import com.kuba.flashscorecompose.data.user.local.converter.UriConverter
 import com.kuba.flashscorecompose.data.user.local.model.UserEntity
 import com.kuba.flashscorecompose.data.userpreferences.local.UserPreferencesDao
 import com.kuba.flashscorecompose.data.userpreferences.local.converter.UserPreferencesConverter
@@ -43,13 +44,14 @@ import com.kuba.flashscorecompose.data.userpreferences.local.model.UserPreferenc
         FixtureInfoEntity::class, TeamEntity::class, VenueEntity::class,
         CoachEntity::class, PlayerEntity::class, StatisticsEntity::class, LineupEntity::class,
         FixtureEntity::class, StandingsEntity::class, UserEntity::class, UserPreferencesEntity::class],
-    version = 33
+    version = 34
 )
 @TypeConverters(
     StatisticsDataConverter::class,
     LineupsDataConverter::class,
     StandingsDataConverter::class,
-    UserPreferencesConverter::class
+    UserPreferencesConverter::class,
+    UriConverter::class
 )
 abstract class FlashScoreDatabase : RoomDatabase() {
     abstract fun countryDao(): CountryDao

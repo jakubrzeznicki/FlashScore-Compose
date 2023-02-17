@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
@@ -59,7 +60,7 @@ fun HeadToHeadScreen(
     navigator: DestinationsNavigator,
     viewModel: HeadToHeadViewModel = getViewModel { parametersOf(homeTeam.id, awayTeam.id, season) }
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(key1 = HEAD_TO_HEAD) { viewModel.setup() }
     HeadToHeadList(
         homeTeam,

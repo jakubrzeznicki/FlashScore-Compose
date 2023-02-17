@@ -16,7 +16,7 @@ interface CountryDao {
     fun observeCountries(): Flow<List<CountryEntity>>
 
     @Query("SELECT * FROM countries WHERE name = :countryName LIMIT 1")
-    suspend fun getCountry(countryName: String): CountryEntity?
+    fun observeCountry(countryName: String): Flow<CountryEntity?>
 
     @Query("SELECT * FROM countries")
     suspend fun getCountries(): List<CountryEntity>

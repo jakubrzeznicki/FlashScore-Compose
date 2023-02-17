@@ -14,6 +14,7 @@ import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessage
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import com.kuba.flashscorecompose.utils.isValidPassword
+import com.kuba.flashscorecompose.utils.md5
 import com.kuba.flashscorecompose.utils.passwordMatches
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -31,7 +32,11 @@ class ProfileSettingsViewModel(
     private val viewModelState = MutableStateFlow(ProfileSettingsViewModelState())
     val uiState = viewModelState
         .map { it.toUiState() }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5_000),
+            viewModelState.value.toUiState()
+        )
     private val password
         get() = viewModelState.value.password
 
@@ -107,6 +112,9 @@ class ProfileSettingsViewModel(
                         SnackbarMessage.ResourceSnackbar(
                             R.string.successfully_updated_password,
                             SnackbarMessageType.Success
+                        )
+                        userRepository.saveUser(
+                            viewModelState.value.user.copy(password = password.md5())
                         )
                         it.copy(isLoading = false)
                     }

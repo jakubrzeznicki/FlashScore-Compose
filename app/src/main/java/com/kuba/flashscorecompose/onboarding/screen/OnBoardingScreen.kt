@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
@@ -57,7 +58,7 @@ fun OnBoardingRpute(
     navigator: DestinationsNavigator,
     viewModel: OnBoardingViewModel = getViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val teamsScrollState = rememberLazyGridState()
     val playersScrollState = rememberLazyGridState()
     LaunchedEffect(key1 = SETUP_ON_BOARDING_KEY) { viewModel.setup() }

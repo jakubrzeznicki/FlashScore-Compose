@@ -2,6 +2,7 @@ package com.kuba.flashscorecompose.di
 
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.kuba.flashscorecompose.account.service.DefaultLogService
 import com.kuba.flashscorecompose.account.service.LogService
 import com.kuba.flashscorecompose.countries.viewmodel.CountriesViewModel
@@ -90,11 +91,11 @@ import java.time.LocalDate
 class KoinModules {
 
     private val viewModelsModule = module {
-        viewModel { HomeViewModel(get(), get(), get()) }
+        viewModel { HomeViewModel(get(), get(), get(), get()) }
         viewModel { CountriesViewModel(get()) }
         viewModel { (countryCode: String) -> LeaguesViewModel(countryCode, get(), get()) }
         viewModel { (fixtureId: Int, leagueId: Int, round: String, season: Int) ->
-            StatisticsViewModel(fixtureId, leagueId, round, season, get(), get())
+            StatisticsViewModel(fixtureId, leagueId, round, season, get(), get(), get())
         }
         viewModel { (fixtureId: Int) -> LineupViewModel(fixtureId, get()) }
         viewModel { (homeTeamId: Int, awayTeamId: Int, season: Int) ->
@@ -113,12 +114,27 @@ class KoinModules {
                 get()
             )
         }
-        viewModel { (league: League) -> LeagueDetailsViewModel(league, get()) }
+        viewModel { (league: League) -> LeagueDetailsViewModel(league, get(), get()) }
         viewModel { (team: Team, leagueId: Int, season: Int) ->
             TeamInformationsViewModel(team, leagueId, season, get(), get())
         }
-        viewModel { (team: Team, season: Int) -> PlayersViewModel(team, season, get(), get()) }
-        viewModel { (teamId: Int, season: Int) -> FixturesTeamViewModel(teamId, season, get()) }
+        viewModel { (team: Team, season: Int) ->
+            PlayersViewModel(
+                team,
+                season,
+                get(),
+                get(),
+                get()
+            )
+        }
+        viewModel { (teamId: Int, season: Int) ->
+            FixturesTeamViewModel(
+                teamId,
+                season,
+                get(),
+                get()
+            )
+        }
         viewModel { (playerId: Int, team: Team, season: Int) ->
             PlayerDetailsViewModel(
                 playerId,
@@ -129,7 +145,7 @@ class KoinModules {
         }
         viewModel { ExploreViewModel(get(), get(), get(), get(), get(), get()) }
         viewModel { SignInViewModel(get(), get(), get()) }
-        viewModel { (signUpType: SignUpType) -> SignUpViewModel(signUpType,get()) }
+        viewModel { (signUpType: SignUpType) -> SignUpViewModel(signUpType, get()) }
         viewModel { WelcomeViewModel(get(), get(), get()) }
         viewModel { SplashViewModel(get()) }
         viewModel { OnBoardingViewModel(get(), get(), get()) }
@@ -191,7 +207,8 @@ class KoinModules {
         }
         single<AuthenticationDataSource> {
             val auth = Firebase.auth
-            AuthenticationRepository(auth, get())
+            val storage = Firebase.storage
+            AuthenticationRepository(auth, storage, get())
         }
         single<UserDataSource> {
             val local = UserLocal(get(), get())

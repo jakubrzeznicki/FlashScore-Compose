@@ -8,14 +8,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.destinations.PlayerDetailsRouteDestination
-import com.kuba.flashscorecompose.teamdetails.players.model.PlayerCountry
+import com.kuba.flashscorecompose.teamdetails.players.model.PlayerWrapper
 import com.kuba.flashscorecompose.teamdetails.players.model.PlayersUiState
 import com.kuba.flashscorecompose.teamdetails.players.viewmodel.PlayersViewModel
 import com.kuba.flashscorecompose.ui.component.EmptyState
@@ -38,7 +38,7 @@ fun PlayersScreen(
     navigator: DestinationsNavigator,
     viewModel: PlayersViewModel = getViewModel { parametersOf(team, season) }
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(key1 = PLAYERS_KEY) { viewModel.setup() }
     PlayersListScreen(
         uiState = uiState,
@@ -52,6 +52,7 @@ fun PlayersScreen(
                 )
             )
         },
+        onPlayerFavoriteClick = { viewModel.addPlayerToFavorite(it) },
         onRefreshClick = { viewModel.refresh() }
     )
 }
@@ -59,7 +60,8 @@ fun PlayersScreen(
 @Composable
 fun PlayersListScreen(
     uiState: PlayersUiState,
-    onPlayerClick: (PlayerCountry) -> Unit,
+    onPlayerClick: (PlayerWrapper) -> Unit,
+    onPlayerFavoriteClick: (PlayerWrapper) -> Unit,
     onRefreshClick: () -> Unit
 ) {
     val scrollState = rememberLazyListState()
@@ -80,8 +82,8 @@ fun PlayersListScreen(
         ) {
             when (uiState) {
                 is PlayersUiState.HasData -> {
-                    items(items = uiState.playerCountries) { playerCountry ->
-                        PlayerCard(playerCountry, onPlayerClick)
+                    items(items = uiState.playerWrappers) { playerCountry ->
+                        PlayerCard(playerCountry, onPlayerClick, onPlayerFavoriteClick)
                     }
                 }
                 is PlayersUiState.NoData -> {

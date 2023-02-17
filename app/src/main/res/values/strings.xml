@@ -168,4 +168,7 @@
     <string name="sign_out_description">You will have to sign in again to use the app.</string>
     <string name="delete_account_title">Delete account?</string>
     <string name="delete_account_description">You will lose all your data and your account will be deleted. This action is irreversible.</string>
+
+    <!-- Errors -->
+    <string name="problem_with_upload_avatar">There was a problem with upload avatar.</string>
 </resources>

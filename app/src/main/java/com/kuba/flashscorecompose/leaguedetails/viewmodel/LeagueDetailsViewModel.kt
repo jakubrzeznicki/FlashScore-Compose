@@ -3,8 +3,9 @@ package com.kuba.flashscorecompose.leaguedetails.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesDataSource
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.league.model.League
+import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
+import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
 import com.kuba.flashscorecompose.leaguedetails.model.LeagueDetailsError
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
@@ -18,12 +19,17 @@ import java.time.LocalDate
  */
 class LeagueDetailsViewModel(
     private val league: League,
-    private val fixturesRepository: FixturesDataSource
+    private val fixturesRepository: FixturesDataSource,
+    private val userPreferencesRepository: UserPreferencesDataSource
 ) : ViewModel() {
     private val viewModelState = MutableStateFlow(LeagueDetailsViewModelState())
     val uiState = viewModelState
         .map { it.toUiState() }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5_000),
+            viewModelState.value.toUiState()
+        )
 
     fun setup() {
         observeFixtures()
@@ -35,16 +41,27 @@ class LeagueDetailsViewModel(
 
     private fun observeFixtures() {
         viewModelScope.launch {
-            fixturesRepository.observeFixtureByLeague(league.id)
-                .collect { fixtureItems ->
-                    val filteredFixtureItems = filterFixtureItems(fixtureItems = fixtureItems)
-                    viewModelState.update {
-                        it.copy(
-                            fixtureItems = fixtureItems,
-                            filteredFixtureItems = filteredFixtureItems
-                        )
-                    }
+            val currentUserId = userPreferencesRepository.getCurrentUserId()
+            val userPreferencesFlow =
+                userPreferencesRepository.observeUserPreferences(currentUserId)
+            val fixturesFlow = fixturesRepository.observeFixtureByLeague(league.id)
+            combine(flow = fixturesFlow, flow2 = userPreferencesFlow) { fixtures, userPreferences ->
+                val favoriteFixtureIds = userPreferences.favoriteFixtureIds
+                val fixtureItemWrappers = fixtures.map {
+                    FixtureItemWrapper(
+                        fixtureItem = it,
+                        isFavorite = favoriteFixtureIds.contains(it.id)
+                    )
                 }
+                val filteredFixtureItems =
+                    filterFixtureItems(fixtureItemWrappers = fixtureItemWrappers)
+                viewModelState.update {
+                    it.copy(
+                        fixtureItemWrappers = fixtureItemWrappers,
+                        filteredFixtureItemWrappers = filteredFixtureItems
+                    )
+                }
+            }.collect()
         }
     }
 
@@ -52,17 +69,17 @@ class LeagueDetailsViewModel(
         viewModelState.update {
             it.copy(
                 date = newDate,
-                filteredFixtureItems = filterFixtureItems(date = newDate)
+                filteredFixtureItemWrappers = filterFixtureItems(date = newDate)
             )
         }
         //refreshFixtures()
     }
 
     private fun filterFixtureItems(
-        fixtureItems: List<FixtureItem> = viewModelState.value.fixtureItems,
+        fixtureItemWrappers: List<FixtureItemWrapper> = viewModelState.value.fixtureItemWrappers,
         date: LocalDate = viewModelState.value.date
-    ): List<FixtureItem> {
-        return fixtureItems.filter { it.fixture.shortDate == date.toString() }
+    ): List<FixtureItemWrapper> {
+        return fixtureItemWrappers.filter { it.fixtureItem.fixture.shortDate == date.toString() }
     }
 
     private fun refreshFixtures() {
@@ -83,6 +100,21 @@ class LeagueDetailsViewModel(
                     }
                 }
             }
+        }
+    }
+
+    fun addFixtureToFavorite(fixtureItemWrapper: FixtureItemWrapper) {
+        viewModelScope.launch {
+            val favoriteFixtureItemWrappers =
+                viewModelState.value.fixtureItemWrappers.filter { it.isFavorite }.toMutableList()
+            if (fixtureItemWrapper.isFavorite) {
+                favoriteFixtureItemWrappers.remove(fixtureItemWrapper)
+            } else {
+                favoriteFixtureItemWrappers.add(fixtureItemWrapper.copy(isFavorite = true))
+            }
+            userPreferencesRepository.saveFavoriteFixturesIds(
+                favoriteFixtureItemWrappers.map { it.fixtureItem.id }
+            )
         }
     }
 }

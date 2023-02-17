@@ -8,9 +8,6 @@ import kotlinx.coroutines.flow.Flow
  * Created by jrzeznicki on 9/9/2022
  */
 class CountryLocal(private val roomStorage: RoomStorage) : CountryLocalDataSource {
-    override suspend fun getCountry(countryName: String): CountryEntity? {
-        return roomStorage.getDatabase().countryDao().getCountry(countryName)
-    }
 
     override fun observeCountries(countryNames: List<String>): Flow<List<CountryEntity>> {
         return roomStorage.getDatabase().countryDao().observeCountries(countryNames)
@@ -18,6 +15,10 @@ class CountryLocal(private val roomStorage: RoomStorage) : CountryLocalDataSourc
 
     override fun observeCountries(): Flow<List<CountryEntity>> {
         return roomStorage.getDatabase().countryDao().observeCountries()
+    }
+
+    override fun observeCountry(countryName: String): Flow<CountryEntity?> {
+        return roomStorage.getDatabase().countryDao().observeCountry(countryName)
     }
 
     override suspend fun getCountries(): List<CountryEntity> {

@@ -7,5 +7,6 @@ data class UserPreferences(
     val userId: String,
     val isOnBoardingCompleted: Boolean,
     val favoriteTeamIds: List<Int>,
-    val favoritePlayerIds: List<Int>
+    val favoritePlayerIds: List<Int>,
+    val favoriteFixtureIds: List<Int>
 )

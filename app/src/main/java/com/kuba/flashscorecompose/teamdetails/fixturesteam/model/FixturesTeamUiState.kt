@@ -1,6 +1,6 @@
 package com.kuba.flashscorecompose.teamdetails.fixturesteam.model
 
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
+import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
 import com.kuba.flashscorecompose.ui.component.chips.FilterChip
 
 /**
@@ -17,7 +17,7 @@ interface FixturesTeamUiState {
         override val error: FixturesTeamError,
         override val fixtureFilterChip: FilterChip.Fixtures,
         override val fixtureFilterChips: List<FilterChip.Fixtures>,
-        val fixtureItems: List<FixtureItem>
+        val fixtureItemWrappers: List<FixtureItemWrapper>
     ) : FixturesTeamUiState
 
     data class NoData(

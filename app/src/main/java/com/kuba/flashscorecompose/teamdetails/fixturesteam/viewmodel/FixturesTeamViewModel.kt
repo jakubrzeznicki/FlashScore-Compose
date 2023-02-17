@@ -3,7 +3,8 @@ package com.kuba.flashscorecompose.teamdetails.fixturesteam.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesDataSource
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
+import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
+import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
 import com.kuba.flashscorecompose.teamdetails.fixturesteam.model.FixturesTeamError
 import com.kuba.flashscorecompose.ui.component.chips.FilterChip
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
@@ -18,13 +19,18 @@ import kotlinx.coroutines.launch
 class FixturesTeamViewModel(
     private val teamId: Int,
     private val season: Int,
-    private val fixturesRepository: FixturesDataSource
+    private val fixturesRepository: FixturesDataSource,
+    private val userPreferencesRepository: UserPreferencesDataSource
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(FixturesTeamViewModelState())
     val uiState = viewModelState
         .map { it.toUiState() }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5_000),
+            viewModelState.value.toUiState()
+        )
 
     fun setup() {
         observeFixtures()
@@ -36,12 +42,26 @@ class FixturesTeamViewModel(
 
     private fun observeFixtures() {
         viewModelScope.launch {
-            fixturesRepository.observeFixturesByTeam(teamId, season).collect { fixtureItems ->
-                val filteredFixtures = filterFixtures(fixtureItems = fixtureItems)
-                viewModelState.update {
-                    it.copy(fixtures = fixtureItems, filteredFixtures = filteredFixtures)
+            val currentUserId = userPreferencesRepository.getCurrentUserId()
+            val userPreferencesFlow =
+                userPreferencesRepository.observeUserPreferences(currentUserId)
+            val fixturesFlow = fixturesRepository.observeFixturesByTeam(teamId, season)
+            combine(flow = fixturesFlow, flow2 = userPreferencesFlow) { fixtures, userPreferences ->
+                val favoriteFixtureIds = userPreferences.favoriteFixtureIds
+                val fixtureItemWrappers = fixtures.map {
+                    FixtureItemWrapper(
+                        fixtureItem = it,
+                        isFavorite = favoriteFixtureIds.contains(it.id)
+                    )
                 }
-            }
+                val filteredFixtures = filterFixtures(fixtureItemWrappers = fixtureItemWrappers)
+                viewModelState.update {
+                    it.copy(
+                        fixtureItemWrappers = fixtureItemWrappers,
+                        filteredFixtureItemWrappers = filteredFixtures
+                    )
+                }
+            }.collect()
         }
     }
 
@@ -49,23 +69,25 @@ class FixturesTeamViewModel(
         val filteredFixtureItems = filterFixtures(fixturesFilterChip = newFixturesFilterChip)
         viewModelState.update {
             it.copy(
-                filteredFixtures = filteredFixtureItems,
+                filteredFixtureItemWrappers = filteredFixtureItems,
                 fixtureFilterChip = newFixturesFilterChip
             )
         }
     }
 
     private fun filterFixtures(
-        fixtureItems: List<FixtureItem> = viewModelState.value.fixtures,
+        fixtureItemWrappers: List<FixtureItemWrapper> = viewModelState.value.fixtureItemWrappers,
         fixturesFilterChip: FilterChip.Fixtures = viewModelState.value.fixtureFilterChip
-    ): List<FixtureItem> {
+    ): List<FixtureItemWrapper> {
         return when (fixturesFilterChip) {
             is FilterChip.Fixtures.Upcoming ->
-                fixtureItems.filter { it.fixture.periods.first == 0 }
+                fixtureItemWrappers.filter { it.fixtureItem.fixture.periods.first == 0 }
             is FilterChip.Fixtures.Played ->
-                fixtureItems.filter { it.fixture.periods.second != 0 }
+                fixtureItemWrappers.filter { it.fixtureItem.fixture.periods.second != 0 }
             is FilterChip.Fixtures.Live ->
-                fixtureItems.filter { it.fixture.periods.first != 0 && it.fixture.periods.second == 0 }
+                fixtureItemWrappers.filter {
+                    it.fixtureItem.fixture.periods.first != 0 && it.fixtureItem.fixture.periods.second == 0
+                }
         }
     }
 
@@ -85,6 +107,21 @@ class FixturesTeamViewModel(
                     }
                 }
             }
+        }
+    }
+
+    fun addFixtureToFavorite(fixtureItemWrapper: FixtureItemWrapper) {
+        viewModelScope.launch {
+            val favoriteFixtureItemWrappers =
+                viewModelState.value.fixtureItemWrappers.filter { it.isFavorite }.toMutableList()
+            if (fixtureItemWrapper.isFavorite) {
+                favoriteFixtureItemWrappers.remove(fixtureItemWrapper)
+            } else {
+                favoriteFixtureItemWrappers.add(fixtureItemWrapper.copy(isFavorite = true))
+            }
+            userPreferencesRepository.saveFavoriteFixturesIds(
+                favoriteFixtureItemWrappers.map { it.fixtureItem.id }
+            )
         }
     }
 }

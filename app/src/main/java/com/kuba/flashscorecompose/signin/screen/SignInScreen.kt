@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.destinations.HomeScreenRouteDestination
 import com.kuba.flashscorecompose.destinations.OnBoardingRputeDestination
@@ -43,7 +44,7 @@ fun SignInRoute(
     navigator: DestinationsNavigator,
     viewModel: SignInViewModel = getViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
     SignInScreen(
         uiState = uiState,

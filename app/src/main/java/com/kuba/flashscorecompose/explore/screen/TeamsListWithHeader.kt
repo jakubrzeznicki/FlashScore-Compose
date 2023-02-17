@@ -13,7 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuba.flashscorecompose.explore.model.TeamCountry
+import com.kuba.flashscorecompose.explore.model.TeamWrapper
 import com.kuba.flashscorecompose.ui.component.TeamCard
 
 /**
@@ -21,11 +21,12 @@ import com.kuba.flashscorecompose.ui.component.TeamCard
  */
 @Composable
 fun TeamsListWithHeader(
-    teams: List<TeamCountry>,
+    teams: List<TeamWrapper>,
     state: LazyListState,
     color: Color,
     textId: Int,
-    onTeamClick: (TeamCountry) -> Unit
+    onTeamClick: (TeamWrapper) -> Unit,
+    onTeamFavoriteClick: (TeamWrapper) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -41,21 +42,26 @@ fun TeamsListWithHeader(
             )
         }
         items(items = teams) {
-            TeamCard(teamCountry = it, onTeamClick = onTeamClick)
+            TeamCard(
+                teamWrapper = it,
+                onTeamClick = onTeamClick,
+                onFavoriteClick = onTeamFavoriteClick
+            )
         }
     }
 }
 
 @Composable
 fun TeamsDoubleListWithHeader(
-    teams: List<TeamCountry>,
-    favoriteTeams: List<TeamCountry>,
+    teamWrappers: List<TeamWrapper>,
+    favoriteTeamWrappers: List<TeamWrapper>,
     state: LazyListState,
     color: Color,
     favoriteColor: Color,
     textId: Int,
     favoriteTextId: Int,
-    onTeamClick: (TeamCountry) -> Unit
+    onTeamClick: (TeamWrapper) -> Unit,
+    onTeamFavoriteClick: (TeamWrapper) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -70,8 +76,12 @@ fun TeamsDoubleListWithHeader(
                 color = favoriteColor,
             )
         }
-        items(items = favoriteTeams) {
-            TeamCard(teamCountry = it, onTeamClick = onTeamClick)
+        items(items = favoriteTeamWrappers) {
+            TeamCard(
+                teamWrapper = it,
+                onTeamClick = onTeamClick,
+                onFavoriteClick = onTeamFavoriteClick
+            )
         }
         item {
             Text(
@@ -82,8 +92,12 @@ fun TeamsDoubleListWithHeader(
                 color = color,
             )
         }
-        items(items = teams) {
-            TeamCard(teamCountry = it, onTeamClick = onTeamClick)
+        items(items = teamWrappers) {
+            TeamCard(
+                teamWrapper = it,
+                onTeamClick = onTeamClick,
+                onFavoriteClick = onTeamFavoriteClick
+            )
         }
     }
 }

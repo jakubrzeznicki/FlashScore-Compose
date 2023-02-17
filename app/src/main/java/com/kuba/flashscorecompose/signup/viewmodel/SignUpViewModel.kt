@@ -27,7 +27,11 @@ class SignUpViewModel(
     private val viewModelState = MutableStateFlow((SignUpViewModelState()))
     val uiState = viewModelState
         .map { it.toUiState() }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5_000),
+            viewModelState.value.toUiState()
+        )
     private val email
         get() = viewModelState.value.email
     private val password

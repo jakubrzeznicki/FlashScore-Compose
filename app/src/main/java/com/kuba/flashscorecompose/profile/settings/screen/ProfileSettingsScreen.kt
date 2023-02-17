@@ -31,6 +31,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.destinations.ProfileRouteDestination
 import com.kuba.flashscorecompose.destinations.SignInRouteDestination
@@ -61,7 +62,7 @@ fun ProfileSettingsScreen(
     navigator: DestinationsNavigator,
     viewModel: ProfileSettingsViewModel = getViewModel { parametersOf(userId) }
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
     LaunchedEffect(key1 = PROFILE_SETTINGS_KEY) { viewModel.setup() }
     SettingsScreen(

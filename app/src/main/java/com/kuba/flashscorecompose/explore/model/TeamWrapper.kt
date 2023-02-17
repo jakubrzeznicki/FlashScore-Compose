@@ -6,4 +6,4 @@ import com.kuba.flashscorecompose.data.team.information.model.Team
 /**
  * Created by jrzeznicki on 02/02/2023.
  */
-data class TeamCountry(val team: Team, val country: Country)
+data class TeamWrapper(val team: Team, val country: Country, val isFavorite: Boolean)

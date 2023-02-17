@@ -25,6 +25,7 @@ interface FixturesDataSource {
     fun observeXLastFixtures(count: Int, countryNames: List<String>): Flow<List<FixtureItem>>
     fun observeFixturesLive(): Flow<List<FixtureItem>>
     fun observeFixturesFavorite(): Flow<List<FixtureItem>>
+    fun observeFavoriteFixtures(ids: List<Int>): Flow<List<FixtureItem>>
     suspend fun getFixture(fixtureId: Int): FixtureItem?
     suspend fun getFixturesByCountry(countryNames: List<String>): List<FixtureItem>
     fun saveFixtureItem(fixtureItems: List<FixtureItem>)

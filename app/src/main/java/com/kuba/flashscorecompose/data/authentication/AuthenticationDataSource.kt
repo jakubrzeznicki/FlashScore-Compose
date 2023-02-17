@@ -29,7 +29,7 @@ interface AuthenticationDataSource {
     suspend fun deleteAccount(): RepositoryResult<Boolean>
     suspend fun signOut(): RepositoryResult<Boolean>
     suspend fun updateName(name: String): RepositoryResult<Boolean>
-    suspend fun updatePhotoUrl(photoUri: Uri?): RepositoryResult<Boolean>
+    suspend fun uploadPhoto(photoUri: Uri?): RepositoryResult<Uri>
     suspend fun updateEmail(email: String): RepositoryResult<Boolean>
     suspend fun updatePassword(password: String): RepositoryResult<Boolean>
     fun getAuthState(viewModelScope: CoroutineScope): StateFlow<Boolean>

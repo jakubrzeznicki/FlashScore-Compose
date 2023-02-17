@@ -13,6 +13,7 @@ import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnac
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import com.kuba.flashscorecompose.utils.isValidEmail
+import com.kuba.flashscorecompose.utils.md5
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -28,7 +29,11 @@ class SignInViewModel(
     private val viewModelState = MutableStateFlow((SignInViewModelState()))
     val uiState = viewModelState
         .map { it.toUiState() }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5_000),
+            viewModelState.value.toUiState()
+        )
     private val email
         get() = viewModelState.value.email
     private val password
@@ -87,7 +92,7 @@ class SignInViewModel(
                             id = currentUserId,
                             name = currentUser?.displayName.orEmpty(),
                             email = email,
-                            password = password,
+                            password = password.md5(),
                             phone = currentUser?.phoneNumber.orEmpty(),
                             isAnonymous = currentUser?.isAnonymous ?: false
                         )

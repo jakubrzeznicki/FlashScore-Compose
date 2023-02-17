@@ -4,7 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.StarBorder
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,6 +25,7 @@ import coil.request.ImageRequest
 import coil.size.Size
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
+import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
 
 /**
  * Created by jrzeznicki on 17/01/2023.
@@ -35,12 +37,12 @@ const val DASH = "-"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FixtureCard(
-    fixtureItem: FixtureItem,
-    onFixtureClick: (FixtureItem) -> Unit,
-    onFavoriteClick: (FixtureItem) -> Unit = {}
+    fixtureItemWrapper: FixtureItemWrapper,
+    onFixtureClick: (FixtureItemWrapper) -> Unit,
+    onFavoriteClick: (FixtureItemWrapper) -> Unit
 ) {
     Card(
-        onClick = { onFixtureClick(fixtureItem) },
+        onClick = { onFixtureClick(fixtureItemWrapper) },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.inverseSurface),
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier.padding(bottom = 8.dp),
@@ -61,14 +63,14 @@ fun FixtureCard(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                TeamLogos(fixtureItem = fixtureItem)
-                FixtureDateInfo(formattedDate = fixtureItem.fixture.formattedDate)
+                TeamLogos(fixtureItem = fixtureItemWrapper.fixtureItem)
+                FixtureDateInfo(formattedDate = fixtureItemWrapper.fixtureItem.fixture.formattedDate)
             }
             FixtureDetails(
                 modifier = Modifier
                     .weight(7f)
                     .padding(end = 4.dp, top = 4.dp, bottom = 4.dp),
-                fixtureItem = fixtureItem
+                fixtureItem = fixtureItemWrapper.fixtureItem
             )
             FixtureStatus(
                 modifier = Modifier
@@ -79,7 +81,7 @@ fun FixtureCard(
                     )
                     .size(72.dp)
                     .padding(vertical = 4.dp),
-                fixtureItem = fixtureItem,
+                fixtureItemWrapper = fixtureItemWrapper,
                 onFavoriteClick = onFavoriteClick
             )
         }
@@ -235,30 +237,35 @@ fun FixtureDetailsColumn(
 @Composable
 fun FixtureStatus(
     modifier: Modifier,
-    fixtureItem: FixtureItem,
-    onFavoriteClick: (FixtureItem) -> Unit
+    fixtureItemWrapper: FixtureItemWrapper,
+    onFavoriteClick: (FixtureItemWrapper) -> Unit
 ) {
-    val isLive = fixtureItem.fixture.isLive
+    val isLive = fixtureItemWrapper.fixtureItem.fixture.isLive
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
         Text(
-            text = fixtureItem.fixture.status.short,
+            text = fixtureItemWrapper.fixtureItem.fixture.status.short,
             fontWeight = FontWeight.SemiBold,
             fontSize = 14.sp,
             color = if (isLive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSecondary,
         )
         IconButton(
-            modifier = Modifier.size(24.dp),
-            onClick = { onFavoriteClick(fixtureItem) }
+            onClick = { onFavoriteClick(fixtureItemWrapper) },
+            modifier = Modifier.size(24.dp)
         ) {
+            val (icon, color) = if (fixtureItemWrapper.isFavorite) {
+                Icons.Filled.Favorite to MaterialTheme.colorScheme.error
+            } else {
+                Icons.Filled.FavoriteBorder to MaterialTheme.colorScheme.onSecondary
+            }
             Icon(
                 modifier = Modifier.size(24.dp),
-                imageVector = Icons.Outlined.StarBorder,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSecondary
+                imageVector = icon,
+                contentDescription = "",
+                tint = color
             )
         }
     }

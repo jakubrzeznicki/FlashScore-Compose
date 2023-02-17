@@ -82,6 +82,12 @@ class FixturesRepository(
         }
     }
 
+    override fun observeFavoriteFixtures(ids: List<Int>): Flow<List<FixtureItem>> {
+        return local.observeFavoriteFixtures(ids).map { fixtureEntities ->
+            fixtureEntities.map { it.toFixtureItem() }
+        }
+    }
+
     override suspend fun getFixture(fixtureId: Int): FixtureItem? {
         return local.getFixture(fixtureId)?.toFixtureItem()
     }

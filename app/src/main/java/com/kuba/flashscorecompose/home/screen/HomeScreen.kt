@@ -22,13 +22,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.country.model.Country
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.destinations.FixtureDetailsRouteDestination
 import com.kuba.flashscorecompose.destinations.LeagueDetailsRouteDestination
 import com.kuba.flashscorecompose.destinations.SplashScreenDestination
+import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
 import com.kuba.flashscorecompose.home.model.HomeUiState
 import com.kuba.flashscorecompose.home.model.LeagueFixturesData
 import com.kuba.flashscorecompose.home.viewmodel.HomeViewModel
@@ -50,7 +51,7 @@ fun HomeScreenRoute(
     navigator: DestinationsNavigator,
     viewModel: HomeViewModel = getViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val fixturesScrollState = rememberLazyListState()
     val countryScrollState = rememberLazyListState()
@@ -62,7 +63,8 @@ fun HomeScreenRoute(
         onCountryClick = { country, isSelected ->
             viewModel.updateSelectedCountry(country, isSelected)
         },
-        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it)) },
+        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixtureItem)) },
+        onFavoriteFixtureClick = { viewModel.addFixtureToFavorite(it) },
         onLeagueClick = { navigator.navigate(LeagueDetailsRouteDestination(it)) },
         fixturesScrollState = fixturesScrollState,
         countryScrollState = countryScrollState,
@@ -78,7 +80,8 @@ private fun HomeScreen(
     navigator: DestinationsNavigator,
     onRefreshClick: () -> Unit,
     onCountryClick: (Country, Boolean) -> Unit,
-    onFixtureClick: (FixtureItem) -> Unit,
+    onFixtureClick: (FixtureItemWrapper) -> Unit,
+    onFavoriteFixtureClick: (FixtureItemWrapper) -> Unit,
     onLeagueClick: (League) -> Unit,
     fixturesScrollState: LazyListState,
     countryScrollState: LazyListState,
@@ -126,7 +129,8 @@ private fun HomeScreen(
                             FixturesWidget(
                                 leagueFixturesData = it,
                                 onFixtureClick = onFixtureClick,
-                                onLeagueClick = onLeagueClick
+                                onLeagueClick = onLeagueClick,
+                                onFavoriteClick = onFavoriteFixtureClick
                             )
                             Spacer(modifier = Modifier.size(8.dp))
                         }
@@ -195,7 +199,7 @@ private fun TopBar(context: Context, navigator: DestinationsNavigator) {
                     .size(24.dp),
                 onClick = {
                     Toast.makeText(context, R.string.search, Toast.LENGTH_SHORT).show()
-                       navigator.navigate(SplashScreenDestination())
+                    navigator.navigate(SplashScreenDestination())
                 }) {
                 Icon(
                     imageVector = Icons.Filled.Search,
@@ -289,11 +293,12 @@ private fun Banner() {
 @Composable
 private fun FixturesWidget(
     leagueFixturesData: LeagueFixturesData,
-    onFixtureClick: (FixtureItem) -> Unit,
-    onLeagueClick: (League) -> Unit
+    onFixtureClick: (FixtureItemWrapper) -> Unit,
+    onLeagueClick: (League) -> Unit,
+    onFavoriteClick: (FixtureItemWrapper) -> Unit
 ) {
     LeagueHeader(leagueFixturesData.league, onLeagueClick)
-    leagueFixturesData.fixtures.forEach { fixtureItem ->
-        FixtureCard(fixtureItem, onFixtureClick)
+    leagueFixturesData.fixtureWrappers.forEach { fixtureWrapper ->
+        FixtureCard(fixtureWrapper, onFixtureClick, onFavoriteClick)
     }
 }

@@ -26,7 +26,11 @@ class TeamInformationsViewModel(
     private val viewModelState = MutableStateFlow(TeamInformationsViewModelState())
     val uiState = viewModelState
         .map { it.toUiState() }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5_000),
+            viewModelState.value.toUiState()
+        )
 
     fun setup() {
         observeTeam()
@@ -41,16 +45,17 @@ class TeamInformationsViewModel(
 
     private fun observeTeam() {
         viewModelScope.launch {
-            teamRepository.observeTeam(team.id).collect { team ->
+            val countriesFlow = countryRepository.observeCountry(team.country)
+            val teamFlow = teamRepository.observeTeam(team.id)
+            combine(flow = teamFlow, flow2 = countriesFlow) { team, country ->
                 if (team == null) {
                     viewModelState.update { it.copy(error = TeamInformationsError.EmptyTeam) }
-                    return@collect
+                    return@combine
                 }
-                val country = countryRepository.getCountry(team.country)
                 viewModelState.update {
                     it.copy(team = team, country = country ?: Country.EMPTY_COUNTRY)
                 }
-            }
+            }.collect()
         }
     }
 

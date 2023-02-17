@@ -27,5 +27,4 @@ class PlayersLocal(private val roomStorage: RoomStorage) : PlayersLocalDataSourc
     override suspend fun savePlayers(players: List<PlayerEntity>) {
         roomStorage.getDatabase().playerDao().savePlayers(players)
     }
-
 }

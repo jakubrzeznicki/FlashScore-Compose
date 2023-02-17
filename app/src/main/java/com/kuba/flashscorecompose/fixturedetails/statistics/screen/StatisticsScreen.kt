@@ -9,7 +9,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,11 +18,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuba.flashscorecompose.R
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.destinations.FixtureDetailsRouteDestination
 import com.kuba.flashscorecompose.fixturedetails.statistics.model.StatisticsUiState
 import com.kuba.flashscorecompose.fixturedetails.statistics.viewmodel.StatisticsViewModel
+import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
 import com.kuba.flashscorecompose.ui.component.EmptyState
 import com.kuba.flashscorecompose.ui.component.FixtureCard
 import com.kuba.flashscorecompose.ui.component.FullScreenLoading
@@ -54,19 +54,22 @@ fun StatisticsScreen(
         )
     }
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(key1 = STATISTICS_KEY) { viewModel.setup() }
     StatisticsList(
         uiState = uiState,
         onRefreshClick = { viewModel.refresh() },
-        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it)) })
+        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixtureItem)) },
+        onFavoriteClick = { viewModel.addFixtureToFavorite(it) }
+    )
 }
 
 @Composable
 private fun StatisticsList(
     uiState: StatisticsUiState,
     onRefreshClick: () -> Unit,
-    onFixtureClick: (FixtureItem) -> Unit
+    onFixtureClick: (FixtureItemWrapper) -> Unit,
+    onFavoriteClick: (FixtureItemWrapper) -> Unit
 ) {
     val scrollState = rememberLazyListState()
     LoadingContent(
@@ -94,8 +97,12 @@ private fun StatisticsList(
                     item {
                         OtherMatchesHeader()
                     }
-                    items(items = uiState.fixtures) {
-                        FixtureCard(fixtureItem = it, onFixtureClick = onFixtureClick)
+                    items(items = uiState.fixtureItemWrappers) {
+                        FixtureCard(
+                            fixtureItemWrapper = it,
+                            onFixtureClick = onFixtureClick,
+                            onFavoriteClick = onFavoriteClick
+                        )
                     }
                 }
                 is StatisticsUiState.HasOnlyStatistics -> {
@@ -113,8 +120,12 @@ private fun StatisticsList(
                     item {
                         OtherMatchesHeader()
                     }
-                    items(items = uiState.fixtures) {
-                        FixtureCard(fixtureItem = it, onFixtureClick = onFixtureClick)
+                    items(items = uiState.fixtureItemWrappers) {
+                        FixtureCard(
+                            fixtureItemWrapper = it,
+                            onFixtureClick = onFixtureClick,
+                            onFavoriteClick = onFavoriteClick
+                        )
                     }
                 }
                 is StatisticsUiState.NoData -> {

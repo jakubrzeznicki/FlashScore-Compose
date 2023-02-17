@@ -13,7 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuba.flashscorecompose.teamdetails.players.model.PlayerCountry
+import com.kuba.flashscorecompose.teamdetails.players.model.PlayerWrapper
 import com.kuba.flashscorecompose.ui.component.PlayerCard
 
 /**
@@ -21,11 +21,12 @@ import com.kuba.flashscorecompose.ui.component.PlayerCard
  */
 @Composable
 fun PlayersListWithHeader(
-    players: List<PlayerCountry>,
+    players: List<PlayerWrapper>,
     state: LazyListState,
     color: Color,
     textId: Int,
-    onPlayerClick: (PlayerCountry) -> Unit
+    onPlayerClick: (PlayerWrapper) -> Unit,
+    onPlayerFavoriteClick: (PlayerWrapper) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -41,21 +42,26 @@ fun PlayersListWithHeader(
             )
         }
         items(items = players) {
-            PlayerCard(playerCountry = it, onPlayerClick = onPlayerClick)
+            PlayerCard(
+                playerWrapper = it,
+                onPlayerClick = onPlayerClick,
+                onFavoriteClick = onPlayerFavoriteClick
+            )
         }
     }
 }
 
 @Composable
 fun PlayersDoubleListWithHeader(
-    players: List<PlayerCountry>,
-    favoritePlayers: List<PlayerCountry>,
+    players: List<PlayerWrapper>,
+    favoritePlayers: List<PlayerWrapper>,
     state: LazyListState,
     color: Color,
     favoriteColor: Color,
     textId: Int,
     favoriteTextId: Int,
-    onPlayerClick: (PlayerCountry) -> Unit
+    onPlayerClick: (PlayerWrapper) -> Unit,
+    onPlayerFavoriteClick: (PlayerWrapper) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -71,7 +77,11 @@ fun PlayersDoubleListWithHeader(
             )
         }
         items(items = favoritePlayers) {
-            PlayerCard(playerCountry = it, onPlayerClick = onPlayerClick)
+            PlayerCard(
+                playerWrapper = it,
+                onPlayerClick = onPlayerClick,
+                onFavoriteClick = onPlayerFavoriteClick
+            )
         }
         item {
             Text(
@@ -83,7 +93,11 @@ fun PlayersDoubleListWithHeader(
             )
         }
         items(items = players) {
-            PlayerCard(playerCountry = it, onPlayerClick = onPlayerClick)
+            PlayerCard(
+                playerWrapper = it,
+                onPlayerClick = onPlayerClick,
+                onFavoriteClick = onPlayerFavoriteClick
+            )
         }
     }
 }

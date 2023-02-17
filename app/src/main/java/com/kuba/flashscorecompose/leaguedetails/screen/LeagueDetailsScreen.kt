@@ -19,15 +19,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import coil.size.Size
 import com.kuba.flashscorecompose.R
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.destinations.FixtureDetailsRouteDestination
 import com.kuba.flashscorecompose.destinations.StandingsDetailsRouteDestination
+import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
 import com.kuba.flashscorecompose.leaguedetails.model.LeagueDetailsUiState
 import com.kuba.flashscorecompose.leaguedetails.viewmodel.LeagueDetailsViewModel
 import com.kuba.flashscorecompose.ui.component.*
@@ -55,14 +56,15 @@ fun LeagueDetailsRoute(
     navigator: DestinationsNavigator,
     viewModel: LeagueDetailsViewModel = getViewModel { parametersOf(league) }
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(key1 = SETUP_LEAGUE_DETAILS_KEY) { viewModel.setup() }
     LeagueDetailsScreen(
         uiState = uiState,
         league = league,
         navigator = navigator,
         onRefreshClick = { viewModel.refresh() },
-        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it)) },
+        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixtureItem)) },
+        onFixtureFavoriteClick = { viewModel.addFixtureToFavorite(it) },
         onDateClick = { viewModel.changeDate(it) },
         onStandingsClick = { navigator.navigate(StandingsDetailsRouteDestination(league)) }
     )
@@ -75,7 +77,8 @@ fun LeagueDetailsScreen(
     league: League,
     navigator: DestinationsNavigator,
     onRefreshClick: () -> Unit,
-    onFixtureClick: (FixtureItem) -> Unit,
+    onFixtureClick: (FixtureItemWrapper) -> Unit,
+    onFixtureFavoriteClick: (FixtureItemWrapper) -> Unit,
     onDateClick: (LocalDate) -> Unit,
     onStandingsClick: () -> Unit,
 ) {
@@ -110,8 +113,12 @@ fun LeagueDetailsScreen(
                 }
                 when (uiState) {
                     is LeagueDetailsUiState.HasData -> {
-                        items(items = uiState.fixtureItems) {
-                            FixtureCard(fixtureItem = it, onFixtureClick = onFixtureClick)
+                        items(items = uiState.fixtureItemWrappers) {
+                            FixtureCard(
+                                fixtureItemWrapper = it,
+                                onFixtureClick = onFixtureClick,
+                                onFavoriteClick = onFixtureFavoriteClick
+                            )
                         }
                     }
                     is LeagueDetailsUiState.NoData -> {

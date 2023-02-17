@@ -6,7 +6,8 @@ import com.kuba.flashscorecompose.data.country.CountryDataSource
 import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.players.PlayersDataSource
 import com.kuba.flashscorecompose.data.team.information.model.Team
-import com.kuba.flashscorecompose.teamdetails.players.model.PlayerCountry
+import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
+import com.kuba.flashscorecompose.teamdetails.players.model.PlayerWrapper
 import com.kuba.flashscorecompose.teamdetails.players.model.PlayersError
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
@@ -21,13 +22,18 @@ class PlayersViewModel(
     private val team: Team,
     private val season: Int,
     private val playersRepository: PlayersDataSource,
-    private val countryRepository: CountryDataSource
+    private val countryRepository: CountryDataSource,
+    private val userPreferencesRepository: UserPreferencesDataSource
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(PlayersViewModelState())
     val uiState = viewModelState
         .map { it.toUiState() }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5_000),
+            viewModelState.value.toUiState()
+        )
 
     fun setup() {
         observePlayers()
@@ -39,18 +45,29 @@ class PlayersViewModel(
 
     private fun observePlayers() {
         viewModelScope.launch {
-            val countries = countryRepository.getCountries()
-            playersRepository.observePlayers(team.id, season).collect { players ->
-                viewModelState.update {
-                    val playerCountry = players.map { player ->
-                        PlayerCountry(
-                            player = player,
-                            country = countries.firstOrNull { country -> country.name == player.nationality }
-                                ?: Country.EMPTY_COUNTRY)
-                    }
-                    it.copy(playerCountries = playerCountry)
+            val countriesFlow = countryRepository.observeCountries()
+            val currentUserId = userPreferencesRepository.getCurrentUserId()
+            val userPreferencesFlow =
+                userPreferencesRepository.observeUserPreferences(currentUserId)
+            val playersFlow = playersRepository.observePlayers()
+            combine(
+                flow = playersFlow,
+                flow2 = countriesFlow,
+                flow3 = userPreferencesFlow
+            ) { players, countries, userPreferences ->
+                val favoritePlayerIds = userPreferences.favoritePlayerIds
+                val playerCountries = players.map {
+                    PlayerWrapper(
+                        player = it,
+                        country = countries.firstOrNull { country -> country.name == it.nationality }
+                            ?: Country.EMPTY_COUNTRY,
+                        isFavorite = favoritePlayerIds.contains(it.id)
+                    )
                 }
-            }
+                viewModelState.update {
+                    it.copy(playerWrappers = playerCountries)
+                }
+            }.collect()
         }
     }
 
@@ -70,6 +87,19 @@ class PlayersViewModel(
                     }
                 }
             }
+        }
+    }
+
+    fun addPlayerToFavorite(playerWrapper: PlayerWrapper) {
+        viewModelScope.launch {
+            val favoritePlayerWrappers =
+                viewModelState.value.playerWrappers.filter { it.isFavorite }.toMutableList()
+            if (playerWrapper.isFavorite) {
+                favoritePlayerWrappers.remove(playerWrapper)
+            } else {
+                favoritePlayerWrappers.add(playerWrapper.copy(isFavorite = true))
+            }
+            userPreferencesRepository.saveFavoritePlayerIds(favoritePlayerWrappers.map { it.player.id })
         }
     }
 }

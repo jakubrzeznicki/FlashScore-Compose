@@ -1,5 +1,6 @@
 package com.kuba.flashscorecompose.data.user.local.model
 
+import android.net.Uri
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -14,6 +15,6 @@ data class UserEntity(
     val password: String,
     val phone: String,
     val address: String,
-    val photoUri: String,
+    val photoUri: Uri,
     val isAnonymous: Boolean
 )
