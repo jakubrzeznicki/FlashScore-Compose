@@ -6,7 +6,6 @@ import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.authentication.AuthenticationDataSource
 import com.kuba.flashscorecompose.data.user.UserDataSource
 import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
-import com.kuba.flashscorecompose.profile.settings.model.ProfileSettingsItem
 import com.kuba.flashscorecompose.signup.model.SignUpError
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
@@ -68,15 +67,9 @@ class ProfileSettingsViewModel(
         viewModelState.update { it.copy(shouldShowConfirmSignOutDialog = showDialog) }
     }
 
-    fun onCardClick(profileSettingsItem: ProfileSettingsItem) {
+    fun onPasswordClick() {
         viewModelState.update {
-            when (profileSettingsItem) {
-                is ProfileSettingsItem.Password ->
-                    it.copy(isPasswordCardExpanded = !it.isPasswordCardExpanded)
-                else -> {
-                    it.copy()
-                }
-            }
+            it.copy(isPasswordCardExpanded = !it.isPasswordCardExpanded)
         }
     }
 

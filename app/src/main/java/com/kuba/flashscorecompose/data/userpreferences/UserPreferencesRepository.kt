@@ -44,7 +44,7 @@ class UserPreferencesRepository(private val local: UserPreferencesLocalDataSourc
         return local.getUserPreferences()?.toUserPreferences()
     }
 
-    override suspend fun observeUserPreferences(currentUserId: String): Flow<UserPreferences> {
+    override fun observeUserPreferences(currentUserId: String): Flow<UserPreferences> {
         return local.observeUserPreferences(currentUserId).mapNotNull { it?.toUserPreferences() }
     }
 

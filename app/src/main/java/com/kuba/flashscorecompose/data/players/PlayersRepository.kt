@@ -37,9 +37,9 @@ class PlayersRepository(
         }
     }
 
-    override fun observeFavoritePlayers(ids: List<Int>): Flow<List<Player>> {
-        return local.observeFavoritePlayers(ids).map { playersEntities ->
-            playersEntities.map { it.toPlayer() }
+    override suspend fun getFavoritePlayers(ids: List<Int>): List<Player> {
+        return local.getFavoritePlayers(ids).map { playerEntity ->
+            playerEntity.toPlayer()
         }
     }
 

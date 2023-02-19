@@ -58,7 +58,6 @@ class ProfileViewModel(
                             viewModelState.value.user.copy(photoUri = result.data ?: Uri.EMPTY)
                         )
                         it.copy(isLoading = false)
-
                     }
                     is RepositoryResult.Error -> {
                         result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)

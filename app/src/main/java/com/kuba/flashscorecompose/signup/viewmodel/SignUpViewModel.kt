@@ -38,9 +38,7 @@ class SignUpViewModel(
         get() = viewModelState.value.password
 
     fun onEmailChange(newValue: String) {
-        viewModelState.update {
-            it.copy(email = newValue)
-        }
+        viewModelState.update { it.copy(email = newValue) }
     }
 
     fun onPasswordChange(newValue: String) {

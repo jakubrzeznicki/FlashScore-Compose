@@ -15,6 +15,6 @@ interface UserPreferencesDataSource {
     suspend fun saveFavoritePlayerIds(playerIds: List<Int>)
     suspend fun saveFavoriteFixturesIds(fixtureIds: List<Int>)
     suspend fun getUserPreferences(): UserPreferences?
-    suspend fun observeUserPreferences(currentUserId: String): Flow<UserPreferences>
+    fun observeUserPreferences(currentUserId: String): Flow<UserPreferences>
     suspend fun saveUserPreferences(userPreferences: UserPreferences)
 }

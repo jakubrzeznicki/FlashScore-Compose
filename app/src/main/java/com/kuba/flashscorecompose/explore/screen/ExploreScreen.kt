@@ -390,7 +390,6 @@ private fun TopBar() {
         })
 }
 
-
 @Composable
 private fun ExploreFilterChips(
     exploreFilterChip: FilterChip.Explore,

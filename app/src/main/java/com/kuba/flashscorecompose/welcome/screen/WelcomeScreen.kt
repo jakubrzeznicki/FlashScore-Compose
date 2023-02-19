@@ -65,11 +65,10 @@ fun WelcomeRoute(
 @Composable
 fun WelcomeScreen(
     uiState: WelcomeUiState,
-    onSignInClick: () -> Unit = {},
-    onSignUpClick: () -> Unit = {},
-    onSignInAsGuest: () -> Unit = {}
+    onSignInClick: () -> Unit,
+    onSignUpClick: () -> Unit,
+    onSignInAsGuest: () -> Unit
 ) {
-
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -84,17 +83,17 @@ fun WelcomeScreen(
                     .padding(start = 32.dp, end = 32.dp)
                     .verticalScroll(scrollState),
             ) {
-                Branding()
-                SignInSignUpButtons(
+                BrandingImage()
+                SignButtons(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 48.dp, bottom = 16.dp),
                     onSignInClick = onSignInClick,
                     onSignUpClick = onSignUpClick
                 )
-                SignInAsGuest(
-                    onSignInAsGuest = onSignInAsGuest,
-                    modifier = Modifier.fillMaxWidth()
+                SignInAsGuestButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onSignInAsGuest = onSignInAsGuest
                 )
             }
             CircularProgressBar(uiState.isLoading)
@@ -103,7 +102,7 @@ fun WelcomeScreen(
 }
 
 @Composable
-fun Branding() {
+fun BrandingImage() {
     Column {
         Image(
             modifier = Modifier
@@ -112,7 +111,7 @@ fun Branding() {
                 .padding(top = 24.dp),
             alignment = Alignment.Center,
             painter = painterResource(id = R.drawable.mbappe),
-            contentDescription = "",
+            contentDescription = null,
             contentScale = ContentScale.Fit
         )
         Spacer(modifier = Modifier.size(32.dp))
@@ -133,10 +132,10 @@ fun Branding() {
 }
 
 @Composable
-fun SignInSignUpButtons(
+fun SignButtons(
     modifier: Modifier,
-    onSignInClick: () -> Unit = {},
-    onSignUpClick: () -> Unit = {},
+    onSignInClick: () -> Unit,
+    onSignUpClick: () -> Unit,
 ) {
     Row(modifier = modifier) {
         Button(
@@ -171,9 +170,9 @@ fun SignInSignUpButtons(
 }
 
 @Composable
-fun SignInAsGuest(
-    onSignInAsGuest: () -> Unit,
-    modifier: Modifier = Modifier
+fun SignInAsGuestButton(
+    modifier: Modifier = Modifier,
+    onSignInAsGuest: () -> Unit
 ) {
     Column(
         modifier = modifier,

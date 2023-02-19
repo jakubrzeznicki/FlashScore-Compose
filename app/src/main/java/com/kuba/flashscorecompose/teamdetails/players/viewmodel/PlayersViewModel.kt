@@ -49,7 +49,7 @@ class PlayersViewModel(
             val currentUserId = userPreferencesRepository.getCurrentUserId()
             val userPreferencesFlow =
                 userPreferencesRepository.observeUserPreferences(currentUserId)
-            val playersFlow = playersRepository.observePlayers()
+            val playersFlow = playersRepository.observePlayers(team.id, team.season)
             combine(
                 flow = playersFlow,
                 flow2 = countriesFlow,

@@ -141,7 +141,7 @@ fun Coach.toCoachEntity(): CoachEntity {
     )
 }
 
-fun TeamDto.toTeam(leagueId: Int, season: Int): Team {
+fun TeamDto.toTeam(leagueId: Int, season: Int, countryParam: String? = ""): Team {
     return Team(
         id = id ?: 0,
         logo = logo.orEmpty(),
@@ -149,7 +149,7 @@ fun TeamDto.toTeam(leagueId: Int, season: Int): Team {
         isWinner = winner ?: false,
         code = code.orEmpty(),
         founded = founded ?: 0,
-        country = country.orEmpty(),
+        country = country ?: countryParam.orEmpty(),
         isNational = national ?: false,
         colors = colors?.toColors() ?: Colors.EMPTY_COLORS,
         leagueId = leagueId,
@@ -157,7 +157,7 @@ fun TeamDto.toTeam(leagueId: Int, season: Int): Team {
     )
 }
 
-fun TeamDto.toTeam(): Team {
+fun TeamDto.toTeam(countryName: String? = ""): Team {
     return Team(
         id = id ?: 0,
         logo = logo.orEmpty(),
@@ -165,7 +165,7 @@ fun TeamDto.toTeam(): Team {
         isWinner = winner ?: false,
         code = code.orEmpty(),
         founded = founded ?: 0,
-        country = country.orEmpty(),
+        country = country ?: countryName.orEmpty(),
         isNational = national ?: false,
         colors = colors?.toColors() ?: Colors.EMPTY_COLORS,
         leagueId = 0,

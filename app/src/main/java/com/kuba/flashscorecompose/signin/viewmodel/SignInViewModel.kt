@@ -1,5 +1,6 @@
 package com.kuba.flashscorecompose.signin.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.R
@@ -88,12 +89,15 @@ class SignInViewModel(
                         val currentUserId = authenticationRepository.currentUserId
                         val isKeepLogged = viewModelState.value.keepLogged
                         val currentUser = authenticationRepository.currentUser
+                        val savedUser = userRepository.getUserById(currentUserId)
                         val user = User(
                             id = currentUserId,
                             name = currentUser?.displayName.orEmpty(),
                             email = email,
                             password = password.md5(),
-                            phone = currentUser?.phoneNumber.orEmpty(),
+                            phone = savedUser?.phone ?: currentUser?.phoneNumber.orEmpty(),
+                            address = savedUser?.address.orEmpty(),
+                            photoUri = savedUser?.photoUri ?: Uri.EMPTY,
                             isAnonymous = currentUser?.isAnonymous ?: false
                         )
                         SnackbarManager.showMessage(

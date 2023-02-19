@@ -94,7 +94,7 @@ fun PlayerDto.toPlayer(): Player {
     return Player(
         grid = grid.orEmpty(),
         team = Team.EMPTY_TEAM,
-        season = 0,
+        season = 2022,
         id = id ?: 0,
         name = name.orEmpty(),
         number = number ?: 0,

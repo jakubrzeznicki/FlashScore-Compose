@@ -9,7 +9,9 @@ import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesDataSource
 import com.kuba.flashscorecompose.data.league.LeagueDataSource
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.data.players.PlayersDataSource
+import com.kuba.flashscorecompose.data.players.model.Player
 import com.kuba.flashscorecompose.data.team.information.TeamDataSource
+import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.data.team.information.model.Venue
 import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
 import com.kuba.flashscorecompose.explore.model.CoachCountry
@@ -45,15 +47,25 @@ class ExploreViewModel(
             SharingStarted.WhileSubscribed(5_000),
             viewModelState.value.toUiState()
         )
+    private lateinit var currentUserId: String
+
+    // private val countries by lazy { countryRepository.getCountries() }
+    private val userPreferences by lazy {
+        userPreferencesRepository.observeUserPreferences(currentUserId)
+    }
+
+    init {
+        viewModelScope.launch {
+            currentUserId = userPreferencesRepository.getCurrentUserId()
+        }
+    }
 
     fun setup() {
-        observeCountries()
-        observeLiveFixtures()
+        observeLeagues()
+        observeFixtures()
         observeFavoriteFixtures()
         observeTeams()
-        observeFavoriteTeams()
         observePlayers()
-        observeFavoritePlayers()
         observeCoaches()
         observeVenues()
     }
@@ -62,7 +74,7 @@ class ExploreViewModel(
         refreshFixtures()
     }
 
-    private fun observeCountries() {
+    private fun observeLeagues() {
         viewModelScope.launch {
             leagueRepository.observeLeagues().collect { leagues ->
                 val filteredLeagues = filterLeagues(leagues)
@@ -73,13 +85,10 @@ class ExploreViewModel(
         }
     }
 
-    private fun observeLiveFixtures() {
+    private fun observeFixtures() {
         viewModelScope.launch {
-            val currentUserId = userPreferencesRepository.getCurrentUserId()
-            val userPreferencesFlow =
-                userPreferencesRepository.observeUserPreferences(currentUserId)
             val fixturesFlow = fixturesRepository.observeFixturesLive()
-            combine(flow = fixturesFlow, flow2 = userPreferencesFlow) { fixtures, userPreferences ->
+            combine(flow = fixturesFlow, flow2 = userPreferences) { fixtures, userPreferences ->
                 val favoriteFixtureIds = userPreferences.favoriteFixtureIds
                 val fixtureItemWrappers = fixtures.map {
                     FixtureItemWrapper(
@@ -87,11 +96,11 @@ class ExploreViewModel(
                         isFavorite = favoriteFixtureIds.contains(it.id)
                     )
                 }
-                val filteredFixtures = filterFixtures(fixtureItemWrappers)
+                val filteredFixtureItemWrappers = filterFixtures(fixtureItemWrappers)
                 viewModelState.update {
                     it.copy(
                         liveFixtures = fixtureItemWrappers,
-                        filteredLiveFixtures = filteredFixtures
+                        filteredLiveFixtures = filteredFixtureItemWrappers
                     )
                 }
             }
@@ -100,10 +109,7 @@ class ExploreViewModel(
 
     private fun observeFavoriteFixtures() {
         viewModelScope.launch {
-            val currentUserId = userPreferencesRepository.getCurrentUserId()
-            val userPreferencesFlow =
-                userPreferencesRepository.observeUserPreferences(currentUserId)
-            userPreferencesFlow.map { userPreferences ->
+            userPreferences.map { userPreferences ->
                 val favoriteFixtureIds = userPreferences.favoriteFixtureIds
                 fixturesRepository.observeFavoriteFixtures(favoriteFixtureIds).collect { fixtures ->
                     val fixtureItemWrappers = fixtures.map {
@@ -112,11 +118,11 @@ class ExploreViewModel(
                             isFavorite = favoriteFixtureIds.contains(it.id)
                         )
                     }
-                    val filteredFixtures = filterFavoriteFixtures(fixtureItemWrappers)
+                    val filteredFixtureItemWrappers = filterFavoriteFixtures(fixtureItemWrappers)
                     viewModelState.update {
                         it.copy(
                             favoriteFixtures = fixtureItemWrappers,
-                            filteredFavoriteFixtures = filteredFixtures
+                            filteredFavoriteFixtures = filteredFixtureItemWrappers
                         )
                     }
                 }
@@ -126,133 +132,84 @@ class ExploreViewModel(
 
     private fun observeTeams() {
         viewModelScope.launch {
-            val countriesFlow = countryRepository.observeCountries()
-            val currentUserId = userPreferencesRepository.getCurrentUserId()
-            val userPreferencesFlow =
-                userPreferencesRepository.observeUserPreferences(currentUserId)
             val teamsFlow = teamRepository.observeTeams()
             combine(
                 flow = teamsFlow,
-                flow2 = countriesFlow,
-                flow3 = userPreferencesFlow
-            ) { teams, countries, userPreferences ->
+                flow2 = userPreferences
+            ) { teams, userPreferences ->
                 val favoriteTeamIds = userPreferences.favoriteTeamIds
-                Log.d("TEST_LOG", "ObserveTeams")
-                favoriteTeamIds.forEach {
-                    Log.d("TEST_LOG", "FacoriteteamsIds -- $it")
+                val countries = countryRepository.getCountries()
+                Log.d("TEST_LOG", "countries size - - ${countries.size}")
+                countries.forEach {
+                    Log.d("TEST_LOG", "country - - ${it}")
                 }
-                val teamWrappers = teams.map {
-                    TeamWrapper(
-                        team = it,
-                        country = countries.firstOrNull { country -> country.name == it.country }
-                            ?: Country.EMPTY_COUNTRY,
-                        isFavorite = favoriteTeamIds.contains(it.id)
-                    )
-                }
-                val filteredTeams = filterTeams(teamWrappers)
+                val teamWrappers = teams.toTeamWrappers(countries, favoriteTeamIds)
+                val filteredTeamWrappers = filterTeams(teamWrappers)
+                val favoriteTeams = teams.filter { favoriteTeamIds.contains(it.id) }
+                val favoriteTeamWrappers = favoriteTeams.toTeamWrappers(countries, favoriteTeamIds)
+                val filteredFavoriteTeamWrappers = filterFavoriteTeams(favoriteTeamWrappers)
                 viewModelState.update {
-                    it.copy(teams = teamWrappers, filteredTeams = filteredTeams)
+                    it.copy(
+                        teams = teamWrappers,
+                        filteredTeams = filteredTeamWrappers,
+                        favoriteTeams = favoriteTeamWrappers,
+                        filteredFavoriteTeams = filteredFavoriteTeamWrappers
+                    )
                 }
             }.collect()
         }
     }
 
-    private fun observeFavoriteTeams() {
-        viewModelScope.launch {
-            val countriesFlow = countryRepository.observeCountries()
-            val currentUserId = userPreferencesRepository.getCurrentUserId()
-            val userPreferencesFlow =
-                userPreferencesRepository.observeUserPreferences(currentUserId)
-            combine(
-                flow = userPreferencesFlow,
-                flow2 = countriesFlow
-            ) { userPreferences, countries ->
-                Log.d("TEST_LOG", "Observe FavoriteTeams beforeee")
-                teamRepository.observeFavoriteTeams(userPreferences.favoriteTeamIds)
-                    .collect { teams ->
-                        val teamCountries = teams.map {
-                            TeamWrapper(
-                                team = it,
-                                country = countries.firstOrNull { country -> country.name == it.country }
-                                    ?: Country.EMPTY_COUNTRY,
-                                isFavorite = true
-                            )
-                        }
-                        Log.d("TEST_LOG", "Observe FavoriteTeams")
-                        userPreferences.favoriteTeamIds.forEach {
-                            Log.d("TEST_LOG", "FacoriteteamsIds on favorite -- $it")
-                        }
-                        val filteredFavoriteTeams = filterFavoriteTeams(teamCountries)
-                        viewModelState.update {
-                            it.copy(
-                                favoriteTeams = teamCountries,
-                                filteredFavoriteTeams = filteredFavoriteTeams
-                            )
-                        }
-                    }
-            }
-        }
+    private fun List<Team>.toTeamWrappers(
+        countries: List<Country>,
+        favoriteTeamIds: List<Int>
+    ): List<TeamWrapper> = map {
+        Log.d("TEST_LOG", "team Country - ${it.country}")
+        TeamWrapper(
+            team = it,
+            country = countries.firstOrNull { country -> country.name == it.country }
+                ?: Country.EMPTY_COUNTRY,
+            isFavorite = favoriteTeamIds.contains(it.id)
+        )
     }
 
     private fun observePlayers() {
         viewModelScope.launch {
-            val countriesFlow = countryRepository.observeCountries()
-            val currentUserId = userPreferencesRepository.getCurrentUserId()
-            val userPreferencesFlow =
-                userPreferencesRepository.observeUserPreferences(currentUserId)
             val playersFlow = playersRepository.observePlayers()
             combine(
                 flow = playersFlow,
-                flow2 = countriesFlow,
-                flow3 = userPreferencesFlow
-            ) { players, countries, userPreferences ->
+                flow2 = userPreferences
+            ) { players, userPreferences ->
                 val favoritePlayerIds = userPreferences.favoritePlayerIds
-                val playerCountries = players.map {
-                    PlayerWrapper(
-                        player = it,
-                        country = countries.firstOrNull { country -> country.name == it.nationality }
-                            ?: Country.EMPTY_COUNTRY,
-                        isFavorite = favoritePlayerIds.contains(it.id)
-                    )
-                }
-                val filteredPlayers = filterPlayers(playerCountries)
+                val countries = countryRepository.getCountries()
+                val playerWrappers = players.toPlayerWrappers(countries, favoritePlayerIds)
+                val filteredPlayerWrappers = filterPlayers(playerWrappers)
+                val favoritePlayers = players.filter { favoritePlayerIds.contains(it.id) }
+                val favoritePlayerWrappers =
+                    favoritePlayers.toPlayerWrappers(countries, favoritePlayerIds)
+                val filteredFavoritePlayerWrappers = filterFavoritePlayers(favoritePlayerWrappers)
                 viewModelState.update {
-                    it.copy(players = playerCountries, filteredPlayers = filteredPlayers)
+                    it.copy(
+                        players = playerWrappers,
+                        filteredPlayers = filteredPlayerWrappers,
+                        favoritePlayers = favoritePlayerWrappers,
+                        filteredFavoritePlayers = filteredFavoritePlayerWrappers
+                    )
                 }
             }.collect()
         }
     }
 
-    private fun observeFavoritePlayers() {
-        viewModelScope.launch {
-            val countriesFlow = countryRepository.observeCountries()
-            val currentUserId = userPreferencesRepository.getCurrentUserId()
-            val userPreferencesFlow =
-                userPreferencesRepository.observeUserPreferences(currentUserId)
-            combine(
-                flow = userPreferencesFlow,
-                flow2 = countriesFlow
-            ) { userPreferences, countries ->
-                playersRepository.observeFavoritePlayers(userPreferences.favoritePlayerIds)
-                    .collect { players ->
-                        val playerCountries = players.map {
-                            PlayerWrapper(
-                                player = it,
-                                country = countries.firstOrNull { country -> country.name == it.nationality }
-                                    ?: Country.EMPTY_COUNTRY,
-                                isFavorite = true
-                            )
-                        }
-                        val filteredFavoritePlayers = filterFavoritePlayers(playerCountries)
-                        viewModelState.update {
-                            it.copy(
-                                favoritePlayers = playerCountries,
-                                filteredFavoritePlayers = filteredFavoritePlayers
-                            )
-                        }
-                    }
-            }.collect()
-        }
+    private fun List<Player>.toPlayerWrappers(
+        countries: List<Country>,
+        favoritePlayerIds: List<Int>
+    ): List<PlayerWrapper> = map {
+        PlayerWrapper(
+            player = it,
+            country = countries.firstOrNull { country -> country.name == it.nationality }
+                ?: Country.EMPTY_COUNTRY,
+            isFavorite = favoritePlayerIds.contains(it.id)
+        )
     }
 
     private fun observeVenues() {
@@ -268,9 +225,8 @@ class ExploreViewModel(
 
     private fun observeCoaches() {
         viewModelScope.launch {
-            val countriesFlow = countryRepository.observeCountries()
-            val coachesFlow = teamRepository.observeCoaches()
-            combine(coachesFlow, countriesFlow) { coaches, countries ->
+            teamRepository.observeCoaches().collect { coaches ->
+                val countries = countryRepository.getCountries()
                 val coachCountries = coaches.map {
                     CoachCountry(
                         coach = it,
@@ -281,7 +237,7 @@ class ExploreViewModel(
                 viewModelState.update {
                     it.copy(coaches = coachCountries, filteredCoaches = filteredCoaches)
                 }
-            }.collect()
+            }
         }
     }
 
@@ -453,7 +409,11 @@ class ExploreViewModel(
         leagues: List<League> = viewModelState.value.leagues,
         query: String = viewModelState.value.exploreQuery
     ): List<League> {
-        return leagues.filter { it.name.containsQuery(query) || it.countryName.containsQuery(query) }
+        return leagues.filter {
+            it.name.containsQuery(query) || it.countryName.containsQuery(
+                query
+            )
+        }
     }
 
     private fun filterCoaches(

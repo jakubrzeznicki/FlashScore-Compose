@@ -125,7 +125,7 @@ class TeamRepository(
             val teamResponseData = result.body()?.response
             val teamWIthVenues = teamResponseData?.map {
                 TeamWithVenue(
-                    team = it.team.toTeam(),
+                    team = it.team.toTeam(countryName),
                     venue = it.venue.toVenue(it.team.id)
                 )
             }

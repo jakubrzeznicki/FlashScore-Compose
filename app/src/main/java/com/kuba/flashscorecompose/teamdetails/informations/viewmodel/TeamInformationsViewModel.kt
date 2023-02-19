@@ -45,17 +45,16 @@ class TeamInformationsViewModel(
 
     private fun observeTeam() {
         viewModelScope.launch {
-            val countriesFlow = countryRepository.observeCountry(team.country)
-            val teamFlow = teamRepository.observeTeam(team.id)
-            combine(flow = teamFlow, flow2 = countriesFlow) { team, country ->
+            teamRepository.observeTeam(team.id).collect { team ->
                 if (team == null) {
                     viewModelState.update { it.copy(error = TeamInformationsError.EmptyTeam) }
-                    return@combine
+                    return@collect
                 }
+                val country = countryRepository.getCountry(team.country)
                 viewModelState.update {
                     it.copy(team = team, country = country ?: Country.EMPTY_COUNTRY)
                 }
-            }.collect()
+            }
         }
     }
 

@@ -98,74 +98,102 @@ fun SignInScreen(
                     .padding(top = 48.dp, start = 32.dp, end = 32.dp)
                     .verticalScroll(scrollState)
             ) {
-                EmailTextField(
-                    value = uiState.email,
-                    onValueChange = onEmailChange,
-                    errorMessage = when (uiState.error) {
-                        is SignInError.InvalidEmail -> stringResource(id = uiState.error.messageId)
-                        else -> null
-                    },
-                    onKeyBoardAction = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }
+                SignInTextFields(
+                    uiState,
+                    focusManager,
+                    onEmailChange,
+                    onPasswordChange,
+                    togglePasswordVisibility,
+                    onSignInClick
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                PasswordTextField(
-                    labelId = R.string.password,
-                    value = uiState.password,
-                    onValueChange = onPasswordChange,
-                    trailingIcon = {
-                        ToggleTextVisibilityTrailingButton(
-                            onClick = togglePasswordVisibility,
-                            isVisible = uiState.isPasswordVisible
-                        )
-                    },
-                    errorMessage = when (uiState.error) {
-                        is SignInError.BlankPassword -> stringResource(id = uiState.error.messageId)
-                        else -> null
-                    },
-                    hideText = !uiState.isPasswordVisible,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            focusManager.clearFocus()
-                            onSignInClick()
-                        }
-                    )
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    onClick = { onSignInClick() },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.tertiary,
-                        contentColor = MaterialTheme.colorScheme.onTertiary
-                    ),
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Text(
-                        modifier = Modifier.padding(vertical = 12.dp),
-                        text = stringResource(id = R.string.sign_in)
-                    )
-                }
-                if (uiState.error is SignInError.AuthenticationError) {
-                    TextFieldError(uiState.error.responseStatus.statusMessage.orEmpty())
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-                TextButton(
-                    onClick = { onForgetPasswordClick() },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Companion.Transparent,
-                        contentColor = MaterialTheme.colorScheme.onSecondary
-                    )
-                ) {
-                    Text(text = stringResource(id = R.string.forgot_password))
-                }
+                SignInButtons(uiState.error, onSignInClick, onForgetPasswordClick)
             }
             CircularProgressBar(uiState.isLoading)
         }
+    }
+}
+
+@Composable
+private fun SignInTextFields(
+    uiState: SignInUiState,
+    focusManager: FocusManager,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    togglePasswordVisibility: () -> Unit,
+    onSignInClick: () -> Unit
+) {
+    EmailTextField(
+        value = uiState.email,
+        onValueChange = onEmailChange,
+        errorMessage = when (uiState.error) {
+            is SignInError.InvalidEmail -> stringResource(id = uiState.error.messageId)
+            else -> null
+        },
+        onKeyBoardAction = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }
+    )
+    Spacer(modifier = Modifier.height(16.dp))
+    PasswordTextField(
+        labelId = R.string.password,
+        value = uiState.password,
+        onValueChange = onPasswordChange,
+        trailingIcon = {
+            ToggleTextVisibilityTrailingButton(
+                onClick = togglePasswordVisibility,
+                isVisible = uiState.isPasswordVisible
+            )
+        },
+        errorMessage = when (uiState.error) {
+            is SignInError.BlankPassword -> stringResource(id = uiState.error.messageId)
+            else -> null
+        },
+        hideText = !uiState.isPasswordVisible,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Password,
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = {
+                focusManager.clearFocus()
+                onSignInClick()
+            }
+        )
+    )
+}
+
+@Composable
+private fun SignInButtons(
+    error: SignInError,
+    onSignInClick: () -> Unit,
+    onForgetPasswordClick: () -> Unit
+) {
+    Button(
+        onClick = { onSignInClick() },
+        modifier = Modifier.fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.tertiary,
+            contentColor = MaterialTheme.colorScheme.onTertiary
+        ),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Text(
+            modifier = Modifier.padding(vertical = 12.dp),
+            text = stringResource(id = R.string.sign_in)
+        )
+    }
+    if (error is SignInError.AuthenticationError) {
+        TextFieldError(error.responseStatus.statusMessage.orEmpty())
+    }
+    Spacer(modifier = Modifier.height(16.dp))
+    TextButton(
+        onClick = { onForgetPasswordClick() },
+        modifier = Modifier.fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.Companion.Transparent,
+            contentColor = MaterialTheme.colorScheme.onSecondary
+        )
+    ) {
+        Text(text = stringResource(id = R.string.forgot_password))
     }
 }
 

@@ -98,12 +98,11 @@ class OnBoardingViewModel(
         }
     }
 
-    private fun getIsNextEnabled(questionIndex: Int): Boolean =
-        when {
-            viewModelState.value.selectedTeams.isEmpty() && questionIndex == 0 -> false
-            viewModelState.value.selectedPlayers.isEmpty() && questionIndex == 1 -> false
-            else -> true
-        }
+    private fun getIsNextEnabled(questionIndex: Int): Boolean = when {
+        viewModelState.value.selectedTeams.isEmpty() && questionIndex == 0 -> false
+        viewModelState.value.selectedPlayers.isEmpty() && questionIndex == 1 -> false
+        else -> true
+    }
 
     private fun observePlayers(teamId: Int, season: Int) {
         viewModelScope.launch {

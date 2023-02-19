@@ -138,7 +138,7 @@ private fun ProfileTabs(user: User, navigator: DestinationsNavigator) {
 }
 
 @Composable
-fun ProfileHeader(
+private fun ProfileHeader(
     context: Context,
     name: String,
     userPhotoUri: Uri,
@@ -164,7 +164,7 @@ fun ProfileHeader(
 }
 
 @Composable
-fun ProfileImage(context: Context, userPhotoUri: Uri, onPhotoUriPicked: (Uri) -> Unit) {
+private fun ProfileImage(context: Context, userPhotoUri: Uri, onPhotoUriPicked: (Uri) -> Unit) {
     val photoLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
             uri?.let { onPhotoUriPicked(it) }
@@ -207,7 +207,6 @@ fun ProfileImage(context: Context, userPhotoUri: Uri, onPhotoUriPicked: (Uri) ->
         )
     }
 }
-
 
 @Composable
 private fun ProfileItemIcon(
