@@ -39,6 +39,10 @@ class UserPreferencesLocal(
         return userDataStore.getCurrentUserId()
     }
 
+    override fun observeCurrentUserId(): Flow<String> {
+        return userDataStore.observeCurrentUserId()
+    }
+
     override suspend fun saveFavoriteTeamIds(teamIds: List<Int>) {
         val userPreferencesEntity = getUserPreferences()
         teamIds.forEach {

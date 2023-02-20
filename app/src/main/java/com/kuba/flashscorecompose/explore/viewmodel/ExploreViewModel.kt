@@ -48,16 +48,6 @@ class ExploreViewModel(
             SharingStarted.WhileSubscribed(5_000),
             viewModelState.value.toUiState()
         )
-    private lateinit var currentUserId: String
-    private val userPreferences by lazy {
-        userPreferencesRepository.observeUserPreferences(currentUserId)
-    }
-
-    init {
-        viewModelScope.launch {
-            currentUserId = userPreferencesRepository.getCurrentUserId()
-        }
-    }
 
     fun setup() {
         observeLeagues()
@@ -86,8 +76,11 @@ class ExploreViewModel(
 
     private fun observeFixtures() {
         viewModelScope.launch {
+            val currentUserId = userPreferencesRepository.getCurrentUserId()
+            val userPreferencesFlow =
+                userPreferencesRepository.observeUserPreferences(currentUserId)
             val fixturesFlow = fixturesRepository.observeFixturesLive()
-            combine(flow = fixturesFlow, flow2 = userPreferences) { fixtures, userPreferences ->
+            combine(flow = fixturesFlow, flow2 = userPreferencesFlow) { fixtures, userPreferences ->
                 val favoriteFixtureIds = userPreferences.favoriteFixtureIds
                 val fixtureItemWrappers = fixtures.map {
                     FixtureItemWrapper(
@@ -108,6 +101,8 @@ class ExploreViewModel(
 
     private fun observeFavoriteFixtures() {
         viewModelScope.launch {
+            val currentUserId = userPreferencesRepository.getCurrentUserId()
+            val userPreferences = userPreferencesRepository.observeUserPreferences(currentUserId)
             userPreferences.map { userPreferences ->
                 val favoriteFixtureIds = userPreferences.favoriteFixtureIds
                 fixturesRepository.observeFavoriteFixtures(favoriteFixtureIds).collect { fixtures ->
@@ -131,11 +126,15 @@ class ExploreViewModel(
 
     private fun observeTeams() {
         viewModelScope.launch {
+            val currentUserId = userPreferencesRepository.getCurrentUserId()
+            val userPreferencesFlow =
+                userPreferencesRepository.observeUserPreferences(currentUserId)
             val teamsFlow = teamRepository.observeTeams()
             combine(
                 flow = teamsFlow,
-                flow2 = userPreferences
+                flow2 = userPreferencesFlow
             ) { teams, userPreferences ->
+                Log.d("TEST_LOG", "observeTeams - userId - ${userPreferences.userId}")
                 val favoriteTeamIds = userPreferences.favoriteTeamIds
                 val countries = countryRepository.getCountries()
                 val teamWrappers = teams.toTeamWrappers(countries, favoriteTeamIds)
@@ -159,7 +158,7 @@ class ExploreViewModel(
         countries: List<Country>,
         favoriteTeamIds: List<Int>
     ): List<TeamWrapper> = map {
-        Log.d("TEST_LOG", "team Country - ${it.country}")
+        //Log.d("TEST_LOG", "team Country - ${it.country}")
         TeamWrapper(
             team = it,
             country = countries.firstOrNull { country -> country.name == it.country }
@@ -170,11 +169,15 @@ class ExploreViewModel(
 
     private fun observePlayers() {
         viewModelScope.launch {
+            val currentUserId = userPreferencesRepository.getCurrentUserId()
+            val userPreferencesFlow =
+                userPreferencesRepository.observeUserPreferences(currentUserId)
             val playersFlow = playersRepository.observePlayers()
             combine(
                 flow = playersFlow,
-                flow2 = userPreferences
+                flow2 = userPreferencesFlow
             ) { players, userPreferences ->
+                Log.d("TEST_LOG", "observePlayers - userId - ${userPreferences.userId}")
                 val favoritePlayerIds = userPreferences.favoritePlayerIds
                 val countries = countryRepository.getCountries()
                 val playerWrappers = players.toPlayerWrappers(countries, favoritePlayerIds)

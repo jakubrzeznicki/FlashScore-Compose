@@ -1,5 +1,6 @@
 package com.kuba.flashscorecompose.signup.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.R
@@ -58,6 +59,8 @@ class SignUpViewModel(
     }
 
     fun onSignUpClick(openWelcomeScreen: () -> Unit) {
+        Log.d("TEST_LOG", "currentUserId - ${authenticationRepository.currentUserId}")
+        Log.d("TEST_LOG", "hasUser - ${authenticationRepository.hasUser}")
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             if (!email.isValidEmail()) {

@@ -3,6 +3,7 @@ package com.kuba.flashscorecompose.data.userpreferences.local.preferences
 import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -55,6 +56,16 @@ class DefaultUserDataStore(private val dataStore: DataStore<Preferences>) : User
             .map { preferences ->
                 preferences[PreferencesKeys.CURRENT_USER_ID].orEmpty()
             }.first()
+    }
+
+    override fun observeCurrentUserId(): Flow<String> {
+        return dataStore.data
+            .catch {
+                emit(emptyPreferences())
+            }
+            .map { preferences ->
+                preferences[PreferencesKeys.CURRENT_USER_ID].orEmpty()
+            }
     }
 
     private object PreferencesKeys {
