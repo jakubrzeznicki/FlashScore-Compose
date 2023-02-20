@@ -32,7 +32,7 @@ class HomeViewModel(
 
     fun setup() {
 //        refreshCountries()
-//        refreshFixtures()
+//        refreshFixtures()//
         observeCountries()
         observeFixtures()
     }
