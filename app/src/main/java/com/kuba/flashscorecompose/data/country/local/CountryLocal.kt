@@ -29,11 +29,7 @@ class CountryLocal(private val roomStorage: RoomStorage) : CountryLocalDataSourc
         return roomStorage.getDatabase().countryDao().getCountries()
     }
 
-    override fun saveCountries(countries: List<CountryEntity>) {
+    override suspend fun saveCountries(countries: List<CountryEntity>) {
         roomStorage.getDatabase().countryDao().saveCountries(countries)
-    }
-
-    override fun deleteCountries() {
-        roomStorage.getDatabase().countryDao().deleteCountries()
     }
 }

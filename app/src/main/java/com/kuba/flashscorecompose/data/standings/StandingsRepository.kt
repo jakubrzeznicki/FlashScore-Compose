@@ -44,18 +44,20 @@ class StandingsRepository(
         val result = remote.loadStandings(leagueId, season)
         return try {
             val standings = result.body()?.response?.map { leagueStandingsDto ->
-                leagueStandingsDto.league?.toStandings() ?: Standing.EMPTY_Standing
+                leagueStandingsDto.league?.toStandings() ?: Standing.EMPTY_STANDING
             }.orEmpty()
             withContext(Dispatchers.IO) {
                 saveStandings(standings = standings)
                 local.saveLeagues(standings.map { it.league.toLeagueEntity() })
                 val leagueSeason = LeagueSeason(leagueId, season)
                 val standingItemsWithLeague = standings.map { leagueSeason to it.standingItems }
-                standingItemsWithLeague.forEach {
-                    val teams =
-                        it.second.map { standingItem ->
-                            standingItem.team.toTeamEntity(it.first.leagueId, it.first.season)
-                        }
+                standingItemsWithLeague.forEach { (leagueSeason, standingItems) ->
+                    val teams = standingItems.map { standingItem ->
+                        standingItem.team.toTeamEntity(
+                            leagueSeason.leagueId,
+                            leagueSeason.season
+                        )
+                    }
                     local.saveTeams(teams)
                 }
             }

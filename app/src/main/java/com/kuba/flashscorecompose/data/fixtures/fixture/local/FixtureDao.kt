@@ -48,11 +48,5 @@ interface FixtureDao {
     suspend fun getFixturesByCountry(countryNames: List<String>): List<FixtureEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveFixtures(fixtures: List<FixtureEntity>)
-
-    @Query("DELETE FROM fixture WHERE league_id = :leagueId AND current_round_season = :season AND current_round_round = :round")
-    fun deleteByRound(leagueId: Int, season: Int, round: String)
-
-    @Query("DELETE FROM fixture WHERE h2h = :h2h")
-    fun deleteByH2H(h2h: String)
+    suspend fun saveFixtures(fixtures: List<FixtureEntity>)
 }

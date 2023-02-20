@@ -20,10 +20,6 @@ class UserRepository(private val local: UserLocalDataSource) : UserDataSource {
         return local.getUserById(id)?.toUser()
     }
 
-    override fun getUserByEmail(email: String): Flow<User> {
-        return local.getUserByEmail(email).map { it.toUser() }
-    }
-
     override suspend fun saveUser(user: User) {
         local.saveUser(user.toUserEntity())
     }

@@ -40,7 +40,7 @@ fun StatisticRowEntity.toStatistic(): Statistic {
     return Statistic(type = type, value = value)
 }
 
-fun StatisticsTeamDto.toStatistics(fixtureId: Int, isHome: Boolean): Statistics {
+fun StatisticsTeamDto.toStatistics(fixtureId: Int): Statistics {
     return Statistics(
         fixtureId = fixtureId,
         statistics = statistics?.map { it.toStatistic() }.orEmpty(),

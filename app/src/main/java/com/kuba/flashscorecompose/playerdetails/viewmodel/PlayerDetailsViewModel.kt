@@ -2,6 +2,7 @@ package com.kuba.flashscorecompose.playerdetails.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kuba.flashscorecompose.data.country.CountryDataSource
 import com.kuba.flashscorecompose.data.players.PlayersDataSource
 import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.playerdetails.model.PlayerDetailsError
@@ -19,6 +20,7 @@ class PlayerDetailsViewModel(
     private val team: Team,
     private val season: Int,
     private val playersRepository: PlayersDataSource,
+    private val countryRepository: CountryDataSource,
     private val snackbarManager: SnackbarManager
 ) : ViewModel() {
 
@@ -46,7 +48,8 @@ class PlayerDetailsViewModel(
                     viewModelState.update { it.copy(error = PlayerDetailsError.EmptyPlayer) }
                     return@collect
                 }
-                viewModelState.update { it.copy(player = player) }
+                val country = countryRepository.getCountry(player.nationality)
+                viewModelState.update { it.copy(player = player, country = country) }
             }
         }
     }

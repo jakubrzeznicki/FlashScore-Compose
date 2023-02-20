@@ -103,7 +103,14 @@ class PlayersViewModel(
             } else {
                 favoritePlayerWrappers.add(playerWrapper.copy(isFavorite = true))
             }
-            userPreferencesRepository.saveFavoritePlayerIds(favoritePlayerWrappers.map { it.player.id })
+            val playerWrapperIds = viewModelState.value.playerWrappers.map { it.player.id }
+            val favoritePlayerIds =
+                userPreferencesRepository.getUserPreferences()?.favoritePlayerIds.orEmpty()
+            val othersFavoritePlayerIds =
+                favoritePlayerIds.filterNot { playerWrapperIds.contains(it) }
+            userPreferencesRepository.saveFavoritePlayerIds(
+                othersFavoritePlayerIds + favoritePlayerWrappers.map { it.player.id }
+            )
         }
     }
 }

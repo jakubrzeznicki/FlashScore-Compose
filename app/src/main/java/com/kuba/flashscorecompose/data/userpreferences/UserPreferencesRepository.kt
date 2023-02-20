@@ -16,20 +16,12 @@ class UserPreferencesRepository(private val local: UserPreferencesLocalDataSourc
         return local.getIsOnBoardingCompleted()
     }
 
-    override suspend fun saveIsOnBoardingCompleted(isOnBoardingCompleted: Boolean) {
-        local.saveIsOnBoardingCompleted(isOnBoardingCompleted)
-    }
-
     override suspend fun saveCurrentUserId(userId: String, isKeepLogged: Boolean) {
         local.saveCurrentUserId(userId, isKeepLogged)
     }
 
     override suspend fun getCurrentUserId(): String {
         return local.getCurrentUserId()
-    }
-
-    override fun observeCurrentUserId(): Flow<String> {
-        return local.observeCurrentUserId()
     }
 
     override suspend fun saveFavoriteTeamIds(teamIds: List<Int>) {

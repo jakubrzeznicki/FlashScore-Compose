@@ -8,10 +8,5 @@ import kotlinx.coroutines.flow.Flow
  */
 interface LeagueLocalDataSource {
     fun observeLeagues(): Flow<List<LeagueEntity>>
-    fun observeLeagues(countryCode: String): Flow<List<LeagueEntity>>
-    fun observeLeagues(countryCodes: List<String>): Flow<List<LeagueEntity>>
-    fun observeLeague(id: Int): Flow<LeagueEntity?>
     suspend fun getLeagues(countryNames: List<String>): List<LeagueEntity>
-    fun saveLeagues(leagues: List<LeagueEntity>)
-    fun deleteLeagues(countryCode: String)
 }

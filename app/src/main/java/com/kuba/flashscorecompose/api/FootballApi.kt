@@ -1,11 +1,9 @@
 package com.kuba.flashscorecompose.api
 
 import com.kuba.flashscorecompose.data.country.remote.model.CountryDataDto
-import com.kuba.flashscorecompose.data.fixtures.currentround.remote.model.CurrentRoundDataDto
 import com.kuba.flashscorecompose.data.fixtures.fixture.remote.model.FixtureDataDto
 import com.kuba.flashscorecompose.data.fixtures.lineups.remote.model.LineupDataDto
 import com.kuba.flashscorecompose.data.fixtures.statistics.remote.model.StatisticsDataDto
-import com.kuba.flashscorecompose.data.league.remote.model.LeagueDataDto
 import com.kuba.flashscorecompose.data.players.remote.model.PlayersDataDto
 import com.kuba.flashscorecompose.data.standings.remote.model.StandingsDataDto
 import com.kuba.flashscorecompose.data.team.information.remote.model.CoachDataDto
@@ -22,14 +20,6 @@ interface FootballApi {
 
     @GET("$API_VERSION/$COUNTRIES")
     suspend fun getCountries(): Response<CountryDataDto>
-
-    @GET("$API_VERSION/$LEAGUES")
-    suspend fun getLeagues(@QueryMap queryMap: Map<String, String>): Response<LeagueDataDto>
-
-    @GET("$API_VERSION/$FIXTURES/$ROUNDS")
-    suspend fun getFixturesCurrentRound(
-        @Query(LEAGUE) leagueId: Int, @Query(SEASON) season: Int, @Query(CURRENT) isCurrent: Boolean
-    ): Response<CurrentRoundDataDto>
 
     @GET("$API_VERSION/$FIXTURES")
     suspend fun getFixtures(@QueryMap queryMap: Map<String, String>): Response<FixtureDataDto>
@@ -65,13 +55,9 @@ interface FootballApi {
         const val API_VERSION = "v3"
         const val COUNTRIES = "countries"
         const val COUNTRY = "country"
-        const val LEAGUES = "leagues"
-        const val CODE = "code"
-        const val CURRENT = "current"
         const val LEAGUE = "league"
         const val SEASON = "season"
         const val FIXTURES = "fixtures"
-        const val ROUNDS = "rounds"
         const val ROUND = "round"
         const val FIXTURE = "fixture"
         const val STATISTICS = "statistics"

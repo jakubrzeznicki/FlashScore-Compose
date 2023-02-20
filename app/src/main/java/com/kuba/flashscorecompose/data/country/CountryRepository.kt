@@ -40,7 +40,7 @@ class CountryRepository(
     override suspend fun getCountries(): List<Country> =
         local.getCountries().map { it.toCountry() }
 
-    override fun saveCountries(countries: List<Country>) {
+    override suspend fun saveCountries(countries: List<Country>) {
         local.saveCountries(countries.map { it.toCountryEntity() })
     }
 
@@ -49,7 +49,6 @@ class CountryRepository(
         return try {
             val countries = result.body()?.countries?.map { it.toCountry() }
             withContext(Dispatchers.IO) {
-                local.deleteCountries()
                 saveCountries(countries = countries.orEmpty())
             }
             RepositoryResult.Success(countries)

@@ -4,5 +4,5 @@ import com.google.gson.annotations.SerializedName
 import com.kuba.flashscorecompose.data.players.remote.model.PlayerDto
 
 data class SubstituteDto(
-    @SerializedName("player") val player: PlayerDto
+    @SerializedName("player") val player: PlayerDto?
 )

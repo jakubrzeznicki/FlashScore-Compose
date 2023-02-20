@@ -260,7 +260,12 @@ private fun FixtureDetailsTabs(
             fixtureItem.season,
             navigator
         ),
-        TabItem.FixtureDetails.LineUp(fixtureItem.id, fixtureItem.season, navigator),
+        TabItem.FixtureDetails.LineUp(
+            fixtureItem.id,
+            fixtureItem.league.id,
+            fixtureItem.season,
+            navigator
+        ),
         TabItem.FixtureDetails.HeadToHead(
             fixtureItem.homeTeam,
             fixtureItem.awayTeam,

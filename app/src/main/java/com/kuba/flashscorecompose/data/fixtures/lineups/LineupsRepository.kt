@@ -31,10 +31,14 @@ class LineupsRepository(
         local.saveLineups(lineups.map { it.toLineupEntity() })
     }
 
-    override suspend fun loadLineups(fixtureId: Int): RepositoryResult<List<Lineup>> {
+    override suspend fun loadLineups(
+        fixtureId: Int,
+        leagueId: Int,
+        season: Int
+    ): RepositoryResult<List<Lineup>> {
         val result = remote.loadLineups(fixtureId = fixtureId)
         return try {
-            val lineups = result.body()?.response?.map { it.toLineup(fixtureId) }
+            val lineups = result.body()?.response?.map { it.toLineup(fixtureId, leagueId, season) }
             withContext(Dispatchers.IO) {
                 saveLineups(lineups.orEmpty())
             }

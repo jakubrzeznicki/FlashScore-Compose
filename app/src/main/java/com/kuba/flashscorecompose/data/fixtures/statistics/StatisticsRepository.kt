@@ -29,18 +29,15 @@ class StatisticsRepository(
 
     override suspend fun saveStatistics(statistics: List<Statistics>, fixtureId: Int) {
         local.saveStatistics(statistics.mapIndexed { index, statistics ->
-            statistics.toStatisticsEntity(
-                fixtureId,
-                isHome = index == 0
-            )
+            statistics.toStatisticsEntity(fixtureId, isHome = index == 0)
         })
     }
 
     override suspend fun loadStatistics(fixtureId: Int): RepositoryResult<List<Statistics>> {
         val result = remote.loadStatistics(fixtureId = fixtureId)
         return try {
-            val statistics = result.body()?.response?.mapIndexed { index, statisticsTeamDto ->
-                statisticsTeamDto.toStatistics(fixtureId, index == 0)
+            val statistics = result.body()?.response?.map { statisticsTeamDto ->
+                statisticsTeamDto.toStatistics(fixtureId)
             }.orEmpty()
             withContext(Dispatchers.IO) {
                 saveStatistics(statistics = statistics, fixtureId = fixtureId)

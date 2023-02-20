@@ -1,7 +1,6 @@
 package com.kuba.flashscorecompose.data.fixtures.fixture.remote.model
 
 import com.google.gson.annotations.SerializedName
-import com.kuba.flashscorecompose.data.league.remote.model.LeagueDto
 
 data class FixtureDto(
     @SerializedName("fixture") val fixture: FixtureInfoDto?,

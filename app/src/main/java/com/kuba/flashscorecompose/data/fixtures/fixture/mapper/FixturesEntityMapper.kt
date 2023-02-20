@@ -9,14 +9,6 @@ import com.kuba.flashscorecompose.data.team.information.mapper.toVenue
 /**
  * Created by jrzeznicki on 03/01/2023.
  */
-fun ColorsEntity.toColors(): Colors {
-    return Colors(goalkeeper.toPlayerColor(), player = player.toPlayerColor())
-}
-
-fun PlayerColorEntity.toPlayerColor(): PlayerColor {
-    return PlayerColor(border = border, number = number, primary = primary)
-}
-
 fun PeriodsEntity.toPeriods(): Periods {
     return Periods(first, second)
 }
@@ -59,8 +51,8 @@ fun FixtureInfoEntity.toFixtureInfo(): FixtureInfo {
 fun FixtureEntity.toFixtureItem(): FixtureItem {
     return FixtureItem(
         id = id,
-        season = currentRound.season,
-        round = currentRound.round,
+        season = league.season,
+        round = league.round,
         h2h = h2h,
         fixture = fixture.toFixtureInfo(),
         goals = goals.toGoals(),

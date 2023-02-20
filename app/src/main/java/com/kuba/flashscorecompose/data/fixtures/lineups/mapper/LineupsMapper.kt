@@ -1,9 +1,11 @@
 package com.kuba.flashscorecompose.data.fixtures.lineups.mapper
+
 import com.kuba.flashscorecompose.data.fixtures.lineups.local.model.LineupEntity
 import com.kuba.flashscorecompose.data.fixtures.lineups.model.Lineup
 import com.kuba.flashscorecompose.data.fixtures.lineups.remote.model.LineupDto
 import com.kuba.flashscorecompose.data.players.mapper.toPlayer
 import com.kuba.flashscorecompose.data.players.mapper.toPlayerEntity
+import com.kuba.flashscorecompose.data.players.model.Player
 import com.kuba.flashscorecompose.data.team.information.mapper.toCoach
 import com.kuba.flashscorecompose.data.team.information.mapper.toCoachEntity
 import com.kuba.flashscorecompose.data.team.information.mapper.toTeam
@@ -39,15 +41,21 @@ fun Lineup.toLineupEntity(): LineupEntity {
     )
 }
 
-fun LineupDto.toLineup(fixtureId: Int): Lineup {
+fun LineupDto.toLineup(fixtureId: Int, leagueId: Int, season: Int): Lineup {
     return Lineup(
         teamId = team?.id ?: 0,
         fixtureId = fixtureId,
         coach = coach?.toCoach(team?.id ?: 0) ?: Coach.EMPTY_COACH,
         formation = formation.orEmpty(),
-        startXI = startXI?.map { it.player.toPlayer() }.orEmpty(),
-        substitutes = substitutes?.map { it.player.toPlayer() }.orEmpty(),
-        team = team?.toTeam() ?: Team.EMPTY_TEAM,
+        startXI = startXI?.map {
+            it.player?.toPlayer(team = team?.toTeam() ?: Team.EMPTY_TEAM, season = season)
+                ?: Player.EMPTY_PLAYER
+        }.orEmpty(),
+        substitutes = substitutes?.map {
+            it.player?.toPlayer(team = team?.toTeam() ?: Team.EMPTY_TEAM, season = season)
+                ?: Player.EMPTY_PLAYER
+        }.orEmpty(),
+        team = team?.toTeam(leagueIdParam = leagueId, seasonParam = season) ?: Team.EMPTY_TEAM,
         emptyMap()
     )
 }

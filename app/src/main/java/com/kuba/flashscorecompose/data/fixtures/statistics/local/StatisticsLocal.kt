@@ -15,8 +15,4 @@ class StatisticsLocal(private val roomStorage: RoomStorage) : StatisticsLocalDat
     override suspend fun saveStatistics(statistics: List<StatisticsEntity>) {
         roomStorage.getDatabase().statisticsDao().saveStatistics(statistics)
     }
-
-    override fun deleteStatistics(fixtureId: Int) {
-        roomStorage.getDatabase().statisticsDao().deleteStatistics(fixtureId)
-    }
 }

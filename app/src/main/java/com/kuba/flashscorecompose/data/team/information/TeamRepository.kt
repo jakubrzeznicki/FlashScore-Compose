@@ -20,9 +20,6 @@ class TeamRepository(
     private val local: TeamLocalDataSource,
     private val remote: TeamRemoteDataSource
 ) : TeamDataSource {
-    override suspend fun getTeam(teamId: Int): Team? {
-        return local.getTeam(teamId)?.toTeam()
-    }
 
     override fun observeTeam(teamId: Int): Flow<Team?> {
         return local.observeTeam(teamId).map { it?.toTeam() }
@@ -34,12 +31,6 @@ class TeamRepository(
 
     override fun observeCoach(teamId: Int): Flow<Coach?> {
         return local.observeCoach(teamId).map { it?.toCoach() }
-    }
-
-    override fun observeFavoriteTeams(ids: List<Int>): Flow<List<Team>> {
-        return local.observeFavoriteTeams(ids).map { teamEntities ->
-            teamEntities.map { it.toTeam() }
-        }
     }
 
     override fun observeTeams(): Flow<List<Team>> {
@@ -125,9 +116,12 @@ class TeamRepository(
             val teamResponseData = result.body()?.response
             val teamWIthVenues = teamResponseData?.map {
                 TeamWithVenue(
-                    team = it.team.toTeam(countryName),
+                    team = it.team.toTeam(),
                     venue = it.venue.toVenue(it.team.id)
                 )
+            }
+            teamWIthVenues?.map {
+                it.team.country
             }
             saveTeams(teamWIthVenues?.map { it.team }.orEmpty())
             saveVenues(teamWIthVenues?.map { it.venue }.orEmpty())

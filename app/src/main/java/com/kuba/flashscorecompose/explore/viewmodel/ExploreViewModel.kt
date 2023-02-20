@@ -1,6 +1,5 @@
 package com.kuba.flashscorecompose.explore.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.data.country.CountryDataSource
@@ -102,8 +101,8 @@ class ExploreViewModel(
     private fun observeFavoriteFixtures() {
         viewModelScope.launch {
             val currentUserId = userPreferencesRepository.getCurrentUserId()
-            val userPreferences = userPreferencesRepository.observeUserPreferences(currentUserId)
-            userPreferences.map { userPreferences ->
+            val userPreferencesFlow = userPreferencesRepository.observeUserPreferences(currentUserId)
+            userPreferencesFlow.map { userPreferences ->
                 val favoriteFixtureIds = userPreferences.favoriteFixtureIds
                 fixturesRepository.observeFavoriteFixtures(favoriteFixtureIds).collect { fixtures ->
                     val fixtureItemWrappers = fixtures.map {
@@ -134,7 +133,6 @@ class ExploreViewModel(
                 flow = teamsFlow,
                 flow2 = userPreferencesFlow
             ) { teams, userPreferences ->
-                Log.d("TEST_LOG", "observeTeams - userId - ${userPreferences.userId}")
                 val favoriteTeamIds = userPreferences.favoriteTeamIds
                 val countries = countryRepository.getCountries()
                 val teamWrappers = teams.toTeamWrappers(countries, favoriteTeamIds)
@@ -158,7 +156,6 @@ class ExploreViewModel(
         countries: List<Country>,
         favoriteTeamIds: List<Int>
     ): List<TeamWrapper> = map {
-        //Log.d("TEST_LOG", "team Country - ${it.country}")
         TeamWrapper(
             team = it,
             country = countries.firstOrNull { country -> country.name == it.country }
@@ -177,7 +174,6 @@ class ExploreViewModel(
                 flow = playersFlow,
                 flow2 = userPreferencesFlow
             ) { players, userPreferences ->
-                Log.d("TEST_LOG", "observePlayers - userId - ${userPreferences.userId}")
                 val favoritePlayerIds = userPreferences.favoritePlayerIds
                 val countries = countryRepository.getCountries()
                 val playerWrappers = players.toPlayerWrappers(countries, favoritePlayerIds)

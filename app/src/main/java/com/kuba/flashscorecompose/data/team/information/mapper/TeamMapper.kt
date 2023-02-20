@@ -1,8 +1,5 @@
 package com.kuba.flashscorecompose.data.team.information.mapper
 
-import com.kuba.flashscorecompose.data.fixtures.fixture.mapper.toColors
-import com.kuba.flashscorecompose.data.fixtures.fixture.mapper.toColorsEntity
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.Colors
 import com.kuba.flashscorecompose.data.players.mapper.toBirth
 import com.kuba.flashscorecompose.data.players.mapper.toBirthEntity
 import com.kuba.flashscorecompose.data.players.model.Birth
@@ -30,7 +27,6 @@ fun TeamEntity.toTeam(): Team {
         founded = founded,
         country = country,
         isNational = isNational,
-        colors = colors.toColors(),
         leagueId = leagueId,
         season = season
     )
@@ -65,7 +61,11 @@ fun CoachEntity.toCoach(): Coach {
     )
 }
 
-fun Team.toTeamEntity(leagueId: Int, season: Int): TeamEntity {
+fun Team.toTeamEntity(
+    leagueIdParam: Int? = null,
+    seasonParam: Int? = null,
+    countryName: String? = null
+): TeamEntity {
     return TeamEntity(
         id = id,
         logo = logo,
@@ -74,28 +74,10 @@ fun Team.toTeamEntity(leagueId: Int, season: Int): TeamEntity {
         isHome = false,
         code = code,
         founded = founded,
-        country = country,
+        country = countryName ?: country,
         isNational = false,
-        colors = colors.toColorsEntity(),
-        leagueId = leagueId,
-        season = season
-    )
-}
-
-fun Team.toTeamEntity(): TeamEntity {
-    return TeamEntity(
-        id = id,
-        logo = logo,
-        name = name,
-        isWinner = isWinner,
-        isHome = false,
-        code = code,
-        founded = founded,
-        country = country,
-        isNational = false,
-        colors = colors.toColorsEntity(),
-        leagueId = leagueId,
-        season = season
+        leagueId = leagueIdParam ?: leagueId,
+        season = seasonParam ?: season
     )
 }
 
@@ -141,7 +123,11 @@ fun Coach.toCoachEntity(): CoachEntity {
     )
 }
 
-fun TeamDto.toTeam(leagueId: Int, season: Int, countryParam: String? = ""): Team {
+fun TeamDto.toTeam(
+    leagueIdParam: Int? = null,
+    seasonParam: Int? = null,
+    countryParam: String? = null
+): Team {
     return Team(
         id = id ?: 0,
         logo = logo.orEmpty(),
@@ -149,27 +135,10 @@ fun TeamDto.toTeam(leagueId: Int, season: Int, countryParam: String? = ""): Team
         isWinner = winner ?: false,
         code = code.orEmpty(),
         founded = founded ?: 0,
-        country = country ?: countryParam.orEmpty(),
+        country = countryParam ?: country.orEmpty(),
         isNational = national ?: false,
-        colors = colors?.toColors() ?: Colors.EMPTY_COLORS,
-        leagueId = leagueId,
-        season = season
-    )
-}
-
-fun TeamDto.toTeam(countryName: String? = ""): Team {
-    return Team(
-        id = id ?: 0,
-        logo = logo.orEmpty(),
-        name = name.orEmpty(),
-        isWinner = winner ?: false,
-        code = code.orEmpty(),
-        founded = founded ?: 0,
-        country = country ?: countryName.orEmpty(),
-        isNational = national ?: false,
-        colors = colors?.toColors() ?: Colors.EMPTY_COLORS,
-        leagueId = 0,
-        season = 0
+        leagueId = leagueIdParam ?: 0,
+        season = seasonParam ?: 2022
     )
 }
 

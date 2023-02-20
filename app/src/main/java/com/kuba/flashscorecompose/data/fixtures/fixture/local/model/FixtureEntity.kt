@@ -1,7 +1,6 @@
 package com.kuba.flashscorecompose.data.fixtures.fixture.local.model
 
 import androidx.room.*
-import com.kuba.flashscorecompose.data.fixtures.currentround.local.model.CurrentRoundEntity
 import com.kuba.flashscorecompose.data.league.local.model.LeagueEntity
 import com.kuba.flashscorecompose.data.team.information.local.model.TeamEntity
 
@@ -9,7 +8,6 @@ import com.kuba.flashscorecompose.data.team.information.local.model.TeamEntity
 @Entity(tableName = "fixture")
 data class FixtureEntity(
     @PrimaryKey @ColumnInfo(name = "id") val id: Int,
-    @Embedded(prefix = "current_round_") val currentRound: CurrentRoundEntity,
     @ColumnInfo(name = "h2h") val h2h: String,
     @Embedded(prefix = "fixture_info_") val fixture: FixtureInfoEntity,
     @Embedded(prefix = "goals_") val goals: GoalsEntity,

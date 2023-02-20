@@ -38,7 +38,6 @@ private const val SETUP_PLAYER_DETAILS_KEY = "SETUP_PLAYER_DETAILS_KEY"
 @Composable
 fun PlayerDetailsRoute(
     playerId: Int,
-    countryLogo: String,
     team: Team,
     season: Int,
     navigator: DestinationsNavigator,
@@ -49,7 +48,6 @@ fun PlayerDetailsRoute(
     PlayerDetailsScreen(
         uiState = uiState,
         team = team,
-        countryLogo = countryLogo,
         navigator = navigator,
         onRefreshClick = { viewModel.refresh() },
     )
@@ -61,7 +59,6 @@ fun PlayerDetailsRoute(
 fun PlayerDetailsScreen(
     uiState: PlayerDetailsUiState,
     team: Team,
-    countryLogo: String,
     navigator: DestinationsNavigator,
     onRefreshClick: () -> Unit
 ) {
@@ -102,7 +99,7 @@ fun PlayerDetailsScreen(
                             fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.onSecondary,
                         )
-                        TeamInfoCard(uiState.player, countryLogo, team)
+                        TeamInfoCard(uiState.player, uiState.country.flag, team)
                         Spacer(modifier = Modifier.size(16.dp))
                         Text(
                             modifier = Modifier.padding(bottom = 8.dp),
