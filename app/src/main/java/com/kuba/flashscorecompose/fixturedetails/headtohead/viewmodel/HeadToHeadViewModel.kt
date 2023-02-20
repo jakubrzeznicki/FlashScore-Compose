@@ -8,7 +8,7 @@ import com.kuba.flashscorecompose.fixturedetails.headtohead.model.FixtureItemSty
 import com.kuba.flashscorecompose.fixturedetails.headtohead.model.HeadToHeadError
 import com.kuba.flashscorecompose.fixturedetails.headtohead.model.ScoreStyle
 import com.kuba.flashscorecompose.fixturedetails.headtohead.model.StyledFixtureItem
-import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
@@ -21,7 +21,8 @@ class HeadToHeadViewModel(
     private val homeTeamId: Int,
     private val awayTeamId: Int,
     private val season: Int,
-    private val fixturesRepository: FixturesDataSource
+    private val fixturesRepository: FixturesDataSource,
+    private val snackbarManager: SnackbarManager
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(HeadToHeadViewModelState())
@@ -93,7 +94,10 @@ class HeadToHeadViewModel(
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
                     is RepositoryResult.Error -> {
-                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        snackbarManager.showSnackbarMessage(
+                            result.error.statusMessage,
+                            SnackbarMessageType.Error
+                        )
                         it.copy(
                             isLoading = false,
                             error = HeadToHeadError.RemoteError(result.error)
@@ -112,7 +116,10 @@ class HeadToHeadViewModel(
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
                     is RepositoryResult.Error -> {
-                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        snackbarManager.showSnackbarMessage(
+                            result.error.statusMessage,
+                            SnackbarMessageType.Error
+                        )
                         it.copy(
                             isLoading = false,
                             error = HeadToHeadError.RemoteError(result.error)

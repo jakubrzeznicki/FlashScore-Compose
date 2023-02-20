@@ -10,7 +10,7 @@ import com.kuba.flashscorecompose.data.standings.StandingsDataSource
 import com.kuba.flashscorecompose.data.standings.model.Standing
 import com.kuba.flashscorecompose.home.viewmodel.HomeViewModel
 import com.kuba.flashscorecompose.standings.model.StandingsError
-import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import com.kuba.flashscorecompose.utils.containsQuery
@@ -23,7 +23,8 @@ import kotlinx.coroutines.launch
 class StandingsViewModel(
     private val countryRepository: CountryDataSource,
     private val leagueRepository: LeagueDataSource,
-    private val standingsRepository: StandingsDataSource
+    private val standingsRepository: StandingsDataSource,
+    private val snackbarManager: SnackbarManager
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(StandingsViewModelState())
@@ -65,7 +66,10 @@ class StandingsViewModel(
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
                     is RepositoryResult.Error -> {
-                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        snackbarManager.showSnackbarMessage(
+                            result.error.statusMessage,
+                            SnackbarMessageType.Error
+                        )
                         it.copy(
                             isLoading = false,
                             error = StandingsError.RemoteError(result.error)
@@ -97,7 +101,10 @@ class StandingsViewModel(
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
                     is RepositoryResult.Error -> {
-                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        snackbarManager.showSnackbarMessage(
+                            result.error.statusMessage,
+                            SnackbarMessageType.Error
+                        )
                         it.copy(
                             isLoading = false,
                             error = StandingsError.RemoteError(result.error)

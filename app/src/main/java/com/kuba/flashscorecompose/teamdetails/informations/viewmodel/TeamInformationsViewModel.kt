@@ -7,7 +7,7 @@ import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.team.information.TeamDataSource
 import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.teamdetails.informations.model.TeamInformationsError
-import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
@@ -21,7 +21,8 @@ class TeamInformationsViewModel(
     private val leagueId: Int,
     private val season: Int,
     private val teamRepository: TeamDataSource,
-    private val countryRepository: CountryDataSource
+    private val countryRepository: CountryDataSource,
+    private val snackbarManager: SnackbarManager
 ) : ViewModel() {
     private val viewModelState = MutableStateFlow(TeamInformationsViewModelState())
     val uiState = viewModelState
@@ -86,7 +87,10 @@ class TeamInformationsViewModel(
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
                     is RepositoryResult.Error -> {
-                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        snackbarManager.showSnackbarMessage(
+                            result.error.statusMessage,
+                            SnackbarMessageType.Error
+                        )
                         it.copy(
                             isLoading = false,
                             error = TeamInformationsError.RemoteError(result.error),
@@ -105,7 +109,10 @@ class TeamInformationsViewModel(
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
                     is RepositoryResult.Error -> {
-                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        snackbarManager.showSnackbarMessage(
+                            result.error.statusMessage,
+                            SnackbarMessageType.Error
+                        )
                         it.copy(
                             isLoading = false,
                             error = TeamInformationsError.RemoteError(result.error),

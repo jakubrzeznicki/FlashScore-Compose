@@ -10,7 +10,7 @@ import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
 import com.kuba.flashscorecompose.data.userpreferences.model.UserPreferences
 import com.kuba.flashscorecompose.onboarding.model.OnBoardingError
 import com.kuba.flashscorecompose.onboarding.model.OnBoardingQuestion
-import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
@@ -22,7 +22,8 @@ import kotlinx.coroutines.launch
 class OnBoardingViewModel(
     private val teamRepository: TeamDataSource,
     private val playersRepository: PlayersDataSource,
-    private val userPreferencesRepository: UserPreferencesDataSource
+    private val userPreferencesRepository: UserPreferencesDataSource,
+    private val snackbarManager: SnackbarManager
 ) : ViewModel() {
     private val viewModelState = MutableStateFlow(OnBoardingViewModelState())
     val uiState = viewModelState
@@ -122,7 +123,10 @@ class OnBoardingViewModel(
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
                     is RepositoryResult.Error -> {
-                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        snackbarManager.showSnackbarMessage(
+                            result.error.statusMessage,
+                            SnackbarMessageType.Error
+                        )
                         it.copy(
                             isLoading = false,
                             error = OnBoardingError.RemoteError(result.error)
@@ -151,7 +155,10 @@ class OnBoardingViewModel(
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
                     is RepositoryResult.Error -> {
-                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        snackbarManager.showSnackbarMessage(
+                            result.error.statusMessage,
+                            SnackbarMessageType.Error
+                        )
                         it.copy(
                             isLoading = false,
                             error = OnBoardingError.RemoteError(result.error)

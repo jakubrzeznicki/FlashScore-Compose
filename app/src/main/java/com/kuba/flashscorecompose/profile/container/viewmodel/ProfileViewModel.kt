@@ -8,7 +8,6 @@ import com.kuba.flashscorecompose.data.authentication.AuthenticationDataSource
 import com.kuba.flashscorecompose.data.user.UserDataSource
 import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
-import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
@@ -20,7 +19,8 @@ import kotlinx.coroutines.launch
 class ProfileViewModel(
     private val userRepository: UserDataSource,
     private val userPreferencesRepository: UserPreferencesDataSource,
-    private val authenticationRepository: AuthenticationDataSource
+    private val authenticationRepository: AuthenticationDataSource,
+    private val snackbarManager: SnackbarManager
 ) : ViewModel() {
     private val viewModelState = MutableStateFlow(ProfileViewModelState())
     val uiState = viewModelState
@@ -50,7 +50,7 @@ class ProfileViewModel(
             viewModelState.update {
                 when (val result = authenticationRepository.uploadPhoto(photoUri = photoUri)) {
                     is RepositoryResult.Success -> {
-                        SnackbarManager.showMessage(
+                        snackbarManager.showMessage(
                             R.string.successfully_updated_photo,
                             SnackbarMessageType.Success
                         )
@@ -60,7 +60,10 @@ class ProfileViewModel(
                         it.copy(isLoading = false)
                     }
                     is RepositoryResult.Error -> {
-                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        snackbarManager.showSnackbarMessage(
+                            result.error.statusMessage,
+                            SnackbarMessageType.Error
+                        )
                         it.copy(isLoading = false)
                     }
                 }

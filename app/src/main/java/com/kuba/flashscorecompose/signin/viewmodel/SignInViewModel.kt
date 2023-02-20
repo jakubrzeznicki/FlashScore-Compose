@@ -10,7 +10,6 @@ import com.kuba.flashscorecompose.data.user.model.User
 import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
 import com.kuba.flashscorecompose.signin.model.SignInError
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
-import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import com.kuba.flashscorecompose.utils.isValidEmail
@@ -24,7 +23,8 @@ import kotlinx.coroutines.launch
 class SignInViewModel(
     private val authenticationRepository: AuthenticationDataSource,
     private val userRepository: UserDataSource,
-    private val userPreferencesRepository: UserPreferencesDataSource
+    private val userPreferencesRepository: UserPreferencesDataSource,
+    private val snackbarManager: SnackbarManager
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow((SignInViewModelState()))
@@ -60,7 +60,7 @@ class SignInViewModel(
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             if (!email.isValidEmail()) {
-                SnackbarManager.showMessage(R.string.email_error, SnackbarMessageType.Error)
+                snackbarManager.showMessage(R.string.email_error, SnackbarMessageType.Error)
                 viewModelState.update {
                     it.copy(
                         error = SignInError.InvalidEmail(R.string.email_error),
@@ -70,7 +70,7 @@ class SignInViewModel(
                 return@launch
             }
             if (password.isBlank()) {
-                SnackbarManager.showMessage(
+                snackbarManager.showMessage(
                     R.string.empty_password_error,
                     SnackbarMessageType.Error
                 )
@@ -100,7 +100,7 @@ class SignInViewModel(
                             photoUri = savedUser?.photoUri ?: Uri.EMPTY,
                             isAnonymous = currentUser?.isAnonymous ?: false
                         )
-                        SnackbarManager.showMessage(
+                        snackbarManager.showMessage(
                             R.string.successfully_signed_in,
                             SnackbarMessageType.Success
                         )
@@ -114,7 +114,10 @@ class SignInViewModel(
                         it.copy(isLoading = false)
                     }
                     is RepositoryResult.Error -> {
-                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        snackbarManager.showSnackbarMessage(
+                            result.error.statusMessage,
+                            SnackbarMessageType.Error
+                        )
                         it.copy(
                             error = SignInError.AuthenticationError(result.error),
                             isLoading = false
@@ -129,7 +132,7 @@ class SignInViewModel(
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             if (!email.isValidEmail()) {
-                SnackbarManager.showMessage(R.string.email_error, SnackbarMessageType.Error)
+                snackbarManager.showMessage(R.string.email_error, SnackbarMessageType.Error)
                 viewModelState.update {
                     it.copy(
                         error = SignInError.InvalidEmail(R.string.email_error),
@@ -141,14 +144,17 @@ class SignInViewModel(
             viewModelState.update {
                 when (val result = authenticationRepository.sendRecoveryEmail(email)) {
                     is RepositoryResult.Success -> {
-                        SnackbarManager.showMessage(
+                        snackbarManager.showMessage(
                             R.string.recovery_email_sent,
                             SnackbarMessageType.Success
                         )
                         it.copy(isLoading = false)
                     }
                     is RepositoryResult.Error -> {
-                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        snackbarManager.showSnackbarMessage(
+                            result.error.statusMessage,
+                            SnackbarMessageType.Error
+                        )
                         it.copy(
                             error = SignInError.AuthenticationError(result.error),
                             isLoading = false

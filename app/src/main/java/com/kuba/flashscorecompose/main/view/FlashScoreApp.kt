@@ -28,13 +28,15 @@ import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
 import com.ramcosta.composedestinations.spec.NavHostEngine
 import kotlinx.coroutines.CoroutineScope
+import org.koin.androidx.compose.inject
 
 /**
  * Created by jrzeznicki on 06/02/2023.
  */
 @Composable
 fun FlashScoreApp() {
-    val appState = rememberAppState()
+    val snackbarManager: SnackbarManager by inject()
+    val appState = rememberAppState(snackbarManager = snackbarManager)
     NavigationScaffold(
         navController = appState.navController,
         startRoute = NavGraphs.root.startRoute,
@@ -82,7 +84,7 @@ fun rememberAppState(
     snackbarMessageType: MutableState<SnackbarMessageType> = remember {
         mutableStateOf(SnackbarMessageType.Error)
     },
-    snackbarManager: SnackbarManager = SnackbarManager,
+    snackbarManager: SnackbarManager,
     resources: Resources = resources(),
     coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) = remember(

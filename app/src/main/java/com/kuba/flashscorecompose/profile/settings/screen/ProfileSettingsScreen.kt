@@ -72,8 +72,16 @@ fun ProfileSettingsScreen(
         togglePasswordVisibility = { viewModel.togglePasswordVisibility() },
         toggleRepeatPasswordVisibility = { viewModel.toggleRepeatPasswordVisibility() },
         onPasswordClick = { viewModel.onPasswordClick() },
-        onSignInClick = { navigator.navigate(SignInRouteDestination()) },
-        onSignUpClick = { navigator.navigate(SignUpRouteDestination(SignUpType.Anonymous)) },
+        onSignInClick = {
+            navigator.navigate(SignInRouteDestination()) {
+                popUpTo(ProfileRouteDestination.route) { inclusive = true }
+            }
+        },
+        onSignUpClick = {
+            navigator.navigate(SignUpRouteDestination(SignUpType.Anonymous)) {
+                popUpTo(ProfileRouteDestination.route) { inclusive = true }
+            }
+        },
         onDeleteAccountClick = {
             viewModel.onDeleteAccountClick {
                 navigator.navigate(WelcomeRouteDestination()) {

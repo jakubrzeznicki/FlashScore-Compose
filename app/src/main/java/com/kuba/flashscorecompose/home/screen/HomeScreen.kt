@@ -2,8 +2,11 @@ package com.kuba.flashscorecompose.home.screen
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,6 +17,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -28,7 +32,6 @@ import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.destinations.FixtureDetailsRouteDestination
 import com.kuba.flashscorecompose.destinations.LeagueDetailsRouteDestination
-import com.kuba.flashscorecompose.destinations.SplashScreenDestination
 import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
 import com.kuba.flashscorecompose.home.model.HomeUiState
 import com.kuba.flashscorecompose.home.model.LeagueFixturesData
@@ -66,6 +69,8 @@ fun HomeScreenRoute(
         onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixtureItem)) },
         onFavoriteFixtureClick = { viewModel.addFixtureToFavorite(it) },
         onLeagueClick = { navigator.navigate(LeagueDetailsRouteDestination(it)) },
+        onSearchClick = { viewModel.onSearchClick() },
+        onSearchQueryChanged = { viewModel.updateSearchQuery(it) },
         fixturesScrollState = fixturesScrollState,
         countryScrollState = countryScrollState,
         context = context
@@ -83,12 +88,20 @@ private fun HomeScreen(
     onFixtureClick: (FixtureItemWrapper) -> Unit,
     onFavoriteFixtureClick: (FixtureItemWrapper) -> Unit,
     onLeagueClick: (League) -> Unit,
+    onSearchClick: () -> Unit,
+    onSearchQueryChanged: (String) -> Unit,
     fixturesScrollState: LazyListState,
     countryScrollState: LazyListState,
     context: Context
 ) {
     Scaffold(
-        topBar = { TopBar(context = context, navigator = navigator) },
+        topBar = {
+            TopBar(
+                context = context,
+                navigator = navigator,
+                onSearchClick = onSearchClick
+            )
+        },
     ) { paddingValues ->
         LoadingContent(
             modifier = modifier.padding(paddingValues),
@@ -108,6 +121,11 @@ private fun HomeScreen(
                 state = fixturesScrollState
             ) {
                 item {
+                    SearchEditText(
+                        uiState.isSearchExpanded,
+                        uiState.searchQuery,
+                        onSearchQueryChanged
+                    )
                     Banner()
                     Spacer(modifier = Modifier.size(16.dp))
                 }
@@ -180,7 +198,7 @@ private fun HomeScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TopBar(context: Context, navigator: DestinationsNavigator) {
+private fun TopBar(context: Context, navigator: DestinationsNavigator, onSearchClick: () -> Unit) {
     AppTopBar(
         modifier = Modifier
             .height(48.dp)
@@ -199,7 +217,7 @@ private fun TopBar(context: Context, navigator: DestinationsNavigator) {
                     .size(24.dp),
                 onClick = {
                     Toast.makeText(context, R.string.search, Toast.LENGTH_SHORT).show()
-                    navigator.navigate(SplashScreenDestination())
+                    onSearchClick()
                 }) {
                 Icon(
                     imageVector = Icons.Filled.Search,
@@ -221,6 +239,40 @@ private fun TopBar(context: Context, navigator: DestinationsNavigator) {
                 )
             }
         })
+}
+
+@Composable
+private fun SearchEditText(
+    isSearchExpanded: Boolean,
+    searchQuery: String,
+    onSearchQueryChanged: (String) -> Unit
+) {
+    AnimatedVisibility(visible = isSearchExpanded) {
+        SimpleSearchBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .background(color = MaterialTheme.colorScheme.surface)
+                .border(
+                    shape = RoundedCornerShape(16.dp),
+                    border = BorderStroke(
+                        width = 2.dp,
+                        color = MaterialTheme.colorScheme.inverseSurface
+                    ),
+                ),
+            label = stringResource(id = R.string.search_home),
+            query = searchQuery,
+            onQueryChange = onSearchQueryChanged,
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.inverseOnSurface
+                )
+            }
+        )
+    }
+    if (isSearchExpanded) Spacer(modifier = Modifier.size(16.dp))
 }
 
 @Composable

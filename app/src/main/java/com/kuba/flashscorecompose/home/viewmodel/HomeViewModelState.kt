@@ -15,6 +15,7 @@ data class HomeViewModelState(
     val filteredLeagueFixtureDataList: List<LeagueFixturesData> = emptyList(),
     val selectedCountry: Country = Country.EMPTY_COUNTRY,
     val searchQuery: String = "",
+    val isSearchExpanded: Boolean = false,
     val countries: List<Country> = emptyList(),
     val date: String = ""
 ) {
@@ -24,6 +25,7 @@ data class HomeViewModelState(
                 isLoading,
                 error,
                 searchQuery,
+                isSearchExpanded,
                 countries,
                 selectedCountry,
                 filteredLeagueFixtureDataList
@@ -33,9 +35,10 @@ data class HomeViewModelState(
                 isLoading,
                 error,
                 searchQuery,
+                isSearchExpanded,
                 selectedCountry,
                 countries
             )
-        else -> HomeUiState.NoData(isLoading, error, searchQuery)
+        else -> HomeUiState.NoData(isLoading, error, searchQuery, isSearchExpanded)
     }
 }

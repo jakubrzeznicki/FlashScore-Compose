@@ -7,7 +7,7 @@ import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
 import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
 import com.kuba.flashscorecompose.teamdetails.fixturesteam.model.FixturesTeamError
 import com.kuba.flashscorecompose.ui.component.chips.FilterChip
-import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
@@ -20,7 +20,8 @@ class FixturesTeamViewModel(
     private val teamId: Int,
     private val season: Int,
     private val fixturesRepository: FixturesDataSource,
-    private val userPreferencesRepository: UserPreferencesDataSource
+    private val userPreferencesRepository: UserPreferencesDataSource,
+    private val snackbarManager: SnackbarManager
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(FixturesTeamViewModelState())
@@ -99,7 +100,10 @@ class FixturesTeamViewModel(
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
                     is RepositoryResult.Error -> {
-                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        snackbarManager.showSnackbarMessage(
+                            result.error.statusMessage,
+                            SnackbarMessageType.Error
+                        )
                         it.copy(
                             isLoading = false,
                             error = FixturesTeamError.RemoteError(result.error),

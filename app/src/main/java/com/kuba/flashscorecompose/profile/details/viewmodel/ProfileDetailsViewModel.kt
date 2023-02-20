@@ -8,7 +8,6 @@ import com.kuba.flashscorecompose.data.user.UserDataSource
 import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
 import com.kuba.flashscorecompose.profile.details.model.ProfileItem
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
-import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
@@ -20,7 +19,8 @@ import kotlinx.coroutines.launch
 class ProfileDetailsViewModel(
     private val userRepository: UserDataSource,
     private val userPreferencesRepository: UserPreferencesDataSource,
-    private val authenticationRepository: AuthenticationDataSource
+    private val authenticationRepository: AuthenticationDataSource,
+    private val snackbarManager: SnackbarManager
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(ProfileDetailsViewModelState())
@@ -73,7 +73,7 @@ class ProfileDetailsViewModel(
             viewModelState.update {
                 when (val result = authenticationRepository.updateName(name = name)) {
                     is RepositoryResult.Success -> {
-                        SnackbarManager.showMessage(
+                        snackbarManager.showMessage(
                             R.string.successfully_updated_name,
                             SnackbarMessageType.Success
                         )
@@ -81,7 +81,10 @@ class ProfileDetailsViewModel(
                         it.copy(isLoading = false)
                     }
                     is RepositoryResult.Error -> {
-                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        snackbarManager.showSnackbarMessage(
+                            result.error.statusMessage,
+                            SnackbarMessageType.Error
+                        )
                         it.copy(isLoading = false)
                     }
                 }
@@ -95,7 +98,7 @@ class ProfileDetailsViewModel(
             viewModelState.update {
                 when (val result = authenticationRepository.updateEmail(email = email)) {
                     is RepositoryResult.Success -> {
-                        SnackbarManager.showMessage(
+                        snackbarManager.showMessage(
                             R.string.successfully_updated_email,
                             SnackbarMessageType.Success
                         )
@@ -103,7 +106,10 @@ class ProfileDetailsViewModel(
                         it.copy(isLoading = false)
                     }
                     is RepositoryResult.Error -> {
-                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        snackbarManager.showSnackbarMessage(
+                            result.error.statusMessage,
+                            SnackbarMessageType.Error
+                        )
                         it.copy(isLoading = false)
                     }
                 }
@@ -113,7 +119,7 @@ class ProfileDetailsViewModel(
 
     private fun updateAddress() {
         viewModelScope.launch {
-            SnackbarManager.showMessage(
+            snackbarManager.showMessage(
                 R.string.successfully_updated_address,
                 SnackbarMessageType.Success
             )
@@ -123,7 +129,7 @@ class ProfileDetailsViewModel(
 
     private fun updatePhone() {
         viewModelScope.launch {
-            SnackbarManager.showMessage(
+            snackbarManager.showMessage(
                 R.string.successfully_updated_phone,
                 SnackbarMessageType.Success
             )

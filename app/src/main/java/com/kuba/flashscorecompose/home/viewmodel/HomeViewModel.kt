@@ -11,7 +11,7 @@ import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
 import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
 import com.kuba.flashscorecompose.home.model.HomeError
 import com.kuba.flashscorecompose.home.model.LeagueFixturesData
-import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import com.kuba.flashscorecompose.utils.containsQuery
@@ -27,6 +27,7 @@ class HomeViewModel(
     private val countryRepository: CountryDataSource,
     private val fixturesRepository: FixturesDataSource,
     private val userPreferencesRepository: UserPreferencesDataSource,
+    private val snackbarManager: SnackbarManager,
     private val localDate: LocalDate
 ) : ViewModel() {
 
@@ -69,7 +70,10 @@ class HomeViewModel(
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
                     is RepositoryResult.Error -> {
-                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        snackbarManager.showSnackbarMessage(
+                            result.error.statusMessage,
+                            SnackbarMessageType.Error
+                        )
                         it.copy(
                             isLoading = false,
                             error = HomeError.RemoteError(result.error)
@@ -95,7 +99,7 @@ class HomeViewModel(
             combine(flow = fixturesFlow, flow2 = userPreferencesFlow) { fixtures, userPreferences ->
                 val favoriteFixtureIds = userPreferences.favoriteFixtureIds
                 val leagueFixturesList = fixtures.toLeagueFixturesData(favoriteFixtureIds)
-                val filteredLeagueFixturesList = filterFixtureItems(leagueFixturesList)
+                val filteredLeagueFixturesList = filterLeagueFixturesData(leagueFixturesList)
                 viewModelState.update {
                     it.copy(
                         leagueFixturesDataList = leagueFixturesList,
@@ -122,23 +126,44 @@ class HomeViewModel(
         }
     }
 
-    private fun filterFixtureItems(
+    private fun filterLeagueFixturesData(
         leagueFixturesDataList: List<LeagueFixturesData> = viewModelState.value.leagueFixturesDataList,
-        selectedCountry: Country = viewModelState.value.selectedCountry
+        query: String = viewModelState.value.searchQuery,
+        selectedCountry: Country = viewModelState.value.selectedCountry,
     ): List<LeagueFixturesData> {
         val countryName = selectedCountry.name
         val countryCode = selectedCountry.code
-        return leagueFixturesDataList.filter {
+        val filterFixtureItemWrappers = filterFixtureItemWrappers(leagueFixturesDataList, query)
+        return filterFixtureItemWrappers.filter {
             it.league.countryCode.containsQuery(countryCode)
                     || it.league.countryName.containsQuery(countryName)
         }
     }
 
+    private fun filterFixtureItemWrappers(
+        leagueFixturesDataList: List<LeagueFixturesData>,
+        query: String = viewModelState.value.searchQuery
+    ): List<LeagueFixturesData> {
+        return leagueFixturesDataList.map {
+            val fixtureWrappers = it.fixtureWrappers.filter { fixtureItemWrapper ->
+                fixtureItemWrapper.fixtureItem.league.name.containsQuery(query)
+                        || fixtureItemWrapper.fixtureItem.fixture.venue.city.containsQuery(query)
+                        || fixtureItemWrapper.fixtureItem.fixture.venue.name.containsQuery(query)
+                        || fixtureItemWrapper.fixtureItem.homeTeam.name.containsQuery(query)
+                        || fixtureItemWrapper.fixtureItem.awayTeam.name.containsQuery(query)
+            }
+            LeagueFixturesData(
+                league = it.league,
+                fixtureWrappers = fixtureWrappers
+            )
+        }.filter { it.fixtureWrappers.isNotEmpty() }
+    }
+
     fun updateSelectedCountry(newSelectedCountry: Country, isSelected: Boolean) {
         val filteredLeagueFixturesList = if (isSelected) {
-            viewModelState.value.leagueFixturesDataList
+            filterFixtureItemWrappers(viewModelState.value.leagueFixturesDataList)
         } else {
-            filterFixtureItems(selectedCountry = newSelectedCountry)
+            filterLeagueFixturesData(selectedCountry = newSelectedCountry)
         }
         viewModelState.update {
             it.copy(
@@ -161,7 +186,10 @@ class HomeViewModel(
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
                     is RepositoryResult.Error -> {
-                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        snackbarManager.showSnackbarMessage(
+                            result.error.statusMessage,
+                            SnackbarMessageType.Error
+                        )
                         it.copy(
                             isLoading = false,
                             error = HomeError.RemoteError(result.error)
@@ -188,6 +216,17 @@ class HomeViewModel(
                 favoriteFixtureItemWrappers.map { it.fixtureItem.id }
             )
         }
+    }
+
+    fun updateSearchQuery(newQuery: String) {
+        val filteredFixtures = filterLeagueFixturesData(query = newQuery)
+        viewModelState.update {
+            it.copy(filteredLeagueFixtureDataList = filteredFixtures, searchQuery = newQuery)
+        }
+    }
+
+    fun onSearchClick() {
+        viewModelState.update { it.copy(isSearchExpanded = !it.isSearchExpanded) }
     }
 
     companion object {

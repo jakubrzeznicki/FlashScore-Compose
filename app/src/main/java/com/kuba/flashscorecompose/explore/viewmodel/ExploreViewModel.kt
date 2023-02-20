@@ -20,7 +20,7 @@ import com.kuba.flashscorecompose.explore.model.TeamWrapper
 import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
 import com.kuba.flashscorecompose.teamdetails.players.model.PlayerWrapper
 import com.kuba.flashscorecompose.ui.component.chips.FilterChip
-import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import com.kuba.flashscorecompose.utils.containsQuery
@@ -36,7 +36,8 @@ class ExploreViewModel(
     private val playersRepository: PlayersDataSource,
     private val countryRepository: CountryDataSource,
     private val leagueRepository: LeagueDataSource,
-    private val userPreferencesRepository: UserPreferencesDataSource
+    private val userPreferencesRepository: UserPreferencesDataSource,
+    private val snackbarManager: SnackbarManager
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(ExploreViewModelState())
@@ -48,8 +49,6 @@ class ExploreViewModel(
             viewModelState.value.toUiState()
         )
     private lateinit var currentUserId: String
-
-    // private val countries by lazy { countryRepository.getCountries() }
     private val userPreferences by lazy {
         userPreferencesRepository.observeUserPreferences(currentUserId)
     }
@@ -139,10 +138,6 @@ class ExploreViewModel(
             ) { teams, userPreferences ->
                 val favoriteTeamIds = userPreferences.favoriteTeamIds
                 val countries = countryRepository.getCountries()
-                Log.d("TEST_LOG", "countries size - - ${countries.size}")
-                countries.forEach {
-                    Log.d("TEST_LOG", "country - - ${it}")
-                }
                 val teamWrappers = teams.toTeamWrappers(countries, favoriteTeamIds)
                 val filteredTeamWrappers = filterTeams(teamWrappers)
                 val favoriteTeams = teams.filter { favoriteTeamIds.contains(it.id) }
@@ -249,7 +244,10 @@ class ExploreViewModel(
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
                     is RepositoryResult.Error -> {
-                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        snackbarManager.showSnackbarMessage(
+                            result.error.statusMessage,
+                            SnackbarMessageType.Error
+                        )
                         it.copy(
                             isLoading = false,
                             error = ExploreError.RemoteError(result.error)
