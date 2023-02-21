@@ -99,7 +99,7 @@ fun PlayerDetailsScreen(
                             fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.onSecondary,
                         )
-                        TeamInfoCard(uiState.player, uiState.country.flag, team)
+                        TeamInfoCard(uiState.player, uiState.country?.flag.orEmpty(), team)
                         Spacer(modifier = Modifier.size(16.dp))
                         Text(
                             modifier = Modifier.padding(bottom = 8.dp),

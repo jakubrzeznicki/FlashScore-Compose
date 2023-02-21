@@ -13,7 +13,7 @@ interface PlayerDetailsUiState {
     data class HasData(
         override val isLoading: Boolean,
         override val error: PlayerDetailsError,
-        val country: Country,
+        val country: Country?,
         val player: Player
     ) : PlayerDetailsUiState
 

@@ -8,7 +8,6 @@ import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesDataSource
 import com.kuba.flashscorecompose.data.league.LeagueDataSource
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.data.players.PlayersDataSource
-import com.kuba.flashscorecompose.data.players.model.Player
 import com.kuba.flashscorecompose.data.team.information.TeamDataSource
 import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.data.team.information.model.Venue
@@ -18,6 +17,7 @@ import com.kuba.flashscorecompose.explore.model.ExploreError
 import com.kuba.flashscorecompose.explore.model.TeamWrapper
 import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
 import com.kuba.flashscorecompose.teamdetails.players.model.PlayerWrapper
+import com.kuba.flashscorecompose.teamdetails.players.model.PlayerWrapper.Companion.toPlayerWrappers
 import com.kuba.flashscorecompose.ui.component.chips.FilterChip
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
@@ -192,18 +192,6 @@ class ExploreViewModel(
                 }
             }.collect()
         }
-    }
-
-    private fun List<Player>.toPlayerWrappers(
-        countries: List<Country>,
-        favoritePlayerIds: List<Int>
-    ): List<PlayerWrapper> = map {
-        PlayerWrapper(
-            player = it,
-            country = countries.firstOrNull { country -> country.name == it.nationality }
-                ?: Country.EMPTY_COUNTRY,
-            isFavorite = favoritePlayerIds.contains(it.id)
-        )
     }
 
     private fun observeVenues() {

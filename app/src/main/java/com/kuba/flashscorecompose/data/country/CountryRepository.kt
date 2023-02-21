@@ -26,14 +26,6 @@ class CountryRepository(
             countryEntity.map { it.toCountry() }
         }
 
-    override fun observeCountries(): Flow<List<Country>> =
-        local.observeCountries().map { countryEntity ->
-            countryEntity.map { it.toCountry() }
-        }
-
-    override fun observeCountry(countryName: String): Flow<Country?> =
-        local.observeCountry(countryName).map { it?.toCountry() }
-
     override suspend fun getCountry(countryName: String): Country? =
         local.getCountry(countryName)?.toCountry()
 

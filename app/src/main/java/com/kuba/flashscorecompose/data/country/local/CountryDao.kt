@@ -12,12 +12,6 @@ interface CountryDao {
     @Query("SELECT * FROM countries WHERE name IN(:countryNames)")
     fun observeCountries(countryNames: List<String>): Flow<List<CountryEntity>>
 
-    @Query("SELECT * FROM countries")
-    fun observeCountries(): Flow<List<CountryEntity>>
-
-    @Query("SELECT * FROM countries WHERE name = :countryName LIMIT 1")
-    fun observeCountry(countryName: String): Flow<CountryEntity?>
-
     @Query("SELECT * FROM countries WHERE name = :countryName LIMIT 1")
     suspend fun getCountry(countryName: String): CountryEntity?
 

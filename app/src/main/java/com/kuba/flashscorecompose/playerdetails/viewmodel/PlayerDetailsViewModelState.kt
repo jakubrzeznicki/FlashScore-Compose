@@ -14,7 +14,7 @@ data class PlayerDetailsViewModelState(
     val country: Country? = Country.EMPTY_COUNTRY,
     val player: Player? = Player.EMPTY_PLAYER
 ) {
-    fun toUiState(): PlayerDetailsUiState = if (player != null && country != null) {
+    fun toUiState(): PlayerDetailsUiState = if (player != null) {
         PlayerDetailsUiState.HasData(isLoading, error, country, player)
     } else {
         PlayerDetailsUiState.NoData(isLoading, error)
