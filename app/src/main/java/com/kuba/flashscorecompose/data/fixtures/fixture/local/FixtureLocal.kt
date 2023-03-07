@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
  * Created by jrzeznicki on 03/01/2023.
  */
 class FixtureLocal(private val roomStorage: RoomStorage) : FixtureLocalDataSource {
+
     override fun observeFixturesFilteredByRound(
         leagueId: Int,
         season: Int,
