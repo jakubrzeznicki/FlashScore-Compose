@@ -118,12 +118,7 @@ class FixturesTeamViewModel(
 
     fun addFixtureToFavorite(fixtureItemWrapper: FixtureItemWrapper) {
         viewModelScope.launch {
-            val favoriteFixtureItemWrappers =
-                viewModelState.value.fixtureItemWrappers.filter { it.isFavorite }.toMutableList()
-            favoriteFixtureInteractor.addFixtureToFavorite(
-                fixtureItemWrapper,
-                favoriteFixtureItemWrappers
-            )
+            favoriteFixtureInteractor.addFixtureToFavorite(fixtureItemWrapper)
         }
     }
 }

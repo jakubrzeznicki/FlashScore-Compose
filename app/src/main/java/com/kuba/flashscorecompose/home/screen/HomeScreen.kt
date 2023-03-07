@@ -65,7 +65,7 @@ fun HomeScreenRoute(
         onCountryClick = { country, isSelected ->
             viewModel.updateSelectedCountry(country, isSelected)
         },
-        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixtureItem)) },
+        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixtureItem.id)) },
         onFavoriteFixtureClick = { viewModel.addFixtureToFavorite(it) },
         onLeagueClick = { navigator.navigate(LeagueDetailsRouteDestination(it)) },
         onSearchClick = { viewModel.onSearchClick() },

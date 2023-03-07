@@ -17,4 +17,19 @@ data class FixtureItem(
     val score: Score,
     val homeTeam: Team,
     val awayTeam: Team
-) : Parcelable
+) : Parcelable {
+    companion object {
+        val EMPTY_FIXTURE_ITEM = FixtureItem(
+            0,
+            0,
+            "",
+            "",
+            FixtureInfo.EMPTY_FIXTURE_INFO,
+            Goals.EMPTY_GOALS,
+            League.EMPTY_LEAGUE,
+            Score.EMPTY_SCORE,
+            Team.EMPTY_TEAM,
+            Team.EMPTY_TEAM
+        )
+    }
+}

@@ -45,7 +45,9 @@ fun FixturesTeamScreen(
     FixturesTeamListScreen(
         uiState = uiState,
         context = context,
-        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixtureItem)) },
+        onFixtureClick = {
+            navigator.navigate(FixtureDetailsRouteDestination(it.fixtureItem.id))
+        },
         onFixtureFavoriteClick = { viewModel.addFixtureToFavorite(it) },
         onFixturesFilterClick = { viewModel.filterFixtures(it as FilterChip.Fixtures) },
         onRefreshClick = { viewModel.refresh() }

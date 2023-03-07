@@ -66,7 +66,7 @@ fun LeagueDetailsRoute(
         navigator = navigator,
         context = context,
         onRefreshClick = { viewModel.refresh() },
-        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixtureItem)) },
+        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixtureItem.id)) },
         onFixtureFavoriteClick = { viewModel.addFixtureToFavorite(it) },
         onDateClick = { viewModel.changeDate(it) },
         onStandingsClick = { navigator.navigate(StandingsDetailsRouteDestination(league)) }

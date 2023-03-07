@@ -54,6 +54,7 @@ import com.kuba.flashscorecompose.data.userpreferences.local.UserPreferencesLoca
 import com.kuba.flashscorecompose.data.userpreferences.local.preferences.DefaultUserDataStore
 import com.kuba.flashscorecompose.data.userpreferences.local.preferences.UserDataStore
 import com.kuba.flashscorecompose.explore.viewmodel.ExploreViewModel
+import com.kuba.flashscorecompose.fixturedetails.container.viewmodel.FixtureDetailsViewModel
 import com.kuba.flashscorecompose.fixturedetails.headtohead.viewmodel.HeadToHeadViewModel
 import com.kuba.flashscorecompose.fixturedetails.lineup.viewmodel.LineupViewModel
 import com.kuba.flashscorecompose.fixturedetails.statistics.viewmodel.StatisticsViewModel
@@ -145,6 +146,7 @@ class KoinModules {
             val favoriteFixtureInteractor = DefaultFavoriteFixtureInteractor(get(), get(), get())
             LeagueDetailsViewModel(league, get(), get(), get(), favoriteFixtureInteractor)
         }
+        viewModel { (fixtureId: Int) -> FixtureDetailsViewModel(fixtureId, get(), get()) }
         viewModel { (team: Team, leagueId: Int, season: Int) ->
             TeamInformationsViewModel(team, leagueId, season, get(), get(), get())
         }

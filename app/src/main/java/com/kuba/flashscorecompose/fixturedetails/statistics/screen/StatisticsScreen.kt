@@ -63,7 +63,7 @@ fun StatisticsScreen(
         uiState = uiState,
         context = context,
         onRefreshClick = { viewModel.refresh() },
-        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixtureItem)) },
+        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixtureItem.id)) },
         onFavoriteClick = { viewModel.addFixtureToFavorite(it) }
     )
 }

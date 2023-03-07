@@ -3,10 +3,12 @@ package com.kuba.flashscorecompose.notifications
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.net.toUri
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.main.view.MainActivity
 import com.kuba.flashscorecompose.notifications.model.NotificationData
@@ -22,18 +24,23 @@ class DefaultFixtureNotification(private val applicationContext: Context) : Fixt
         notificationData: NotificationData
     ) {
         notificationManager.createNotificationChannel()
-        notificationManager.createNotification(getPendingIntent(), notificationData)
+        notificationManager.createNotification(
+            getPendingIntent(notificationData.id),
+            notificationData
+        )
     }
 
-    private fun getPendingIntent(): PendingIntent {
-        val intent = Intent(applicationContext, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        return PendingIntent.getActivity(
+    private fun getPendingIntent(id: Int): PendingIntent {
+        val intent = Intent(
+            Intent.ACTION_VIEW,
+            "$MY_URI/$FIXTURE_ID_ARGS=$id".toUri(),
             applicationContext,
-            0,
-            intent,
-            getPendingIntentFlag()
+            MainActivity::class.java
         )
+        return TaskStackBuilder.create(applicationContext).run {
+            addNextIntentWithParentStack(intent)
+            getPendingIntent(0, getPendingIntentFlag())
+        }
     }
 
     private fun NotificationManager.createNotificationChannel() {
@@ -72,8 +79,10 @@ class DefaultFixtureNotification(private val applicationContext: Context) : Fixt
         notify(notificationData.id, notificationBuilder.build())
     }
 
-    private companion object {
-        const val NOTIFICATION_CHANNEL_ID = "FIXTURE_NOTIFICATION_CHANNEL_ID"
-        const val NOTIFICATION_CHANNEL_NAME = "FIXTURE_NOTIFICATION_CHANNEL_NAME"
+    companion object {
+        private const val NOTIFICATION_CHANNEL_ID = "FIXTURE_NOTIFICATION_CHANNEL_ID"
+        private const val NOTIFICATION_CHANNEL_NAME = "FIXTURE_NOTIFICATION_CHANNEL_NAME"
+        const val MY_URI = "https://flashscorecompose.com"
+        const val FIXTURE_ID_ARGS = "fixtureId"
     }
 }

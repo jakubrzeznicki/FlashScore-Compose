@@ -41,11 +41,8 @@ interface FixtureDao {
     @Query("SELECT * FROM fixture WHERE id IN(:ids)")
     fun observeFavoriteFixtures(ids: List<Int>): Flow<List<FixtureEntity>>
 
-    @Query("SELECT * FROM fixture WHERE fixture_info_id = :fixtureId")
-    suspend fun getFixture(fixtureId: Int): FixtureEntity?
-
-    @Query("SELECT * FROM fixture WHERE league_countryName IN(:countryNames) ORDER BY fixture_info_timestamp")
-    suspend fun getFixturesByCountry(countryNames: List<String>): List<FixtureEntity>
+    @Query("SELECT * FROM fixture WHERE fixture_info_id = :id")
+    fun observeFixtureById(id: Int): Flow<FixtureEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveFixtures(fixtures: List<FixtureEntity>)

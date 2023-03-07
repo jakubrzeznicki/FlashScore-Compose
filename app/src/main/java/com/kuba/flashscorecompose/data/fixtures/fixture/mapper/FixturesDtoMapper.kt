@@ -52,7 +52,7 @@ fun FixtureInfoDto.toFixtureInfo(teamId: Int?): FixtureInfo {
         timezone = timezone.orEmpty(),
         venue = venue?.toVenue(teamId) ?: Venue.EMPTY_VENUE,
         periods = periods?.toPeriods() ?: Periods.EMPTY_PERIODS,
-        isLive = isLive(periods?.toPeriods() ?: Periods.EMPTY_PERIODS),
+        isLive = isLive(periods?.toPeriods() ?: Periods.EMPTY_PERIODS) && !isNotStarted(status?.short.orEmpty()),
         isStarted = !isNotStarted(status?.short.orEmpty())
     )
 }

@@ -57,7 +57,7 @@ fun ExploreRoute(
         uiState = uiState,
         context = context,
         onRefreshClick = { viewModel.refresh() },
-        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixtureItem)) },
+        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixtureItem.id)) },
         onFixtureFavoriteClick = { viewModel.addFixtureToFavorite(it) },
         onTeamClick = {
             navigator.navigate(

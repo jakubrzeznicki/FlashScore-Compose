@@ -73,6 +73,12 @@ class FixturesRepository(
         }
     }
 
+    override fun observeFixtureById(id: Int): Flow<FixtureItem?> {
+        return local.observeFixtureById(id).map { fixtureEntity ->
+            fixtureEntity?.toFixtureItem()
+        }
+    }
+
     override suspend fun saveFixtureItem(fixtureItems: List<FixtureItem>) {
         local.saveFixtures(fixtureItems.map { it.toFixtureEntity() })
     }
@@ -175,6 +181,20 @@ class FixturesRepository(
             val fixtureItems = result.body()?.response?.map { it.toFixtureItem(season = season) }
             saveData(fixtureItems)
             RepositoryResult.Success(fixtureItems)
+        } catch (e: HttpException) {
+            RepositoryResult.Error(ResponseStatus().apply {
+                this.statusMessage = e.message()
+                this.internalStatus = e.code()
+            })
+        }
+    }
+
+    override suspend fun loadFixtureById(id: Int): RepositoryResult<FixtureItem> {
+        val result = remote.loadFixtureById(id)
+        return try {
+            val fixtureItem = result.body()?.response?.map { it.toFixtureItem() }
+            saveData(fixtureItem)
+            RepositoryResult.Success(fixtureItem?.first())
         } catch (e: HttpException) {
             RepositoryResult.Error(ResponseStatus().apply {
                 this.statusMessage = e.message()

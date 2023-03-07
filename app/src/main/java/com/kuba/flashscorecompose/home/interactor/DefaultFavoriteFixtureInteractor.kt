@@ -4,8 +4,8 @@ import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.notifications.NotificationsDataSource
 import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
 import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
-import com.kuba.flashscorecompose.notifications.model.NotificationData
 import com.kuba.flashscorecompose.notifications.ReminderManager
+import com.kuba.flashscorecompose.notifications.model.NotificationData
 
 /**
  * Created by jrzeznicki on 06/03/2023.
@@ -16,20 +16,17 @@ class DefaultFavoriteFixtureInteractor(
     private val notificationsRepository: NotificationsDataSource
 ) : FavoriteFixtureInteractor {
 
-    override suspend fun addFixtureToFavorite(
-        fixtureItemWrapper: FixtureItemWrapper,
-        favoriteFixtureItemWrappers: MutableList<FixtureItemWrapper>
-    ) {
+    override suspend fun addFixtureToFavorite(fixtureItemWrapper: FixtureItemWrapper) {
+        val savedFavoriteFixtureIds = userPreferencesRepository.getUserPreferences()
+            ?.favoriteFixtureIds.orEmpty().toMutableList()
         if (fixtureItemWrapper.isFavorite) {
-            favoriteFixtureItemWrappers.remove(fixtureItemWrapper)
+            savedFavoriteFixtureIds.remove(fixtureItemWrapper.fixtureItem.id)
             cancelReminder(fixtureItemWrapper.fixtureItem)
         } else {
-            favoriteFixtureItemWrappers.add(fixtureItemWrapper.copy(isFavorite = true))
+            savedFavoriteFixtureIds.add(fixtureItemWrapper.fixtureItem.id)
             setReminder(fixtureItemWrapper.fixtureItem)
         }
-        userPreferencesRepository.saveFavoriteFixturesIds(
-            favoriteFixtureItemWrappers.map { it.fixtureItem.id }
-        )
+        userPreferencesRepository.saveFavoriteFixturesIds(savedFavoriteFixtureIds)
     }
 
     private suspend fun setReminder(fixtureItem: FixtureItem) {

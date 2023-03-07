@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
@@ -27,26 +28,46 @@ import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.destinations.TeamDetailsRouteDestination
+import com.kuba.flashscorecompose.fixturedetails.container.model.FixtureDetailsUiState
+import com.kuba.flashscorecompose.fixturedetails.container.viewmodel.FixtureDetailsViewModel
+import com.kuba.flashscorecompose.notifications.DefaultFixtureNotification.Companion.FIXTURE_ID_ARGS
+import com.kuba.flashscorecompose.notifications.DefaultFixtureNotification.Companion.MY_URI
 import com.kuba.flashscorecompose.ui.component.CenterAppTopBar
+import com.kuba.flashscorecompose.ui.component.EmptyState
+import com.kuba.flashscorecompose.ui.component.FullScreenLoading
+import com.kuba.flashscorecompose.ui.component.LoadingContent
 import com.kuba.flashscorecompose.ui.component.tabs.TabItem
 import com.kuba.flashscorecompose.ui.component.tabs.Tabs
 import com.kuba.flashscorecompose.ui.component.tabs.TabsContent
 import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
+import com.ramcosta.composedestinations.annotation.DeepLink
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import org.koin.androidx.compose.getViewModel
+import org.koin.core.parameter.parametersOf
 
 /**
  * Created by jrzeznicki on 23/12/2022.
  */
-@Destination
+private const val SETUP_FIXTURE_DETAILS_KEY = "SETUP_FIXTURE_DETAILS_KEY"
+
+@Destination(
+    deepLinks = [
+        DeepLink(uriPattern = "$MY_URI/$FIXTURE_ID_ARGS={fixtureId}")
+    ]
+)
 @Composable
 fun FixtureDetailsRoute(
-    fixtureItem: FixtureItem,
-    navigator: DestinationsNavigator
+    fixtureId: Int,
+    navigator: DestinationsNavigator,
+    viewModel: FixtureDetailsViewModel = getViewModel { parametersOf(fixtureId) }
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(key1 = SETUP_FIXTURE_DETAILS_KEY) { viewModel.setup() }
     FixtureDetailsScreen(
-        fixtureItem = fixtureItem,
+        uiState = uiState,
         navigator = navigator,
+        onRefreshClick = { viewModel.refreshFixtureItem() },
         onTeamClick = { team, leagueId, season ->
             navigator.navigate(TeamDetailsRouteDestination(team, leagueId, season))
         }
@@ -58,21 +79,47 @@ fun FixtureDetailsRoute(
 @Composable
 private fun FixtureDetailsScreen(
     modifier: Modifier = Modifier,
-    fixtureItem: FixtureItem,
+    uiState: FixtureDetailsUiState,
     navigator: DestinationsNavigator,
+    onRefreshClick: () -> Unit,
     onTeamClick: (Team, Int, Int) -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
-        topBar = { TopBar(navigator, fixtureItem.league.round) }
+        topBar = {
+            TopBar(
+                navigator = navigator,
+                round = when (uiState) {
+                    is FixtureDetailsUiState.HasData -> uiState.fixtureItem.league.round
+                    else -> ""
+                }
+            )
+        }
     ) {
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(top = 32.dp)
+        LoadingContent(
+            modifier = Modifier.padding(top = 36.dp),
+            empty = when (uiState) {
+                is FixtureDetailsUiState.HasData -> false
+                else -> uiState.isLoading
+            },
+            emptyContent = { FullScreenLoading() },
+            loading = uiState.isLoading,
+            onRefresh = onRefreshClick
         ) {
-            HeaderMatchInfo(fixtureItem, onTeamClick)
-            FixtureDetailsTabs(fixtureItem, navigator)
+            Column(Modifier.fillMaxSize()) {
+                when (uiState) {
+                    is FixtureDetailsUiState.HasData -> {
+                        HeaderMatchInfo(uiState.fixtureItem, onTeamClick)
+                        FixtureDetailsTabs(uiState.fixtureItem, navigator)
+                    }
+                    is FixtureDetailsUiState.NoData -> {
+                        EmptyState(
+                            modifier = Modifier.fillMaxWidth(),
+                            textId = R.string.no_fixture_details
+                        )
+                    }
+                }
+            }
         }
     }
 }

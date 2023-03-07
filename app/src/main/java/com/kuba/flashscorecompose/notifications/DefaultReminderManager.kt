@@ -5,7 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.provider.Settings
+import android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
 import androidx.annotation.RequiresApi
 import com.kuba.flashscorecompose.notifications.model.NotificationData
 import com.kuba.flashscorecompose.utils.getPendingIntentFlag
@@ -41,7 +41,8 @@ class DefaultReminderManager(val context: Context) : ReminderManager {
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 val settingsIntent = Intent().apply {
-                    action = Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                    action = ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 }
                 context.startActivity(settingsIntent)
             }

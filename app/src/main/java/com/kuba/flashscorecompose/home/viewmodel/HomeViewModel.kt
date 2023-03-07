@@ -204,15 +204,7 @@ class HomeViewModel(
 
     fun addFixtureToFavorite(fixtureItemWrapper: FixtureItemWrapper) {
         viewModelScope.launch {
-            val favoriteFixtureItemWrappers =
-                viewModelState.value.leagueFixturesDataList.map { it.fixtureWrappers }
-                    .flatten()
-                    .filter { it.isFavorite }
-                    .toMutableList()
-            favoriteFixtureInteractor.addFixtureToFavorite(
-                fixtureItemWrapper,
-                favoriteFixtureItemWrappers
-            )
+            favoriteFixtureInteractor.addFixtureToFavorite(fixtureItemWrapper)
         }
     }
 

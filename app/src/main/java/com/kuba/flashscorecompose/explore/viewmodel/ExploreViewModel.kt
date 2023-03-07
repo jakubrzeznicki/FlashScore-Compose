@@ -94,7 +94,7 @@ class ExploreViewModel(
                         filteredLiveFixtures = filteredFixtureItemWrappers
                     )
                 }
-            }
+            }.collect()
         }
     }
 

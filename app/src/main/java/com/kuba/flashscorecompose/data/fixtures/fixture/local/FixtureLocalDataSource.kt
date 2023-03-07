@@ -22,6 +22,7 @@ interface FixtureLocalDataSource {
     fun observeFixturesByLeague(leagueId: Int): Flow<List<FixtureEntity>>
     fun observeFixturesLive(): Flow<List<FixtureEntity>>
     fun observeFavoriteFixtures(ids: List<Int>): Flow<List<FixtureEntity>>
+    fun observeFixtureById(id: Int): Flow<FixtureEntity?>
     suspend fun saveFixtures(fixtures: List<FixtureEntity>)
     suspend fun saveVenues(venues: List<VenueEntity>)
     suspend fun saveLeagues(leagues: List<LeagueEntity>)
