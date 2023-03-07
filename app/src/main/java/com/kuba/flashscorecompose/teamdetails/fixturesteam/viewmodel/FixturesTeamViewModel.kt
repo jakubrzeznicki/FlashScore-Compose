@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesDataSource
 import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
+import com.kuba.flashscorecompose.home.interactor.FavoriteFixtureInteractor
 import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
 import com.kuba.flashscorecompose.teamdetails.fixturesteam.model.FixturesTeamError
 import com.kuba.flashscorecompose.ui.component.chips.FilterChip
@@ -21,6 +22,7 @@ class FixturesTeamViewModel(
     private val season: Int,
     private val fixturesRepository: FixturesDataSource,
     private val userPreferencesRepository: UserPreferencesDataSource,
+    private val favoriteFixtureInteractor: FavoriteFixtureInteractor,
     private val snackbarManager: SnackbarManager
 ) : ViewModel() {
 
@@ -118,13 +120,9 @@ class FixturesTeamViewModel(
         viewModelScope.launch {
             val favoriteFixtureItemWrappers =
                 viewModelState.value.fixtureItemWrappers.filter { it.isFavorite }.toMutableList()
-            if (fixtureItemWrapper.isFavorite) {
-                favoriteFixtureItemWrappers.remove(fixtureItemWrapper)
-            } else {
-                favoriteFixtureItemWrappers.add(fixtureItemWrapper.copy(isFavorite = true))
-            }
-            userPreferencesRepository.saveFavoriteFixturesIds(
-                favoriteFixtureItemWrappers.map { it.fixtureItem.id }
+            favoriteFixtureInteractor.addFixtureToFavorite(
+                fixtureItemWrapper,
+                favoriteFixtureItemWrappers
             )
         }
     }

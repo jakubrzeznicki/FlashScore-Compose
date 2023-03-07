@@ -136,7 +136,7 @@ private fun TopBar(navigator: DestinationsNavigator, title: String) {
                     .size(24.dp),
                 onClick = { navigator.popBackStack() }) {
                 Icon(
-                    imageVector = Icons.Filled.ArrowBack,
+                    imageVector = Icons.Filled.ChevronLeft,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSecondary
                 )

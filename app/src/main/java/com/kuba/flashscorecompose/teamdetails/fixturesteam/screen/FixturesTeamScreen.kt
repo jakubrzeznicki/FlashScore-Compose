@@ -1,5 +1,6 @@
 package com.kuba.flashscorecompose.teamdetails.fixturesteam.screen
 
+import android.content.Context
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -8,9 +9,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.flowlayout.FlowRow
@@ -39,9 +40,11 @@ fun FixturesTeamScreen(
     viewModel: FixturesTeamViewModel = getViewModel { parametersOf(teamId, season) }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     LaunchedEffect(key1 = SETUP_FIXTURES_TEAM_KEY) { viewModel.setup() }
     FixturesTeamListScreen(
         uiState = uiState,
+        context = context,
         onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixtureItem)) },
         onFixtureFavoriteClick = { viewModel.addFixtureToFavorite(it) },
         onFixturesFilterClick = { viewModel.filterFixtures(it as FilterChip.Fixtures) },
@@ -52,6 +55,7 @@ fun FixturesTeamScreen(
 @Composable
 fun FixturesTeamListScreen(
     uiState: FixturesTeamUiState,
+    context: Context,
     onFixtureClick: (FixtureItemWrapper) -> Unit,
     onFixtureFavoriteClick: (FixtureItemWrapper) -> Unit,
     onFixturesFilterClick: (FilterChip) -> Unit,
@@ -86,6 +90,7 @@ fun FixturesTeamListScreen(
                     items(items = uiState.fixtureItemWrappers) {
                         FixtureCard(
                             fixtureItemWrapper = it,
+                            context = context,
                             onFixtureClick = onFixtureClick,
                             onFavoriteClick = onFixtureFavoriteClick
                         )

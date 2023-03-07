@@ -1,5 +1,6 @@
 package com.kuba.flashscorecompose.leaguedetails.screen
 
+import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -57,11 +58,13 @@ fun LeagueDetailsRoute(
     viewModel: LeagueDetailsViewModel = getViewModel { parametersOf(league) }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     LaunchedEffect(key1 = SETUP_LEAGUE_DETAILS_KEY) { viewModel.setup() }
     LeagueDetailsScreen(
         uiState = uiState,
         league = league,
         navigator = navigator,
+        context = context,
         onRefreshClick = { viewModel.refresh() },
         onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixtureItem)) },
         onFixtureFavoriteClick = { viewModel.addFixtureToFavorite(it) },
@@ -76,6 +79,7 @@ fun LeagueDetailsScreen(
     uiState: LeagueDetailsUiState,
     league: League,
     navigator: DestinationsNavigator,
+    context: Context,
     onRefreshClick: () -> Unit,
     onFixtureClick: (FixtureItemWrapper) -> Unit,
     onFixtureFavoriteClick: (FixtureItemWrapper) -> Unit,
@@ -116,6 +120,7 @@ fun LeagueDetailsScreen(
                         items(items = uiState.fixtureItemWrappers) {
                             FixtureCard(
                                 fixtureItemWrapper = it,
+                                context = context,
                                 onFixtureClick = onFixtureClick,
                                 onFavoriteClick = onFixtureFavoriteClick
                             )
@@ -238,7 +243,7 @@ private fun TopBar(navigator: DestinationsNavigator, league: League) {
                     .size(24.dp),
                 onClick = { navigator.popBackStack() }) {
                 Icon(
-                    imageVector = Icons.Filled.ArrowBack,
+                    imageVector = Icons.Filled.ChevronLeft,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSecondary
                 )

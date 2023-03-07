@@ -3,7 +3,7 @@ package com.kuba.flashscorecompose.teamdetails.container.screen
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -78,7 +78,7 @@ private fun TopBar(navigator: DestinationsNavigator, title: String) {
                     .size(24.dp),
                 onClick = { navigator.popBackStack() }) {
                 Icon(
-                    imageVector = Icons.Filled.ArrowBack,
+                    imageVector = Icons.Filled.ChevronLeft,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSecondary
                 )

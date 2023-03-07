@@ -1,5 +1,6 @@
 package com.kuba.flashscorecompose.fixturedetails.statistics.screen
 
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -55,9 +57,11 @@ fun StatisticsScreen(
     }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     LaunchedEffect(key1 = STATISTICS_KEY) { viewModel.setup() }
     StatisticsList(
         uiState = uiState,
+        context = context,
         onRefreshClick = { viewModel.refresh() },
         onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixtureItem)) },
         onFavoriteClick = { viewModel.addFixtureToFavorite(it) }
@@ -68,6 +72,7 @@ fun StatisticsScreen(
 private fun StatisticsList(
     uiState: StatisticsUiState,
     onRefreshClick: () -> Unit,
+    context: Context,
     onFixtureClick: (FixtureItemWrapper) -> Unit,
     onFavoriteClick: (FixtureItemWrapper) -> Unit
 ) {
@@ -100,6 +105,7 @@ private fun StatisticsList(
                     items(items = uiState.fixtureItemWrappers) {
                         FixtureCard(
                             fixtureItemWrapper = it,
+                            context = context,
                             onFixtureClick = onFixtureClick,
                             onFavoriteClick = onFavoriteClick
                         )
@@ -123,6 +129,7 @@ private fun StatisticsList(
                     items(items = uiState.fixtureItemWrappers) {
                         FixtureCard(
                             fixtureItemWrapper = it,
+                            context = context,
                             onFixtureClick = onFixtureClick,
                             onFavoriteClick = onFavoriteClick
                         )

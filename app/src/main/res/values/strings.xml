@@ -172,4 +172,12 @@
 
     <!-- Errors -->
     <string name="problem_with_upload_avatar">There was a problem with upload avatar.</string>
+
+    <!-- Notifications -->
+    <string name="round">Round:</string>
+    <string name="fixture">Fixture:</string>
+    <string name="start">Start:</string>
+    <string name="vs">vs</string>
+    <string name="no_notifications">No notifications</string>
+    <string name="cancel_notification">Successfully cancel notification</string>
 </resources>

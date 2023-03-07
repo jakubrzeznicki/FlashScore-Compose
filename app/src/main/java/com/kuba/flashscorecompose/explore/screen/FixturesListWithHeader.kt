@@ -1,5 +1,6 @@
 package com.kuba.flashscorecompose.explore.screen
 
+import android.content.Context
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,6 +26,7 @@ fun FixturesListWithHeader(
     state: LazyListState,
     color: Color,
     textId: Int,
+    context: Context,
     onFixtureClick: (FixtureItemWrapper) -> Unit,
     onFavoriteClick: (FixtureItemWrapper) -> Unit
 ) {
@@ -44,6 +46,7 @@ fun FixturesListWithHeader(
         items(items = fixtures) {
             FixtureCard(
                 fixtureItemWrapper = it,
+                context = context,
                 onFixtureClick = onFixtureClick,
                 onFavoriteClick = onFavoriteClick
             )
@@ -60,6 +63,7 @@ fun FixturesDoubleListWithHeader(
     favoriteColor: Color,
     textId: Int,
     favoriteTextId: Int,
+    context: Context,
     onFixtureClick: (FixtureItemWrapper) -> Unit,
     onFavoriteClick: (FixtureItemWrapper) -> Unit
 ) {
@@ -79,6 +83,7 @@ fun FixturesDoubleListWithHeader(
         items(items = favoriteFixtures) {
             FixtureCard(
                 fixtureItemWrapper = it,
+                context = context,
                 onFixtureClick = onFixtureClick,
                 onFavoriteClick = onFavoriteClick
             )
@@ -95,6 +100,7 @@ fun FixturesDoubleListWithHeader(
         items(items = fixtures) {
             FixtureCard(
                 fixtureItemWrapper = it,
+                context = context,
                 onFixtureClick = onFixtureClick,
                 onFavoriteClick = onFavoriteClick
             )

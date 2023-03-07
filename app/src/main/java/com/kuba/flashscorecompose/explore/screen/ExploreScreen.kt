@@ -1,5 +1,6 @@
 package com.kuba.flashscorecompose.explore.screen
 
+import android.content.Context
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
@@ -12,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -49,9 +51,11 @@ fun ExploreRoute(
     viewModel: ExploreViewModel = getViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     LaunchedEffect(key1 = SETUP_EXPLORE_KEY) { viewModel.setup() }
     ExploreScreen(
         uiState = uiState,
+        context = context,
         onRefreshClick = { viewModel.refresh() },
         onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixtureItem)) },
         onFixtureFavoriteClick = { viewModel.addFixtureToFavorite(it) },
@@ -86,6 +90,7 @@ fun ExploreRoute(
 fun ExploreScreen(
     modifier: Modifier = Modifier,
     uiState: ExploreUiState,
+    context: Context,
     onRefreshClick: () -> Unit,
     onFixtureClick: (FixtureItemWrapper) -> Unit,
     onFixtureFavoriteClick: (FixtureItemWrapper) -> Unit,
@@ -163,6 +168,7 @@ fun ExploreScreen(
                             color = MaterialTheme.colorScheme.error,
                             favoriteColor = MaterialTheme.colorScheme.primary,
                             textId = R.string.live_score,
+                            context = context,
                             favoriteTextId = R.string.favorites,
                             onFixtureClick = onFixtureClick,
                             onFavoriteClick = onFixtureFavoriteClick
@@ -174,6 +180,7 @@ fun ExploreScreen(
                             state = fixturesLazyListState,
                             color = MaterialTheme.colorScheme.error,
                             textId = R.string.live_score,
+                            context = context,
                             onFixtureClick = onFixtureClick,
                             onFavoriteClick = onFixtureFavoriteClick
                         )
@@ -184,6 +191,7 @@ fun ExploreScreen(
                             state = fixturesLazyListState,
                             color = MaterialTheme.colorScheme.primary,
                             textId = R.string.favorites,
+                            context = context,
                             onFixtureClick = onFixtureClick,
                             onFavoriteClick = onFixtureFavoriteClick
                         )

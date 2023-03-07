@@ -8,6 +8,7 @@ import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesDataSource
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
+import com.kuba.flashscorecompose.home.interactor.FavoriteFixtureInteractor
 import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
 import com.kuba.flashscorecompose.home.model.HomeError
 import com.kuba.flashscorecompose.home.model.LeagueFixturesData
@@ -28,6 +29,7 @@ class HomeViewModel(
     private val fixturesRepository: FixturesDataSource,
     private val userPreferencesRepository: UserPreferencesDataSource,
     private val snackbarManager: SnackbarManager,
+    private val favoriteFixtureInteractor: FavoriteFixtureInteractor,
     private val localDate: LocalDate
 ) : ViewModel() {
 
@@ -207,13 +209,9 @@ class HomeViewModel(
                     .flatten()
                     .filter { it.isFavorite }
                     .toMutableList()
-            if (fixtureItemWrapper.isFavorite) {
-                favoriteFixtureItemWrappers.remove(fixtureItemWrapper)
-            } else {
-                favoriteFixtureItemWrappers.add(fixtureItemWrapper.copy(isFavorite = true))
-            }
-            userPreferencesRepository.saveFavoriteFixturesIds(
-                favoriteFixtureItemWrappers.map { it.fixtureItem.id }
+            favoriteFixtureInteractor.addFixtureToFavorite(
+                fixtureItemWrapper,
+                favoriteFixtureItemWrappers
             )
         }
     }

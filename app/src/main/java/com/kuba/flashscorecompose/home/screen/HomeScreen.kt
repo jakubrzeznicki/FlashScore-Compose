@@ -1,7 +1,6 @@
 package com.kuba.flashscorecompose.home.screen
 
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -32,6 +31,7 @@ import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.destinations.FixtureDetailsRouteDestination
 import com.kuba.flashscorecompose.destinations.LeagueDetailsRouteDestination
+import com.kuba.flashscorecompose.destinations.NotificationsRouteDestination
 import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
 import com.kuba.flashscorecompose.home.model.HomeUiState
 import com.kuba.flashscorecompose.home.model.LeagueFixturesData
@@ -61,7 +61,6 @@ fun HomeScreenRoute(
     LaunchedEffect(key1 = SETUP_HOME_KEY) { viewModel.setup() }
     HomeScreen(
         uiState = uiState,
-        navigator = navigator,
         onRefreshClick = { viewModel.refresh() },
         onCountryClick = { country, isSelected ->
             viewModel.updateSelectedCountry(country, isSelected)
@@ -71,6 +70,7 @@ fun HomeScreenRoute(
         onLeagueClick = { navigator.navigate(LeagueDetailsRouteDestination(it)) },
         onSearchClick = { viewModel.onSearchClick() },
         onSearchQueryChanged = { viewModel.updateSearchQuery(it) },
+        onNavigationsClick = { navigator.navigate(NotificationsRouteDestination()) },
         fixturesScrollState = fixturesScrollState,
         countryScrollState = countryScrollState,
         context = context
@@ -82,7 +82,6 @@ fun HomeScreenRoute(
 private fun HomeScreen(
     modifier: Modifier = Modifier,
     uiState: HomeUiState,
-    navigator: DestinationsNavigator,
     onRefreshClick: () -> Unit,
     onCountryClick: (Country, Boolean) -> Unit,
     onFixtureClick: (FixtureItemWrapper) -> Unit,
@@ -90,6 +89,7 @@ private fun HomeScreen(
     onLeagueClick: (League) -> Unit,
     onSearchClick: () -> Unit,
     onSearchQueryChanged: (String) -> Unit,
+    onNavigationsClick: () -> Unit,
     fixturesScrollState: LazyListState,
     countryScrollState: LazyListState,
     context: Context
@@ -97,9 +97,8 @@ private fun HomeScreen(
     Scaffold(
         topBar = {
             TopBar(
-                context = context,
-                navigator = navigator,
-                onSearchClick = onSearchClick
+                onSearchClick = onSearchClick,
+                onNavigationsClick = onNavigationsClick
             )
         },
     ) { paddingValues ->
@@ -146,6 +145,7 @@ private fun HomeScreen(
                         items(items = uiState.leagueFixturesDataList) {
                             FixturesWidget(
                                 leagueFixturesData = it,
+                                context = context,
                                 onFixtureClick = onFixtureClick,
                                 onLeagueClick = onLeagueClick,
                                 onFavoriteClick = onFavoriteFixtureClick
@@ -198,7 +198,10 @@ private fun HomeScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TopBar(context: Context, navigator: DestinationsNavigator, onSearchClick: () -> Unit) {
+private fun TopBar(
+    onSearchClick: () -> Unit,
+    onNavigationsClick: () -> Unit
+) {
     AppTopBar(
         modifier = Modifier
             .height(48.dp)
@@ -215,10 +218,7 @@ private fun TopBar(context: Context, navigator: DestinationsNavigator, onSearchC
                 modifier = Modifier
                     .padding(horizontal = 12.dp)
                     .size(24.dp),
-                onClick = {
-                    Toast.makeText(context, R.string.search, Toast.LENGTH_SHORT).show()
-                    onSearchClick()
-                }) {
+                onClick = { onSearchClick() }) {
                 Icon(
                     imageVector = Icons.Filled.Search,
                     contentDescription = stringResource(id = R.string.search),
@@ -229,9 +229,7 @@ private fun TopBar(context: Context, navigator: DestinationsNavigator, onSearchC
                 modifier = Modifier
                     .padding(horizontal = 12.dp)
                     .size(24.dp),
-                onClick = {
-                    Toast.makeText(context, R.string.notifications, Toast.LENGTH_SHORT).show()
-                }) {
+                onClick = { onNavigationsClick() }) {
                 Icon(
                     imageVector = Icons.Filled.Notifications,
                     contentDescription = stringResource(id = R.string.notifications),
@@ -345,12 +343,13 @@ private fun Banner() {
 @Composable
 private fun FixturesWidget(
     leagueFixturesData: LeagueFixturesData,
+    context: Context,
     onFixtureClick: (FixtureItemWrapper) -> Unit,
     onLeagueClick: (League) -> Unit,
     onFavoriteClick: (FixtureItemWrapper) -> Unit
 ) {
     LeagueHeader(leagueFixturesData.league, onLeagueClick)
     leagueFixturesData.fixtureWrappers.forEach { fixtureWrapper ->
-        FixtureCard(fixtureWrapper, onFixtureClick, onFavoriteClick)
+        FixtureCard(fixtureWrapper, context, onFixtureClick, onFavoriteClick)
     }
 }

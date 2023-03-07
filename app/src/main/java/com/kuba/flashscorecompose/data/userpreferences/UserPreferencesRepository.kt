@@ -4,6 +4,7 @@ import com.kuba.flashscorecompose.data.userpreferences.local.UserPreferencesLoca
 import com.kuba.flashscorecompose.data.userpreferences.mapper.toUserPreferences
 import com.kuba.flashscorecompose.data.userpreferences.mapper.toUserPreferencesEntity
 import com.kuba.flashscorecompose.data.userpreferences.model.UserPreferences
+import com.kuba.flashscorecompose.notifications.model.NotificationData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
 
@@ -34,6 +35,18 @@ class UserPreferencesRepository(private val local: UserPreferencesLocalDataSourc
 
     override suspend fun saveFavoriteFixturesIds(fixtureIds: List<Int>) {
         local.saveFavoriteFixtureIds(fixtureIds)
+    }
+
+    override suspend fun saveReminder(notificationData: NotificationData) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteReminder(id: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getReminders(timestamp: Long): List<NotificationData> {
+        TODO("Not yet implemented")
     }
 
     override suspend fun getUserPreferences(): UserPreferences? {
