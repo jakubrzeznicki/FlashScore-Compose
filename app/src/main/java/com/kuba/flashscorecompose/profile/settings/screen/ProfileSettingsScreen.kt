@@ -130,7 +130,7 @@ private fun SettingsScreen(
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(16.dp)
             ) {
                 Column(
                     modifier = Modifier
@@ -187,7 +187,7 @@ private fun SignInButton(
         onClick = { showSignOutDialog(true) },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 16.dp, bottom = 8.dp),
+            .padding(top = 16.dp, bottom = 8.dp)
     ) {
         Text(text = stringResource(id = R.string.sign_out))
     }

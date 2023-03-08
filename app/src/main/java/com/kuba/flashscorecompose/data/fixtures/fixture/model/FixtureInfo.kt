@@ -21,8 +21,8 @@ data class FixtureInfo(
     val isStarted: Boolean
 ) : Parcelable {
     companion object {
-        const val FORMATTED_DATE_PATTERN =  "dd.MM.yyyy HH:mm"
-        const val SHORT_DATE_PATTERN =  "yyyy-MM-dd"
+        const val FORMATTED_DATE_PATTERN = "dd.MM.yyyy HH:mm"
+        const val SHORT_DATE_PATTERN = "yyyy-MM-dd"
         val EMPTY_FIXTURE_INFO =
             FixtureInfo(
                 "",

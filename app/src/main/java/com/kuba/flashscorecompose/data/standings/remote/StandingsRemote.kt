@@ -10,5 +10,4 @@ import retrofit2.Response
 class StandingsRemote(private val footballApi: FootballApi) : StandingsRemoteDataSource {
     override suspend fun loadStandings(leagueId: Int, season: Int): Response<StandingsDataDto> =
         footballApi.getStandings(season = season, leagueId = leagueId)
-
 }

@@ -19,8 +19,8 @@ class BootReceiver : BroadcastReceiver() {
     private val notificationsRepository by inject<NotificationsDataSource>(NotificationsDataSource::class.java)
 
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action == Intent.ACTION_BOOT_COMPLETED
-            || intent.action == AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED
+        if (intent.action == Intent.ACTION_BOOT_COMPLETED ||
+            intent.action == AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED
         ) {
             CoroutineScope(Dispatchers.Main).launch {
                 val currentTimestamp = System.currentTimeMillis()

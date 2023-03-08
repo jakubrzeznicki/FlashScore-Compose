@@ -28,9 +28,11 @@ class StatisticsRepository(
     }
 
     override suspend fun saveStatistics(statistics: List<Statistics>, fixtureId: Int) {
-        local.saveStatistics(statistics.mapIndexed { index, statistics ->
-            statistics.toStatisticsEntity(fixtureId, isHome = index == 0)
-        })
+        local.saveStatistics(
+            statistics.mapIndexed { index, statistics ->
+                statistics.toStatisticsEntity(fixtureId, isHome = index == 0)
+            }
+        )
     }
 
     override suspend fun loadStatistics(fixtureId: Int): RepositoryResult<List<Statistics>> {
@@ -44,10 +46,12 @@ class StatisticsRepository(
             }
             RepositoryResult.Success(statistics)
         } catch (e: HttpException) {
-            RepositoryResult.Error(ResponseStatus().apply {
-                this.statusMessage = e.message()
-                this.internalStatus = e.code()
-            })
+            RepositoryResult.Error(
+                ResponseStatus().apply {
+                    this.statusMessage = e.message()
+                    this.internalStatus = e.code()
+                }
+            )
         }
     }
 }

@@ -49,7 +49,7 @@ fun CountryWidgetCard(
                 .fillMaxSize()
                 .background(color = color),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.Center
         ) {
             AsyncImage(
                 modifier = Modifier.size(40.dp),

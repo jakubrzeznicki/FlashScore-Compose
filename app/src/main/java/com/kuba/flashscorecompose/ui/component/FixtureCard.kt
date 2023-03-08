@@ -237,7 +237,7 @@ fun FixtureDetailsColumn(
                 text = secondLine,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = MaterialTheme.colorScheme.onSecondary
             )
         }
     }
@@ -269,7 +269,7 @@ fun FixtureStatus(
             text = fixtureItemWrapper.fixtureItem.fixture.status.short,
             fontWeight = FontWeight.SemiBold,
             fontSize = 14.sp,
-            color = if (isLive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSecondary,
+            color = if (isLive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSecondary
         )
         IconButton(
             onClick = {

@@ -81,7 +81,7 @@ fun WelcomeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 32.dp, end = 32.dp)
-                    .verticalScroll(scrollState),
+                    .verticalScroll(scrollState)
             ) {
                 BrandingImage()
                 SignButtons(
@@ -119,14 +119,14 @@ fun BrandingImage() {
             text = stringResource(id = R.string.welcome_title),
             color = MaterialTheme.colorScheme.onSecondary,
             fontWeight = FontWeight.SemiBold,
-            fontSize = 40.sp,
+            fontSize = 40.sp
         )
         Spacer(modifier = Modifier.size(16.dp))
         Text(
             text = stringResource(id = R.string.welcome_subtitle),
             color = MaterialTheme.colorScheme.inverseOnSurface,
             fontWeight = FontWeight.Normal,
-            fontSize = 16.sp,
+            fontSize = 16.sp
         )
     }
 }
@@ -135,7 +135,7 @@ fun BrandingImage() {
 fun SignButtons(
     modifier: Modifier,
     onSignInClick: () -> Unit,
-    onSignUpClick: () -> Unit,
+    onSignUpClick: () -> Unit
 ) {
     Row(modifier = modifier) {
         Button(
@@ -181,13 +181,13 @@ fun SignInAsGuestButton(
         Text(
             text = stringResource(id = R.string.or),
             style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
         )
         OutlinedButton(
             onClick = onSignInAsGuest,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 24.dp),
+                .padding(top = 16.dp, bottom = 24.dp)
         ) {
             Text(text = stringResource(id = R.string.sign_in_guest))
         }

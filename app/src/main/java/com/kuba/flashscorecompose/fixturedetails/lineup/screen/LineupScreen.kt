@@ -83,7 +83,8 @@ private fun LineupList(
         empty = when (uiState) {
             is LineupUiState.HasData -> false
             else -> uiState.isLoading
-        }, emptyContent = { FullScreenLoading() },
+        },
+        emptyContent = { FullScreenLoading() },
         loading = uiState.isLoading,
         onRefresh = onRefreshClick
     ) {
@@ -277,7 +278,7 @@ fun PlayerLineupItem(player: Player, onPlayerClick: (Player) -> Unit) {
                 text = player.number.toString(),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = MaterialTheme.colorScheme.onSecondary
             )
         }
         Spacer(modifier = Modifier.size(4.dp))

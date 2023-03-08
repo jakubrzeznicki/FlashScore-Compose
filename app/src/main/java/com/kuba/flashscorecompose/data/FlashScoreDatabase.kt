@@ -40,10 +40,12 @@ import com.kuba.flashscorecompose.data.userpreferences.local.model.UserPreferenc
  * Created by jrzeznicki on 9/5/2022
  */
 @Database(
-    entities = [CountryEntity::class, LeagueEntity::class, FixtureInfoEntity::class,
+    entities = [
+        CountryEntity::class, LeagueEntity::class, FixtureInfoEntity::class,
         TeamEntity::class, VenueEntity::class, CoachEntity::class, PlayerEntity::class,
         StatisticsEntity::class, LineupEntity::class, FixtureEntity::class, StandingsEntity::class,
-        UserEntity::class, UserPreferencesEntity::class, NotificationDataEntity::class],
+        UserEntity::class, UserPreferencesEntity::class, NotificationDataEntity::class
+    ],
     version = 37
 )
 @TypeConverters(

@@ -108,7 +108,7 @@ class FixturesTeamViewModel(
                         )
                         it.copy(
                             isLoading = false,
-                            error = FixturesTeamError.RemoteError(result.error),
+                            error = FixturesTeamError.RemoteError(result.error)
                         )
                     }
                 }

@@ -62,13 +62,13 @@ class DefaultFixtureNotification(private val applicationContext: Context) : Fixt
             NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
                 .setContentTitle(
                     "${applicationContext.getString(R.string.fixture)} " +
-                            "${notificationData.homeTeam} ${applicationContext.getString(R.string.vs)} " +
-                            notificationData.awayTeam
+                        "${notificationData.homeTeam} ${applicationContext.getString(R.string.vs)} " +
+                        notificationData.awayTeam
                 )
                 .setContentText(
                     "${applicationContext.getString(R.string.round)} " +
-                            "${notificationData.round} \n${applicationContext.getString(R.string.start)} " +
-                            notificationData.formattedDate
+                        "${notificationData.round} \n${applicationContext.getString(R.string.start)} " +
+                        notificationData.formattedDate
                 )
                 .setContentIntent(pendingIntent)
                 .setSmallIcon(R.drawable.ic_explore)

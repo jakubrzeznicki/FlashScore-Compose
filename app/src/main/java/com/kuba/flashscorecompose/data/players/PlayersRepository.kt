@@ -58,10 +58,12 @@ class PlayersRepository(
             }
             RepositoryResult.Success(players)
         } catch (e: HttpException) {
-            RepositoryResult.Error(ResponseStatus().apply {
-                statusMessage = e.message()
-                internalStatus = e.code()
-            })
+            RepositoryResult.Error(
+                ResponseStatus().apply {
+                    statusMessage = e.message()
+                    internalStatus = e.code()
+                }
+            )
         }
     }
 
@@ -80,10 +82,12 @@ class PlayersRepository(
             }
             RepositoryResult.Success(players)
         } catch (e: HttpException) {
-            RepositoryResult.Error(ResponseStatus().apply {
-                statusMessage = e.message()
-                internalStatus = e.code()
-            })
+            RepositoryResult.Error(
+                ResponseStatus().apply {
+                    statusMessage = e.message()
+                    internalStatus = e.code()
+                }
+            )
         }
     }
 }

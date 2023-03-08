@@ -54,10 +54,11 @@ fun TeamCard(
                 .background(color = MaterialTheme.colorScheme.surface),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(modifier = Modifier
-                .weight(1f)
-                .padding(8.dp)
-                .clickable { onTeamClick(teamWrapper) }
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(8.dp)
+                    .clickable { onTeamClick(teamWrapper) }
             ) {
                 AsyncImage(
                     modifier = Modifier

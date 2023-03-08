@@ -9,7 +9,9 @@ import androidx.room.PrimaryKey
  */
 @Entity(tableName = "notification_data")
 data class NotificationDataEntity(
-    @PrimaryKey @ColumnInfo(name = "id") val id: Int,
+    @PrimaryKey
+    @ColumnInfo(name = "id")
+    val id: Int,
     @ColumnInfo(name = "round") val round: String,
     @ColumnInfo(name = "formatted_date") val formattedDate: String,
     @ColumnInfo(name = "home_team") val homeTeam: String,

@@ -178,7 +178,8 @@ private fun TopBar(navigator: DestinationsNavigator, league: League) {
                 modifier = Modifier
                     .padding(start = 12.dp)
                     .size(24.dp),
-                onClick = { navigator.popBackStack() }) {
+                onClick = { navigator.popBackStack() }
+            ) {
                 Icon(
                     imageVector = Icons.Filled.ChevronLeft,
                     contentDescription = "",
@@ -214,7 +215,8 @@ private fun TopBar(navigator: DestinationsNavigator, league: League) {
                     maxLines = 1
                 )
             }
-        })
+        }
+    )
 }
 
 @Composable

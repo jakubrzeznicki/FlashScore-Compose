@@ -44,10 +44,12 @@ class LineupsRepository(
             }
             RepositoryResult.Success(lineups)
         } catch (e: HttpException) {
-            RepositoryResult.Error(ResponseStatus().apply {
-                this.statusMessage = e.message()
-                this.internalStatus = e.code()
-            })
+            RepositoryResult.Error(
+                ResponseStatus().apply {
+                    this.statusMessage = e.message()
+                    this.internalStatus = e.code()
+                }
+            )
         }
     }
 }

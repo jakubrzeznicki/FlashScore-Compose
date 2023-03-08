@@ -15,7 +15,7 @@ data class FixturesTeamViewModelState(
     val filteredFixtureItemWrappers: List<FixtureItemWrapper> = emptyList(),
     val fixtureFilterChip: FilterChip.Fixtures = FilterChip.Fixtures.Played,
     val fixtureFilterChips: List<FilterChip.Fixtures> =
-        listOf(FilterChip.Fixtures.Played, FilterChip.Fixtures.Live, FilterChip.Fixtures.Upcoming),
+        listOf(FilterChip.Fixtures.Played, FilterChip.Fixtures.Live, FilterChip.Fixtures.Upcoming)
 ) {
     fun toUiState(): FixturesTeamUiState = if (fixtureItemWrappers.isNotEmpty()) {
         FixturesTeamUiState.HasData(

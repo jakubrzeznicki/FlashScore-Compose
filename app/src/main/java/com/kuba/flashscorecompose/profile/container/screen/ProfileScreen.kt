@@ -118,7 +118,8 @@ private fun TopBar() {
                 color = MaterialTheme.colorScheme.onSecondary,
                 style = FlashScoreTypography.headlineSmall
             )
-        })
+        }
+    )
 }
 
 @OptIn(ExperimentalPagerApi::class)

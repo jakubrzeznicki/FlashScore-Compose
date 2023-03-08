@@ -1,6 +1,5 @@
 package com.kuba.flashscorecompose.data.players.model
 
-
 /**
  * Created by jrzeznicki on 15/01/2023.
  */

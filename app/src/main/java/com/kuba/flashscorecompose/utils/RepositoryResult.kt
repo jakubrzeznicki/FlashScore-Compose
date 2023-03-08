@@ -1,7 +1,5 @@
 package com.kuba.flashscorecompose.utils
 
-import com.kuba.flashscorecompose.data.country.remote.model.CountryDataDto
-
 /**
  * Created by jrzeznicki on 9/7/2022
  */

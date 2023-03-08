@@ -10,6 +10,7 @@ import kotlinx.parcelize.Parcelize
 sealed interface SignUpType : Parcelable {
     @Parcelize
     object New : SignUpType
+
     @Parcelize
     object Anonymous : SignUpType
 }

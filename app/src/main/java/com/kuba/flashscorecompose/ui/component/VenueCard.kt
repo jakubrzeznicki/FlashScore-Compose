@@ -46,7 +46,7 @@ fun VenueCard(venue: Venue = Venue.EMPTY_VENUE, onVenueClick: (Venue) -> Unit = 
                 .background(color = MaterialTheme.colorScheme.surface)
                 .padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.Center
         ) {
             AsyncImage(
                 modifier = Modifier.size(100.dp),

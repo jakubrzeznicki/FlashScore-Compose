@@ -63,11 +63,11 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-#      - name: Build with Gradle
-#        run: ./gradlew build --info
+      - name: Build with Gradle
+        run: ./gradlew build --info
 
-#      - name: Run Ktlint
-#        run: ./gradlew ktlintStagingDebugCheck
+      - name: Run Ktlint
+        run: ./gradlew ktlintStagingDebugCheck
 
       - name: Decode Google Service JSON File
         uses: timheuer/base64-to-file@v1
@@ -102,7 +102,7 @@ jobs:
 
       - name: Generate Release APK
         run: ./gradlew assembleRelease
-      # 3
+
       - name: Sign APK
         uses: r0adkll/sign-android-release@v1
         id: sign_app
@@ -123,7 +123,6 @@ jobs:
 #          app/build/outputs/bundle/release/app-release.aab ${{ secrets.ALIAS }}
 
   deploy-firebase:
-    # 1
     needs: [ build ]
     runs-on: ubuntu-latest
     steps:

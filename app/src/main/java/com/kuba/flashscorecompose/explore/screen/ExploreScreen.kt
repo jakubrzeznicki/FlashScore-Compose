@@ -81,7 +81,7 @@ fun ExploreRoute(
         onPlayerFavoriteClick = { viewModel.addPlayerToFavorite(it) },
         onLeagueClick = { navigator.navigate(LeagueDetailsRouteDestination(it)) },
         onExploreQueryChanged = { viewModel.updateExploreQuery(it) },
-        onExploreChipClick = { viewModel.changeExploreView(it as FilterChip.Explore) },
+        onExploreChipClick = { viewModel.changeExploreView(it as FilterChip.Explore) }
     )
 }
 
@@ -140,7 +140,7 @@ fun ExploreScreen(
                             border = BorderStroke(
                                 width = 2.dp,
                                 color = MaterialTheme.colorScheme.inverseSurface
-                            ),
+                            )
                         ),
                     label = stringResource(id = R.string.search_all),
                     query = uiState.exploreQuery,
@@ -394,7 +394,8 @@ private fun TopBar() {
                 color = MaterialTheme.colorScheme.onSecondary,
                 style = FlashScoreTypography.headlineSmall
             )
-        })
+        }
+    )
 }
 
 @Composable

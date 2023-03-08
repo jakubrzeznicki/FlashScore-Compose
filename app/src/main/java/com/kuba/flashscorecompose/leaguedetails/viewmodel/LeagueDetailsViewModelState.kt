@@ -13,7 +13,7 @@ data class LeagueDetailsViewModelState(
     val error: LeagueDetailsError = LeagueDetailsError.NoError,
     val date: LocalDate = LocalDate.now(),
     val fixtureItemWrappers: List<FixtureItemWrapper> = emptyList(),
-    val filteredFixtureItemWrappers: List<FixtureItemWrapper> = emptyList(),
+    val filteredFixtureItemWrappers: List<FixtureItemWrapper> = emptyList()
 ) {
     fun toUiState(): LeagueDetailsUiState = if (filteredFixtureItemWrappers.isNotEmpty()) {
         LeagueDetailsUiState.HasData(
@@ -26,7 +26,7 @@ data class LeagueDetailsViewModelState(
         LeagueDetailsUiState.NoData(
             isLoading = isLoading,
             error = error,
-            date = date,
+            date = date
         )
     }
 }

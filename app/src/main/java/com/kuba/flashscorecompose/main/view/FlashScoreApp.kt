@@ -36,7 +36,7 @@ import org.koin.androidx.compose.inject
 @Composable
 fun FlashScoreApp() {
     val snackbarManager: SnackbarManager by inject()
-    //val snackbarManager2: SnackbarManager = get<SnackbarManager>()
+    // val snackbarManager2: SnackbarManager = get<SnackbarManager>()
     val appState = rememberAppState(snackbarManager = snackbarManager)
     NavigationScaffold(
         navController = appState.navController,

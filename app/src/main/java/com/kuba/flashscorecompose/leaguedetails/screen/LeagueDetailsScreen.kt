@@ -84,7 +84,7 @@ fun LeagueDetailsScreen(
     onFixtureClick: (FixtureItemWrapper) -> Unit,
     onFixtureFavoriteClick: (FixtureItemWrapper) -> Unit,
     onDateClick: (LocalDate) -> Unit,
-    onStandingsClick: () -> Unit,
+    onStandingsClick: () -> Unit
 ) {
     val scrollState = rememberLazyListState()
     Scaffold(
@@ -166,7 +166,7 @@ fun DateRow(localDate: LocalDate, onDateClick: (LocalDate) -> Unit) {
             text = localDate.toString(),
             fontWeight = FontWeight.SemiBold,
             fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.onSecondary,
+            color = MaterialTheme.colorScheme.onSecondary
         )
         IconButton(
             modifier = Modifier
@@ -211,7 +211,7 @@ fun StandingsRow(onStandingClick: () -> Unit) {
             text = stringResource(id = R.string.standings),
             fontWeight = FontWeight.SemiBold,
             fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.onSecondary,
+            color = MaterialTheme.colorScheme.onSecondary
         )
         IconButton(
             modifier = Modifier
@@ -241,7 +241,8 @@ private fun TopBar(navigator: DestinationsNavigator, league: League) {
                 modifier = Modifier
                     .padding(start = 12.dp)
                     .size(24.dp),
-                onClick = { navigator.popBackStack() }) {
+                onClick = { navigator.popBackStack() }
+            ) {
                 Icon(
                     imageVector = Icons.Filled.ChevronLeft,
                     contentDescription = null,
@@ -277,5 +278,6 @@ private fun TopBar(navigator: DestinationsNavigator, league: League) {
                     maxLines = 1
                 )
             }
-        })
+        }
+    )
 }

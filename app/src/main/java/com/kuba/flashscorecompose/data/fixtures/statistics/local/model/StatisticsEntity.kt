@@ -13,5 +13,5 @@ data class StatisticsEntity(
     @ColumnInfo(name = "fixture_id") val fixtureId: Int,
     @ColumnInfo(name = "statistics") val statistics: List<StatisticRowEntity>,
     @Embedded(prefix = "team_") val team: TeamEntity,
-    @ColumnInfo(name = "is_home") val isHome: Boolean,
+    @ColumnInfo(name = "is_home") val isHome: Boolean
 )

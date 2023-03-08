@@ -38,7 +38,7 @@ fun PlayersListWithHeader(
                 text = stringResource(id = textId),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
-                color = color,
+                color = color
             )
         }
         items(items = players) {
@@ -73,7 +73,7 @@ fun PlayersDoubleListWithHeader(
                 text = stringResource(id = favoriteTextId),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
-                color = favoriteColor,
+                color = favoriteColor
             )
         }
         items(items = favoritePlayers) {
@@ -89,7 +89,7 @@ fun PlayersDoubleListWithHeader(
                 text = stringResource(id = textId),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
-                color = color,
+                color = color
             )
         }
         items(items = players) {

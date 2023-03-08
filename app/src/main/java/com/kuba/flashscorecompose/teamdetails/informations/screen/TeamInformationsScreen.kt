@@ -11,7 +11,6 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -88,7 +87,7 @@ fun InformationsScreen(uiState: TeamInformationsUiState, onRefreshClick: () -> U
                         text = stringResource(id = R.string.info),
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSecondary,
+                        color = MaterialTheme.colorScheme.onSecondary
                     )
                     TeamInfoCard(team = uiState.team, uiState.country)
                     Spacer(modifier = Modifier.size(16.dp))
@@ -97,7 +96,7 @@ fun InformationsScreen(uiState: TeamInformationsUiState, onRefreshClick: () -> U
                         text = stringResource(id = R.string.venue),
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSecondary,
+                        color = MaterialTheme.colorScheme.onSecondary
                     )
                     VenueInfoCard(venue = uiState.venue)
                     Spacer(modifier = Modifier.size(16.dp))
@@ -106,7 +105,7 @@ fun InformationsScreen(uiState: TeamInformationsUiState, onRefreshClick: () -> U
                         text = stringResource(id = R.string.coach),
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSecondary,
+                        color = MaterialTheme.colorScheme.onSecondary
                     )
                     CoachInfoCard(coach = uiState.coach)
                 }
@@ -116,7 +115,7 @@ fun InformationsScreen(uiState: TeamInformationsUiState, onRefreshClick: () -> U
                         text = stringResource(id = R.string.info),
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSecondary,
+                        color = MaterialTheme.colorScheme.onSecondary
                     )
                     TeamInfoCard(team = uiState.team, uiState.country)
                     Spacer(modifier = Modifier.size(16.dp))
@@ -125,7 +124,7 @@ fun InformationsScreen(uiState: TeamInformationsUiState, onRefreshClick: () -> U
                         text = stringResource(id = R.string.venue),
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSecondary,
+                        color = MaterialTheme.colorScheme.onSecondary
                     )
                     VenueInfoCard(venue = uiState.venue)
                 }
@@ -135,7 +134,7 @@ fun InformationsScreen(uiState: TeamInformationsUiState, onRefreshClick: () -> U
                         text = stringResource(id = R.string.info),
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSecondary,
+                        color = MaterialTheme.colorScheme.onSecondary
                     )
                     TeamInfoCard(team = uiState.team, uiState.country)
                 }
@@ -157,7 +156,7 @@ fun TeamInfoCard(team: Team, country: Country) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Column(
             modifier = Modifier
@@ -208,7 +207,7 @@ fun VenueInfoCard(venue: Venue) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(16.dp)
     ) {
         Column(
             modifier = Modifier
@@ -300,7 +299,7 @@ fun CoachInfoCard(coach: Coach) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Column(
             modifier = Modifier

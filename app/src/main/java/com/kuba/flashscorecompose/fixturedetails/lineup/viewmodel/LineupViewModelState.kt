@@ -11,14 +11,14 @@ data class LineupViewModelState(
     val isLoading: Boolean = false,
     val error: LineupError = LineupError.NoError,
     val lineups: List<Lineup> = emptyList(),
-    val selectedLineup: Lineup = Lineup.EMPTY_LINEUP,
+    val selectedLineup: Lineup = Lineup.EMPTY_LINEUP
 ) {
     fun toUiState(): LineupUiState = if (lineups.isNotEmpty()) {
         LineupUiState.HasData(
             isLoading,
             error,
             lineups,
-            selectedLineup,
+            selectedLineup
         )
     } else {
         LineupUiState.NoData(isLoading, error)

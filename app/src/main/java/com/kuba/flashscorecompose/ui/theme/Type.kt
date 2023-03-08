@@ -5,12 +5,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-//private val Roboto = FontFamily(
+// private val Roboto = FontFamily(
 //    Font(R.font, FontWeight.W100),
 //    Font(R.font.roboto_light, FontWeight.W300),
 //    Font(R.font.roboto_regular, FontWeight.W500),
 //    Font(R.font.roboto_medium, FontWeight.W700),
-//)
+// )
 
 val FlashScoreTypography = Typography(
     displayMedium = TextStyle(

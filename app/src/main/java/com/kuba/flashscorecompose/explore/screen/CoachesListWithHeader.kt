@@ -37,7 +37,7 @@ fun CoachesListWithHeader(
                 text = stringResource(id = textId),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
-                color = color,
+                color = color
             )
         }
         items(items = coaches) {

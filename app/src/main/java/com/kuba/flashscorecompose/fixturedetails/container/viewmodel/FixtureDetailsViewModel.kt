@@ -58,7 +58,7 @@ class FixtureDetailsViewModel(
                         )
                         it.copy(
                             isLoading = false,
-                            error = FixtureDetailsError.RemoteError(result.error),
+                            error = FixtureDetailsError.RemoteError(result.error)
                         )
                     }
                 }

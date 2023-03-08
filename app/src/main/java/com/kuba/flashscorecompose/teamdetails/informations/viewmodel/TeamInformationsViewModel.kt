@@ -93,7 +93,7 @@ class TeamInformationsViewModel(
                         )
                         it.copy(
                             isLoading = false,
-                            error = TeamInformationsError.RemoteError(result.error),
+                            error = TeamInformationsError.RemoteError(result.error)
                         )
                     }
                 }
@@ -115,7 +115,7 @@ class TeamInformationsViewModel(
                         )
                         it.copy(
                             isLoading = false,
-                            error = TeamInformationsError.RemoteError(result.error),
+                            error = TeamInformationsError.RemoteError(result.error)
                         )
                     }
                 }

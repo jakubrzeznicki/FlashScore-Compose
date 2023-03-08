@@ -49,10 +49,11 @@ fun PlayerCard(
                 .background(color = MaterialTheme.colorScheme.surface),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(modifier = Modifier
-                .weight(1f)
-                .padding(8.dp)
-                .clickable { onPlayerClick(playerWrapper) }
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(8.dp)
+                    .clickable { onPlayerClick(playerWrapper) }
             ) {
                 AsyncImage(
                     modifier = Modifier

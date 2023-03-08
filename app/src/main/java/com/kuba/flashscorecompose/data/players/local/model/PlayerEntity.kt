@@ -11,7 +11,9 @@ import com.kuba.flashscorecompose.data.team.information.local.model.TeamEntity
  */
 @Entity(tableName = "player")
 data class PlayerEntity(
-    @PrimaryKey @ColumnInfo(name = "id") val id: Int,
+    @PrimaryKey
+    @ColumnInfo(name = "id")
+    val id: Int,
     @Embedded(prefix = "team_") val team: TeamEntity,
     @ColumnInfo(name = "season") val season: Int,
     @ColumnInfo(name = "grid") val grid: String,

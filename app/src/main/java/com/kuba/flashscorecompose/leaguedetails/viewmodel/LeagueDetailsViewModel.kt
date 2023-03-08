@@ -75,7 +75,7 @@ class LeagueDetailsViewModel(
                 filteredFixtureItemWrappers = filterFixtureItems(date = newDate)
             )
         }
-        //refreshFixtures()
+        // refreshFixtures()
     }
 
     private fun filterFixtureItems(

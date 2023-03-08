@@ -125,7 +125,8 @@ private fun TopBar(navigator: DestinationsNavigator) {
                 modifier = Modifier
                     .padding(start = 12.dp)
                     .size(24.dp),
-                onClick = { navigator.popBackStack() }) {
+                onClick = { navigator.popBackStack() }
+            ) {
                 Icon(
                     imageVector = Icons.Filled.ChevronLeft,
                     contentDescription = "",
@@ -139,7 +140,8 @@ private fun TopBar(navigator: DestinationsNavigator) {
                 color = MaterialTheme.colorScheme.onSecondary,
                 style = FlashScoreTypography.headlineSmall
             )
-        })
+        }
+    )
 }
 
 @Composable

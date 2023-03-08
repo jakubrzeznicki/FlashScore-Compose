@@ -40,7 +40,7 @@ fun FixturesListWithHeader(
                 text = stringResource(id = textId),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
-                color = color,
+                color = color
             )
         }
         items(items = fixtures) {
@@ -77,7 +77,7 @@ fun FixturesDoubleListWithHeader(
                 text = stringResource(id = favoriteTextId),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
-                color = favoriteColor,
+                color = favoriteColor
             )
         }
         items(items = favoriteFixtures) {
@@ -94,7 +94,7 @@ fun FixturesDoubleListWithHeader(
                 text = stringResource(id = textId),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
-                color = color,
+                color = color
             )
         }
         items(items = fixtures) {

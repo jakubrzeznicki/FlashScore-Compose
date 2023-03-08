@@ -83,7 +83,8 @@ fun HeadToHeadList(
         empty = when (uiState) {
             is HeadToHeadUiState.HasData -> false
             else -> uiState.isLoading
-        }, emptyContent = { FullScreenLoading() },
+        },
+        emptyContent = { FullScreenLoading() },
         loading = uiState.isLoading,
         onRefresh = onRefreshClick
     ) {
@@ -294,7 +295,8 @@ private fun FixtureResultIcon(scoreStyle: ScoreStyle) {
             text = scoreStyle.text,
             modifier = Modifier.align(Alignment.Center),
             style = TextStyle(
-                fontSize = 10.sp, fontWeight = FontWeight.SemiBold
+                fontSize = 10.sp,
+                fontWeight = FontWeight.SemiBold
             ),
             color = MaterialTheme.colorScheme.onSecondary
         )

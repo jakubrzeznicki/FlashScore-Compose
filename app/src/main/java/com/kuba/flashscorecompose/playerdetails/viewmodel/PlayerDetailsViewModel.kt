@@ -68,7 +68,7 @@ class PlayerDetailsViewModel(
                         )
                         it.copy(
                             isLoading = false,
-                            error = PlayerDetailsError.RemoteError(result.error),
+                            error = PlayerDetailsError.RemoteError(result.error)
                         )
                     }
                 }

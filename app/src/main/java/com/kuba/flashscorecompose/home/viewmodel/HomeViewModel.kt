@@ -131,14 +131,14 @@ class HomeViewModel(
     private fun filterLeagueFixturesData(
         leagueFixturesDataList: List<LeagueFixturesData> = viewModelState.value.leagueFixturesDataList,
         query: String = viewModelState.value.searchQuery,
-        selectedCountry: Country = viewModelState.value.selectedCountry,
+        selectedCountry: Country = viewModelState.value.selectedCountry
     ): List<LeagueFixturesData> {
         val countryName = selectedCountry.name
         val countryCode = selectedCountry.code
         val filterFixtureItemWrappers = filterFixtureItemWrappers(leagueFixturesDataList, query)
         return filterFixtureItemWrappers.filter {
-            it.league.countryCode.containsQuery(countryCode)
-                    || it.league.countryName.containsQuery(countryName)
+            it.league.countryCode.containsQuery(countryCode) ||
+                it.league.countryName.containsQuery(countryName)
         }
     }
 
@@ -148,11 +148,11 @@ class HomeViewModel(
     ): List<LeagueFixturesData> {
         return leagueFixturesDataList.map {
             val fixtureWrappers = it.fixtureWrappers.filter { fixtureItemWrapper ->
-                fixtureItemWrapper.fixtureItem.league.name.containsQuery(query)
-                        || fixtureItemWrapper.fixtureItem.fixture.venue.city.containsQuery(query)
-                        || fixtureItemWrapper.fixtureItem.fixture.venue.name.containsQuery(query)
-                        || fixtureItemWrapper.fixtureItem.homeTeam.name.containsQuery(query)
-                        || fixtureItemWrapper.fixtureItem.awayTeam.name.containsQuery(query)
+                fixtureItemWrapper.fixtureItem.league.name.containsQuery(query) ||
+                    fixtureItemWrapper.fixtureItem.fixture.venue.city.containsQuery(query) ||
+                    fixtureItemWrapper.fixtureItem.fixture.venue.name.containsQuery(query) ||
+                    fixtureItemWrapper.fixtureItem.homeTeam.name.containsQuery(query) ||
+                    fixtureItemWrapper.fixtureItem.awayTeam.name.containsQuery(query)
             }
             LeagueFixturesData(
                 league = it.league,

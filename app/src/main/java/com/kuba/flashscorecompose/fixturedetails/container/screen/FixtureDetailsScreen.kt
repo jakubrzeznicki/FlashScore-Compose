@@ -82,7 +82,7 @@ private fun FixtureDetailsScreen(
     uiState: FixtureDetailsUiState,
     navigator: DestinationsNavigator,
     onRefreshClick: () -> Unit,
-    onTeamClick: (Team, Int, Int) -> Unit,
+    onTeamClick: (Team, Int, Int) -> Unit
 ) {
     Scaffold(
         modifier = modifier,
@@ -136,7 +136,8 @@ private fun TopBar(navigator: DestinationsNavigator, round: String) {
                 modifier = Modifier
                     .padding(horizontal = 12.dp)
                     .size(24.dp),
-                onClick = { navigator.popBackStack() }) {
+                onClick = { navigator.popBackStack() }
+            ) {
                 Icon(
                     imageVector = Icons.Filled.ChevronLeft,
                     contentDescription = null,
@@ -150,7 +151,6 @@ private fun TopBar(navigator: DestinationsNavigator, round: String) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
                     text = round,

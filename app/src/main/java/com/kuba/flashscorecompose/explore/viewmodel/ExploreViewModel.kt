@@ -213,7 +213,8 @@ class ExploreViewModel(
                     CoachCountry(
                         coach = it,
                         country = countries.firstOrNull { country -> country.name == it.nationality }
-                            ?: Country.EMPTY_COUNTRY)
+                            ?: Country.EMPTY_COUNTRY
+                    )
                 }
                 val filteredCoaches = filterCoaches(coachCountries)
                 viewModelState.update {
@@ -356,10 +357,10 @@ class ExploreViewModel(
         query: String = viewModelState.value.exploreQuery
     ): List<FixtureItemWrapper> {
         return fixtureItems.filter {
-            it.fixtureItem.homeTeam.name.containsQuery(query)
-                    || it.fixtureItem.awayTeam.name.containsQuery(query)
-                    || it.fixtureItem.league.name.containsQuery(query)
-                    || it.fixtureItem.league.countryName.containsQuery(query)
+            it.fixtureItem.homeTeam.name.containsQuery(query) ||
+                it.fixtureItem.awayTeam.name.containsQuery(query) ||
+                it.fixtureItem.league.name.containsQuery(query) ||
+                it.fixtureItem.league.countryName.containsQuery(query)
         }
     }
 
@@ -406,9 +407,9 @@ class ExploreViewModel(
         query: String = viewModelState.value.exploreQuery
     ): List<CoachCountry> {
         return coaches.filter {
-            it.coach.name.containsQuery(query) || it.coach.nationality.containsQuery(query)
-                    || it.coach.firstname.containsQuery(query)
-                    || it.coach.lastname.containsQuery(query)
+            it.coach.name.containsQuery(query) || it.coach.nationality.containsQuery(query) ||
+                it.coach.firstname.containsQuery(query) ||
+                it.coach.lastname.containsQuery(query)
         }
     }
 
@@ -417,9 +418,9 @@ class ExploreViewModel(
         query: String = viewModelState.value.exploreQuery
     ): List<PlayerWrapper> {
         return players.filter {
-            it.player.name.containsQuery(query) || it.player.nationality.containsQuery(query)
-                    || it.player.firstname.containsQuery(query)
-                    || it.player.lastname.containsQuery(query)
+            it.player.name.containsQuery(query) || it.player.nationality.containsQuery(query) ||
+                it.player.firstname.containsQuery(query) ||
+                it.player.lastname.containsQuery(query)
         }
     }
 
@@ -428,9 +429,9 @@ class ExploreViewModel(
         query: String = viewModelState.value.exploreQuery
     ): List<PlayerWrapper> {
         return favoritePlayers.filter {
-            it.player.name.containsQuery(query) || it.player.nationality.containsQuery(query)
-                    || it.player.firstname.containsQuery(query)
-                    || it.player.lastname.containsQuery(query)
+            it.player.name.containsQuery(query) || it.player.nationality.containsQuery(query) ||
+                it.player.firstname.containsQuery(query) ||
+                it.player.lastname.containsQuery(query)
         }
     }
 
@@ -439,10 +440,10 @@ class ExploreViewModel(
         query: String = viewModelState.value.exploreQuery
     ): List<FixtureItemWrapper> {
         return favoriteFixtures.filter {
-            it.fixtureItem.homeTeam.name.containsQuery(query)
-                    || it.fixtureItem.awayTeam.name.containsQuery(query)
-                    || it.fixtureItem.league.name.containsQuery(query)
-                    || it.fixtureItem.league.countryName.containsQuery(query)
+            it.fixtureItem.homeTeam.name.containsQuery(query) ||
+                it.fixtureItem.awayTeam.name.containsQuery(query) ||
+                it.fixtureItem.league.name.containsQuery(query) ||
+                it.fixtureItem.league.countryName.containsQuery(query)
         }
     }
 }

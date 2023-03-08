@@ -76,7 +76,8 @@ private fun TopBar(navigator: DestinationsNavigator, title: String) {
                 modifier = Modifier
                     .padding(horizontal = 12.dp)
                     .size(24.dp),
-                onClick = { navigator.popBackStack() }) {
+                onClick = { navigator.popBackStack() }
+            ) {
                 Icon(
                     imageVector = Icons.Filled.ChevronLeft,
                     contentDescription = null,

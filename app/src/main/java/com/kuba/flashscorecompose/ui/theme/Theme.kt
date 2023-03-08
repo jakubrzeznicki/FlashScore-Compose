@@ -27,9 +27,9 @@ private val DarkColorPalette = darkColorScheme(
     inverseOnSurface = GreyTextDark,
     outline = Grey
 )
-//import androidx.compose.ui.graphics.Color
+// import androidx.compose.ui.graphics.Color
 
-//import com.kuba.flashscorecompose.ui.theme.GreyTextLight
+// import com.kuba.flashscorecompose.ui.theme.GreyTextLight
 
 private val LightColorPalette = lightColorScheme(
     primary = LightOrange,

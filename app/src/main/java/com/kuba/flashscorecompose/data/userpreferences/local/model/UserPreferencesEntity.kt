@@ -9,7 +9,9 @@ import androidx.room.PrimaryKey
  */
 @Entity(tableName = "user_preferences")
 data class UserPreferencesEntity(
-    @PrimaryKey @ColumnInfo(name = "user_id") val userId: String,
+    @PrimaryKey
+    @ColumnInfo(name = "user_id")
+    val userId: String,
     @ColumnInfo(name = "is_on_boarding_completed") val isOnBoardingCompleted: Boolean,
     @ColumnInfo(name = "favorite_team_ids") val favoriteTeamIds: List<Int>,
     @ColumnInfo(name = "favorite_player_ids") val favoritePlayerIds: List<Int>,

@@ -38,7 +38,7 @@ fun TeamsListWithHeader(
                 text = stringResource(id = textId),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
-                color = color,
+                color = color
             )
         }
         items(items = teams) {
@@ -73,7 +73,7 @@ fun TeamsDoubleListWithHeader(
                 text = stringResource(id = favoriteTextId),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
-                color = favoriteColor,
+                color = favoriteColor
             )
         }
         items(items = favoriteTeamWrappers) {
@@ -89,7 +89,7 @@ fun TeamsDoubleListWithHeader(
                 text = stringResource(id = textId),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
-                color = color,
+                color = color
             )
         }
         items(items = teamWrappers) {

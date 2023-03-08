@@ -9,6 +9,6 @@ data class Standing(
     val standingItems: List<StandingItem>
 ) {
     companion object {
-        val EMPTY_STANDING = Standing(League.EMPTY_LEAGUE, 0,0, listOf())
+        val EMPTY_STANDING = Standing(League.EMPTY_LEAGUE, 0, 0, listOf())
     }
 }

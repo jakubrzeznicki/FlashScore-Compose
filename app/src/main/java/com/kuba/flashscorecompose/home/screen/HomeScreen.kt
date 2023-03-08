@@ -100,7 +100,7 @@ private fun HomeScreen(
                 onSearchClick = onSearchClick,
                 onNavigationsClick = onNavigationsClick
             )
-        },
+        }
     ) { paddingValues ->
         LoadingContent(
             modifier = modifier.padding(paddingValues),
@@ -218,7 +218,8 @@ private fun TopBar(
                 modifier = Modifier
                     .padding(horizontal = 12.dp)
                     .size(24.dp),
-                onClick = { onSearchClick() }) {
+                onClick = { onSearchClick() }
+            ) {
                 Icon(
                     imageVector = Icons.Filled.Search,
                     contentDescription = stringResource(id = R.string.search),
@@ -229,14 +230,16 @@ private fun TopBar(
                 modifier = Modifier
                     .padding(horizontal = 12.dp)
                     .size(24.dp),
-                onClick = { onNavigationsClick() }) {
+                onClick = { onNavigationsClick() }
+            ) {
                 Icon(
                     imageVector = Icons.Filled.Notifications,
                     contentDescription = stringResource(id = R.string.notifications),
                     tint = MaterialTheme.colorScheme.onSecondary
                 )
             }
-        })
+        }
+    )
 }
 
 @Composable
@@ -256,7 +259,7 @@ private fun SearchEditText(
                     border = BorderStroke(
                         width = 2.dp,
                         color = MaterialTheme.colorScheme.inverseSurface
-                    ),
+                    )
                 ),
             label = stringResource(id = R.string.search_home),
             query = searchQuery,
@@ -314,7 +317,7 @@ private fun Banner() {
                     text = stringResource(id = R.string.football),
                     color = MaterialTheme.colorScheme.background,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp,
+                    fontSize = 12.sp
                 )
             }
             Spacer(modifier = Modifier.size(8.dp))
@@ -329,7 +332,7 @@ private fun Banner() {
             Text(
                 text = stringResource(id = R.string.text_second_banner),
                 fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = MaterialTheme.colorScheme.onSecondary
             )
         }
         Image(

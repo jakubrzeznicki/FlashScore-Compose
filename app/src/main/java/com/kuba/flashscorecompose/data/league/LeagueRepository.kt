@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.map
 /**
  * Created by jrzeznicki on 10/3/2022
  */
-class LeagueRepository(private val local: LeagueLocalDataSource, ) : LeagueDataSource {
+class LeagueRepository(private val local: LeagueLocalDataSource) : LeagueDataSource {
     override fun observeLeagues(): Flow<List<League>> =
         local.observeLeagues().map { leagueEntities -> leagueEntities.map { it.toLeague() } }
 

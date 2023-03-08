@@ -80,13 +80,13 @@ fun FixtureDto.toFixtureItem(
             leagueIdParam = league?.id ?: 0,
             seasonParam = season ?: league?.season,
             countryParam = league?.countryName.orEmpty()
-        ) ?: Team.EMPTY_TEAM,
+        ) ?: Team.EMPTY_TEAM
     )
 }
 
 private fun isNotStarted(shortStatus: String): Boolean {
-    return shortStatus == FixtureStatus.NS.status || shortStatus == FixtureStatus.PST.status
-            || shortStatus == FixtureStatus.SUSP.status || shortStatus == FixtureStatus.TBD.status
+    return shortStatus == FixtureStatus.NS.status || shortStatus == FixtureStatus.PST.status ||
+        shortStatus == FixtureStatus.SUSP.status || shortStatus == FixtureStatus.TBD.status
 }
 
 private fun isLive(periods: Periods): Boolean {

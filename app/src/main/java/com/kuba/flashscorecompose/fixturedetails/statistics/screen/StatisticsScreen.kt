@@ -83,7 +83,8 @@ private fun StatisticsList(
             is StatisticsUiState.HasOnlyStatistics -> false
             is StatisticsUiState.HasOnlyOtherFixtures -> false
             else -> uiState.isLoading
-        }, emptyContent = { FullScreenLoading() },
+        },
+        emptyContent = { FullScreenLoading() },
         loading = uiState.isLoading,
         onRefresh = onRefreshClick
     ) {
@@ -203,12 +204,12 @@ private fun OtherMatchesHeader() {
             text = stringResource(id = R.string.other_matches),
             fontWeight = FontWeight.SemiBold,
             fontSize = 20.sp,
-            color = MaterialTheme.colorScheme.onSecondary,
+            color = MaterialTheme.colorScheme.onSecondary
         )
         Text(
             text = stringResource(id = R.string.see_all),
             fontSize = 12.sp,
-            color = MaterialTheme.colorScheme.onBackground,
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }

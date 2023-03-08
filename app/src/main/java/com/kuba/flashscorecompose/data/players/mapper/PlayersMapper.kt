@@ -66,7 +66,6 @@ fun Birth.toBirthEntity(): BirthEntity {
     return BirthEntity(date = date, place = place, country = country)
 }
 
-
 fun PlayerDto.toPlayer(team: Team, season: Int): Player {
     return Player(
         grid = grid.orEmpty(),
@@ -88,7 +87,6 @@ fun PlayerDto.toPlayer(team: Team, season: Int): Player {
         photo = photo.orEmpty()
     )
 }
-
 
 fun PlayerDto.toPlayer(): Player {
     return Player(
