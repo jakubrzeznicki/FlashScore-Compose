@@ -7,7 +7,24 @@ on:
     branches: [ "master","develop" ]
 
 jobs:
+  test:
+    name: ALl tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Unit Tests
+        run: bundle exec fastlane android test
+
+      - name: Instrumentation Tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          script: ./gradlew connectedAndroidTest
+
   build:
+    needs: [ test ]
     name: Setup Environment and build
     runs-on: ubuntu-latest
     steps:
@@ -41,14 +58,11 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build with Gradle
-        run: ./gradlew build --info
+#      - name: Build with Gradle
+#        run: ./gradlew build --info
 
 #      - name: Run Ktlint
 #        run: ./gradlew ktlintStagingDebugCheck
-
-      - name: Run Tests
-        run: bundle exec fastlane android test
 
       - name: Decode Google Service JSON File
         uses: timheuer/base64-to-file@v1
@@ -78,9 +92,25 @@ jobs:
 #          gradlePath: android/app/build.gradle
 #          versionCode: ${{ env.version_code }}
 
-      - name: Generate app bundle
-        run: ./gradlew app:bundleRelease --stacktrace
+#      - name: Generate app bundle
+#        run: ./gradlew app:bundleRelease --stacktrace
 
+      - name: Generate Release APK
+        run: ./gradlew assembleRelease
+      # 3
+      - name: Sign APK
+        uses: r0adkll/sign-android-release@v1
+        id: sign_app
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.KEYSTORE_FILE }}
+          alias: ${{ secrets.KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+      - uses: actions/upload-artifact@master
+        with:
+          name: release.apk
+          path: ${{steps.sign_app.outputs.signedReleaseFile}}
 #      - name: Sign app bundle
 #        run: |
 #          jarsigner -keystore app/*.jks \
@@ -92,8 +122,8 @@ jobs:
     name: Upload the signed artifact
     runs-on: ubuntu-latest
     steps:
-      - name: Upload Bundle
+      - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
-          name: signed_app_bundle
-          path: app/build/outputs/bundle/release/app-release.aab
+          name: signed_apk
+          path: app/build/outputs/apk/release/release.apk
