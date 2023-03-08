@@ -40,8 +40,13 @@ jobs:
         run: echo "apiKey=\"\"" >> local.properties
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+
       - name: Build with Gradle
         run: ./gradlew build --info
+
+      - name: Run Ktlint
+        run: ./gradlew ktlintStagingDebugCheck
+
       - name: Run Tests
         run: bundle exec fastlane android test
 
@@ -67,11 +72,11 @@ jobs:
           VERSION_CODE=$((INITIAL_VERSION_CODE + RUN_NUMBER))
           echo "version_code=$VERSION_CODE" >> $GITHUB_ENV        
 
-      - name: Update version code
-        uses: chkfung/android-version-actions@v1.1
-        with:
-          gradlePath: android/app/build.gradle
-          versionCode: ${{ env.version_code }}
+#      - name: Update version code
+#        uses: chkfung/android-version-actions@v1.1
+#        with:
+#          gradlePath: android/app/build.gradle
+#          versionCode: ${{ env.version_code }}
 
       - name: Generate app bundle
         run: ./gradlew app:bundleRelease --stacktrace
