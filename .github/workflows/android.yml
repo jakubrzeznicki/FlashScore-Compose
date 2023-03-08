@@ -81,11 +81,11 @@ jobs:
       - name: Generate app bundle
         run: ./gradlew app:bundleRelease --stacktrace
 
-      - name: Sign app bundle
-        run: |
-          jarsigner -keystore app/*.jks \
-          -storepass ${{ secrets.KEY_STORE_PASSWORD }} -keypass ${{ secrets.KEY_PASSWORD }} \
-          app/build/outputs/bundle/release/app-release.aab ${{ secrets.ALIAS }}
+#      - name: Sign app bundle
+#        run: |
+#          jarsigner -keystore app/*.jks \
+#          -storepass ${{ secrets.KEY_STORE_PASSWORD }} -keypass ${{ secrets.KEY_PASSWORD }} \
+#          app/build/outputs/bundle/release/app-release.aab ${{ secrets.ALIAS }}
 
   upload:
     needs: [ build ]
