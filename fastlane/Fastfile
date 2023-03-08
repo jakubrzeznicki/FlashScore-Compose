@@ -43,12 +43,6 @@ platform :android do
             "android.injected.signing.key.password" => ENV["KEY_PASSWORD"],
         }
     )
-    upload_to_play_store(
-        track: "internal"
-        skip_upload_metadata: true,
-        skip_upload_changelogs: true,
-        skip_upload_images: true,
-        skip_upload_screenshots: true,
-    )
+    upload_to_play_store
   end
 end

@@ -8,53 +8,87 @@ on:
 
 jobs:
   build:
+    name: Setup Environment and build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: set up JDK 11
-      uses: actions/setup-java@v3
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-        cache: gradle
-    - name: Set up ruby env
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 2.7.2
-        bundler-cache: true
-    - name: Touch local properties
-      run: touch local.properties
-    - name: Add Api Key
-      run: echo "apiKey=\"\"" >> local.properties
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-    - name: Build with Gradle
-      run: ./gradlew build --info
-    - name: Run Tests
-      run: bundle exec fastlane android test
-    - name: Decode Google Service JSON File
-      uses: timheuer/base64-to-file@v1
-      id: google_services
-      with:
-        fileName: "google_services.json"
-        encodedString: ${{ secrets.GOOGLE_SERVICES }}
-    - name: Decode Keystore File
-      uses: timheuer/base64-to-file@v1
-      id: keystore_file
-      with:
-        fileName: "google_services.json"
-        encodedString: ${{ secrets.KEYSTORE_FILE }}
+      - uses: actions/checkout@v3
+      - name: set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: gradle
 
-    - name: Define version code with offset
-      env:
-        RUN_NUMBER: ${{ github.run_number }}
-        INITIAL_VERSION_CODE: 73
-      run: |
-        VERSION_CODE=$((INITIAL_VERSION_CODE + RUN_NUMBER))
-        echo "version_code=$VERSION_CODE" >> $GITHUB_ENV        
+      - name: Set up ruby env
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.2
+          bundler-cache: true
 
-    - name: Update version code
-      uses: chkfung/android-version-actions@v1.1
-      with:
-        gradlePath: android/app/build.gradle
-        versionCode: ${{ env.version_code }}
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Touch local properties
+        run: touch local.properties
+      - name: Add Api Key
+        run: echo "apiKey=\"\"" >> local.properties
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Build with Gradle
+        run: ./gradlew build --info
+      - name: Run Tests
+        run: bundle exec fastlane android test
+
+      - name: Decode Google Service JSON File
+        uses: timheuer/base64-to-file@v1
+        id: google_services
+        with:
+          fileName: "google_services.json"
+          encodedString: ${{ secrets.GOOGLE_SERVICES }}
+
+      - name: Decode Keystore File
+        uses: timheuer/base64-to-file@v1
+        id: keystore_file
+        with:
+          fileName: "google_services.json"
+          encodedString: ${{ secrets.KEYSTORE_FILE }}
+
+      - name: Define version code with offset
+        env:
+          RUN_NUMBER: ${{ github.run_number }}
+          INITIAL_VERSION_CODE: 73
+        run: |
+          VERSION_CODE=$((INITIAL_VERSION_CODE + RUN_NUMBER))
+          echo "version_code=$VERSION_CODE" >> $GITHUB_ENV        
+
+      - name: Update version code
+        uses: chkfung/android-version-actions@v1.1
+        with:
+          gradlePath: android/app/build.gradle
+          versionCode: ${{ env.version_code }}
+
+      - name: Generate app bundle
+        run: ./gradlew app:bundleRelease --stacktrace
+
+      - name: Sign app bundle
+        run: |
+          jarsigner -keystore app/*.jks \
+          -storepass ${{ secrets.KEY_STORE_PASSWORD }} -keypass ${{ secrets.KEY_PASSWORD }} \
+          app/build/outputs/bundle/release/app-release.aab ${{ secrets.ALIAS }}
+
+  upload:
+    needs: [ build ]
+    name: Upload the signed artifact
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload Bundle
+        uses: actions/upload-artifact@v2
+        with:
+          name: signed_app_bundle
+          path: app/build/outputs/bundle/release/app-release.aab
