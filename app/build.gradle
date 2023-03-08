@@ -39,8 +39,6 @@ android {
         Properties properties = new Properties()
         properties.load(project.rootProject.file("local.properties").newDataInputStream())
         buildConfigField "String", "API_KEY", "\"${properties.getProperty("API_KEY")}\""
-
-        signingConfig signingConfigs.debug
     }
     buildTypes {
         debug {
@@ -50,6 +48,8 @@ android {
             versionNameSuffix '-debug'
         }
         release {
+            resValue "string", "docuframe_app_name", "@string/flashscorecompose_app_name_release"
+            debuggable false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
