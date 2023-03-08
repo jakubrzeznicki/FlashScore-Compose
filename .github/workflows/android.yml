@@ -1,16 +1,11 @@
 name: Android CI
 
 on:
-  push:
-    branches: [ "master","develop" ]
-  pull_request:
-    branches: [ "master","develop" ]
+  workflow_dispatch:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
     - name: set up JDK 11
@@ -19,7 +14,11 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: gradle
-
+    - name: Set up ruby env
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7.2
+        bundler-cache: true
     - name: Touch local properties
       run: touch local.properties
     - name: Add Api Key
@@ -29,4 +28,30 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build --info
     - name: Run Tests
-      run: ./gradlew test
+      run: bundle exec fastlane android test
+    - name: Decode Google Service JSON File
+      uses: timheuer/base64-to-file@v1
+      id: google_services
+      with:
+        fileName: "google_services.json"
+        encodedString: ${{ secrets.GOOGLE_SERVICES }}
+    - name: Decode Keystore File
+      uses: timheuer/base64-to-file@v1
+      id: keystore_file
+      with:
+        fileName: "google_services.json"
+        encodedString: ${{ secrets.KEYSTORE_FILE }}
+
+    - name: Define version code with offset
+      env:
+        RUN_NUMBER: ${{ github.run_number }}
+        INITIAL_VERSION_CODE: 73
+      run: |
+        VERSION_CODE=$((INITIAL_VERSION_CODE + RUN_NUMBER))
+        echo "version_code=$VERSION_CODE" >> $GITHUB_ENV        
+
+    - name: Update version code
+      uses: chkfung/android-version-actions@v1.1
+      with:
+        gradlePath: android/app/build.gradle
+        versionCode: ${{ env.version_code }}
