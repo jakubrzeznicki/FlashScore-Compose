@@ -61,15 +61,23 @@ platform :android do
      )
    end
 
-  desc "Responsible for uploading .aab to Firebase app distribution."
+  desc "Responsible for uploading .apk to Firebase app distribution."
   lane :distribute_to_firebase do
     firebase_app_distribution(
       app: ENV['FIREBASE_APP_ID'],
       release_notes: "Uploaded from CI/CD",
-      android_artifact_type: "AAB",
+      android_artifact_type: "APK",
       android_artifact_path: ENV['KEYSTORE_FILE'],
       service_credentials_file: ENV['FIREBASE_KEY'],
       groups: "Testers"
+    )
+  end
+
+  desc "Submit a new Beta Build to Firebase App Distribution"
+  lane :beta do
+    gradle(task: "assembleDebug")
+    firebase_app_distribution(
+      app: "1:322077523128:android:5bf5527e5d2187642a084d"
     )
   end
 
