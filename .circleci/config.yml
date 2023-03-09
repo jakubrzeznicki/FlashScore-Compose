@@ -2,7 +2,7 @@ version: 2
 
 defaults: &defaults
   docker:
-    - image: ubuntu-1604:202007-01
+    - image: cimg/openjdk:11.0.18
   environment:
     JVM_OPTS: -Xmx3200m
 
@@ -11,13 +11,7 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      - run:
-          name: Install OpenJDK 11
-          command: |
-            sudo apt-get update && sudo apt-get install openjdk-11-jdk
-            sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java
-            sudo update-alternatives --set javac /usr/lib/jvm/java-11-openjdk-amd64/bin/javac
-            java -version
+      - run: java --version
       - restore_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - run:
