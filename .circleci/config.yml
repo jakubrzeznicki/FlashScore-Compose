@@ -1,4 +1,4 @@
-version: 2
+version: 2.1
 
 defaults: &defaults
   docker:
@@ -7,9 +7,30 @@ defaults: &defaults
     JVM_OPTS: -Xmx3200m
 
 orbs:
-  ruby: circleci/ruby@1.2.0
+  android: circleci/android@2.2.0
+  ruby: circleci/ruby@2.0.0
 
 jobs:
+  lint:
+    executor:
+      name: android/android-docker
+    steps:
+      - checkout
+      - android/restore-gradle-cache
+      - run: ./gradlew lintDebug
+      - android/save-gradle-cache
+
+  unit_test2:
+    executor:
+      name: android/android-docker
+    steps:
+      - checkout
+      - android/restore-gradle-cache
+      - run: ./gradlew testDebugUnitTest
+      - android/save-gradle-cache
+      - store_test_results:
+          path: ./app/build/test-results/testDebugUnitTest
+
   unit-tests:
     <<: *defaults
     steps:
