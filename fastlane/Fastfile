@@ -13,7 +13,7 @@
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
 
-UPDATED_VERSION_CODE = 2
+UPDATED_VERSION_CODE = "2"
 
 default_platform(:android)
 
@@ -21,6 +21,16 @@ platform :android do
   desc "Runs all the tests"
   lane :test do
     gradle(task: "test")
+  end
+
+ desc "Assemble a debug apk"
+  lane :assemble_debug do
+    gradle(task: "assembleDebug")
+  end
+
+  desc "Assemble an android test apk"
+  lane :assemble_android_test do
+    gradle(task: "assembleDebugAndroidTest")
   end
 
   desc "Submit a new Beta Build to Crashlytics Beta"
