@@ -84,18 +84,18 @@ platform :android do
     upload_to_play_store
   end
 
-  desc "After successful execution of all task, this block is called"
-  after_all do
-    git_add(path: "*")
-    git_commit(
-      path: "*",
-      message: "#" + UPDATED_VERSION_CODE + " released"
-    )
-    push_to_git_remote(
-      local_branch: buildConfigs.key(options[:buildConfig]),
-      remote: "origin",
-      remote_branch: buildConfigs.key(options[:buildConfig]),
-      tags: true,
-    )
-  end
+#   desc "After successful execution of all task, this block is called"
+#   after_all do
+#     git_add(path: "*")
+#     git_commit(
+#       path: "*",
+#       message: "#" + UPDATED_VERSION_CODE + " released"
+#     )
+#     push_to_git_remote(
+#       local_branch: buildConfigs.key(options[:buildConfig]),
+#       remote: "origin",
+#       remote_branch: buildConfigs.key(options[:buildConfig]),
+#       tags: true,
+#     )
+#   end
 end

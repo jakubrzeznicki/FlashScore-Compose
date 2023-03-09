@@ -18,9 +18,7 @@ buildscript {
         // in the individual module build.gradle files
     }
 }
-plugins {
-    id 'com.google.relay' version '0.3.00'
-}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
