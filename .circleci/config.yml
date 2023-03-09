@@ -63,10 +63,8 @@ jobs:
       - checkout
       - android/restore-gradle-cache
       - ruby/install-deps
-      - run:
-        command: bundle exec fastlane assemble_debug
-      - run:
-        command: bundle exec fastlane build
+      - run: bundle exec fastlane assemble_debug
+      - run: bundle exec fastlane build
       - android/save-gradle-cache
 #  build:
 #    working_directory: ~/code
