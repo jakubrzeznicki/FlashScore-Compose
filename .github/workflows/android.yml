@@ -19,14 +19,6 @@ jobs:
           ruby-version: 2.7.2
           bundler-cache: true
 
-      - name: Cache Ruby dependencies
-        uses: actions/cache@v2
-        with:
-          path: 'vendor/bundle'
-          key: ${{ runner.os }}-gems-${{ secrets.GEMS_CACHE_VERSION }}-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-gems-
-
       - name: Touch local properties
         run: touch local.properties
 

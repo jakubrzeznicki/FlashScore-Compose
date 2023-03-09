@@ -18,7 +18,6 @@ import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import coil.size.Size
-import com.google.relay.compose.BoxScopeInstanceImpl.align
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.country.model.Country
 
@@ -39,8 +38,7 @@ fun CountryWidgetCard(
         colors = CardDefaults.cardColors(containerColor = color),
         modifier = Modifier
             .size(width = 130.dp, height = 120.dp)
-            .padding(8.dp)
-            .align(Alignment.Center),
+            .padding(8.dp),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {

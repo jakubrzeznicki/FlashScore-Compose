@@ -31,7 +31,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.relay.compose.ColumnScopeInstanceImpl.align
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.destinations.ProfileRouteDestination
 import com.kuba.flashscorecompose.destinations.SignInRouteDestination
@@ -179,9 +178,7 @@ private fun SignInButton(
     Divider(
         color = MaterialTheme.colorScheme.inverseSurface,
         thickness = 2.dp,
-        modifier = Modifier
-            .fillMaxWidth(0.8f)
-            .align(Alignment.CenterHorizontally)
+        modifier = Modifier.fillMaxWidth(0.8f)
     )
     OutlinedButton(
         onClick = { showSignOutDialog(true) },
@@ -212,9 +209,7 @@ private fun DeleteAccountButton(
     Divider(
         color = MaterialTheme.colorScheme.inverseSurface,
         thickness = 2.dp,
-        modifier = Modifier
-            .fillMaxWidth(0.8f)
-            .align(Alignment.CenterHorizontally)
+        modifier = Modifier.fillMaxWidth(0.8f)
     )
     OutlinedButton(
         onClick = { showDeleteAccountDialog(true) },

@@ -29,7 +29,6 @@ import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import coil.size.Size
-import com.google.relay.compose.RowScopeInstanceImpl.align
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.team.information.model.Team
@@ -288,8 +287,8 @@ private fun FixtureResultIcon(scoreStyle: ScoreStyle) {
                 shape = RoundedCornerShape(2.dp)
             )
             .size(16.dp)
-            .align(Alignment.CenterVertically)
-            .padding(1.dp)
+            .padding(1.dp),
+        contentAlignment = Alignment.Center
     ) {
         Text(
             text = scoreStyle.text,
