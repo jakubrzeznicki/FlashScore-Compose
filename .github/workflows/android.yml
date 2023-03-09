@@ -31,12 +31,6 @@ jobs:
       - name: Unit Tests
         run: bundle exec fastlane android test
 
-#      - name: Instrumentation Tests
-#        uses: reactivecircus/android-emulator-runner@v2
-#        with:
-#          api-level: 29
-#          script: ./gradlew connectedAndroidTest
-
   build:
     needs: [ test ]
     name: Setup Environment and build
