@@ -60,7 +60,8 @@ jobs:
           paths:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
-      - ruby/install-deps
+      - run:
+          command: ruby/install-deps
       - run:
           name: Assemble a debug apk
           command: bundle exec fastlane assemble_debug
