@@ -13,6 +13,8 @@
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
 
+UPDATED_VERSION_CODE = 2
+
 default_platform(:android)
 
 platform :android do
@@ -30,6 +32,32 @@ platform :android do
     # You can also use other beta testing services here
   end
 
+   desc "Build the .aab file"
+   lane :build do
+     gradle(
+       task: "bundle",
+       build_type: "Release",
+       properties: {
+         "android.injected.signing.store.file" => ENV['KEYSTORE_FILE'],
+         "android.injected.signing.store.password" => ENV['KEYSTORE_PASSWORD'],
+         "android.injected.signing.key.alias" => ENV['KEYSTORE_ALIAS'],
+         "android.injected.signing.key.password" => ENV['KEYSTORE_PASSWORD']
+       }
+     )
+   end
+
+  desc "Responsible for uploading .aab to Firebase app distribution."
+  lane :distribute_to_firebase do
+    firebase_app_distribution(
+      app: ENV['FIREBASE_APP_ID'],
+      release_notes: "Uploaded from CI/CD",
+      android_artifact_type: "AAB",
+      android_artifact_path: ENV['KEYSTORE_FILE'],
+      service_credentials_file: ENV['FIREBASE_KEY'],
+      groups: "Testers"
+    )
+  end
+
   desc "Deploy a new version to the Google Play"
   lane :deploy do
     gradle(
@@ -44,5 +72,20 @@ platform :android do
         }
     )
     upload_to_play_store
+  end
+
+  desc "After successful execution of all task, this block is called"
+  after_all do
+    git_add(path: "*")
+    git_commit(
+      path: "*",
+      message: "#" + UPDATED_VERSION_CODE + " released"
+    )
+    push_to_git_remote(
+      local_branch: buildConfigs.key(options[:buildConfig]),
+      remote: "origin",
+      remote_branch: buildConfigs.key(options[:buildConfig]),
+      tags: true,
+    )
   end
 end

@@ -19,12 +19,23 @@ jobs:
           ruby-version: 2.7.2
           bundler-cache: true
 
+      - name: Cache Ruby dependencies
+        uses: actions/cache@v2
+        with:
+          path: 'vendor/bundle'
+          key: ${{ runner.os }}-gems-${{ secrets.GEMS_CACHE_VERSION }}-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+
       - name: Touch local properties
         run: touch local.properties
+
       - name: Add Api Key
         run: echo "apiKey=\"\"" >> local.properties
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+
       - name: Unit Tests
         run: bundle exec fastlane android test
 
@@ -40,6 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: set up JDK 11
         uses: actions/setup-java@v3
         with:
@@ -47,7 +59,8 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - uses: actions/cache@v2
+      - name: Cache Gradle packages
+        uses: actions/cache@v2
         with:
           path: |
             ~/.gradle/caches
@@ -58,8 +71,10 @@ jobs:
 
       - name: Touch local properties
         run: touch local.properties
+
       - name: Add Api Key
         run: echo "apiKey=\"\"" >> local.properties
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
