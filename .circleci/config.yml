@@ -12,10 +12,10 @@ jobs:
     steps:
       - checkout
       - run:
-          - name: Create local properties
-          - command: |
-              touch local.properties
-              echo "apiKey=\"\"" >> local.properties
+          name: Create local properties
+          command: |
+            touch local.properties
+            echo "apiKey=\"\"" >> local.properties
       - run: java --version
       - restore_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
@@ -40,10 +40,10 @@ jobs:
     steps:
       - checkout
       - run:
-          - name: Create local properties
-          - command: |
-              touch local.properties
-              echo "apiKey=\"\"" >> local.properties
+          name: Create local properties
+          command: |
+            touch local.properties
+            echo "apiKey=\"\"" >> local.properties
       - run: java --version
       - restore_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
