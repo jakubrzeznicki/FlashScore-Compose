@@ -5,13 +5,35 @@ on:
     branches: [ "master","develop" ]
   pull_request:
     branches: [ "master","develop" ]
+  workflow_dispatch:
 
 jobs:
-  test:
-    name: ALl tests
+  lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Build Lint
+        run: ./gradlew lint
+
+      - name: Upload Build Lint Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: report
+          path: app/build/reports/lint-results-debug.html
+
+  test:
+    needs: [lint]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
       - name: Set up ruby env
         uses: ruby/setup-ruby@v1
@@ -25,18 +47,25 @@ jobs:
       - name: Add Api Key
         run: echo "apiKey=\"\"" >> local.properties
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
       - name: Unit Tests
         run: bundle exec fastlane android test
 
+      - name: Run Unit Tests
+        run: ./gradlew test --stacktrace
+
+      - name: Upload Unit Test Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-report
+          path: app/build/reports/tests/testDebugUnitTest/
+
   build:
-    needs: [ test ]
+    needs: [test]
     name: Setup Environment and build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v2
 
       - name: set up JDK 11
         uses: actions/setup-java@v3
@@ -61,14 +90,8 @@ jobs:
       - name: Add Api Key
         run: echo "apiKey=\"\"" >> local.properties
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: Build with Gradle
-        run: ./gradlew build --info
-
-#      - name: Run Ktlint
-#        run: ./gradlew ktlintStagingDebugCheck
+#      - name: Build with Gradle
+#        run: ./gradlew build --info
 
       - name: Decode Google Service JSON File
         uses: timheuer/base64-to-file@v1
@@ -87,64 +110,84 @@ jobs:
       - name: Define version code with offset
         env:
           RUN_NUMBER: ${{ github.run_number }}
-          INITIAL_VERSION_CODE: 73
+          INITIAL_VERSION_CODE: 1
         run: |
           VERSION_CODE=$((INITIAL_VERSION_CODE + RUN_NUMBER))
           echo "version_code=$VERSION_CODE" >> $GITHUB_ENV        
 
-#      - name: Update version code
-#        uses: chkfung/android-version-actions@v1.1
+      - name: Update version code
+        uses: chkfung/android-version-actions@v1.1
+        with:
+          gradlePath: android/app/build.gradle
+          versionCode: ${{ env.version_code }}
+
+      - name: Build debug apk
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: UploadAPK
+          path: app/build/outputs/apk/debug/app-debug.apk
+
+#      - name: Sign APK
+#        uses: r0adkll/sign-android-release@v1
+#        id: sign_app
 #        with:
-#          gradlePath: android/app/build.gradle
-#          versionCode: ${{ env.version_code }}
+#          releaseDirectory: app/build/outputs/apk/release
+#          signingKeyBase64: ${{ secrets.KEYSTORE_FILE }}
+#          alias: ${{ secrets.KEY_ALIAS }}
+#          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+#          keyPassword: ${{ secrets.KEY_PASSWORD }}
 
-#      - name: Generate app bundle
-#        run: ./gradlew app:bundleRelease --stacktrace
-
-      - name: Generate Release APK
-        run: ./gradlew assembleRelease
-
-      - name: Sign APK
-        uses: r0adkll/sign-android-release@v1
-        id: sign_app
-        with:
-          releaseDirectory: app/build/outputs/apk/release
-          signingKeyBase64: ${{ secrets.KEYSTORE_FILE }}
-          alias: ${{ secrets.KEY_ALIAS }}
-          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
-      - uses: actions/upload-artifact@master
-        with:
-          name: release.apk
-          path: ${{steps.sign_app.outputs.signedReleaseFile}}
-#      - name: Sign app bundle
-#        run: |
-#          jarsigner -keystore app/*.jks \
-#          -storepass ${{ secrets.KEY_STORE_PASSWORD }} -keypass ${{ secrets.KEY_PASSWORD }} \
-#          app/build/outputs/bundle/release/app-release.aab ${{ secrets.ALIAS }}
-
-  deploy-firebase:
-    needs: [ build ]
+  create-release: # Job to create a new github release and upload the generated apk
+    name: 🎉 Create Release
+    needs: [ generate-apk ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@master
+
+      - name: Download APK from build
+        uses: actions/download-artifact@v1
         with:
-          name: release.apk
-      - name: upload artifact to Firebase App Distribution
+          name: Android-CI-CD
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+
+      - name: Upload Release APK
+        id: upload_release_asset
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: Android-CI-CD/app-debug.apk
+          asset_name: Android-CI-CD.apk
+          asset_content_type: application/zip
+
+  deploy-firebase:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download APK from build
+        uses: actions/download-artifact@v1
+        with:
+          name: UploadAPK
+
+      - name: Upload artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{secrets.FIREBASE_APP_ID}}
           token: ${{secrets.FIREBASE_TOKEN}}
           groups: Testers
-          file: app-release-unsigned-signed.apk
-
-  upload:
-    needs: [ build ]
-    name: Upload the signed artifact
-    runs-on: ubuntu-latest
-    steps:
-      - name: Upload APK
-        uses: actions/upload-artifact@v2
-        with:
-          name: release.apk
-          path: app/build/outputs/apk/release/release.apk
+          releaseNotes: "From Github Actions"
+          file: UploadAPK/app-debug.apk
