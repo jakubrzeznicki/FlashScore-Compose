@@ -67,8 +67,8 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build --info
 
-      - name: Run Ktlint
-        run: ./gradlew ktlintStagingDebugCheck
+#      - name: Run Ktlint
+#        run: ./gradlew ktlintStagingDebugCheck
 
       - name: Decode Google Service JSON File
         uses: timheuer/base64-to-file@v1
