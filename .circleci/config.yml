@@ -17,6 +17,11 @@ jobs:
       tag: 2022.12.1
     steps:
       - checkout
+      - run:
+          name: Create local properties
+          command: |
+            touch local.properties
+            echo "apiKey=\"\"" >> local.properties
       - android/restore-gradle-cache
       - run: ./gradlew lintDebug
       - android/save-gradle-cache
@@ -27,6 +32,11 @@ jobs:
       tag: 2022.12.1
     steps:
       - checkout
+      - run:
+          name: Create local properties
+          command: |
+            touch local.properties
+            echo "apiKey=\"\"" >> local.properties
       - android/restore-gradle-cache
       - run: ./gradlew testDebugUnitTest
       - android/save-gradle-cache
@@ -64,6 +74,11 @@ jobs:
       tag: 2022.12.1
     steps:
       - checkout
+      - run:
+          name: Create local properties
+          command: |
+            touch local.properties
+            echo "apiKey=\"\"" >> local.properties
       - android/restore-gradle-cache
       - ruby/install-deps
       - run: bundle exec fastlane assemble_debug
