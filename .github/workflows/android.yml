@@ -108,8 +108,8 @@ jobs:
       - name: Add Api Key
         run: echo "apiKey=\"\"" >> local.properties
 
-#      - name: Build with Gradle
-#        run: ./gradlew build --info
+      - name: Build with Gradle
+        run: ./gradlew build --info
 
       - name: Decode Google Service JSON File
         uses: timheuer/base64-to-file@v1
@@ -182,7 +182,7 @@ jobs:
       - name: Download APK from build
         uses: actions/download-artifact@v1
         with:
-          name: Android-CI-CD
+          name: UploadAPK
 
       - name: Create Release
         id: create_release
@@ -200,8 +200,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: Android-CI-CD/app-debug.apk
-          asset_name: Android-CI-CD.apk
+          asset_path: UploadAPK/app-debug.apk
+          asset_name: UploadAPK.apk
           asset_content_type: application/zip
 
   deploy-firebase:
