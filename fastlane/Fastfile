@@ -42,6 +42,11 @@ platform :android do
     # You can also use other beta testing services here
   end
 
+  desc "Detekt checks"
+  lane :detekt do
+    gradle(task: "detekt --continue")
+  end
+
    desc "Build the .aab file"
    lane :build do
      gradle(
