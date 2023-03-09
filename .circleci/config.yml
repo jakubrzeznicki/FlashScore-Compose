@@ -80,9 +80,6 @@ jobs:
       - android/restore-gradle-cache
       - run: ./gradlew assembleDebugAndroidTest
       - android/save-gradle-cache
-      - persist_to_workspace:
-          root: ~/
-          paths: .
 
   beta:
     executor:
