@@ -45,8 +45,8 @@ android {
         debug {
             resValue "string", "flashscore_app_name", "FlashScore Debug"
             testCoverageEnabled true
-            applicationIdSuffix ".debug"
             versionNameSuffix '-debug'
+            signingConfig signingConfigs.debug
         }
         release {
             resValue "string", "flashscore_app_name", "@string/flashscorecompose_app_name_release"
