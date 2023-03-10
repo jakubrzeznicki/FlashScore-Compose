@@ -172,7 +172,7 @@ jobs:
       - name: Download APK from build
         uses: actions/download-artifact@v1
         with:
-          name: UploadAPK
+          name: app
 
       - name: Create Release
         id: create_release
