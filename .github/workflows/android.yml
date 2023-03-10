@@ -194,14 +194,14 @@ jobs:
           asset_name: app.apk
           asset_content_type: application/zip
 
-      - name: Send APK to Slack
-          uses: adrey/slack-file-upload-action@1.0.5
-          with:
-            token: ${{ secrets.SLACK_TOKEN }}
-            path: app/app-debug.apk
-            channel: general
-            filename: Github Actions App.apk
-            initial_comment: ${{ github.event.head_commit.message }}
+ #     - name: Send APK to Slack
+ #         uses: adrey/slack-file-upload-action@1.0.5
+ #         with:
+ #           token: ${{ secrets.SLACK_TOKEN }}
+ #           path: app/app-debug.apk
+ #           channel: general
+ #           filename: Github Actions App.apk
+ #           initial_comment: ${{ github.event.head_commit.message }}
 
   deploy-firebase:
     needs: [build]
