@@ -61,11 +61,6 @@ jobs:
       - run:
           name: Build Assemble
           command: ./gradlew assembleDebug --stacktrace
-      # - run:
-      #     name: Build Assemble
-      #     command: bundle exec fastlane assemble_debug
-      #      - run:
-      #        command: bundle exec fastlane build
       - store_artifacts:
           path: app/build/outputs/apk/
           destination: apks/
