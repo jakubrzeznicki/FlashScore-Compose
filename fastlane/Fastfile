@@ -75,7 +75,6 @@ platform :android do
 
   desc "Submit a new Beta Build to Firebase App Distribution"
   lane :firebase_beta do
-    gradle(task: "assembleDebug")
     firebase_app_distribution(
       app: "1:322077523128:android:5bf5527e5d2187642a084d"
     )

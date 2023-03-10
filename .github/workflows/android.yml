@@ -30,9 +30,9 @@ jobs:
       - name: Build Lint
         run: ./gradlew lint
 
-      #      - name: Build Ktlint
-      #        run: bash ./gradlew ktlintCheck
-      #
+      #- name: Build Ktlint
+      #run: bash ./gradlew ktlintCheck
+
       - name: Upload Build Lint Report
         uses: actions/upload-artifact@v2
         with:
@@ -145,11 +145,11 @@ jobs:
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: UploadAPK
+          name: app
           path: app/build/outputs/apk/debug/app-debug.apk
 
-  create-release: # Job to create a new github release and upload the generated apk
-    name: 🎉 Create Release
+  create-release:
+    name: Create Release
     needs: [build]
     runs-on: ubuntu-latest
     steps:
@@ -190,9 +190,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: UploadAPK/app-debug.apk
-          asset_name: UploadAPK.apk
+          asset_path: app/app-debug.apk
+          asset_name: app.apk
           asset_content_type: application/zip
+
+      - name: Send APK to Slack
+          uses: adrey/slack-file-upload-action@1.0.5
+          with:
+            token: ${{ secrets.SLACK_TOKEN }}
+            path: app/app-debug.apk
+            channel: general
+            filename: Github Actions App.apk
+            initial_comment: ${{ github.event.head_commit.message }}
 
   deploy-firebase:
     needs: [build]
@@ -217,7 +226,7 @@ jobs:
       - name: Download APK from build
         uses: actions/download-artifact@v1
         with:
-          name: UploadAPK
+          name: app
 
       - name: Upload artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
@@ -226,4 +235,4 @@ jobs:
           token: ${{secrets.FIREBASE_TOKEN}}
           groups: Testers
           releaseNotes: "From Github Actions"
-          file: UploadAPK/app-debug.apk
+          file: app/app-debug.apk
