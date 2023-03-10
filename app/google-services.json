@@ -7,38 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:322077523128:android:5bf5527e5d2187642a084d",
+        "mobilesdk_app_id": "1:322077523128:android:daacedacb7d7d0722a084d",
         "android_client_info": {
           "package_name": "com.kuba.flashscorecompose"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "322077523128-9a7p551a6ivkin0bkn8dqkvbkuicupuk.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCvd06LOyFUz8FFf2MN330y0Cr66ss_WPM"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "322077523128-9a7p551a6ivkin0bkn8dqkvbkuicupuk.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:322077523128:android:5bf5527e5d2187642a084d",
-        "android_client_info": {
-          "package_name": "com.kuba.flashscorecompose.debug"
         }
       },
       "oauth_client": [
