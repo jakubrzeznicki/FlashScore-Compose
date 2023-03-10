@@ -148,16 +148,6 @@ jobs:
           name: UploadAPK
           path: app/build/outputs/apk/debug/app-debug.apk
 
-  #      - name: Sign APK
-  #        uses: r0adkll/sign-android-release@v1
-  #        id: sign_app
-  #        with:
-  #          releaseDirectory: app/build/outputs/apk/release
-  #          signingKeyBase64: ${{ secrets.KEYSTORE_FILE }}
-  #          alias: ${{ secrets.KEY_ALIAS }}
-  #          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
-  #          keyPassword: ${{ secrets.KEY_PASSWORD }}
-
   create-release: # Job to create a new github release and upload the generated apk
     name: 🎉 Create Release
     needs: [build]
