@@ -1,0 +1,27 @@
+plugins {
+    id "com.android.library"
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace = "com.example.authentication"
+}
+
+apply {
+    from("$rootDir/base_module.gradle")
+}
+
+dependencies {
+    implementation project(Modules.common)
+
+    //Koin
+    implementation Koin.core
+    testImplementation Koin.test
+    implementation Koin.android
+
+
+    //Firebase
+    implementation Firebase.auth
+    implementation Firebase.crashlytics
+    implementation Firebase.storage
+}

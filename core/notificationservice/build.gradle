@@ -1,0 +1,23 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-parcelize'
+}
+
+android {
+    namespace = "com.example.notificationservice"
+}
+
+apply {
+    from("$rootDir/base_module.gradle")
+}
+
+dependencies {
+    implementation project(Modules.model)
+    implementation project(Modules.common)
+
+    //Koin
+    implementation Koin.core
+    testImplementation Koin.test
+    implementation Koin.android
+}

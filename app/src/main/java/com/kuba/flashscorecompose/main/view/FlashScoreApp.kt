@@ -2,7 +2,6 @@ package com.kuba.flashscorecompose.main.view
 
 import android.content.res.Resources
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -16,15 +15,12 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.ui.composables.FlashScoreSnackbar
+import com.example.ui.snackbar.SnackbarManager
+import com.example.ui.snackbar.SnackbarMessageType
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
-import com.kuba.flashscorecompose.NavGraphs
-import com.kuba.flashscorecompose.ui.component.BottomNavigationBar
-import com.kuba.flashscorecompose.ui.component.FlashScoreSnackbar
 import com.kuba.flashscorecompose.ui.component.NavigationScaffold
-import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
-import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.ui.theme.GreenLight
-import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
 import com.ramcosta.composedestinations.spec.NavHostEngine
 import kotlinx.coroutines.CoroutineScope
@@ -39,7 +35,7 @@ fun FlashScoreApp() {
     val appState = rememberAppState(snackbarManager = snackbarManager)
     NavigationScaffold(
         navController = appState.navController,
-        startRoute = NavGraphs.root.startRoute,
+       // startRoute = NavGraphs.root.startRoute,
         snackbarHost = {
             SnackbarHost(
                 hostState = appState.snackbarHostState,
@@ -59,19 +55,19 @@ fun FlashScoreApp() {
                 }
             )
         },
-        bottomBar = {
-            if (appState.shouldShowBottomBar) {
-                BottomNavigationBar(appState.bottomBarTabs, appState.navController)
-            }
-        }
+//        bottomBar = {
+//            if (appState.shouldShowBottomBar) {
+//                BottomNavigationBar(appState.bottomBarTabs, appState.navController)
+//            }
+//        }
     ) {
-        DestinationsNavHost(
-            engine = appState.engine,
-            navController = appState.navController,
-            navGraph = NavGraphs.root,
-            modifier = Modifier.padding(it),
-            startRoute = NavGraphs.root.startRoute
-        )
+//        DestinationsNavHost(
+//            engine = appState.engine,
+//            navController = appState.navController,
+//            navGraph = NavGraphs.root,
+//            modifier = Modifier.padding(it),
+//            startRoute = NavGraphs.root.startRoute
+//        )
     }
 }
 

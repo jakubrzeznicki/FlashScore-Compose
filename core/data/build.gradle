@@ -1,0 +1,30 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
+}
+
+android {
+    namespace = "com.example.data"
+}
+
+apply {
+    from("$rootDir/base_module.gradle")
+}
+
+dependencies {
+    implementation project(Modules.model)
+    implementation project(Modules.common)
+    implementation project(Modules.database)
+    implementation project(Modules.datastore)
+    implementation project(Modules.network)
+
+    //Koin
+    implementation Koin.core
+    testImplementation Koin.test
+    implementation Koin.android
+
+    implementation Retrofit.retrofit
+}

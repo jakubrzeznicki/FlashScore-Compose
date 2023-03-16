@@ -1,0 +1,25 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-parcelize'
+}
+
+android {
+    namespace = "com.example.favoritefixtureinteractor"
+}
+
+apply {
+    from("$rootDir/base_module.gradle")
+}
+
+dependencies {
+    implementation project(Modules.model)
+    implementation project(Modules.common)
+    implementation project(Modules.data)
+    implementation project(Modules.notificationService)
+
+    //Koin
+    implementation Koin.core
+    testImplementation Koin.test
+    implementation Koin.android
+}

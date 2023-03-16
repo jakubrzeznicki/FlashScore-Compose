@@ -1,0 +1,57 @@
+plugins {
+    id "com.android.library"
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace = "com.example.ui"
+}
+
+apply {
+    from("$rootDir/compose_module.gradle")
+}
+
+dependencies {
+    implementation project(Modules.common)
+    implementation project(Modules.model)
+
+    //Koin
+    implementation Koin.core
+    testImplementation Koin.test
+    implementation Koin.android
+    implementation Koin.compose
+
+    //Coil
+    implementation Coil.compose
+    implementation Coil.svg
+
+    //Lifecycle
+    implementation Lifecycle.lifecycleCompose
+    implementation Lifecycle.lifecycleExtensions
+    implementation Lifecycle.lifecycleLiveData
+    implementation Lifecycle.lifecycleViewModel
+    implementation Lifecycle.lifecycleJava8
+    implementation Lifecycle.lifecycleCompose
+
+    //Compose
+    implementation Compose.material3
+    implementation Compose.material3WindowSize
+    implementation Compose.toolingPreview
+    implementation Compose.uiTooling
+    implementation Compose.viewModelCompose
+    implementation Compose.materialIcons
+    implementation Compose.activityCompose
+    implementation Compose.runtime
+    implementation Compose.animation
+
+    //Accompanist
+    implementation Accompanist.swipeRefresh
+    implementation Accompanist.permissions
+    implementation Accompanist.pager
+    implementation Accompanist.pagerIndicators
+    implementation Accompanist.systemUiController
+    implementation Accompanist.flowLayout
+    implementation Accompanist.insets
+    implementation Accompanist.navigationMaterial
+    implementation Accompanist.navigationAnimation
+}

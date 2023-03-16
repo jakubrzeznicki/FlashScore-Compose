@@ -1,0 +1,28 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace = "com.example.network"
+}
+
+apply {
+    from("$rootDir/base_module.gradle")
+}
+
+dependencies {
+    implementation project(Modules.model)
+
+    //Koin
+    implementation Koin.core
+    testImplementation Koin.test
+    implementation Koin.android
+
+    // Retrofit
+    api Retrofit.retrofit
+    implementation Retrofit.converterGson
+    implementation Retrofit.converterScalars
+    implementation Retrofit.okhttp
+    implementation Retrofit.loggingInterceptor
+}

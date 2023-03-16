@@ -1,0 +1,6 @@
+<resources>
+    //Standings Screen
+    <string name="search_standings">Search your competition...</string>
+    <string name="no_standings">There are no standings</string>
+    <string name="played_short">P</string>
+</resources>

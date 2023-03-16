@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Welcome</string>
+
+    //Welcome Screen
+    <string name="logged_as_guest">Successfully logged as guest</string>
+    <string name="welcome_title">Discover all \nabout sport</string>
+    <string name="welcome_subtitle">Search millions of jobs and get the \ninside scoop on companies.\nWait for what? Let\'s get start it!</string>
+    <string name="sign_in_guest">Sign in as guest</string>
+    <string name="or">or</string>
+    <string name="sign_up">Sign Up</string>
+
+</resources>

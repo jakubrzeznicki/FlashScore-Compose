@@ -1,0 +1,9 @@
+<resources>
+
+    //Sign In
+    <string name="forgot_password">Forgot password?</string>
+
+    //Sign Up
+    <string name="successfully_signed_up">Successfully signed up</string>
+    <string name="repeat_password">Repeat password</string>
+</resources>
