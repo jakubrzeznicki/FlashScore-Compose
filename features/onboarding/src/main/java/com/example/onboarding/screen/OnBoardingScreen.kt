@@ -29,16 +29,19 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
+import com.example.data.navigation.HomeBackStackType
 import com.example.model.player.Player
 import com.example.model.team.Team
 import com.example.onboarding.R
 import com.example.onboarding.model.OnBoardingQuestion
 import com.example.onboarding.model.OnBoardingUiState
+import com.example.onboarding.navigation.OnBoardingNavigator
 import com.example.onboarding.viewmodel.OnBoardingViewModel
 import com.example.ui.composables.CenterAppTopBar
 import com.example.ui.composables.EmptyState
 import com.example.ui.composables.FullScreenLoading
 import com.example.ui.composables.LoadingContent
+import com.ramcosta.composedestinations.annotation.Destination
 import org.koin.androidx.compose.getViewModel
 
 /**
@@ -46,10 +49,10 @@ import org.koin.androidx.compose.getViewModel
  */
 private const val SETUP_ON_BOARDING_KEY = "SETUP_ON_BOARDING_KEY"
 
-//@Destination
+@Destination
 @Composable
 fun OnBoardingRoute(
-    //navigator: DestinationsNavigator,
+    navigator: OnBoardingNavigator,
     viewModel: OnBoardingViewModel = getViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -63,13 +66,13 @@ fun OnBoardingRoute(
         onPlayerClick = { viewModel.playerClicked(it) },
         onClosePressed = {
             viewModel.setOnBoardingAsCompleted()
-            //navigator.navigate(HomeScreenRouteDestination())
+            navigator.openHome(HomeBackStackType.OnBoarding)
         },
         onNextPressed = { viewModel.onNextPressed() },
         onPreviousPressed = { viewModel.onPreviousPressed() },
         onDonePressed = {
             viewModel.setOnBoardingAsCompleted()
-            //navigator.navigate(HomeScreenRouteDestination())
+            navigator.openHome(HomeBackStackType.OnBoarding)
         },
         teamsScrollState = teamsScrollState,
         playersScrollState = playersScrollState

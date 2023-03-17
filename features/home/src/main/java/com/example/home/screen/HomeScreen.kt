@@ -29,13 +29,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.home.R
 import com.example.home.model.HomeUiState
 import com.example.home.model.LeagueFixturesData
+import com.example.home.navigation.HomeNavigator
 import com.example.home.viewmodel.HomeViewModel
 import com.example.model.country.Country
 import com.example.model.fixture.FixtureItemWrapper
 import com.example.model.league.League
 import com.example.ui.composables.*
 import com.example.ui.theme.FlashScoreTypography
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.annotation.Destination
 import org.koin.androidx.compose.getViewModel
 
 /**
@@ -44,10 +45,10 @@ import org.koin.androidx.compose.getViewModel
 
 private const val SETUP_HOME_KEY = "SETUP_HOME_KEY"
 
-//@Destination
+@Destination
 @Composable
 fun HomeScreenRoute(
-    navigator: DestinationsNavigator,
+    navigator: HomeNavigator,
     viewModel: HomeViewModel = getViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -61,18 +62,12 @@ fun HomeScreenRoute(
         onCountryClick = { country, isSelected ->
             viewModel.updateSelectedCountry(country, isSelected)
         },
-        onFixtureClick = {
-            //navigator.navigate(FixtureDetailsRouteDestination(it.fixtureItem.id))
-        },
+        onFixtureClick = { navigator.openFixtureDetails(it.fixtureItem.id) },
         onFavoriteFixtureClick = { viewModel.addFixtureToFavorite(it) },
-        onLeagueClick = {
-            //navigator.navigate(LeagueDetailsRouteDestination(it))
-        },
+        onLeagueClick = { navigator.openLeagueDetails(it) },
         onSearchClick = { viewModel.onSearchClick() },
         onSearchQueryChanged = { viewModel.updateSearchQuery(it) },
-        onNavigationsClick = {
-            //navigator.navigate(NotificationsRouteDestination())
-        },
+        onNavigationsClick = { navigator.openNotifications() },
         fixturesScrollState = fixturesScrollState,
         countryScrollState = countryScrollState,
         context = context

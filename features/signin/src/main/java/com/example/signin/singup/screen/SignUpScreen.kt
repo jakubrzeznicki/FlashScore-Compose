@@ -21,13 +21,15 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.data.navigation.SignUpType
+import com.example.data.navigation.WelcomeBackStackType
 import com.example.signin.R
+import com.example.signin.navigation.SignInNavigator
 import com.example.signin.singup.model.SignUpError
-import com.example.signin.singup.model.SignUpType
 import com.example.signin.singup.model.SignUpUiState
 import com.example.signin.singup.viewmodel.SignUpViewModel
 import com.example.ui.composables.*
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.annotation.Destination
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -35,11 +37,11 @@ import org.koin.core.parameter.parametersOf
  * Created by jrzeznicki on 05/02/2023.
  */
 
-//@Destination
+@Destination
 @Composable
 fun SignUpRoute(
     signUpType: SignUpType,
-    navigator: DestinationsNavigator,
+    navigator: SignInNavigator,
     viewModel: SignUpViewModel = getViewModel { parametersOf(signUpType) }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -54,11 +56,7 @@ fun SignUpRoute(
         togglePasswordVisibility = { viewModel.togglePasswordVisibility() },
         toggleRepeatPasswordVisibility = { viewModel.toggleRepeatPasswordVisibility() },
         onSignUpClick = {
-            viewModel.onSignUpClick {
-//                navigator.navigate(WelcomeRouteDestination()) {
-//                    popUpTo(SignUpRouteDestination.route) { inclusive = true }
-//                }
-            }
+            viewModel.onSignUpClick { navigator.openWelcome(WelcomeBackStackType.SignUp) }
         }
     )
 }
@@ -68,7 +66,7 @@ fun SignUpRoute(
 @Composable
 private fun SignUpScreen(
     modifier: Modifier = Modifier,
-    navigator: DestinationsNavigator? = null,
+    navigator: SignInNavigator? = null,
     uiState: SignUpUiState,
     focusManager: FocusManager,
     onEmailChange: (String) -> Unit = {},
@@ -178,7 +176,7 @@ private fun SignUpScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TopBar(navigator: DestinationsNavigator?) {
+private fun TopBar(navigator: SignInNavigator?) {
     CenterAppTopBar(
         modifier = Modifier
             .height(58.dp)
@@ -188,7 +186,7 @@ private fun TopBar(navigator: DestinationsNavigator?) {
                 modifier = Modifier
                     .padding(start = 12.dp)
                     .size(24.dp),
-                onClick = { navigator?.popBackStack() }
+                onClick = { navigator?.navigateUp() }
             ) {
                 Icon(
                     imageVector = Icons.Filled.ChevronLeft,

@@ -16,6 +16,7 @@ import com.example.playerdetails.di.playerDetailsViewModelModule
 import com.example.profile.di.profileViewModelModule
 import com.example.signin.di.signInViewModelModule
 import com.example.standings.di.standingsViewModelModule
+import com.example.standingsdetails.di.standingsDetailsViewModelModule
 import com.example.teamdetails.di.teamDetailsViewModelModule
 import com.example.ui.di.uiModule
 import com.example.welcome.di.welcomeViewModelModule
@@ -43,7 +44,7 @@ class KoinModules {
         profileViewModelModule,
         signInViewModelModule,
         standingsViewModelModule,
-        //standingsDetailsViewModelModule,
+        standingsDetailsViewModelModule,
         teamDetailsViewModelModule,
         welcomeViewModelModule
     )

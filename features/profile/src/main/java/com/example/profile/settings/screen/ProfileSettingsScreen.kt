@@ -31,7 +31,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.data.navigation.SignInBackStackType
+import com.example.data.navigation.SignUpType
+import com.example.data.navigation.WelcomeBackStackType
 import com.example.profile.R
+import com.example.profile.navigation.ProfileNavigator
 import com.example.profile.settings.model.ProfileSettingsError
 import com.example.profile.settings.model.ProfileSettingsUiState
 import com.example.profile.settings.viewmodel.ProfileSettingsViewModel
@@ -39,7 +43,6 @@ import com.example.ui.composables.CircularProgressBar
 import com.example.ui.composables.PasswordTextField
 import com.example.ui.composables.TextFieldError
 import com.example.ui.composables.ToggleTextVisibilityTrailingButton
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -52,7 +55,7 @@ private const val PROFILE_SETTINGS_KEY = "PROFILE_SETTINGS_KEY"
 @Composable
 fun ProfileSettingsScreen(
     userId: String,
-    navigator: DestinationsNavigator,
+    navigator: ProfileNavigator,
     viewModel: ProfileSettingsViewModel = getViewModel { parametersOf(userId) }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -66,30 +69,14 @@ fun ProfileSettingsScreen(
         togglePasswordVisibility = { viewModel.togglePasswordVisibility() },
         toggleRepeatPasswordVisibility = { viewModel.toggleRepeatPasswordVisibility() },
         onPasswordClick = { viewModel.onPasswordClick() },
-        onSignInClick = {
-//            navigator.navigate(SignInRouteDestination()) {
-//                popUpTo(ProfileRouteDestination.route) { inclusive = true }
-//            }
-        },
-        onSignUpClick = {
-//            navigator.navigate(SignUpRouteDestination(SignUpType.Anonymous)) {
-//                popUpTo(ProfileRouteDestination.route) { inclusive = true }
-//            }
-        },
+        onSignInClick = { navigator.openSignIn(SignInBackStackType.Profile) },
+        onSignUpClick = { navigator.openSignUp(SignUpType.Anonymous) },
         onDeleteAccountClick = {
-            viewModel.onDeleteAccountClick {
-//                navigator.navigate(WelcomeRouteDestination()) {
-//                    popUpTo(ProfileRouteDestination.route) { inclusive = true }
-//                }
-            }
+            viewModel.onDeleteAccountClick { navigator.openWelcome(WelcomeBackStackType.Profile) }
         },
         onSavePasswordClick = { viewModel.onSavePasswordClick() },
         onSignOutClick = {
-            viewModel.onSignOutClick {
-//                navigator.navigate(WelcomeRouteDestination()) {
-//                    popUpTo(ProfileRouteDestination.route) { inclusive = true }
-//                }
-            }
+            viewModel.onSignOutClick { navigator.openWelcome(WelcomeBackStackType.Profile) }
         },
         showDeleteAccountDialog = { viewModel.showConfirmDeleteAccountDialog(it) },
         showSignOutDialog = { viewModel.showConfirmSignOutDialog(it) }

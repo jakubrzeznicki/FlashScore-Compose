@@ -22,22 +22,25 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.data.navigation.HomeBackStackType
+import com.example.data.navigation.OnBoardingBackStackType
 import com.example.signin.R
+import com.example.signin.navigation.SignInNavigator
 import com.example.signin.signin.model.SignInError
 import com.example.signin.signin.model.SignInUiState
 import com.example.signin.signin.viewmodel.SignInViewModel
 import com.example.ui.composables.*
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.annotation.Destination
 import org.koin.androidx.compose.getViewModel
 
 /**
  * Created by jrzeznicki on 05/02/2023.
  */
 
-//@Destination
+@Destination
 @Composable
 fun SignInRoute(
-    navigator: DestinationsNavigator,
+    navigator: SignInNavigator,
     viewModel: SignInViewModel = getViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -52,16 +55,8 @@ fun SignInRoute(
         toggleKeepLogged = { viewModel.toggleKeepLogged() },
         onSignInClick = {
             viewModel.onSignInClick(
-                openHomeScreen = {
-//                    navigator.navigate(HomeScreenRouteDestination()) {
-//                        popUpTo(SignInRouteDestination.route) { inclusive = true }
-//                    }
-                },
-                openOnBoardingScreen = {
-//                    navigator.navigate(OnBoardingRputeDestination()) {
-//                        popUpTo(SignInRouteDestination.route) { inclusive = true }
-//                    }
-                }
+                openHomeScreen = { navigator.openHome(HomeBackStackType.SignIn) },
+                openOnBoardingScreen = { navigator.openOnBoarding(OnBoardingBackStackType.SignIn) }
             )
         },
         onForgetPasswordClick = { viewModel.onForgotPasswordClick() }
@@ -73,7 +68,7 @@ fun SignInRoute(
 @Composable
 fun SignInScreen(
     modifier: Modifier = Modifier,
-    navigator: DestinationsNavigator? = null,
+    navigator: SignInNavigator? = null,
     focusManager: FocusManager,
     uiState: SignInUiState,
     onEmailChange: (String) -> Unit = {},
@@ -195,7 +190,7 @@ private fun SignInButtons(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TopBar(navigator: DestinationsNavigator?) {
+private fun TopBar(navigator: SignInNavigator?) {
     CenterAppTopBar(
         modifier = Modifier
             .height(58.dp)
@@ -205,7 +200,7 @@ private fun TopBar(navigator: DestinationsNavigator?) {
                 modifier = Modifier
                     .padding(start = 12.dp)
                     .size(24.dp),
-                onClick = { navigator?.popBackStack() }
+                onClick = { navigator?.navigateUp() }
             ) {
                 Icon(
                     imageVector = Icons.Filled.ChevronLeft,

@@ -97,6 +97,7 @@ dependencies {
     implementation project(Modules.onboarding)
     implementation project(Modules.home)
     implementation project(Modules.standings)
+    implementation project(Modules.standingsDetails)
     implementation project(Modules.explore)
     implementation project(Modules.signIn)
     implementation project(Modules.welcome)

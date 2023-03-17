@@ -29,10 +29,11 @@ import com.example.model.standings.Standing
 import com.example.model.standings.StandingItem
 import com.example.standings.R
 import com.example.standings.model.StandingsUiState
+import com.example.standings.navigation.StandingsNavigator
 import com.example.standings.viewmodel.StandingsViewModel
 import com.example.ui.composables.*
 import com.example.ui.theme.FlashScoreTypography
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.annotation.Destination
 import org.koin.androidx.compose.getViewModel
 
 /**
@@ -42,10 +43,10 @@ import org.koin.androidx.compose.getViewModel
 private const val SETUP_STANDINGS_KEY = "SETUP_STANDINGS_KEY"
 private const val TEAMS = 4
 
-//@Destination
+@Destination
 @Composable
 fun StandingsRoute(
-    navigator: DestinationsNavigator,
+    navigator: StandingsNavigator,
     viewModel: StandingsViewModel = getViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -60,12 +61,8 @@ fun StandingsRoute(
         onCountryClick = { country, isSelected ->
             viewModel.updateSelectedCountry(country, isSelected)
         },
-        onStandingsClick = {
-            //navigator.navigate(StandingsDetailsRouteDestination(league = it.league))
-        },
-        onLeagueClick = {
-            //navigator.navigate(LeagueDetailsRouteDestination(it))
-        },
+        onStandingsClick = { navigator.openStandingsDetails(it.league) },
+        onLeagueClick = { navigator.openLeagueDetails(it) },
         onStandingsQueryChanged = { viewModel.updateStandingsQuery(it) }
     )
 }

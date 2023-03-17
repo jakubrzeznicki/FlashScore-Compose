@@ -18,6 +18,7 @@ import com.example.model.fixture.FixtureItemWrapper
 import com.example.teamdetails.R
 import com.example.teamdetails.fixturesteam.model.FixturesTeamUiState
 import com.example.teamdetails.fixturesteam.viewmodel.FixturesTeamViewModel
+import com.example.teamdetails.navigation.TeamDetailsNavigator
 import com.example.ui.composables.EmptyState
 import com.example.ui.composables.FixtureCard
 import com.example.ui.composables.FullScreenLoading
@@ -25,7 +26,6 @@ import com.example.ui.composables.LoadingContent
 import com.example.ui.composables.chips.CustomFilterChip
 import com.example.ui.composables.chips.FilterChip
 import com.google.accompanist.flowlayout.FlowRow
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -39,7 +39,7 @@ private const val SETUP_FIXTURES_TEAM_KEY = "SETUP_FIXTURES_TEAM_KEY"
 fun FixturesTeamScreen(
     teamId: Int,
     season: Int,
-    navigator: DestinationsNavigator,
+    navigator: TeamDetailsNavigator,
     viewModel: FixturesTeamViewModel = getViewModel { parametersOf(teamId, season) }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -48,9 +48,7 @@ fun FixturesTeamScreen(
     FixturesTeamListScreen(
         uiState = uiState,
         context = context,
-        onFixtureClick = {
-           // navigator.navigate(FixtureDetailsRouteDestination(it.fixtureItem.id))
-        },
+        onFixtureClick = { navigator.openFixtureDetails(it.fixtureItem.id) },
         onFixtureFavoriteClick = { viewModel.addFixtureToFavorite(it) },
         onFixturesFilterClick = { viewModel.filterFixtures(it as FilterChip.Fixtures) },
         onRefreshClick = { viewModel.refresh() }

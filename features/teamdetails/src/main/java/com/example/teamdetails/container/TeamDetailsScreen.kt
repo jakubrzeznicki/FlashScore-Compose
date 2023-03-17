@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.example.model.team.Team
 import com.example.teamdetails.fixturesteam.screen.FixturesTeamScreen
 import com.example.teamdetails.informations.screen.TeamInformationsScreen
+import com.example.teamdetails.navigation.TeamDetailsNavigator
 import com.example.teamdetails.players.screen.PlayersScreen
 import com.example.ui.composables.CenterAppTopBar
 import com.example.ui.composables.HeaderDetails
@@ -20,19 +21,19 @@ import com.example.ui.composables.tabs.TabsContent
 import com.example.ui.theme.FlashScoreTypography
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.annotation.Destination
 
 /**
  * Created by jrzeznicki on 27/01/2023.
  */
 
-//@Destination
+@Destination
 @Composable
 fun TeamDetailsRoute(
     team: Team,
     leagueId: Int,
     season: Int,
-    navigator: DestinationsNavigator
+    navigator: TeamDetailsNavigator
 ) {
     TeamDetailsScreen(
         team = team,
@@ -50,7 +51,7 @@ fun TeamDetailsScreen(
     team: Team,
     leagueId: Int,
     season: Int,
-    navigator: DestinationsNavigator
+    navigator: TeamDetailsNavigator
 ) {
     Scaffold(
         modifier = modifier,
@@ -69,7 +70,7 @@ fun TeamDetailsScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TopBar(navigator: DestinationsNavigator, title: String) {
+private fun TopBar(navigator: TeamDetailsNavigator, title: String) {
     CenterAppTopBar(
         modifier = Modifier
             .height(42.dp)
@@ -79,7 +80,7 @@ private fun TopBar(navigator: DestinationsNavigator, title: String) {
                 modifier = Modifier
                     .padding(horizontal = 12.dp)
                     .size(24.dp),
-                onClick = { navigator.popBackStack() }
+                onClick = { navigator.navigateUp() }
             ) {
                 Icon(
                     imageVector = Icons.Filled.ChevronLeft,
@@ -104,7 +105,7 @@ private fun TeamDetailsTabs(
     team: Team,
     leagueId: Int,
     season: Int,
-    navigator: DestinationsNavigator
+    navigator: TeamDetailsNavigator
 ) {
     val tabs = listOf(
         TabItem.TeamDetails.Information {

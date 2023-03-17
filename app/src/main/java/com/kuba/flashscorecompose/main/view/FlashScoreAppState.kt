@@ -2,13 +2,17 @@ package com.kuba.flashscorecompose.main.view
 
 import android.content.res.Resources
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.ui.snackbar.SnackbarManager
 import com.example.ui.snackbar.SnackbarMessage.Companion.toMessage
 import com.example.ui.snackbar.SnackbarMessageType
+import com.kuba.flashscorecompose.navigation.model.NavigationItem
 import com.ramcosta.composedestinations.spec.NavHostEngine
+import com.ramcosta.composedestinations.utils.route
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -36,16 +40,16 @@ class FlashScoreAppState(
         }
     }
 
-//    val bottomBarTabs = listOf(
-//        NavigationItem.Home,
-//        NavigationItem.Explore,
-//        NavigationItem.Standings,
-//        NavigationItem.Profile
-//    )
-//    private val bottomBarDirections = bottomBarTabs.map { it.direction }
-//    val shouldShowBottomBar: Boolean
-//        @Composable get() = navController
-//            .currentBackStackEntryAsState().value?.route() in bottomBarDirections
+    val bottomBarTabs = listOf(
+        NavigationItem.Home,
+        NavigationItem.Explore,
+        NavigationItem.Standings,
+        NavigationItem.Profile
+    )
+    private val bottomBarDirections = bottomBarTabs.map { it.direction }
+    val shouldShowBottomBar: Boolean
+        @Composable get() = navController
+            .currentBackStackEntryAsState().value?.route() in bottomBarDirections
 
     fun popUp() {
         navController.popBackStack()

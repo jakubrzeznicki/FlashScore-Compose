@@ -18,43 +18,35 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.data.navigation.HomeBackStackType
+import com.example.data.navigation.SignInBackStackType
+import com.example.data.navigation.SignUpType
 import com.example.ui.composables.CircularProgressBar
 import com.example.welcome.R
+import com.example.welcome.navigation.WelcomeNavigator
 import com.example.welcome.welcome.model.WelcomeUiState
 import com.example.welcome.welcome.viewmodel.WelcomeViewModel
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.annotation.Destination
 import org.koin.androidx.compose.getViewModel
 
 /**
  * Created by jrzeznicki on 06/02/2023.
  */
-//@Destination
+@Destination
 @Composable
 fun WelcomeRoute(
-    navigator: DestinationsNavigator,
+    navigator: WelcomeNavigator,
     viewModel: WelcomeViewModel = getViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     WelcomeScreen(
         uiState = uiState,
-        onSignInClick = {
-            //navigator.navigate(SignInRouteDestination())
-        },
-        onSignUpClick = {
-            //navigator.navigate(SignUpRouteDestination(SignUpType.New))
-        },
+        onSignInClick = { navigator.openSignIn(SignInBackStackType.Welcome) },
+        onSignUpClick = { navigator.openSignUp(SignUpType.New) },
         onSignInAsGuest = {
             viewModel.createAnonymousAccount(
-                openHomeScreen = {
-//                    navigator.navigate(HomeScreenRouteDestination()) {
-//                        popUpTo(SignInRouteDestination.route) { inclusive = true }
-//                    }
-                },
-                openOnBoardingScreen = {
-//                    navigator.navigate(OnBoardingRputeDestination()) {
-//                        popUpTo(SignInRouteDestination.route) { inclusive = true }
-//                    }
-                }
+                openHomeScreen = { navigator.openHome(HomeBackStackType.Welcome) },
+                openOnBoardingScreen = { navigator.openOnBoarding() }
             )
         }
     )

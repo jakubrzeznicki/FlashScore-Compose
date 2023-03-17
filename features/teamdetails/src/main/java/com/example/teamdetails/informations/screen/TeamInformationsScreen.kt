@@ -34,8 +34,8 @@ import com.example.model.team.Venue
 import com.example.teamdetails.R
 import com.example.teamdetails.informations.model.TeamInformationsUiState
 import com.example.teamdetails.informations.viewmodel.TeamInformationsViewModel
+import com.example.teamdetails.navigation.TeamDetailsNavigator
 import com.example.ui.composables.*
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -50,7 +50,7 @@ fun TeamInformationsScreen(
     team: Team,
     leagueId: Int,
     season: Int,
-    navigator: DestinationsNavigator,
+    navigator: TeamDetailsNavigator,
     viewModel: TeamInformationsViewModel = getViewModel {
         parametersOf(team, leagueId, season)
     }

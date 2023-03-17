@@ -24,23 +24,23 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.fixturedetails.R
 import com.example.model.notificationdata.NotificationData
+import com.example.notifications.R
 import com.example.notifications.model.NotificationsUiState
+import com.example.notifications.navigation.NotificationsNavigator
 import com.example.notifications.viewmodel.NotificationsViewModel
 import com.example.ui.composables.CenterAppTopBar
 import com.example.ui.composables.EmptyState
 import com.example.ui.theme.FlashScoreTypography
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
 
 private const val SETUP_NOTIFICATIONS_KEY = "SETUP_NOTIFICATIONS_KEY"
 
-//@Destination
+@Destination
 @Composable
 fun NotificationsRoute(
-    navigator: DestinationsNavigator,
+    navigator: NotificationsNavigator,
     viewModel: NotificationsViewModel = getViewModel()
 ) {
     val context = LocalContext.current
@@ -61,7 +61,7 @@ fun NotificationsScreen(
     modifier: Modifier = Modifier,
     uiState: NotificationsUiState,
     context: Context,
-    navigator: DestinationsNavigator,
+    navigator: NotificationsNavigator,
     onCancelClick: (NotificationData) -> Unit
 ) {
     val scrollState = rememberLazyListState()
@@ -115,7 +115,7 @@ fun NotificationsScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TopBar(navigator: DestinationsNavigator) {
+private fun TopBar(navigator: NotificationsNavigator) {
     CenterAppTopBar(
         modifier = Modifier
             .height(48.dp)
@@ -125,7 +125,7 @@ private fun TopBar(navigator: DestinationsNavigator) {
                 modifier = Modifier
                     .padding(start = 12.dp)
                     .size(24.dp),
-                onClick = { navigator.popBackStack() }
+                onClick = { navigator.navigateUp() }
             ) {
                 Icon(
                     imageVector = Icons.Filled.ChevronLeft,

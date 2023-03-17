@@ -32,13 +32,14 @@ import com.example.model.standings.StandingItem
 import com.example.model.team.Team
 import com.example.standingsdetails.R
 import com.example.standingsdetails.model.StandingsDetailsUiState
+import com.example.standingsdetails.navigation.StandingsDetailsNavigator
 import com.example.standingsdetails.viewmodel.StandingsDetailsViewModel
 import com.example.ui.composables.*
 import com.example.ui.composables.chips.CustomFilterChip
 import com.example.ui.composables.chips.FilterChip
 import com.example.ui.theme.FlashScoreTypography
 import com.google.accompanist.flowlayout.FlowRow
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.annotation.Destination
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -49,11 +50,11 @@ import org.koin.core.parameter.parametersOf
 private const val SETUP_STANDINGS_DETAILS_KEY = "SETUP_STANDINGS_DETAILS_KEY"
 private const val HASZTAG = "#"
 
-//@Destination
+@Destination
 @Composable
 fun StandingsDetailsRoute(
     league: League,
-    navigator: DestinationsNavigator,
+    navigator: StandingsDetailsNavigator,
     viewModel: StandingsDetailsViewModel = getViewModel { parametersOf(league.id, league.season) }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -62,12 +63,8 @@ fun StandingsDetailsRoute(
         uiState = uiState,
         league = league,
         navigator = navigator,
-        onTeamClick = {
-            //navigator.navigate(TeamDetailsRouteDestination(it, league.id, league.season))
-        },
-        onLeagueClick = {
-//            navigator.navigate(LeagueDetailsRouteDestination(league))
-        },
+        onTeamClick = { navigator.openTeamDetails(it, league.id, league.season) },
+        onLeagueClick = { navigator.openLeagueDetails(league) },
         onRefreshClick = { viewModel.refresh() },
         onStandingsFilterClick = { viewModel.filterStandings(it as FilterChip.Standings) }
     )
@@ -79,7 +76,7 @@ private fun StandingsDetailsScreen(
     modifier: Modifier = Modifier,
     uiState: StandingsDetailsUiState,
     league: League,
-    navigator: DestinationsNavigator,
+    navigator: StandingsDetailsNavigator,
     onTeamClick: (Team) -> Unit,
     onLeagueClick: () -> Unit,
     onRefreshClick: () -> Unit,
@@ -168,7 +165,7 @@ private fun StandingsDetailsScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TopBar(navigator: DestinationsNavigator, league: League) {
+private fun TopBar(navigator: StandingsDetailsNavigator, league: League) {
     CenterAppTopBar(
         modifier = Modifier
             .height(48.dp)
@@ -178,7 +175,7 @@ private fun TopBar(navigator: DestinationsNavigator, league: League) {
                 modifier = Modifier
                     .padding(start = 12.dp)
                     .size(24.dp),
-                onClick = { navigator.popBackStack() }
+                onClick = { navigator.navigateUp() }
             ) {
                 Icon(
                     imageVector = Icons.Filled.ChevronLeft,

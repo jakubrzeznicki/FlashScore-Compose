@@ -14,13 +14,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.model.player.PlayerWrapper
 import com.example.model.team.Team
+import com.example.teamdetails.navigation.TeamDetailsNavigator
 import com.example.teamdetails.players.model.PlayersUiState
 import com.example.teamdetails.players.viewmodel.PlayersViewModel
 import com.example.ui.composables.EmptyState
 import com.example.ui.composables.FullScreenLoading
 import com.example.ui.composables.LoadingContent
 import com.example.ui.composables.PlayerCard
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -33,7 +33,7 @@ private const val PLAYERS_KEY = "PLAYERS_KEY"
 fun PlayersScreen(
     team: Team,
     season: Int,
-    navigator: DestinationsNavigator,
+    navigator: TeamDetailsNavigator,
     viewModel: PlayersViewModel = getViewModel { parametersOf(team, season) }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -41,13 +41,7 @@ fun PlayersScreen(
     PlayersListScreen(
         uiState = uiState,
         onPlayerClick = {
-//            navigator.navigate(
-//                PlayerDetailsRouteDestination(
-//                    it.player.id,
-//                    it.player.team,
-//                    it.player.season
-//                )
-//            )
+            navigator.openPlayerDetails(it.player.id, it.player.team, it.player.season)
         },
         onPlayerFavoriteClick = { viewModel.addPlayerToFavorite(it) },
         onRefreshClick = { viewModel.refresh() }

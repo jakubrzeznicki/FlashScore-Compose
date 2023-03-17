@@ -28,6 +28,7 @@ import com.example.fixturedetails.container.model.FixtureDetailsUiState
 import com.example.fixturedetails.container.viewmodel.FixtureDetailsViewModel
 import com.example.fixturedetails.headtohead.screen.HeadToHeadScreen
 import com.example.fixturedetails.lineup.screen.LineupScreen
+import com.example.fixturedetails.navigation.FixtureDetailsNavigator
 import com.example.fixturedetails.statistics.screen.StatisticsScreen
 import com.example.model.fixture.FixtureItem
 import com.example.model.team.Team
@@ -40,7 +41,7 @@ import com.example.ui.composables.tabs.Tabs
 import com.example.ui.composables.tabs.TabsContent
 import com.example.ui.theme.FlashScoreTypography
 import com.google.accompanist.pager.*
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.annotation.Destination
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -54,10 +55,11 @@ private const val SETUP_FIXTURE_DETAILS_KEY = "SETUP_FIXTURE_DETAILS_KEY"
 //        DeepLink(uriPattern = "$MY_URI/$FIXTURE_ID_ARGS={fixtureId}")
 //    ]
 //)
+@Destination
 @Composable
 fun FixtureDetailsRoute(
     fixtureId: Int,
-    navigator: DestinationsNavigator,
+    navigator: FixtureDetailsNavigator,
     viewModel: FixtureDetailsViewModel = getViewModel { parametersOf(fixtureId) }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -67,7 +69,7 @@ fun FixtureDetailsRoute(
         navigator = navigator,
         onRefreshClick = { viewModel.refreshFixtureItem() },
         onTeamClick = { team, leagueId, season ->
-            // navigator.navigate(TeamDetailsRouteDestination(team, leagueId, season))
+            navigator.openTeamDetails(team, leagueId, season)
         }
     )
 }
@@ -78,7 +80,7 @@ fun FixtureDetailsRoute(
 private fun FixtureDetailsScreen(
     modifier: Modifier = Modifier,
     uiState: FixtureDetailsUiState,
-    navigator: DestinationsNavigator,
+    navigator: FixtureDetailsNavigator,
     onRefreshClick: () -> Unit,
     onTeamClick: (Team, Int, Int) -> Unit
 ) {
@@ -124,7 +126,7 @@ private fun FixtureDetailsScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TopBar(navigator: DestinationsNavigator, round: String) {
+private fun TopBar(navigator: FixtureDetailsNavigator, round: String) {
     CenterAppTopBar(
         modifier = Modifier
             .height(58.dp)
@@ -134,7 +136,7 @@ private fun TopBar(navigator: DestinationsNavigator, round: String) {
                 modifier = Modifier
                     .padding(horizontal = 12.dp)
                     .size(24.dp),
-                onClick = { navigator.popBackStack() }
+                onClick = { navigator.navigateUp() }
             ) {
                 Icon(
                     imageVector = Icons.Filled.ChevronLeft,
@@ -295,7 +297,7 @@ private fun TeamInfoScore(fixtureItem: FixtureItem, modifier: Modifier) {
 @Composable
 private fun FixtureDetailsTabs(
     fixtureItem: FixtureItem,
-    navigator: DestinationsNavigator
+    navigator: FixtureDetailsNavigator
 ) {
     val tabs = listOf(
         TabItem.FixtureDetails.Statistics {

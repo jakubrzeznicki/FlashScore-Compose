@@ -21,11 +21,11 @@ import com.example.model.player.Player
 import com.example.model.team.Team
 import com.example.playerdetails.R
 import com.example.playerdetails.model.PlayerDetailsUiState
+import com.example.playerdetails.navigation.PlayerDetailsNavigator
 import com.example.playerdetails.viewmodel.PlayerDetailsViewModel
 import com.example.ui.composables.*
 import com.example.ui.theme.FlashScoreTypography
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -34,13 +34,13 @@ import org.koin.core.parameter.parametersOf
  */
 private const val SETUP_PLAYER_DETAILS_KEY = "SETUP_PLAYER_DETAILS_KEY"
 
-//@Destination
+@Destination
 @Composable
 fun PlayerDetailsRoute(
     playerId: Int,
     team: Team,
     season: Int,
-    navigator: DestinationsNavigator,
+    navigator: PlayerDetailsNavigator,
     viewModel: PlayerDetailsViewModel = getViewModel { parametersOf(playerId, team, season) }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -59,7 +59,7 @@ fun PlayerDetailsRoute(
 fun PlayerDetailsScreen(
     uiState: PlayerDetailsUiState,
     team: Team,
-    navigator: DestinationsNavigator,
+    navigator: PlayerDetailsNavigator,
     onRefreshClick: () -> Unit
 ) {
     Scaffold(
@@ -124,7 +124,7 @@ fun PlayerDetailsScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TopBar(navigator: DestinationsNavigator, title: String) {
+private fun TopBar(navigator: PlayerDetailsNavigator, title: String) {
     CenterAppTopBar(
         modifier = Modifier
             .height(42.dp)
@@ -134,7 +134,7 @@ private fun TopBar(navigator: DestinationsNavigator, title: String) {
                 modifier = Modifier
                     .padding(horizontal = 12.dp)
                     .size(24.dp),
-                onClick = { navigator.popBackStack() }
+                onClick = { navigator.navigateUp() }
             ) {
                 Icon(
                     imageVector = Icons.Filled.ChevronLeft,

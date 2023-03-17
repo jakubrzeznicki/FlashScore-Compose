@@ -28,6 +28,7 @@ import coil.size.Size
 import com.example.fixturedetails.R
 import com.example.fixturedetails.lineup.model.LineupUiState
 import com.example.fixturedetails.lineup.viewmodel.LineupViewModel
+import com.example.fixturedetails.navigation.FixtureDetailsNavigator
 import com.example.model.lineup.Lineup
 import com.example.model.player.Player
 import com.example.ui.composables.EmptyState
@@ -35,7 +36,6 @@ import com.example.ui.composables.FullScreenLoading
 import com.example.ui.composables.LoadingContent
 import com.example.ui.theme.GreenDark
 import com.example.ui.theme.GreenLight
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -49,7 +49,7 @@ fun LineupScreen(
     fixtureId: Int,
     leagueId: Int,
     season: Int,
-    navigator: DestinationsNavigator,
+    navigator: FixtureDetailsNavigator,
     viewModel: LineupViewModel = getViewModel { parametersOf(fixtureId, leagueId, season) }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -58,13 +58,7 @@ fun LineupScreen(
         uiState = uiState,
         onRefreshClick = { viewModel.refresh() },
         onPlayerClick = {
-//            navigator.navigate(
-//                PlayerDetailsRouteDestination(
-//                    it.id,
-//                    it.team,
-//                    season
-//                )
-//            )
+            navigator.openPlayerDetails(it.id, it.team, season)
         },
         onLineupClick = { viewModel.changeSelectedLineup(it) }
     )

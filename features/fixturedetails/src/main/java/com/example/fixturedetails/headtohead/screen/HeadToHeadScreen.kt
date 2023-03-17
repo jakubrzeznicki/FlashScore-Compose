@@ -35,12 +35,12 @@ import com.example.fixturedetails.headtohead.model.HeadToHeadUiState
 import com.example.fixturedetails.headtohead.model.ScoreStyle
 import com.example.fixturedetails.headtohead.model.StyledFixtureItem
 import com.example.fixturedetails.headtohead.viewmodel.HeadToHeadViewModel
+import com.example.fixturedetails.navigation.FixtureDetailsNavigator
 import com.example.model.fixture.FixtureItem
 import com.example.model.team.Team
 import com.example.ui.composables.EmptyState
 import com.example.ui.composables.FullScreenLoading
 import com.example.ui.composables.LoadingContent
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -55,7 +55,7 @@ fun HeadToHeadScreen(
     homeTeam: Team,
     awayTeam: Team,
     season: Int,
-    navigator: DestinationsNavigator,
+    navigator: FixtureDetailsNavigator,
     viewModel: HeadToHeadViewModel = getViewModel { parametersOf(homeTeam.id, awayTeam.id, season) }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -66,7 +66,7 @@ fun HeadToHeadScreen(
         uiState = uiState,
         onRefreshClick = { viewModel.refresh() },
         onFixtureClick = {
-            //navigator.navigate(FixtureDetailsRouteDestination(it.id))
+            navigator.openFixtureDetails(it.id)
         }
     )
 }

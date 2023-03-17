@@ -25,8 +25,9 @@ import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import coil.size.Size
-import com.example.fixturedetails.R
+import com.example.leaguedetails.R
 import com.example.leaguedetails.model.LeagueDetailsUiState
+import com.example.leaguedetails.navigation.LeagueDetailsNavigator
 import com.example.leaguedetails.viewmodel.LeagueDetailsViewModel
 import com.example.model.fixture.FixtureItemWrapper
 import com.example.model.league.League
@@ -36,7 +37,7 @@ import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarConfig
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.annotation.Destination
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 import java.time.LocalDate
@@ -47,11 +48,11 @@ import java.time.LocalDate
 
 private const val SETUP_LEAGUE_DETAILS_KEY = "SETUP_LEAGUE_DETAILS_KEY"
 
-//@Destination
+@Destination
 @Composable
 fun LeagueDetailsRoute(
     league: League,
-    navigator: DestinationsNavigator,
+    navigator: LeagueDetailsNavigator,
     viewModel: LeagueDetailsViewModel = getViewModel { parametersOf(league) }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -63,14 +64,10 @@ fun LeagueDetailsRoute(
         navigator = navigator,
         context = context,
         onRefreshClick = { viewModel.refresh() },
-        onFixtureClick = {
-            //navigator.navigate(FixtureDetailsRouteDestination(it.fixtureItem.id))
-        },
+        onFixtureClick = { navigator.openFixtureDetails(it.fixtureItem.id) },
         onFixtureFavoriteClick = { viewModel.addFixtureToFavorite(it) },
         onDateClick = { viewModel.changeDate(it) },
-        onStandingsClick = {
-            //navigator.navigate(StandingsDetailsRouteDestination(league))
-        }
+        onStandingsClick = { navigator.openStandingsDetails(league) }
     )
 }
 
@@ -79,7 +76,7 @@ fun LeagueDetailsRoute(
 fun LeagueDetailsScreen(
     uiState: LeagueDetailsUiState,
     league: League,
-    navigator: DestinationsNavigator,
+    navigator: LeagueDetailsNavigator,
     context: Context,
     onRefreshClick: () -> Unit,
     onFixtureClick: (FixtureItemWrapper) -> Unit,
@@ -232,7 +229,7 @@ fun StandingsRow(onStandingClick: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun TopBar(navigator: DestinationsNavigator, league: League) {
+private fun TopBar(navigator: LeagueDetailsNavigator, league: League) {
     CenterAppTopBar(
         modifier = Modifier
             .height(58.dp)
@@ -242,7 +239,7 @@ private fun TopBar(navigator: DestinationsNavigator, league: League) {
                 modifier = Modifier
                     .padding(start = 12.dp)
                     .size(24.dp),
-                onClick = { navigator.popBackStack() }
+                onClick = { navigator.navigateUp() }
             ) {
                 Icon(
                     imageVector = Icons.Filled.ChevronLeft,

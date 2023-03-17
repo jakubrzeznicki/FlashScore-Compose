@@ -15,9 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.data.navigation.HomeBackStackType
+import com.example.data.navigation.WelcomeBackStackType
 import com.example.welcome.R
+import com.example.welcome.navigation.WelcomeNavigator
 import com.example.welcome.splash.viewmodel.SplashViewModel
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.getViewModel
 
@@ -26,11 +29,10 @@ import org.koin.androidx.compose.getViewModel
  */
 private const val SPLASH_TIMEOUT = 1500L
 
-//@RootNavGraph(start = true)
-//@Destination
+@Destination
 @Composable
 fun SplashScreen(
-    navigator: DestinationsNavigator,
+    navigator: WelcomeNavigator,
     viewModel: SplashViewModel = getViewModel()
 ) {
     Surface(
@@ -56,16 +58,8 @@ fun SplashScreen(
     LaunchedEffect(true) {
         delay(SPLASH_TIMEOUT)
         viewModel.onAppStart(
-            openHomeScreen = {
-//                navigator.navigate(HomeScreenRouteDestination()) {
-//                    popUpTo(SplashScreenDestination.route) { inclusive = true }
-//                }
-            },
-            openWelcomeScreen = {
-//                navigator.navigate(WelcomeRouteDestination()) {
-//                    popUpTo(SplashScreenDestination.route) { inclusive = true }
-//                }
-            }
+            openHomeScreen = { navigator.openHome(HomeBackStackType.Splash) },
+            openWelcomeScreen = { navigator.openWelcome(WelcomeBackStackType.Splash) }
         )
     }
 }

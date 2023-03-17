@@ -5,11 +5,16 @@ plugins {
 }
 
 android {
-    namespace = "com.example.fixturedetails"
+    namespace = "com.example.notifications"
 }
 
 apply {
     from("$rootDir/compose_module.gradle")
+}
+
+ksp {
+    arg("compose-destinations.mode", "destinations")
+    arg("compose-destinations.moduleName", "notifications")
 }
 
 dependencies {

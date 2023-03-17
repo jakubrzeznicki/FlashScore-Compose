@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.fixturedetails.R
+import com.example.fixturedetails.navigation.FixtureDetailsNavigator
 import com.example.fixturedetails.statistics.model.StatisticsUiState
 import com.example.fixturedetails.statistics.viewmodel.StatisticsViewModel
 import com.example.model.fixture.FixtureItemWrapper
@@ -29,7 +30,6 @@ import com.example.ui.composables.EmptyState
 import com.example.ui.composables.FixtureCard
 import com.example.ui.composables.FullScreenLoading
 import com.example.ui.composables.LoadingContent
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -45,7 +45,7 @@ fun StatisticsScreen(
     leagueId: Int,
     round: String,
     season: Int,
-    navigator: DestinationsNavigator,
+    navigator: FixtureDetailsNavigator,
     viewModel: StatisticsViewModel = getViewModel {
         parametersOf(
             fixtureId,
@@ -63,7 +63,7 @@ fun StatisticsScreen(
         context = context,
         onRefreshClick = { viewModel.refresh() },
         onFixtureClick = {
-            //navigator.navigate(FixtureDetailsRouteDestination(it.fixtureItem.id))
+            navigator.openFixtureDetails(it.fixtureItem.id)
         },
         onFavoriteClick = { viewModel.addFixtureToFavorite(it) }
     )

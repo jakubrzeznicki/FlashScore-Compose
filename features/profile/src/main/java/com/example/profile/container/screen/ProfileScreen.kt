@@ -38,6 +38,7 @@ import com.example.model.user.User
 import com.example.profile.container.model.ProfileUiState
 import com.example.profile.container.viewmodel.ProfileViewModel
 import com.example.profile.details.screen.ProfileDetailsScreen
+import com.example.profile.navigation.ProfileNavigator
 import com.example.profile.settings.screen.ProfileSettingsScreen
 import com.example.ui.composables.AppTopBar
 import com.example.ui.composables.CircularProgressBar
@@ -48,7 +49,7 @@ import com.example.ui.theme.FlashScoreTypography
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.permissions.*
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.annotation.Destination
 import org.koin.androidx.compose.getViewModel
 
 /**
@@ -57,10 +58,10 @@ import org.koin.androidx.compose.getViewModel
 private const val SETUP_PROFILE_KEY = "SETUP_PROFILE_KEY"
 private const val IMAGE_PATH = "image/*"
 
-//@Destination
+@Destination
 @Composable
 fun ProfileRoute(
-    navigator: DestinationsNavigator,
+    navigator: ProfileNavigator,
     viewModel: ProfileViewModel = getViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -80,7 +81,7 @@ fun ProfileRoute(
 private fun ProfileScreen(
     context: Context,
     uiState: ProfileUiState,
-    navigator: DestinationsNavigator,
+    navigator: ProfileNavigator,
     onPhotoUriPicked: (Uri) -> Unit
 ) {
     Scaffold(
@@ -124,7 +125,7 @@ private fun TopBar() {
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-private fun ProfileTabs(user: User, navigator: DestinationsNavigator) {
+private fun ProfileTabs(user: User, navigator: ProfileNavigator) {
     val tabs = listOf(
         TabItem.Profile.Details { ProfileDetailsScreen() },
         TabItem.Profile.Activity { },

@@ -12,6 +12,11 @@ apply {
     from("$rootDir/compose_module.gradle")
 }
 
+ksp {
+    arg("compose-destinations.mode", "destinations")
+    arg("compose-destinations.moduleName", "explore")
+}
+
 dependencies {
     implementation project(Modules.model)
     implementation project(Modules.common)

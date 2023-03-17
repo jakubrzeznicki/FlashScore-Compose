@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.explore.R
 import com.example.explore.model.ExploreUiState
+import com.example.explore.navigation.ExploreNavigator
 import com.example.explore.viewmodel.ExploreViewModel
 import com.example.model.fixture.FixtureItemWrapper
 import com.example.model.league.League
@@ -33,7 +34,7 @@ import com.example.ui.composables.chips.FilterChip
 import com.example.ui.theme.FlashScoreTypography
 import com.google.accompanist.flowlayout.FlowMainAxisAlignment
 import com.google.accompanist.flowlayout.FlowRow
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.annotation.Destination
 import org.koin.androidx.compose.getViewModel
 
 /**
@@ -42,10 +43,10 @@ import org.koin.androidx.compose.getViewModel
 
 private const val SETUP_EXPLORE_KEY = "SETUP_EXPLORE_KEY"
 
-//@Destination
+@Destination
 @Composable
 fun ExploreRoute(
-    navigator: DestinationsNavigator,
+    navigator: ExploreNavigator,
     viewModel: ExploreViewModel = getViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -56,31 +57,19 @@ fun ExploreRoute(
         context = context,
         onRefreshClick = { viewModel.refresh() },
         onFixtureClick = {
-            //navigator.navigate(FixtureDetailsRouteDestination(it.fixtureItem.id))
+            navigator.openFixtureDetails(it.fixtureItem.id)
         },
         onFixtureFavoriteClick = { viewModel.addFixtureToFavorite(it) },
         onTeamClick = {
-//            navigator.navigate(
-//                TeamDetailsRouteDestination(
-//                    it.team,
-//                    it.team.leagueId,
-//                    it.team.season
-//                )
-//            )
+            navigator.openTeamDetails(it.team, it.team.leagueId, it.team.season)
         },
         onTeamFavoriteClick = { viewModel.addTeamToFavorite(it) },
         onPlayerClick = {
-//            navigator.navigate(
-//                PlayerDetailsRouteDestination(
-//                    it.player.id,
-//                    it.player.team,
-//                    it.player.season
-//                )
-//            )
+            navigator.openPlayerDetails(it.player.id, it.player.team, it.player.season)
         },
         onPlayerFavoriteClick = { viewModel.addPlayerToFavorite(it) },
         onLeagueClick = {
-            //navigator.navigate(LeagueDetailsRouteDestination(it))
+            navigator.openLeagueDetails(it)
         },
         onExploreQueryChanged = { viewModel.updateExploreQuery(it) },
         onExploreChipClick = { viewModel.changeExploreView(it as FilterChip.Explore) }

@@ -7,9 +7,9 @@ import com.example.common.utils.RepositoryResult
 import com.example.common.utils.isValidEmail
 import com.example.common.utils.isValidPassword
 import com.example.common.utils.passwordMatches
+import com.example.data.navigation.SignUpType
 import com.example.signin.R
 import com.example.signin.singup.model.SignUpError
-import com.example.signin.singup.model.SignUpType
 import com.example.ui.snackbar.SnackbarManager
 import com.example.ui.snackbar.SnackbarMessageType
 import kotlinx.coroutines.flow.*

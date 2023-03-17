@@ -3,7 +3,7 @@ package com.kuba.flashscorecompose.main.view
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.kuba.flashscorecompose.ui.theme.FlashScoreComposeTheme
+import com.example.ui.theme.FlashScoreComposeTheme
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
 import com.microsoft.appcenter.crashes.Crashes
