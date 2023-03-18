@@ -11,7 +11,7 @@ kotlin {
 
 android {
     compileSdk Config.compileSdk
-    buildToolsVersion Config.buildTools
+    //buildToolsVersion Config.buildTools
 
     defaultConfig {
         minSdk Config.minSdk

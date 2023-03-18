@@ -42,7 +42,6 @@ dependencies {
     implementation Lifecycle.lifecycleCompose
 
     //Navigation Compose
-    implementation NavigationCompose.core
     implementation NavigationCompose.animations
     ksp NavigationCompose.ksp
 

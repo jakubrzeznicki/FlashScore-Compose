@@ -76,30 +76,30 @@ class CommonNavGraphNavigator(
     }
 
     override fun openNotifications() {
-        navController.navigate(NotificationsRouteDestination())
+        navController.navigate(NotificationsRouteDestination() )
     }
 
     override fun openOnBoarding(onBoardingBackStackType: OnBoardingBackStackType) {
-        navController.navigate(OnBoardingRouteDestination())
+        navController.navigate(OnBoardingRouteDestination() )
     }
 
     override fun openHome(homeBackStackType: HomeBackStackType) {
-        navController.navigate(HomeScreenRouteDestination()) //Dorobić Back Stack w zalenzosci od typu
+        navController.navigate(HomeScreenRouteDestination) //Dorobić Back Stack w zalenzosci od typu
     }
 
     override fun openSignIn(signInBackStackType: SignInBackStackType) {
-        navController.navigate(SignInRouteDestination()) //Dorobić Back Stack w zalenzosci od typu
+        navController.navigate(SignInRouteDestination ) //Dorobić Back Stack w zalenzosci od typu
     }
 
     override fun openWelcome(welcomeBackStackType: WelcomeBackStackType) {
-        navController.navigate(WelcomeRouteDestination())  //Dorobić Back Stack w zalenzosci od typu
+        navController.navigate(WelcomeRouteDestination )  //Dorobić Back Stack w zalenzosci od typu
     }
 
     override fun openSignUp(signUpType: SignUpType) {
-        navController.navigate(SignUpRouteDestination(signUpType))
+        navController.navigate(SignUpRouteDestination(signUpType) )
     }
 
     override fun openOnBoarding() {
-        navController.navigate(OnBoardingRouteDestination())
+        navController.navigate(OnBoardingRouteDestination() )
     }
 }

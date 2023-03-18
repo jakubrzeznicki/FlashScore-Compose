@@ -22,7 +22,7 @@ kotlin {
 
 android {
     compileSdk Config.compileSdk
-    buildToolsVersion Config.buildTools
+    //buildToolsVersion Config.buildTools
 
     defaultConfig {
         applicationId "com.kuba.flashscorecompose"
@@ -132,7 +132,6 @@ dependencies {
     implementation Lifecycle.lifecycleCompose
 
     // Navigation Compose
-    implementation NavigationCompose.core
     implementation NavigationCompose.animations
     ksp NavigationCompose.ksp
 

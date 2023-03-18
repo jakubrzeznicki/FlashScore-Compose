@@ -2,8 +2,8 @@
  * Created by jrzeznicki on 13/03/2023.
  */
 object AndroidX {
-    private const val coreKtxVersion = "1.7.0"
-    private const val appCompatVersion = "1.6.1"
+    private const val coreKtxVersion = "1.9.0"
+    private const val appCompatVersion = "1.6.0"
     private const val materialVersion = "1.8.0"
     private const val dataStoreVersion = "1.0.0"
     private const val desugarVersion = "1.2.2"

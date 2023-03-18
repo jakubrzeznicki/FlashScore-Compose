@@ -2,7 +2,6 @@ package com.kuba.flashscorecompose.main.view
 
 import android.content.res.Resources
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -23,12 +22,13 @@ import com.example.ui.composables.FlashScoreSnackbar
 import com.example.ui.snackbar.SnackbarManager
 import com.example.ui.snackbar.SnackbarMessageType
 import com.example.ui.theme.GreenLight
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.kuba.flashscorecompose.navigation.NavGraphs
+import com.kuba.flashscorecompose.navigation.NavGraphs.AppNavigation
 import com.kuba.flashscorecompose.navigation.NavGraphs.print
 import com.kuba.flashscorecompose.ui.component.BottomNavigationBar
 import com.kuba.flashscorecompose.ui.component.NavigationScaffold
-import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
 import com.ramcosta.composedestinations.spec.NavGraphSpec
 import com.ramcosta.composedestinations.spec.NavHostEngine
@@ -41,6 +41,7 @@ import org.koin.androidx.compose.inject
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun FlashScoreApp() {
+    val navController = rememberAnimatedNavController()
     val snackbarManager: SnackbarManager by inject()
     val appState = rememberAppState(snackbarManager = snackbarManager)
     NavigationScaffold(
@@ -71,14 +72,14 @@ fun FlashScoreApp() {
             }
         }
     ) {
-       // NavGraphs.AppNavigation(appState = appState)
-        DestinationsNavHost(
-            engine = appState.engine,
-            navController = appState.navController,
-            navGraph = NavGraphs.root,
-            modifier = Modifier.padding(it),
-            startRoute = NavGraphs.root.startRoute
-        )
+        AppNavigation(navController = navController)
+//        DestinationsNavHost(
+//            engine = appState.engine,
+//            navController = appState.navController,
+//            navGraph = NavGraphs.root,
+//            modifier = Modifier.padding(it),
+//            startRoute = NavGraphs.root.startRoute
+//        )
     }
 }
 
@@ -86,7 +87,7 @@ fun FlashScoreApp() {
 @Composable
 fun rememberAppState(
     engine: NavHostEngine = rememberAnimatedNavHostEngine(),
-    navController: NavHostController = engine.rememberNavController(),
+    navController: NavHostController = rememberAnimatedNavController(),
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     snackbarMessageType: MutableState<SnackbarMessageType> = remember {
         mutableStateOf(SnackbarMessageType.Error)
@@ -123,20 +124,17 @@ fun resources(): Resources {
 @Stable
 @Composable
 private fun NavController.currentScreenAsState(): State<NavGraphSpec> {
-    val selectedItem = remember { mutableStateOf(NavGraphs.welcome) }
-
+    val selectedItem = remember { mutableStateOf(NavGraphs.home) }
     DisposableEffect(this) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
             backQueue.print()
             selectedItem.value = destination.navGraph()
         }
         addOnDestinationChangedListener(listener)
-
         onDispose {
             removeOnDestinationChangedListener(listener)
         }
     }
-
     return selectedItem
 }
 

@@ -14,7 +14,7 @@ apply {
 
 ksp {
     arg("compose-destinations.mode", "destinations")
-    arg("compose-destinations.moduleName", "welsome")
+    arg("compose-destinations.moduleName", "welcome")
 }
 
 dependencies {
@@ -43,7 +43,6 @@ dependencies {
     implementation Lifecycle.lifecycleCompose
 
     //Navigation Compose
-    implementation NavigationCompose.core
     implementation NavigationCompose.animations
     ksp NavigationCompose.ksp
 

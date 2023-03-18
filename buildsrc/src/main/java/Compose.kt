@@ -9,7 +9,7 @@ object Compose {
     private const val materialIconsVersion = "1.3.1"
     const val material3 = "androidx.compose.material3:material3:$material3Version"
     const val material3WindowSize =
-        "androidx.compose.material3:material3-window-size-class:$material3Version"
+        "androidx.compose.material3:material3-window-size-class:1.0.1"
     const val toolingPreview = "androidx.compose.ui:ui-tooling-preview:$composeVersion"
     const val ui = "androidx.compose.ui:ui:$composeVersion"
     const val foundation = "androidx.compose.foundation:foundation:$materialIconsVersion"

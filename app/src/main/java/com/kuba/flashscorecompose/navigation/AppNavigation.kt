@@ -1,9 +1,13 @@
 package com.kuba.flashscorecompose.navigation
 
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph
+import androidx.navigation.NavHostController
 import com.example.explore.screen.destinations.ExploreRouteDestination
 import com.example.fixturedetails.container.screen.destinations.FixtureDetailsRouteDestination
 import com.example.home.screen.destinations.HomeScreenRouteDestination
@@ -19,12 +23,13 @@ import com.example.standingsdetails.screen.destinations.StandingsDetailsRouteDes
 import com.example.teamdetails.container.destinations.TeamDetailsRouteDestination
 import com.example.welcome.destinations.SplashScreenDestination
 import com.example.welcome.destinations.WelcomeRouteDestination
-import com.kuba.flashscorecompose.main.view.FlashScoreAppState
+import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.kuba.flashscorecompose.main.view.navGraph
 import com.ramcosta.composedestinations.DestinationsNavHost
-import com.ramcosta.composedestinations.dynamic.routedIn
+import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
+import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
 import com.ramcosta.composedestinations.navigation.dependency
-import com.ramcosta.composedestinations.scope.DestinationScope
+import com.ramcosta.composedestinations.scope.DestinationScopeWithNoDependencies
 import com.ramcosta.composedestinations.spec.DestinationSpec
 import com.ramcosta.composedestinations.spec.NavGraphSpec
 import com.ramcosta.composedestinations.spec.Route
@@ -47,6 +52,7 @@ object NavGraphs {
     private const val STANDINGS_DETAILS = "standingsdetails"
     private const val TEAM_DETAILS = "teamdetails"
     private const val WELCOME = "welcome"
+    private const val SPLASH = "splash"
     val explore = object : NavGraphSpec {
         override val destinationsByRoute = listOf<DestinationSpec<*>>(
             ExploreRouteDestination,
@@ -54,149 +60,158 @@ object NavGraphs {
             TeamDetailsRouteDestination,
             PlayerDetailsRouteDestination,
             LeagueDetailsRouteDestination
-        ).routedIn(this)
-            .associateBy { it.route }
+        ).associateBy { it.route }
         override val route: String = EXPLORE
-        override val startRoute: Route = ExploreRouteDestination routedIn this
+        override val startRoute = ExploreRouteDestination
     }
-    val fixtureDetails = object : NavGraphSpec {
-        override val destinationsByRoute = listOf<DestinationSpec<*>>(
-            FixtureDetailsRouteDestination,
-            TeamDetailsRouteDestination,
-            PlayerDetailsRouteDestination
-        ).routedIn(this)
-            .associateBy { it.route }
-        override val route: String = FIXTURE_DETAILS
-        override val startRoute: Route = FixtureDetailsRouteDestination routedIn this
-    }
+
+    //    val fixtureDetails = object : NavGraphSpec {
+//        override val destinationsByRoute = listOf<DestinationSpec<*>>(
+//            FixtureDetailsRouteDestination,
+//            TeamDetailsRouteDestination,
+//            PlayerDetailsRouteDestination
+//        ).routedIn(this)
+//            .associateBy { it.route }
+//        override val route: String = FIXTURE_DETAILS
+//        override val startRoute: Route = FixtureDetailsRouteDestination routedIn this
+//    }
     val home = object : NavGraphSpec {
         override val destinationsByRoute = listOf<DestinationSpec<*>>(
             HomeScreenRouteDestination,
-            FixtureDetailsRouteDestination,
-            LeagueDetailsRouteDestination,
+            //FixtureDetailsRouteDestination,
+            // LeagueDetailsRouteDestination,
             NotificationsRouteDestination
-        ).routedIn(this)
-            .associateBy { it.route }
+        ).associateBy { it.route }
         override val route: String = HOME
-        override val startRoute: Route = HomeScreenRouteDestination routedIn this
+        override val startRoute = HomeScreenRouteDestination
     }
-    val leagueDetails = object : NavGraphSpec {
-        override val destinationsByRoute = listOf<DestinationSpec<*>>(
-            LeagueDetailsRouteDestination,
-            FixtureDetailsRouteDestination,
-            StandingsDetailsRouteDestination
-        ).routedIn(this)
-            .associateBy { it.route }
-        override val route: String = LEAGUE_DETAILS
-        override val startRoute: Route = LeagueDetailsRouteDestination routedIn this
-    }
-    val notifications = object : NavGraphSpec {
-        override val destinationsByRoute = listOf<DestinationSpec<*>>(
-            NotificationsRouteDestination
-        ).routedIn(this)
-            .associateBy { it.route }
-        override val route: String = NOTIFICATIONS
-        override val startRoute: Route = NotificationsRouteDestination routedIn this
-    }
+
+    //    val leagueDetails = object : NavGraphSpec {
+//        override val destinationsByRoute = listOf<DestinationSpec<*>>(
+//            LeagueDetailsRouteDestination,
+//            FixtureDetailsRouteDestination,
+//            StandingsDetailsRouteDestination
+//        ).routedIn(this)
+//            .associateBy { it.route }
+//        override val route: String = LEAGUE_DETAILS
+//        override val startRoute: Route = LeagueDetailsRouteDestination routedIn this
+//    }
+//    val notifications = object : NavGraphSpec {
+//        override val destinationsByRoute = listOf<DestinationSpec<*>>(
+//            NotificationsRouteDestination
+//        ).routedIn(this)
+//            .associateBy { it.route }
+//        override val route: String = NOTIFICATIONS
+//        override val startRoute: Route = NotificationsRouteDestination routedIn this
+//    }
     val onBoarding = object : NavGraphSpec {
         override val destinationsByRoute = listOf<DestinationSpec<*>>(
             OnBoardingRouteDestination,
             HomeScreenRouteDestination
-        ).routedIn(this)
-            .associateBy { it.route }
+        ).associateBy { it.route }
         override val route: String = ON_BOARDING
-        override val startRoute: Route = OnBoardingRouteDestination routedIn this
+        override val startRoute = OnBoardingRouteDestination
     }
-    val playerDetails = object : NavGraphSpec {
-        override val destinationsByRoute = listOf<DestinationSpec<*>>(
-            PlayerDetailsRouteDestination
-        ).routedIn(this)
-            .associateBy { it.route }
-        override val route: String = PLAYER_DETAILS
-        override val startRoute: Route = PlayerDetailsRouteDestination routedIn this
-    }
+
+    //    val playerDetails = object : NavGraphSpec {
+//        override val destinationsByRoute = listOf<DestinationSpec<*>>(
+//            PlayerDetailsRouteDestination
+//        ).routedIn(this)
+//            .associateBy { it.route }
+//        override val route: String = PLAYER_DETAILS
+//        override val startRoute: Route = PlayerDetailsRouteDestination routedIn this
+//    }
     val profile = object : NavGraphSpec {
         override val destinationsByRoute = listOf<DestinationSpec<*>>(
             ProfileRouteDestination,
             SignInRouteDestination,
             SignUpRouteDestination,
             WelcomeRouteDestination
-        ).routedIn(this)
-            .associateBy { it.route }
+        ).associateBy { it.route }
         override val route: String = PROFILE
-        override val startRoute: Route = ProfileRouteDestination routedIn this
+        override val startRoute = ProfileRouteDestination
     }
-    val signIn = object : NavGraphSpec {
-        override val destinationsByRoute = listOf<DestinationSpec<*>>(
-            SignInRouteDestination,
-            OnBoardingRouteDestination,
-            HomeScreenRouteDestination,
-            WelcomeRouteDestination
-        ).routedIn(this)
-            .associateBy { it.route }
-        override val route: String = SIGN_IN
-        override val startRoute: Route = SignInRouteDestination routedIn this
-    }
+
+    //    val signIn = object : NavGraphSpec {
+//        override val destinationsByRoute = listOf<DestinationSpec<*>>(
+//            SignInRouteDestination,
+//            OnBoardingRouteDestination,
+//            HomeScreenRouteDestination,
+//            WelcomeRouteDestination
+//        ).routedIn(this)
+//            .associateBy { it.route }
+//        override val route: String = SIGN_IN
+//        override val startRoute: Route = SignInRouteDestination routedIn this
+//    }
     val standings = object : NavGraphSpec {
         override val destinationsByRoute = listOf<DestinationSpec<*>>(
             StandingsRouteDestination,
             StandingsDetailsRouteDestination,
             LeagueDetailsRouteDestination
-        ).routedIn(this)
-            .associateBy { it.route }
+        ).associateBy { it.route }
         override val route: String = STANDINGS
-        override val startRoute: Route = StandingsRouteDestination routedIn this
+        override val startRoute: Route = StandingsRouteDestination
     }
-    val standingsDetails = object : NavGraphSpec {
-        override val destinationsByRoute = listOf<DestinationSpec<*>>(
-            StandingsDetailsRouteDestination,
-            TeamDetailsRouteDestination,
-            LeagueDetailsRouteDestination
-        ).routedIn(this)
-            .associateBy { it.route }
-        override val route: String = STANDINGS_DETAILS
-        override val startRoute: Route = StandingsDetailsRouteDestination routedIn this
-    }
-    val teamDetails = object : NavGraphSpec {
-        override val destinationsByRoute = listOf<DestinationSpec<*>>(
-            TeamDetailsRouteDestination,
-            PlayerDetailsRouteDestination,
-            FixtureDetailsRouteDestination
-        ).routedIn(this)
-            .associateBy { it.route }
-        override val route: String = TEAM_DETAILS
-        override val startRoute: Route = TeamDetailsRouteDestination routedIn this
-    }
+
+    //    val standingsDetails = object : NavGraphSpec {
+//        override val destinationsByRoute = listOf<DestinationSpec<*>>(
+//            StandingsDetailsRouteDestination,
+//            TeamDetailsRouteDestination,
+//            LeagueDetailsRouteDestination
+//        ).routedIn(this)
+//            .associateBy { it.route }
+//        override val route: String = STANDINGS_DETAILS
+//        override val startRoute: Route = StandingsDetailsRouteDestination routedIn this
+//    }
+//    val teamDetails = object : NavGraphSpec {
+//        override val destinationsByRoute = listOf<DestinationSpec<*>>(
+//            TeamDetailsRouteDestination,
+//            PlayerDetailsRouteDestination,
+//            FixtureDetailsRouteDestination
+//        ).routedIn(this)
+//            .associateBy { it.route }
+//        override val route: String = TEAM_DETAILS
+//        override val startRoute: Route = TeamDetailsRouteDestination routedIn this
+//    }
     val welcome = object : NavGraphSpec {
         override val destinationsByRoute = listOf<DestinationSpec<*>>(
             WelcomeRouteDestination,
-            HomeScreenRouteDestination,
+            //HomeScreenRouteDestination,
             SignInRouteDestination,
             SignUpRouteDestination,
             OnBoardingRouteDestination,
-        ).routedIn(this)
-            .associateBy { it.route }
+        ).associateBy { it.route }
         override val route: String = WELCOME
-        override val startRoute: Route = WelcomeRouteDestination routedIn this
+        override val startRoute = WelcomeRouteDestination
+    }
+    val splash = object : NavGraphSpec {
+        override val destinationsByRoute = listOf<DestinationSpec<*>>(
+            SplashScreenDestination,
+            WelcomeRouteDestination,
+            HomeScreenRouteDestination
+        ).associateBy { it.route }
+        override val route: String = SPLASH
+        override val startRoute = SplashScreenDestination
     }
     val root = object : NavGraphSpec {
         override val destinationsByRoute = emptyMap<String, DestinationSpec<*>>()
         override val route: String = ROOT
-        override val startRoute: Route = SplashScreenDestination routedIn this
+        override val startRoute = splash
         override val nestedNavGraphs: List<NavGraphSpec> = listOf(
-            explore,
+            splash,
+            welcome,
+            //onBoarding,
+            //signIn,
             home,
-            fixtureDetails,
-            leagueDetails,
-            notifications,
-            onBoarding,
-            playerDetails,
+            explore,
+//            fixtureDetails,
+//            leagueDetails,
+//            notifications,
+//            playerDetails,
             profile,
-            signIn,
-            standingsDetails,
+            //standingsDetails,
             standings,
-            teamDetails,
-            welcome
+            //teamDetails,
         )
     }
 
@@ -207,27 +222,78 @@ object NavGraphs {
         println("$prefix = $stack")
     }
 
-    fun DestinationScope<*>.currentNavigator(): CommonNavGraphNavigator{
+    fun DestinationScopeWithNoDependencies<*>.currentNavigator(navController: NavHostController): CommonNavGraphNavigator {
         return CommonNavGraphNavigator(
             navBackStackEntry.destination.navGraph(),
             navController
         )
     }
 
+    @OptIn(ExperimentalMaterialNavigationApi::class)
     @ExperimentalAnimationApi
     @Composable
     internal fun AppNavigation(
         modifier: Modifier = Modifier,
-        appState: FlashScoreAppState
+        navController: NavHostController
     ) {
         DestinationsNavHost(
-            engine = appState.engine,
-            navController = appState.navController,
-            navGraph = NavGraphs.root,
+            engine = rememberAnimatedNavHostEngine(
+                rootDefaultAnimations = RootNavGraphDefaultAnimations(
+                    enterTransition = { defaultTiviEnterTransition(initialState, targetState) },
+                    exitTransition = { defaultTiviExitTransition(initialState, targetState) },
+                    popEnterTransition = { defaultTiviPopEnterTransition() },
+                    popExitTransition = { defaultTiviPopExitTransition() },
+                )
+            ),
+            navController = navController,
+            navGraph = root,
             modifier = modifier,
             dependenciesContainerBuilder = {
-                dependency(currentNavigator())
+                dependency(currentNavigator(navController = navController))
             }
         )
+    }
+
+    @ExperimentalAnimationApi
+    private fun AnimatedContentScope<*>.defaultTiviEnterTransition(
+        initial: NavBackStackEntry,
+        target: NavBackStackEntry,
+    ): EnterTransition {
+        val initialNavGraph = initial.destination.hostNavGraph
+        val targetNavGraph = target.destination.hostNavGraph
+        // If we're crossing nav graphs (bottom navigation graphs), we crossfade
+        if (initialNavGraph.id != targetNavGraph.id) {
+            return fadeIn()
+        }
+        // Otherwise we're in the same nav graph, we can imply a direction
+        return fadeIn() + slideIntoContainer(AnimatedContentScope.SlideDirection.Start)
+    }
+
+    @ExperimentalAnimationApi
+    private fun AnimatedContentScope<*>.defaultTiviExitTransition(
+        initial: NavBackStackEntry,
+        target: NavBackStackEntry,
+    ): ExitTransition {
+        val initialNavGraph = initial.destination.hostNavGraph
+        val targetNavGraph = target.destination.hostNavGraph
+        // If we're crossing nav graphs (bottom navigation graphs), we crossfade
+        if (initialNavGraph.id != targetNavGraph.id) {
+            return fadeOut()
+        }
+        // Otherwise we're in the same nav graph, we can imply a direction
+        return fadeOut() + slideOutOfContainer(AnimatedContentScope.SlideDirection.Start)
+    }
+
+    private val NavDestination.hostNavGraph: NavGraph
+        get() = hierarchy.first { it is NavGraph } as NavGraph
+
+    @ExperimentalAnimationApi
+    private fun AnimatedContentScope<*>.defaultTiviPopEnterTransition(): EnterTransition {
+        return fadeIn() + slideIntoContainer(AnimatedContentScope.SlideDirection.End)
+    }
+
+    @ExperimentalAnimationApi
+    private fun AnimatedContentScope<*>.defaultTiviPopExitTransition(): ExitTransition {
+        return fadeOut() + slideOutOfContainer(AnimatedContentScope.SlideDirection.End)
     }
 }
