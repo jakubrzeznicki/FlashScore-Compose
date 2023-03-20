@@ -112,8 +112,7 @@ private fun TeamDetailsTabs(
             TeamInformationsScreen(
                 team,
                 leagueId,
-                season,
-                navigator
+                season
             )
         },
         TabItem.TeamDetails.Players {
