@@ -16,6 +16,8 @@ import kotlinx.coroutines.launch
  */
 class LineupViewModel(
     private val fixtureId: Int,
+    private val leagueId: Int,
+    private val season: Int,
     private val lineupsRepository: LineupsDataSource,
     private val snackbarManager: SnackbarManager
 ) : ViewModel() {
@@ -45,7 +47,7 @@ class LineupViewModel(
                     it.copy(
                         startXIWithPosition = it.startXI
                             .map { player ->
-                                val names = player.name.split(" ")
+                                val names = player.name.split(SPACE)
                                 val newName = if (names.size >= 2) {
                                     "${names.first().first()}.${names.last()}"
                                 } else {
@@ -93,7 +95,7 @@ class LineupViewModel(
     private fun loadLineups() {
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            val result = lineupsRepository.loadLineups(fixtureId)
+            val result = lineupsRepository.loadLineups(fixtureId, leagueId, season)
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
@@ -110,5 +112,9 @@ class LineupViewModel(
                 }
             }
         }
+    }
+
+    private companion object {
+        const val SPACE = " "
     }
 }

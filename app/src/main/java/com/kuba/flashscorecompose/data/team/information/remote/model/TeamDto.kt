@@ -1,7 +1,6 @@
 package com.kuba.flashscorecompose.data.team.information.remote.model
 
 import com.google.gson.annotations.SerializedName
-import com.kuba.flashscorecompose.data.fixtures.fixture.remote.model.ColorsDto
 
 data class TeamDto(
     @SerializedName("id") val id: Int?,
@@ -11,6 +10,5 @@ data class TeamDto(
     @SerializedName("code") val code: String?,
     @SerializedName("country") val country: String?,
     @SerializedName("founded") val founded: Int?,
-    @SerializedName("national") val national: Boolean?,
-    @SerializedName("colors") val colors: ColorsDto?
+    @SerializedName("national") val national: Boolean?
 )

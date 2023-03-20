@@ -41,13 +41,6 @@ class FixtureLocal(private val roomStorage: RoomStorage) : FixtureLocalDataSourc
         return roomStorage.getDatabase().fixtureDao().observeFixturesByLeague(leagueId)
     }
 
-    override fun observeXLastFixtures(
-        count: Int,
-        countryNames: List<String>
-    ): Flow<List<FixtureEntity>> {
-        return roomStorage.getDatabase().fixtureDao().observeXLastFixtures(count, countryNames)
-    }
-
     override fun observeFixturesLive(): Flow<List<FixtureEntity>> {
         return roomStorage.getDatabase().fixtureDao().observeFixturesLive()
     }
@@ -56,15 +49,7 @@ class FixtureLocal(private val roomStorage: RoomStorage) : FixtureLocalDataSourc
         return roomStorage.getDatabase().fixtureDao().observeFavoriteFixtures(ids)
     }
 
-    override suspend fun getFixture(fixtureId: Int): FixtureEntity? {
-        return roomStorage.getDatabase().fixtureDao().getFixture(fixtureId)
-    }
-
-    override suspend fun getFixturesByCountry(countryNames: List<String>): List<FixtureEntity> {
-        return roomStorage.getDatabase().fixtureDao().getFixturesByCountry(countryNames)
-    }
-
-    override fun saveFixtures(fixtures: List<FixtureEntity>) {
+    override suspend fun saveFixtures(fixtures: List<FixtureEntity>) {
         roomStorage.getDatabase().fixtureDao().saveFixtures(fixtures = fixtures)
     }
 
@@ -72,19 +57,11 @@ class FixtureLocal(private val roomStorage: RoomStorage) : FixtureLocalDataSourc
         roomStorage.getDatabase().venueDao().saveVenue(venues)
     }
 
-    override fun saveLeagues(leagues: List<LeagueEntity>) {
+    override suspend fun saveLeagues(leagues: List<LeagueEntity>) {
         roomStorage.getDatabase().leagueDao().saveLeagues(leagues)
     }
 
     override suspend fun saveTeams(teams: List<TeamEntity>) {
         roomStorage.getDatabase().teamDao().saveTeams(teams)
-    }
-
-    override fun deleteFixturesByRound(leagueId: Int, season: Int, round: String) {
-        roomStorage.getDatabase().fixtureDao().deleteByRound(leagueId, season, round)
-    }
-
-    override fun deleteFixturesByH2H(h2h: String) {
-        roomStorage.getDatabase().fixtureDao().deleteByH2H(h2h)
     }
 }

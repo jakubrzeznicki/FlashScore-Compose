@@ -5,7 +5,6 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.kuba.flashscorecompose.account.service.DefaultLogService
 import com.kuba.flashscorecompose.account.service.LogService
-import com.kuba.flashscorecompose.countries.viewmodel.CountriesViewModel
 import com.kuba.flashscorecompose.data.LocalRoomStorage
 import com.kuba.flashscorecompose.data.RoomStorage
 import com.kuba.flashscorecompose.data.authentication.AuthenticationDataSource
@@ -14,10 +13,6 @@ import com.kuba.flashscorecompose.data.country.CountryDataSource
 import com.kuba.flashscorecompose.data.country.CountryRepository
 import com.kuba.flashscorecompose.data.country.local.CountryLocal
 import com.kuba.flashscorecompose.data.country.remote.CountryRemote
-import com.kuba.flashscorecompose.data.fixtures.currentround.CurrentRoundDataSource
-import com.kuba.flashscorecompose.data.fixtures.currentround.CurrentRoundRepository
-import com.kuba.flashscorecompose.data.fixtures.currentround.local.CurrentRoundLocal
-import com.kuba.flashscorecompose.data.fixtures.currentround.remote.CurrentRoundRemote
 import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesDataSource
 import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesRepository
 import com.kuba.flashscorecompose.data.fixtures.fixture.local.FixtureLocal
@@ -34,7 +29,6 @@ import com.kuba.flashscorecompose.data.league.LeagueDataSource
 import com.kuba.flashscorecompose.data.league.LeagueRepository
 import com.kuba.flashscorecompose.data.league.local.LeagueLocal
 import com.kuba.flashscorecompose.data.league.model.League
-import com.kuba.flashscorecompose.data.league.remote.LeagueRemote
 import com.kuba.flashscorecompose.data.players.PlayersDataSource
 import com.kuba.flashscorecompose.data.players.PlayersRepository
 import com.kuba.flashscorecompose.data.players.local.PlayersLocal
@@ -62,7 +56,6 @@ import com.kuba.flashscorecompose.fixturedetails.lineup.viewmodel.LineupViewMode
 import com.kuba.flashscorecompose.fixturedetails.statistics.viewmodel.StatisticsViewModel
 import com.kuba.flashscorecompose.home.viewmodel.HomeViewModel
 import com.kuba.flashscorecompose.leaguedetails.viewmodel.LeagueDetailsViewModel
-import com.kuba.flashscorecompose.leagues.viewmodel.LeaguesViewModel
 import com.kuba.flashscorecompose.network.uuidsource.UuidData
 import com.kuba.flashscorecompose.network.uuidsource.UuidSource
 import com.kuba.flashscorecompose.onboarding.viewmodel.OnBoardingViewModel
@@ -94,12 +87,18 @@ class KoinModules {
 
     private val viewModelsModule = module {
         viewModel { HomeViewModel(get(), get(), get(), get(), get()) }
-        viewModel { CountriesViewModel(get()) }
-        viewModel { (countryCode: String) -> LeaguesViewModel(countryCode, get(), get()) }
         viewModel { (fixtureId: Int, leagueId: Int, round: String, season: Int) ->
             StatisticsViewModel(fixtureId, leagueId, round, season, get(), get(), get(), get())
         }
-        viewModel { (fixtureId: Int) -> LineupViewModel(fixtureId, get(), get()) }
+        viewModel { (fixtureId: Int, leagueId: Int, season: Int) ->
+            LineupViewModel(
+                fixtureId,
+                leagueId,
+                season,
+                get(),
+                get()
+            )
+        }
         viewModel { (homeTeamId: Int, awayTeamId: Int, season: Int) ->
             HeadToHeadViewModel(
                 homeTeamId,
@@ -147,6 +146,7 @@ class KoinModules {
                 team,
                 season,
                 get(),
+                get(),
                 get()
             )
         }
@@ -154,7 +154,7 @@ class KoinModules {
         viewModel { SignInViewModel(get(), get(), get(), get()) }
         viewModel { (signUpType: SignUpType) -> SignUpViewModel(signUpType, get(), get()) }
         viewModel { WelcomeViewModel(get(), get(), get(), get()) }
-        viewModel { SplashViewModel(get()) }
+        viewModel { SplashViewModel(get(), get()) }
         viewModel { OnBoardingViewModel(get(), get(), get(), get()) }
         viewModel { ProfileViewModel(get(), get(), get(), get()) }
         viewModel { ProfileDetailsViewModel(get(), get(), get(), get()) }
@@ -183,8 +183,7 @@ class KoinModules {
         }
         single<LeagueDataSource> {
             val local = LeagueLocal(get())
-            val remote = LeagueRemote(get())
-            LeagueRepository(local, remote)
+            LeagueRepository(local)
         }
         single<FixturesDataSource> {
             val local = FixtureLocal(get())
@@ -200,11 +199,6 @@ class KoinModules {
             val local = StatisticsLocal(get())
             val remote = StatisticsRemote(get())
             StatisticsRepository(local, remote)
-        }
-        single<CurrentRoundDataSource> {
-            val local = CurrentRoundLocal(get())
-            val remote = CurrentRoundRemote(get())
-            CurrentRoundRepository(local, remote)
         }
         single<StandingsDataSource> {
             val local = StandingsLocal(get())
@@ -227,7 +221,7 @@ class KoinModules {
             AuthenticationRepository(auth, storage, get())
         }
         single<UserDataSource> {
-            val local = UserLocal(get(), get())
+            val local = UserLocal(get())
             UserRepository(local)
         }
         single<UserPreferencesDataSource> {

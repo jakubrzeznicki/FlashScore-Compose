@@ -1,8 +1,8 @@
 package com.kuba.flashscorecompose.data.league.mapper
 
+import com.kuba.flashscorecompose.data.fixtures.fixture.remote.model.LeagueDto
 import com.kuba.flashscorecompose.data.league.local.model.LeagueEntity
 import com.kuba.flashscorecompose.data.league.model.League
-import com.kuba.flashscorecompose.data.league.remote.model.LeagueDto
 
 /**
  * Created by jrzeznicki on 21/12/2022.

@@ -1,7 +1,6 @@
 package com.kuba.flashscorecompose.data.team.information.model
 
 import android.os.Parcelable
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.Colors
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -14,11 +13,10 @@ data class Team(
     val country: String,
     val founded: Int,
     val isNational: Boolean,
-    val colors: Colors,
     val leagueId: Int,
     val season: Int
 ) : Parcelable {
     companion object {
-        val EMPTY_TEAM = Team(0, "", "", false, "", "", 0, false, Colors.EMPTY_COLORS, 0, 0)
+        val EMPTY_TEAM = Team(0, "", "", false, "", "", 0, false, 0, 0)
     }
 }

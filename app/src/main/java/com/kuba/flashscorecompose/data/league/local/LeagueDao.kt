@@ -15,21 +15,9 @@ interface LeagueDao {
     @Query("SELECT * FROM leagues")
     fun observeLeagues(): Flow<List<LeagueEntity>>
 
-    @Query("SELECT * FROM leagues WHERE countryCode = :countryCode")
-    fun observeLeagues(countryCode: String): Flow<List<LeagueEntity>>
-
-    @Query("SELECT * FROM leagues WHERE countryCode IN(:countryCodes)")
-    fun observeLeagues(countryCodes: List<String>): Flow<List<LeagueEntity>>
-
     @Query("SELECT * FROM leagues WHERE countryName IN(:countryNames)")
     suspend fun getLeagues(countryNames: List<String>): List<LeagueEntity>
 
-    @Query("SELECT * FROM leagues WHERE id = :id")
-    fun getLeagueById(id: Int): Flow<LeagueEntity?>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveLeagues(leagues: List<LeagueEntity>)
-
-    @Query("DELETE from leagues WHERE countryCode = :countryCode")
-    fun deleteLeagues(countryCode: String)
+    suspend fun saveLeagues(leagues: List<LeagueEntity>)
 }

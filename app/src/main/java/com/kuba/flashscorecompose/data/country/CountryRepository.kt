@@ -26,21 +26,13 @@ class CountryRepository(
             countryEntity.map { it.toCountry() }
         }
 
-    override fun observeCountries(): Flow<List<Country>> =
-        local.observeCountries().map { countryEntity ->
-            countryEntity.map { it.toCountry() }
-        }
-
-    override fun observeCountry(countryName: String): Flow<Country?> =
-        local.observeCountry(countryName).map { it?.toCountry() }
-
     override suspend fun getCountry(countryName: String): Country? =
         local.getCountry(countryName)?.toCountry()
 
     override suspend fun getCountries(): List<Country> =
         local.getCountries().map { it.toCountry() }
 
-    override fun saveCountries(countries: List<Country>) {
+    override suspend fun saveCountries(countries: List<Country>) {
         local.saveCountries(countries.map { it.toCountryEntity() })
     }
 
@@ -49,7 +41,6 @@ class CountryRepository(
         return try {
             val countries = result.body()?.countries?.map { it.toCountry() }
             withContext(Dispatchers.IO) {
-                local.deleteCountries()
                 saveCountries(countries = countries.orEmpty())
             }
             RepositoryResult.Success(countries)

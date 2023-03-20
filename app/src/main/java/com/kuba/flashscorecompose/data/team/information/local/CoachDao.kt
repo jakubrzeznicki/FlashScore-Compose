@@ -19,9 +19,6 @@ interface CoachDao {
     @Query("SELECT * FROM coach WHERE team_id = :teamId")
     fun observeCoachByTeam(teamId: Int): Flow<CoachEntity?>
 
-    @Query("SELECT * FROM coach WHERE team_id = :teamId")
-    suspend fun getCoachByTeam(teamId: Int): CoachEntity?
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertCoaches(coaches: List<CoachEntity>): List<Long>
 
@@ -49,7 +46,4 @@ interface CoachDao {
         val id: Long = insertCoach(coach)
         if (id == -1L) updateCoach(coach)
     }
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun deleteCoaches(coaches: List<CoachEntity>)
 }

@@ -17,7 +17,4 @@ interface LineupDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveLineups(lineups: List<LineupEntity>)
-
-    @Query("DELETE FROM lineup WHERE fixture_id = :fixtureId")
-    fun deleteLineups(fixtureId: Int)
 }

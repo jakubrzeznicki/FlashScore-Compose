@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.Flow
 interface UserLocalDataSource {
     fun observeUser(id: String): Flow<UserEntity>
     suspend fun getUserById(id: String): UserEntity?
-    fun getUserByEmail(email: String): Flow<UserEntity>
     suspend fun saveUser(user: UserEntity)
     suspend fun deleteUser(id: String)
 }

@@ -12,12 +12,6 @@ import kotlinx.coroutines.flow.Flow
  */
 @Dao
 interface UserPreferencesDao {
-//
-//    @Query("SELECT favorite_team_ids FROM user_preferences WHERE user_id = :id")
-//    suspend fun getFavoriteTeamIds(id: String): Flow<List<Int>>
-
-//    @Query("SELECT favorite_player_ids FROM user_preferences WHERE user_id = :id")
-//    suspend fun getFavoritePlayerIds(id: String): List<Int>?
 
     @Query("SELECT is_on_boarding_completed FROM user_preferences WHERE user_id = :id")
     suspend fun getIsOnBoardingCompleted(id: String): Boolean?

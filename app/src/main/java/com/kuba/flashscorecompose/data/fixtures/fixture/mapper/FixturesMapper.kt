@@ -1,6 +1,5 @@
 package com.kuba.flashscorecompose.data.fixtures.fixture.mapper
 
-import com.kuba.flashscorecompose.data.fixtures.currentround.local.model.CurrentRoundEntity
 import com.kuba.flashscorecompose.data.fixtures.fixture.local.model.*
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.*
 import com.kuba.flashscorecompose.data.league.mapper.toLeagueEntity
@@ -35,17 +34,6 @@ fun Goals.toGoalsEntity(): GoalsEntity {
     return GoalsEntity(home = home, away = away)
 }
 
-fun PlayerColor.toPlayerColorEntity(): PlayerColorEntity {
-    return PlayerColorEntity(border = border, number, primary)
-}
-
-fun Colors.toColorsEntity(): ColorsEntity {
-    return ColorsEntity(
-        goalkeeper = goalkeeper.toPlayerColorEntity(),
-        player = player.toPlayerColorEntity()
-    )
-}
-
 fun FixtureInfo.toFixtureInfoEntity(teamId: Int?): FixtureInfoEntity {
     return FixtureInfoEntity(
         date = date,
@@ -67,12 +55,6 @@ fun FixtureInfo.toFixtureInfoEntity(teamId: Int?): FixtureInfoEntity {
 fun FixtureItem.toFixtureEntity(): FixtureEntity {
     return FixtureEntity(
         id = id,
-        currentRound = CurrentRoundEntity(
-            0,
-            league.id,
-            league.season,
-            league.round
-        ),
         h2h = h2h,
         fixture = fixture.toFixtureInfoEntity(homeTeam.id),
         goals = goals.toGoalsEntity(),

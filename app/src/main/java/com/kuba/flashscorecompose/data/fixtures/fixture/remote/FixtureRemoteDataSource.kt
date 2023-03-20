@@ -21,7 +21,6 @@ interface FixtureRemoteDataSource {
         season: Int
     ): Response<FixtureDataDto>
 
-    suspend fun loadLastXFixtures(count: Int): Response<FixtureDataDto>
     suspend fun loadFixturesByTeam(teamId: Int, season: Int, count: Int): Response<FixtureDataDto>
     suspend fun loadFixturesByTeam(teamId: Int, season: Int): Response<FixtureDataDto>
     suspend fun loadFixturesLive(): Response<FixtureDataDto>

@@ -1,9 +1,10 @@
 package com.kuba.flashscorecompose.data.userpreferences.local.preferences
 
-import android.util.Log
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.*
-import kotlinx.coroutines.flow.Flow
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -13,38 +14,9 @@ import kotlinx.coroutines.flow.map
  */
 class DefaultUserDataStore(private val dataStore: DataStore<Preferences>) : UserDataStore {
 
-    override suspend fun getIsOnBoardingCompleted(): Boolean {
-        return dataStore.data
-            .catch {
-                emit(emptyPreferences())
-            }
-            .map { preferences ->
-                Log.d("TEST_LOG", "getIsOnBoardingCompleted  in datastore")
-                preferences[PreferencesKeys.IS_ON_BOARDING_COMPLETED] ?: false
-            }.first()
-    }
-
-    override suspend fun saveIsOnBoardingCompleted(isOnBoardingCompleted: Boolean) {
-        dataStore.edit { preferences ->
-            Log.d("TEST_LOG", "saveIsOnBoardingCompleted - $isOnBoardingCompleted in datastore")
-            preferences[PreferencesKeys.IS_ON_BOARDING_COMPLETED] = isOnBoardingCompleted
-        }
-    }
-
-    override suspend fun getIsKeepLogged(): Boolean {
-        return dataStore.data
-            .catch {
-                emit(emptyPreferences())
-            }
-            .map { preferences ->
-                preferences[PreferencesKeys.IS_KEEP_LOGGED] ?: false
-            }.first()
-    }
-
     override suspend fun saveCurrentUserId(userId: String, isKeepLogged: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.CURRENT_USER_ID] = userId
-            preferences[PreferencesKeys.IS_KEEP_LOGGED] = isKeepLogged
         }
     }
 
@@ -58,19 +30,7 @@ class DefaultUserDataStore(private val dataStore: DataStore<Preferences>) : User
             }.first()
     }
 
-    override fun observeCurrentUserId(): Flow<String> {
-        return dataStore.data
-            .catch {
-                emit(emptyPreferences())
-            }
-            .map { preferences ->
-                preferences[PreferencesKeys.CURRENT_USER_ID].orEmpty()
-            }
-    }
-
     private object PreferencesKeys {
-        val IS_ON_BOARDING_COMPLETED = booleanPreferencesKey("is_on_boarding_completed")
-        val IS_KEEP_LOGGED = booleanPreferencesKey("is_keep_logged")
         val CURRENT_USER_ID = stringPreferencesKey("current_user_id")
     }
 }

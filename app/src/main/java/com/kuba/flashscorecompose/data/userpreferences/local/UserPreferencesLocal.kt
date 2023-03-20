@@ -1,6 +1,5 @@
 package com.kuba.flashscorecompose.data.userpreferences.local
 
-import android.util.Log
 import com.kuba.flashscorecompose.data.RoomStorage
 import com.kuba.flashscorecompose.data.userpreferences.local.model.UserPreferencesEntity
 import com.kuba.flashscorecompose.data.userpreferences.local.preferences.UserDataStore
@@ -20,17 +19,6 @@ class UserPreferencesLocal(
             .getIsOnBoardingCompleted(currentUserId)
     }
 
-    override suspend fun saveIsOnBoardingCompleted(isOnBoardingCompleted: Boolean) {
-        val userPreferencesEntity = getUserPreferences()
-        val updateUserPreferencesEntity = userPreferencesEntity?.copy(
-            isOnBoardingCompleted = isOnBoardingCompleted
-        )
-        updateUserPreferencesEntity?.let {
-            roomStorage.getDatabase().userPreferencesDao()
-                .saveUserPreferences(it)
-        }
-    }
-
     override suspend fun saveCurrentUserId(userId: String, isKeepLogged: Boolean) {
         userDataStore.saveCurrentUserId(userId, isKeepLogged)
     }
@@ -39,15 +27,8 @@ class UserPreferencesLocal(
         return userDataStore.getCurrentUserId()
     }
 
-    override fun observeCurrentUserId(): Flow<String> {
-        return userDataStore.observeCurrentUserId()
-    }
-
     override suspend fun saveFavoriteTeamIds(teamIds: List<Int>) {
         val userPreferencesEntity = getUserPreferences()
-        teamIds.forEach {
-            Log.d("TEST_LOG", "saveFavoriteTeamIds local -- $it")
-        }
         val updateUserPreferencesEntity = userPreferencesEntity?.copy(
             favoriteTeamIds = teamIds
         )

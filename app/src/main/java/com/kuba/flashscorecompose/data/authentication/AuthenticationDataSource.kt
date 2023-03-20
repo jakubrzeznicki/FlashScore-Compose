@@ -3,8 +3,6 @@ package com.kuba.flashscorecompose.data.authentication
 import android.net.Uri
 import com.google.firebase.auth.FirebaseUser
 import com.kuba.flashscorecompose.utils.RepositoryResult
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Created by jrzeznicki on 07/02/2023.
@@ -32,5 +30,4 @@ interface AuthenticationDataSource {
     suspend fun uploadPhoto(photoUri: Uri?): RepositoryResult<Uri>
     suspend fun updateEmail(email: String): RepositoryResult<Boolean>
     suspend fun updatePassword(password: String): RepositoryResult<Boolean>
-    fun getAuthState(viewModelScope: CoroutineScope): StateFlow<Boolean>
 }

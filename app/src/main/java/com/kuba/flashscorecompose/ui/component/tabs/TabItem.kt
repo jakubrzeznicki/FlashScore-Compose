@@ -36,11 +36,11 @@ sealed class TabItem(var icon: ImageVector, var titleId: Int, var screen: Compos
             R.string.statistics,
             { StatisticsScreen(fixtureId, leagueId, round, season, navigator) })
 
-        class LineUp(fixtureId: Int, season: Int, navigator: DestinationsNavigator) :
+        class LineUp(fixtureId: Int, leagueId: Int, season: Int, navigator: DestinationsNavigator) :
             TabItem(
                 Icons.Default.Square,
                 R.string.lineups,
-                { LineupScreen(fixtureId, season, navigator) })
+                { LineupScreen(fixtureId, leagueId ,season, navigator) })
 
         class HeadToHead(
             homeTeam: Team,

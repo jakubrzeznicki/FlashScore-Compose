@@ -1,7 +1,10 @@
-package com.kuba.flashscorecompose.data.league.remote.model
+package com.kuba.flashscorecompose.data.fixtures.fixture.remote.model
 
 import com.google.gson.annotations.SerializedName
 
+/**
+ * Created by jrzeznicki on 20/02/2023.
+ */
 data class LeagueDto(
     @SerializedName("id") val id: Int?,
     @SerializedName("logo") val logo: String?,

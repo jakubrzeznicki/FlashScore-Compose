@@ -1,7 +1,6 @@
 package com.kuba.flashscorecompose.profile.container.viewmodel
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.R
@@ -33,14 +32,13 @@ class ProfileViewModel(
         )
 
     fun setup() {
-        Log.d("TEST_LOG", "currentUserId - ${authenticationRepository.currentUserId}")
-        Log.d("TEST_LOG", "hasUser - ${authenticationRepository.hasUser}")
         observeUser()
     }
 
     private fun observeUser() {
         viewModelScope.launch {
             val currentUserId = userPreferencesRepository.getCurrentUserId()
+            if (currentUserId.isEmpty()) authenticationRepository.signOut()
             userRepository.observeUser(currentUserId).collect { user ->
                 viewModelState.update { it.copy(user = user) }
             }

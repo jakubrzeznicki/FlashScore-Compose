@@ -15,8 +15,4 @@ class LineupLocal(private val roomStorage: RoomStorage) : LineupLocalDataSource 
     override suspend fun saveLineups(lineups: List<LineupEntity>) {
         roomStorage.getDatabase().lineupDao().saveLineups(lineups)
     }
-
-    override fun deleteLineups(fixtureId: Int) {
-        roomStorage.getDatabase().lineupDao().deleteLineups(fixtureId)
-    }
 }

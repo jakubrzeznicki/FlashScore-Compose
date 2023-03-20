@@ -20,15 +20,10 @@ interface FixtureLocalDataSource {
     fun observeFixturesByTeam(teamId: Int, season: Int): Flow<List<FixtureEntity>>
     fun observeFixturesByDate(date: String, countryNames: List<String>): Flow<List<FixtureEntity>>
     fun observeFixturesByLeague(leagueId: Int): Flow<List<FixtureEntity>>
-    fun observeXLastFixtures(count: Int, countryNames: List<String>): Flow<List<FixtureEntity>>
     fun observeFixturesLive(): Flow<List<FixtureEntity>>
     fun observeFavoriteFixtures(ids: List<Int>): Flow<List<FixtureEntity>>
-    suspend fun getFixture(fixtureId: Int): FixtureEntity?
-    suspend fun getFixturesByCountry(countryNames: List<String>): List<FixtureEntity>
-    fun saveFixtures(fixtures: List<FixtureEntity>)
+    suspend fun saveFixtures(fixtures: List<FixtureEntity>)
     suspend fun saveVenues(venues: List<VenueEntity>)
-    fun saveLeagues(leagues: List<LeagueEntity>)
+    suspend fun saveLeagues(leagues: List<LeagueEntity>)
     suspend fun saveTeams(teams: List<TeamEntity>)
-    fun deleteFixturesByRound(leagueId: Int, season: Int, round: String)
-    fun deleteFixturesByH2H(h2h: String)
 }

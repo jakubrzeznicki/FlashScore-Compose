@@ -3,11 +3,11 @@ package com.kuba.flashscorecompose.teamdetails.players.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.data.country.CountryDataSource
-import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.players.PlayersDataSource
 import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
 import com.kuba.flashscorecompose.teamdetails.players.model.PlayerWrapper
+import com.kuba.flashscorecompose.teamdetails.players.model.PlayerWrapper.Companion.toPlayerWrappers
 import com.kuba.flashscorecompose.teamdetails.players.model.PlayersError
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
@@ -46,28 +46,18 @@ class PlayersViewModel(
 
     private fun observePlayers() {
         viewModelScope.launch {
-            val countriesFlow = countryRepository.observeCountries()
             val currentUserId = userPreferencesRepository.getCurrentUserId()
             val userPreferencesFlow =
                 userPreferencesRepository.observeUserPreferences(currentUserId)
             val playersFlow = playersRepository.observePlayers(team.id, team.season)
             combine(
                 flow = playersFlow,
-                flow2 = countriesFlow,
-                flow3 = userPreferencesFlow
-            ) { players, countries, userPreferences ->
+                flow2 = userPreferencesFlow
+            ) { players, userPreferences ->
                 val favoritePlayerIds = userPreferences.favoritePlayerIds
-                val playerCountries = players.map {
-                    PlayerWrapper(
-                        player = it,
-                        country = countries.firstOrNull { country -> country.name == it.nationality }
-                            ?: Country.EMPTY_COUNTRY,
-                        isFavorite = favoritePlayerIds.contains(it.id)
-                    )
-                }
-                viewModelState.update {
-                    it.copy(playerWrappers = playerCountries)
-                }
+                val countries = countryRepository.getCountries()
+                val playerWrappers = players.toPlayerWrappers(countries, favoritePlayerIds)
+                viewModelState.update { it.copy(playerWrappers = playerWrappers) }
             }.collect()
         }
     }
@@ -103,7 +93,14 @@ class PlayersViewModel(
             } else {
                 favoritePlayerWrappers.add(playerWrapper.copy(isFavorite = true))
             }
-            userPreferencesRepository.saveFavoritePlayerIds(favoritePlayerWrappers.map { it.player.id })
+            val playerWrapperIds = viewModelState.value.playerWrappers.map { it.player.id }
+            val favoritePlayerIds =
+                userPreferencesRepository.getUserPreferences()?.favoritePlayerIds.orEmpty()
+            val othersFavoritePlayerIds =
+                favoritePlayerIds.filterNot { playerWrapperIds.contains(it) }
+            userPreferencesRepository.saveFavoritePlayerIds(
+                othersFavoritePlayerIds + favoritePlayerWrappers.map { it.player.id }
+            )
         }
     }
 }

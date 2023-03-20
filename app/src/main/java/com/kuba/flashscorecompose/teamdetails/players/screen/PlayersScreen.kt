@@ -46,7 +46,6 @@ fun PlayersScreen(
             navigator.navigate(
                 PlayerDetailsRouteDestination(
                     it.player.id,
-                    it.country.flag,
                     it.player.team,
                     it.player.season
                 )

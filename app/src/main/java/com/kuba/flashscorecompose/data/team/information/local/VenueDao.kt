@@ -18,9 +18,6 @@ interface VenueDao {
     @Query("SELECT * FROM venue")
     fun observeVenues(): Flow<List<VenueEntity>>
 
-    @Query("SELECT * FROM venue WHERE team_id = :teamId")
-    suspend fun getVenueByTeam(teamId: Int): VenueEntity?
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveVenue(venues: List<VenueEntity>)
 

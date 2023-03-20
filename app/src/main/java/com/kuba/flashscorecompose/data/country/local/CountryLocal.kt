@@ -13,14 +13,6 @@ class CountryLocal(private val roomStorage: RoomStorage) : CountryLocalDataSourc
         return roomStorage.getDatabase().countryDao().observeCountries(countryNames)
     }
 
-    override fun observeCountries(): Flow<List<CountryEntity>> {
-        return roomStorage.getDatabase().countryDao().observeCountries()
-    }
-
-    override fun observeCountry(countryName: String): Flow<CountryEntity?> {
-        return roomStorage.getDatabase().countryDao().observeCountry(countryName)
-    }
-
     override suspend fun getCountry(countryName: String): CountryEntity? {
         return roomStorage.getDatabase().countryDao().getCountry(countryName)
     }
@@ -29,11 +21,7 @@ class CountryLocal(private val roomStorage: RoomStorage) : CountryLocalDataSourc
         return roomStorage.getDatabase().countryDao().getCountries()
     }
 
-    override fun saveCountries(countries: List<CountryEntity>) {
+    override suspend fun saveCountries(countries: List<CountryEntity>) {
         roomStorage.getDatabase().countryDao().saveCountries(countries)
-    }
-
-    override fun deleteCountries() {
-        roomStorage.getDatabase().countryDao().deleteCountries()
     }
 }

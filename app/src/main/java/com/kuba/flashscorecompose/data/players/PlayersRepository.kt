@@ -70,7 +70,7 @@ class PlayersRepository(
         team: Team,
         season: Int
     ): RepositoryResult<List<Player>> {
-        val result = remote.loadPlayers(id, team.season)
+        val result = remote.loadPlayer(id, season)
         return try {
             val players = result.body()?.response?.map { playerWrapperDto ->
                 playerWrapperDto.player.toPlayer(team, season)

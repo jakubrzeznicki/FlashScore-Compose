@@ -10,5 +10,9 @@ import kotlinx.coroutines.flow.Flow
 interface LineupsDataSource {
     fun observeLineups(fixtureId: Int): Flow<List<Lineup>>
     suspend fun saveLineups(lineups: List<Lineup>)
-    suspend fun loadLineups(fixtureId: Int): RepositoryResult<List<Lineup>>
+    suspend fun loadLineups(
+        fixtureId: Int,
+        leagueId: Int,
+        season: Int
+    ): RepositoryResult<List<Lineup>>
 }

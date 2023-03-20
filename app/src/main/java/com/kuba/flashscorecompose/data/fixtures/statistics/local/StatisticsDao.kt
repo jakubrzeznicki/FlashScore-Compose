@@ -18,7 +18,4 @@ interface StatisticsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveStatistics(statistics: List<StatisticsEntity>)
-
-    @Query("DELETE FROM statistics WHERE fixture_id = :fixtureId")
-    fun deleteStatistics(fixtureId: Int)
 }

@@ -36,17 +36,6 @@ fun GoalsDto.toGoals(): Goals {
     return Goals(home = home ?: 0, away = away ?: 0)
 }
 
-fun PlayerColorDto.toPlayerColor(): PlayerColor {
-    return PlayerColor(border = border.orEmpty(), number.orEmpty(), primary.orEmpty())
-}
-
-fun ColorsDto.toColors(): Colors {
-    return Colors(
-        goalkeeper = goalkeeper?.toPlayerColor() ?: PlayerColor.EMPTY_PLAYER_COLOR,
-        player = player?.toPlayerColor() ?: PlayerColor.EMPTY_PLAYER_COLOR
-    )
-}
-
 fun FixtureInfoDto.toFixtureInfo(teamId: Int?): FixtureInfo {
     val dateTime = timestamp?.formatTimestampToLocalDateTime() ?: LocalDateTime.now()
     val formattedDate = dateTime.format(FixtureInfo.FORMATTED_DATE_PATTERN)
@@ -75,7 +64,7 @@ fun FixtureDto.toFixtureItem(
 ): FixtureItem {
     return FixtureItem(
         id = fixture?.id ?: 0,
-        season = season ?: league?.season ?: 0,
+        season = season ?: league?.season ?: 2022,
         round = round ?: league?.round.orEmpty(),
         h2h = h2h ?: "${teams?.home?.id ?: 0}-${teams?.away?.id ?: 0}",
         fixture = fixture?.toFixtureInfo(teams?.home?.id) ?: FixtureInfo.EMPTY_FIXTURE_INFO,
@@ -83,10 +72,14 @@ fun FixtureDto.toFixtureItem(
         league = league?.toLeague() ?: League.EMPTY_LEAGUE,
         score = score?.toScore() ?: Score.EMPTY_SCORE,
         homeTeam = teams?.home?.toTeam(
-            league?.id ?: 0, season ?: 0, league?.countryName.orEmpty()
+            leagueIdParam = league?.id ?: 0,
+            seasonParam = season ?: league?.season,
+            countryParam = league?.countryName.orEmpty()
         ) ?: Team.EMPTY_TEAM,
         awayTeam = teams?.away?.toTeam(
-            league?.id ?: 0, season ?: 0, league?.countryName.orEmpty()
+            leagueIdParam = league?.id ?: 0,
+            seasonParam = season ?: league?.season,
+            countryParam = league?.countryName.orEmpty()
         ) ?: Team.EMPTY_TEAM,
     )
 }

@@ -10,6 +10,7 @@ import com.kuba.flashscorecompose.profile.details.model.ProfileItem
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
+import com.kuba.flashscorecompose.utils.isValidEmail
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -95,6 +96,13 @@ class ProfileDetailsViewModel(
     private fun updateEmail(email: String) {
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
+            if (!email.isValidEmail()) {
+                snackbarManager.showMessage(R.string.email_error, SnackbarMessageType.Error)
+                viewModelState.update {
+                    it.copy(isLoading = false)
+                }
+                return@launch
+            }
             viewModelState.update {
                 when (val result = authenticationRepository.updateEmail(email = email)) {
                     is RepositoryResult.Success -> {

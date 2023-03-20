@@ -193,16 +193,6 @@ class AuthenticationRepository(
         }
     }
 
-    override fun getAuthState(viewModelScope: CoroutineScope) = callbackFlow {
-        val authStateListener = FirebaseAuth.AuthStateListener { auth ->
-            trySend(auth.currentUser == null)
-        }
-        firebaseAuth.addAuthStateListener(authStateListener)
-        awaitClose {
-            firebaseAuth.removeAuthStateListener(authStateListener)
-        }
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), firebaseAuth.currentUser == null)
-
     private companion object {
         const val STORAGE_AVATARS_PATH = "avatars/"
     }

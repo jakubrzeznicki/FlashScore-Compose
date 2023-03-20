@@ -7,7 +7,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,9 +48,10 @@ private const val LINEUP_KEYS = "LINEUP_KEY"
 @Composable
 fun LineupScreen(
     fixtureId: Int,
+    leagueId: Int,
     season: Int,
     navigator: DestinationsNavigator,
-    viewModel: LineupViewModel = getViewModel { parametersOf(fixtureId) }
+    viewModel: LineupViewModel = getViewModel { parametersOf(fixtureId, leagueId, season) }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(key1 = LINEUP_KEYS) { viewModel.setup() }
@@ -62,7 +62,6 @@ fun LineupScreen(
             navigator.navigate(
                 PlayerDetailsRouteDestination(
                     it.id,
-                    it.team.logo,
                     it.team,
                     season
                 )

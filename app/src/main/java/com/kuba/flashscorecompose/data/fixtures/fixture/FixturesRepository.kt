@@ -61,22 +61,7 @@ class FixturesRepository(
         }
     }
 
-    override fun observeXLastFixtures(
-        count: Int,
-        countryNames: List<String>
-    ): Flow<List<FixtureItem>> {
-        return local.observeXLastFixtures(count, countryNames).map { fixtureEntities ->
-            fixtureEntities.map { it.toFixtureItem() }
-        }
-    }
-
     override fun observeFixturesLive(): Flow<List<FixtureItem>> {
-        return local.observeFixturesLive().map { fixtureEntities ->
-            fixtureEntities.map { it.toFixtureItem() }
-        }
-    }
-
-    override fun observeFixturesFavorite(): Flow<List<FixtureItem>> {
         return local.observeFixturesLive().map { fixtureEntities ->
             fixtureEntities.map { it.toFixtureItem() }
         }
@@ -88,15 +73,7 @@ class FixturesRepository(
         }
     }
 
-    override suspend fun getFixture(fixtureId: Int): FixtureItem? {
-        return local.getFixture(fixtureId)?.toFixtureItem()
-    }
-
-    override suspend fun getFixturesByCountry(countryNames: List<String>): List<FixtureItem> {
-        return local.getFixturesByCountry(countryNames).map { it.toFixtureItem() }
-    }
-
-    override fun saveFixtureItem(fixtureItems: List<FixtureItem>) {
+    override suspend fun saveFixtureItem(fixtureItems: List<FixtureItem>) {
         local.saveFixtures(fixtureItems.map { it.toFixtureEntity() })
     }
 
@@ -111,16 +88,7 @@ class FixturesRepository(
             val fixtureItems = result.body()?.response?.map {
                 it.toFixtureItem(season = season, round = round)
             }
-            withContext(Dispatchers.IO) {
-                saveFixtureItem(fixtureItems.orEmpty())
-                local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
-                local.saveTeams(fixtureItems?.map {
-                    it.homeTeam.toTeamEntity(it.league.id, it.league.season)
-                }.orEmpty())
-                local.saveTeams(fixtureItems?.map {
-                    it.awayTeam.toTeamEntity(it.league.id, it.league.season)
-                }.orEmpty())
-            }
+            saveData(fixtureItems)
             RepositoryResult.Success(fixtureItems)
         } catch (e: HttpException) {
             RepositoryResult.Error(ResponseStatus().apply {
@@ -137,16 +105,7 @@ class FixturesRepository(
         val result = remote.loadFixturesHeadToHead(h2h = h2h, count = count)
         return try {
             val fixtureItems = result.body()?.response?.map { it.toFixtureItem(h2h = h2h) }
-            withContext(Dispatchers.IO) {
-                saveFixtureItem(fixtureItems.orEmpty())
-                local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
-                local.saveTeams(fixtureItems?.map {
-                    it.homeTeam.toTeamEntity(it.league.id, it.league.season)
-                }.orEmpty())
-                local.saveTeams(fixtureItems?.map {
-                    it.awayTeam.toTeamEntity(it.league.id, it.league.season)
-                }.orEmpty())
-            }
+            saveData(fixtureItems)
             RepositoryResult.Success(fixtureItems)
         } catch (e: HttpException) {
             RepositoryResult.Error(ResponseStatus().apply {
@@ -160,16 +119,7 @@ class FixturesRepository(
         val result = remote.loadFixturesByDate(date)
         return try {
             val fixtureItems = result.body()?.response?.map { it.toFixtureItem() }
-            withContext(Dispatchers.IO) {
-                saveFixtureItem(fixtureItems.orEmpty())
-                local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
-                local.saveTeams(fixtureItems?.map {
-                    it.homeTeam.toTeamEntity(it.league.id, it.league.season)
-                }.orEmpty())
-                local.saveTeams(fixtureItems?.map {
-                    it.awayTeam.toTeamEntity(it.league.id, it.league.season)
-                }.orEmpty())
-            }
+            saveData(fixtureItems)
             RepositoryResult.Success(fixtureItems)
         } catch (e: HttpException) {
             RepositoryResult.Error(ResponseStatus().apply {
@@ -188,39 +138,7 @@ class FixturesRepository(
         return try {
             val fixtureItems =
                 result.body()?.response?.map { it.toFixtureItem(season = season) }
-            withContext(Dispatchers.IO) {
-                saveFixtureItem(fixtureItems.orEmpty())
-                local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
-                local.saveTeams(fixtureItems?.map {
-                    it.homeTeam.toTeamEntity(it.league.id, it.league.season)
-                }.orEmpty())
-                local.saveTeams(fixtureItems?.map {
-                    it.awayTeam.toTeamEntity(it.league.id, it.league.season)
-                }.orEmpty())
-            }
-            RepositoryResult.Success(fixtureItems)
-        } catch (e: HttpException) {
-            RepositoryResult.Error(ResponseStatus().apply {
-                this.statusMessage = e.message()
-                this.internalStatus = e.code()
-            })
-        }
-    }
-
-    override suspend fun loadLastXFixtures(count: Int): RepositoryResult<List<FixtureItem>> {
-        val result = remote.loadLastXFixtures(count = count)
-        return try {
-            val fixtureItems = result.body()?.response?.map { it.toFixtureItem() }
-            withContext(Dispatchers.IO) {
-                saveFixtureItem(fixtureItems.orEmpty())
-                local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
-                local.saveTeams(fixtureItems?.map {
-                    it.homeTeam.toTeamEntity(it.league.id, it.league.season)
-                }.orEmpty())
-                local.saveTeams(fixtureItems?.map {
-                    it.awayTeam.toTeamEntity(it.league.id, it.league.season)
-                }.orEmpty())
-            }
+            saveData(fixtureItems)
             RepositoryResult.Success(fixtureItems)
         } catch (e: HttpException) {
             RepositoryResult.Error(ResponseStatus().apply {
@@ -238,16 +156,7 @@ class FixturesRepository(
         val result = remote.loadFixturesByTeam(teamId, season, count)
         return try {
             val fixtureItems = result.body()?.response?.map { it.toFixtureItem(season = season) }
-            withContext(Dispatchers.IO) {
-                saveFixtureItem(fixtureItems.orEmpty())
-                local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
-                local.saveTeams(fixtureItems?.map {
-                    it.homeTeam.toTeamEntity(it.league.id, it.league.season)
-                }.orEmpty())
-                local.saveTeams(fixtureItems?.map {
-                    it.awayTeam.toTeamEntity(it.league.id, it.league.season)
-                }.orEmpty())
-            }
+            saveData(fixtureItems)
             RepositoryResult.Success(fixtureItems)
         } catch (e: HttpException) {
             RepositoryResult.Error(ResponseStatus().apply {
@@ -264,14 +173,7 @@ class FixturesRepository(
         val result = remote.loadFixturesByTeam(teamId, season)
         return try {
             val fixtureItems = result.body()?.response?.map { it.toFixtureItem(season = season) }
-            withContext(Dispatchers.IO) {
-                saveFixtureItem(fixtureItems.orEmpty())
-                local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
-                local.saveTeams(fixtureItems?.map { it.homeTeam.toTeamEntity(it.league.id, season) }
-                    .orEmpty())
-                local.saveTeams(fixtureItems?.map { it.awayTeam.toTeamEntity(it.league.id, season) }
-                    .orEmpty())
-            }
+            saveData(fixtureItems)
             RepositoryResult.Success(fixtureItems)
         } catch (e: HttpException) {
             RepositoryResult.Error(ResponseStatus().apply {
@@ -285,22 +187,26 @@ class FixturesRepository(
         val result = remote.loadFixturesLive()
         return try {
             val fixtureItems = result.body()?.response?.map { it.toFixtureItem() }
-            withContext(Dispatchers.IO) {
-                saveFixtureItem(fixtureItems.orEmpty())
-                local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
-                local.saveTeams(fixtureItems?.map {
-                    it.homeTeam.toTeamEntity(it.league.id, it.league.season)
-                }.orEmpty())
-                local.saveTeams(fixtureItems?.map {
-                    it.awayTeam.toTeamEntity(it.league.id, it.league.season)
-                }.orEmpty())
-            }
+            saveData(fixtureItems)
             RepositoryResult.Success(fixtureItems)
         } catch (e: HttpException) {
             RepositoryResult.Error(ResponseStatus().apply {
                 this.statusMessage = e.message()
                 this.internalStatus = e.code()
             })
+        }
+    }
+
+    private suspend fun saveData(fixtureItems: List<FixtureItem>?) {
+        withContext(Dispatchers.IO) {
+            saveFixtureItem(fixtureItems.orEmpty())
+            local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
+            local.saveTeams(fixtureItems?.map {
+                it.homeTeam.toTeamEntity(it.league.id, it.league.season)
+            }.orEmpty())
+            local.saveTeams(fixtureItems?.map {
+                it.awayTeam.toTeamEntity(it.league.id, it.league.season)
+            }.orEmpty())
         }
     }
 }

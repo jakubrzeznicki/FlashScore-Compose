@@ -13,9 +13,6 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TeamDao {
 
-    @Query("SELECT * FROM team WHERE league_id = :leagueId")
-    fun observeTeamsByLeague(leagueId: Int): Flow<List<TeamEntity>>
-
     @Query("SELECT * FROM team WHERE id = :teamId")
     suspend fun getTeam(teamId: Int): TeamEntity?
 
@@ -24,9 +21,6 @@ interface TeamDao {
 
     @Query("SELECT * FROM team")
     fun observeTeams(): Flow<List<TeamEntity>>
-
-    @Query("SELECT * FROM team WHERE id IN(:ids)")
-    fun observeFavoriteTeams(ids: List<Int>): Flow<List<TeamEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveTeams(teams: List<TeamEntity>)

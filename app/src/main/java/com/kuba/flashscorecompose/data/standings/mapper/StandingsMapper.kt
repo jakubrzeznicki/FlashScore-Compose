@@ -28,11 +28,21 @@ fun Standing.toStandingsEntity(): StandingsEntity {
         league = league.toLeagueEntity(),
         leagueId = leagueId,
         season = season,
-        standings = standingItems.map { it.toStandingItemEntity(leagueId, season) }
+        standings = standingItems.map {
+            it.toStandingItemEntity(
+                league.id,
+                season,
+                league.countryName
+            )
+        }
     )
 }
 
-fun StandingItem.toStandingItemEntity(leagueId: Int, season: Int): StandingItemEntity {
+fun StandingItem.toStandingItemEntity(
+    leagueId: Int,
+    season: Int,
+    countryName: String
+): StandingItemEntity {
     return StandingItemEntity(
         all = all.toInformationStandingEntity(),
         away = away.toInformationStandingEntity(),
@@ -44,7 +54,7 @@ fun StandingItem.toStandingItemEntity(leagueId: Int, season: Int): StandingItemE
         points = points,
         rank = rank,
         status = status,
-        team = team.toTeamEntity(leagueId, season),
+        team = team.toTeamEntity(leagueId, season, countryName),
         update = update
     )
 }
