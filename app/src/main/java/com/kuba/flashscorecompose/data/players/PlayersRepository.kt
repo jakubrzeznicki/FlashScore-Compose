@@ -37,6 +37,12 @@ class PlayersRepository(
         }
     }
 
+    override fun observeFavoritePlayers(ids: List<Int>): Flow<List<Player>> {
+        return local.observeFavoritePlayers(ids).map { playersEntities ->
+            playersEntities.map { it.toPlayer() }
+        }
+    }
+
     override suspend fun savePlayers(players: List<Player>) {
         local.savePlayers(players.map { it.toPlayerEntity() })
     }
@@ -59,7 +65,11 @@ class PlayersRepository(
         }
     }
 
-    override suspend fun loadPlayer(id: Int, team: Team, season: Int): RepositoryResult<List<Player>> {
+    override suspend fun loadPlayer(
+        id: Int,
+        team: Team,
+        season: Int
+    ): RepositoryResult<List<Player>> {
         val result = remote.loadPlayers(id, team.season)
         return try {
             val players = result.body()?.response?.map { playerWrapperDto ->

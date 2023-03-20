@@ -11,25 +11,6 @@ import kotlinx.coroutines.flow.map
  * Created by jrzeznicki on 08/02/2023.
  */
 class UserRepository(private val local: UserLocalDataSource) : UserDataSource {
-    override suspend fun getIsOnBoardingCompleted(): Boolean {
-        return local.getIsOnBoardingCompleted()
-    }
-
-    override suspend fun saveIsOnBoardingCompleted(isOnBoardingCompleted: Boolean) {
-        local.saveIsOnBoardingCompleted(isOnBoardingCompleted)
-    }
-
-    override suspend fun getIsKeepLogged(): Boolean {
-        return local.getIsKeepLogged()
-    }
-
-    override suspend fun saveCurrentUserId(userId: String, isKeepLogged: Boolean) {
-        local.saveCurrentUserId(userId, isKeepLogged)
-    }
-
-    override suspend fun getCurrentUserId(): String {
-        return local.getCurrentUserId()
-    }
 
     override fun observeUser(id: String): Flow<User> {
         return local.observeUser(id).map { it.toUser() }

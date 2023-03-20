@@ -6,6 +6,6 @@ import com.kuba.flashscorecompose.profile.container.model.ProfileUiState
 /**
  * Created by jrzeznicki on 08/02/2023.
  */
-data class ProfileViewModelState(val user: User = User()) {
-    fun toUiState(): ProfileUiState = ProfileUiState(user)
+data class ProfileViewModelState(val isLoading: Boolean = false, val user: User = User()) {
+    fun toUiState(): ProfileUiState = ProfileUiState(isLoading, user)
 }

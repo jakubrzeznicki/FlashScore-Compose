@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -41,6 +40,7 @@ import com.kuba.flashscorecompose.data.user.model.User
 import com.kuba.flashscorecompose.profile.container.model.ProfileUiState
 import com.kuba.flashscorecompose.profile.container.viewmodel.ProfileViewModel
 import com.kuba.flashscorecompose.ui.component.AppTopBar
+import com.kuba.flashscorecompose.ui.component.CircularProgressBar
 import com.kuba.flashscorecompose.ui.component.tabs.ScrollableTabs
 import com.kuba.flashscorecompose.ui.component.tabs.TabItem
 import com.kuba.flashscorecompose.ui.component.tabs.TabsContent
@@ -85,18 +85,21 @@ private fun ProfileScreen(
     Scaffold(
         topBar = { TopBar() }
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 48.dp)
-        ) {
-            ProfileHeader(
-                context,
-                uiState.user.name,
-                Uri.parse(uiState.user.photoUri),
-                onPhotoUriPicked
-            )
-            ProfileTabs(user = uiState.user, navigator = navigator)
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 48.dp)
+            ) {
+                ProfileHeader(
+                    context,
+                    uiState.user.name,
+                    Uri.parse(uiState.user.photoUri),
+                    onPhotoUriPicked
+                )
+                ProfileTabs(user = uiState.user, navigator = navigator)
+            }
+            CircularProgressBar(uiState.isLoading)
         }
     }
 }
@@ -121,7 +124,7 @@ private fun TopBar() {
 @Composable
 private fun ProfileTabs(user: User, navigator: DestinationsNavigator) {
     val tabs = listOf(
-        TabItem.Profile.Details(user),
+        TabItem.Profile.Details(),
         TabItem.Profile.Activity(user),
         TabItem.Profile.Settings(user, navigator)
     )
@@ -163,10 +166,7 @@ fun ProfileHeader(
 fun ProfileImage(context: Context, userPhotoUri: Uri, onPhotoUriPicked: (Uri) -> Unit) {
     val photoLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-            uri?.let {
-                Log.d("TEST_LOG", "selected uri -  $it")
-                onPhotoUriPicked(it)
-            }
+            uri?.let { onPhotoUriPicked(it) }
         }
     val permissions = getPermissions()
     val permissionLauncher =

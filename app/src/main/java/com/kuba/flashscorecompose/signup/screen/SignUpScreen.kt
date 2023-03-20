@@ -19,19 +19,19 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.destinations.SignUpRouteDestination
 import com.kuba.flashscorecompose.destinations.WelcomeRouteDestination
 import com.kuba.flashscorecompose.signup.model.SignUpError
+import com.kuba.flashscorecompose.signup.model.SignUpType
 import com.kuba.flashscorecompose.signup.model.SignUpUiState
 import com.kuba.flashscorecompose.signup.viewmodel.SignUpViewModel
 import com.kuba.flashscorecompose.ui.component.*
-import com.kuba.flashscorecompose.ui.theme.FlashScoreComposeTheme
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
+import org.koin.core.parameter.parametersOf
 
 /**
  * Created by jrzeznicki on 05/02/2023.
@@ -40,8 +40,9 @@ import org.koin.androidx.compose.getViewModel
 @Destination
 @Composable
 fun SignUpRoute(
+    signUpType: SignUpType,
     navigator: DestinationsNavigator,
-    viewModel: SignUpViewModel = getViewModel()
+    viewModel: SignUpViewModel = getViewModel { parametersOf(signUpType) }
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val focusManager = LocalFocusManager.current
@@ -60,8 +61,7 @@ fun SignUpRoute(
                     popUpTo(SignUpRouteDestination.route) { inclusive = true }
                 }
             }
-        },
-        onErrorClear = {}
+        }
     )
 }
 
@@ -78,100 +78,102 @@ private fun SignUpScreen(
     onRepeatPasswordChange: (String) -> Unit = {},
     togglePasswordVisibility: () -> Unit = {},
     toggleRepeatPasswordVisibility: () -> Unit = {},
-    onSignUpClick: () -> Unit = {},
-    onErrorClear: () -> Unit = {}
+    onSignUpClick: () -> Unit = {}
 ) {
     Scaffold(
         topBar = { TopBar(navigator = navigator) }
     ) {
         val scrollState = rememberScrollState()
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(top = 48.dp, start = 32.dp, end = 32.dp)
-                .verticalScroll(scrollState)
-        ) {
-            EmailTextField(
-                value = uiState.email,
-                onValueChange = onEmailChange,
-                errorMessage = when (uiState.error) {
-                    is SignUpError.InvalidEmail -> stringResource(id = uiState.error.messageId)
-                    else -> null
-                },
-                onKeyBoardAction = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            PasswordTextField(
-                labelId = R.string.password,
-                value = uiState.password,
-                onValueChange = onPasswordChange,
-                trailingIcon = {
-                    ToggleTextVisibilityTrailingButton(
-                        onClick = togglePasswordVisibility,
-                        isVisible = uiState.isPasswordVisible
-                    )
-                },
-                errorMessage = when (uiState.error) {
-                    is SignUpError.InvalidPassword -> stringResource(id = uiState.error.messageId)
-                    is SignUpError.NotMatchesPassword -> stringResource(id = uiState.error.messageId)
-                    else -> null
-                },
-                hideText = !uiState.isPasswordVisible,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Next
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }
-                )
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            PasswordTextField(
-                labelId = R.string.repeat_password,
-                value = uiState.repeatPassword,
-                onValueChange = onRepeatPasswordChange,
-                trailingIcon = {
-                    ToggleTextVisibilityTrailingButton(
-                        onClick = toggleRepeatPasswordVisibility,
-                        isVisible = uiState.isRepeatPasswordVisible
-                    )
-                },
-                errorMessage = when (uiState.error) {
-                    is SignUpError.InvalidPassword -> stringResource(id = uiState.error.messageId)
-                    is SignUpError.NotMatchesPassword -> stringResource(id = uiState.error.messageId)
-                    else -> null
-                },
-                hideText = !uiState.isRepeatPasswordVisible,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus()
-                        onSignUpClick()
-                    }
-                )
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = { onSignUpClick() },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.tertiary,
-                    contentColor = MaterialTheme.colorScheme.onTertiary
-                ),
-                shape = RoundedCornerShape(16.dp)
-                // enabled = emailState.isValid && passwordState.isValid
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(top = 48.dp, start = 32.dp, end = 32.dp)
+                    .verticalScroll(scrollState)
             ) {
-                Text(
-                    modifier = Modifier.padding(vertical = 12.dp),
-                    text = stringResource(id = R.string.create_account)
+                EmailTextField(
+                    value = uiState.email,
+                    onValueChange = onEmailChange,
+                    errorMessage = when (uiState.error) {
+                        is SignUpError.InvalidEmail -> stringResource(id = uiState.error.messageId)
+                        else -> null
+                    },
+                    onKeyBoardAction = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }
                 )
+                Spacer(modifier = Modifier.height(16.dp))
+                PasswordTextField(
+                    labelId = R.string.password,
+                    value = uiState.password,
+                    onValueChange = onPasswordChange,
+                    trailingIcon = {
+                        ToggleTextVisibilityTrailingButton(
+                            onClick = togglePasswordVisibility,
+                            isVisible = uiState.isPasswordVisible
+                        )
+                    },
+                    errorMessage = when (uiState.error) {
+                        is SignUpError.InvalidPassword -> stringResource(id = uiState.error.messageId)
+                        is SignUpError.NotMatchesPassword -> stringResource(id = uiState.error.messageId)
+                        else -> null
+                    },
+                    hideText = !uiState.isPasswordVisible,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }
+                    )
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                PasswordTextField(
+                    labelId = R.string.repeat_password,
+                    value = uiState.repeatPassword,
+                    onValueChange = onRepeatPasswordChange,
+                    trailingIcon = {
+                        ToggleTextVisibilityTrailingButton(
+                            onClick = toggleRepeatPasswordVisibility,
+                            isVisible = uiState.isRepeatPasswordVisible
+                        )
+                    },
+                    errorMessage = when (uiState.error) {
+                        is SignUpError.InvalidPassword -> stringResource(id = uiState.error.messageId)
+                        is SignUpError.NotMatchesPassword -> stringResource(id = uiState.error.messageId)
+                        else -> null
+                    },
+                    hideText = !uiState.isRepeatPasswordVisible,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            focusManager.clearFocus()
+                            onSignUpClick()
+                        }
+                    )
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = { onSignUpClick() },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.tertiary,
+                        contentColor = MaterialTheme.colorScheme.onTertiary
+                    ),
+                    shape = RoundedCornerShape(16.dp)
+                    // enabled = emailState.isValid && passwordState.isValid
+                ) {
+                    Text(
+                        modifier = Modifier.padding(vertical = 12.dp),
+                        text = stringResource(id = R.string.create_account)
+                    )
+                }
+                if (uiState.error is SignUpError.AuthenticationError) {
+                    TextFieldError(uiState.error.responseStatus.statusMessage.orEmpty())
+                }
             }
-            if (uiState.error is SignUpError.AuthenticationError) {
-                TextFieldError(uiState.error.responseStatus.statusMessage.orEmpty())
-            }
+            CircularProgressBar(uiState.isLoading)
         }
     }
 }
@@ -196,50 +198,6 @@ private fun TopBar(navigator: DestinationsNavigator?) {
                 )
             }
         },
-        title = {
-        }
+        title = {}
     )
-}
-
-@Composable
-fun ErrorSnackbar(
-    snackbarHostState: SnackbarHostState,
-    modifier: Modifier = Modifier,
-    onDismiss: () -> Unit = { }
-) {
-    SnackbarHost(
-        hostState = snackbarHostState,
-        snackbar = { data ->
-            Snackbar(
-                modifier = Modifier.padding(16.dp),
-                content = {
-                    Text(
-                        text = data.visuals.message,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                },
-                action = {
-                    data.visuals.actionLabel?.let {
-                        TextButton(onClick = onDismiss) {
-                            Text(
-                                text = stringResource(id = R.string.dismiss),
-                                color = MaterialTheme.colorScheme.inversePrimary
-                            )
-                        }
-                    }
-                }
-            )
-        },
-        modifier = modifier
-            .fillMaxWidth()
-            .wrapContentHeight(Alignment.Bottom)
-    )
-}
-
-@Preview
-@Composable
-fun SignInScreenPreview() {
-    FlashScoreComposeTheme {
-        //  SignInScreen()
-    }
 }

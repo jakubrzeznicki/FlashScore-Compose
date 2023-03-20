@@ -30,6 +30,10 @@ class TeamLocal(private val roomStorage: RoomStorage) : TeamLocalDataSource {
         return roomStorage.getDatabase().teamDao().observeTeams()
     }
 
+    override fun observeFavoriteTeams(ids: List<Int>): Flow<List<TeamEntity>> {
+        return roomStorage.getDatabase().teamDao().observeFavoriteTeams(ids)
+    }
+
     override fun observeVenues(): Flow<List<VenueEntity>> {
         return roomStorage.getDatabase().venueDao().observeVenues()
     }

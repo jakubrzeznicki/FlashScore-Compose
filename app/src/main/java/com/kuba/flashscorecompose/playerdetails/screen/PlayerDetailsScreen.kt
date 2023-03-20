@@ -19,11 +19,9 @@ import androidx.compose.ui.unit.sp
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.players.model.Player
 import com.kuba.flashscorecompose.data.team.information.model.Team
-import com.kuba.flashscorecompose.playerdetails.model.PlayerDetailsError
 import com.kuba.flashscorecompose.playerdetails.model.PlayerDetailsUiState
 import com.kuba.flashscorecompose.playerdetails.viewmodel.PlayerDetailsViewModel
 import com.kuba.flashscorecompose.ui.component.*
-import com.kuba.flashscorecompose.ui.component.snackbar.FlashScoreSnackbarHost
 import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -46,16 +44,13 @@ fun PlayerDetailsRoute(
     viewModel: PlayerDetailsViewModel = getViewModel { parametersOf(playerId, team, season) }
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(key1 = SETUP_PLAYER_DETAILS_KEY) { viewModel.setup() }
     PlayerDetailsScreen(
         uiState = uiState,
         team = team,
         countryLogo = countryLogo,
-        snackbarHostState = snackbarHostState,
         navigator = navigator,
         onRefreshClick = { viewModel.refresh() },
-        onErrorClear = { viewModel.cleanError() },
     )
 }
 
@@ -66,10 +61,8 @@ fun PlayerDetailsScreen(
     uiState: PlayerDetailsUiState,
     team: Team,
     countryLogo: String,
-    snackbarHostState: SnackbarHostState,
     navigator: DestinationsNavigator,
-    onRefreshClick: () -> Unit,
-    onErrorClear: () -> Unit
+    onRefreshClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -80,8 +73,7 @@ fun PlayerDetailsScreen(
                     else -> ""
                 }
             )
-        },
-        snackbarHost = { FlashScoreSnackbarHost(hostState = snackbarHostState) }
+        }
     ) {
         val scrollState = rememberScrollState()
         LoadingContent(
@@ -130,12 +122,6 @@ fun PlayerDetailsScreen(
             }
         }
     }
-    ErrorSnackbar(
-        uiState = uiState,
-        onRefreshClick = onRefreshClick,
-        onErrorClear = onErrorClear,
-        snackbarHostState = snackbarHostState
-    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -303,43 +289,6 @@ fun PlayerDetailsInfoCard(player: Player) {
                     title = player.weight,
                     Icons.Default.MonitorWeight
                 )
-            }
-        }
-    }
-}
-
-@Composable
-private fun ErrorSnackbar(
-    uiState: PlayerDetailsUiState,
-    onRefreshClick: () -> Unit,
-    onErrorClear: () -> Unit,
-    snackbarHostState: SnackbarHostState
-) {
-    when (val error = uiState.error) {
-        is PlayerDetailsError.NoError -> {}
-        is PlayerDetailsError.EmptyPlayer -> {
-            val errorMessageText = stringResource(id = R.string.empty_player_details)
-            val onErrorDismissState by rememberUpdatedState(onErrorClear)
-            LaunchedEffect(errorMessageText) {
-                snackbarHostState.showSnackbar(message = errorMessageText)
-                onErrorDismissState()
-            }
-        }
-        is PlayerDetailsError.RemoteError -> {
-            val errorMessageText =
-                remember(uiState) { error.responseStatus.statusMessage.orEmpty() }
-            val retryMessageText = stringResource(id = R.string.retry)
-            val onRefreshPostStates by rememberUpdatedState(onRefreshClick)
-            val onErrorDismissState by rememberUpdatedState(onErrorClear)
-            LaunchedEffect(errorMessageText, retryMessageText) {
-                val snackbarResult = snackbarHostState.showSnackbar(
-                    message = errorMessageText,
-                    actionLabel = retryMessageText
-                )
-                if (snackbarResult == SnackbarResult.ActionPerformed) {
-                    onRefreshPostStates()
-                }
-                onErrorDismissState()
             }
         }
     }

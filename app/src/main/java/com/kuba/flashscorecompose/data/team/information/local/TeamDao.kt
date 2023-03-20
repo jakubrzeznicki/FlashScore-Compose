@@ -25,6 +25,9 @@ interface TeamDao {
     @Query("SELECT * FROM team")
     fun observeTeams(): Flow<List<TeamEntity>>
 
+    @Query("SELECT * FROM team WHERE id IN(:ids)")
+    fun observeFavoriteTeams(ids: List<Int>): Flow<List<TeamEntity>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveTeams(teams: List<TeamEntity>)
 

@@ -1,0 +1,19 @@
+package com.kuba.flashscorecompose.data.userpreferences
+
+import com.kuba.flashscorecompose.data.userpreferences.model.UserPreferences
+
+/**
+ * Created by jrzeznicki on 10/02/2023.
+ */
+interface UserPreferencesDataSource {
+    suspend fun getIsOnBoardingCompleted(): Boolean?
+    suspend fun saveIsOnBoardingCompleted(isOnBoardingCompleted: Boolean)
+    suspend fun saveCurrentUserId(userId: String, isKeepLogged: Boolean)
+    suspend fun getCurrentUserId(): String
+    suspend fun saveFavoriteTeamIds(teamIds: List<Int>)
+    suspend fun saveFavoritePlayerIds(playerIds: List<Int>)
+    suspend fun getFavoriteTeamIds(): List<Int>?
+    suspend fun getFavoritePlayerIds(): List<Int>?
+    suspend fun getUserPreferences(): UserPreferences?
+    suspend fun saveUserPreferences(userPreferences: UserPreferences)
+}

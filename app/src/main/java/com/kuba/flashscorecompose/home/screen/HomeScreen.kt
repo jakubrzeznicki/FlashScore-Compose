@@ -29,12 +29,10 @@ import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.destinations.FixtureDetailsRouteDestination
 import com.kuba.flashscorecompose.destinations.LeagueDetailsRouteDestination
 import com.kuba.flashscorecompose.destinations.SplashScreenDestination
-import com.kuba.flashscorecompose.home.model.HomeError
 import com.kuba.flashscorecompose.home.model.HomeUiState
 import com.kuba.flashscorecompose.home.model.LeagueFixturesData
 import com.kuba.flashscorecompose.home.viewmodel.HomeViewModel
 import com.kuba.flashscorecompose.ui.component.*
-import com.kuba.flashscorecompose.ui.component.snackbar.FlashScoreSnackbarHost
 import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -56,7 +54,6 @@ fun HomeScreenRoute(
     val context = LocalContext.current
     val fixturesScrollState = rememberLazyListState()
     val countryScrollState = rememberLazyListState()
-    val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(key1 = SETUP_HOME_KEY) { viewModel.setup() }
     HomeScreen(
         uiState = uiState,
@@ -67,8 +64,6 @@ fun HomeScreenRoute(
         },
         onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it)) },
         onLeagueClick = { navigator.navigate(LeagueDetailsRouteDestination(it)) },
-        onErrorClear = { viewModel.cleanError() },
-        snackbarHostState = snackbarHostState,
         fixturesScrollState = fixturesScrollState,
         countryScrollState = countryScrollState,
         context = context
@@ -85,15 +80,12 @@ private fun HomeScreen(
     onCountryClick: (Country, Boolean) -> Unit,
     onFixtureClick: (FixtureItem) -> Unit,
     onLeagueClick: (League) -> Unit,
-    onErrorClear: () -> Unit,
-    snackbarHostState: SnackbarHostState,
     fixturesScrollState: LazyListState,
     countryScrollState: LazyListState,
     context: Context
 ) {
     Scaffold(
         topBar = { TopBar(context = context, navigator = navigator) },
-        snackbarHost = { FlashScoreSnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
         LoadingContent(
             modifier = modifier.padding(paddingValues),
@@ -180,7 +172,6 @@ private fun HomeScreen(
             }
         }
     }
-    ErrorSnackbar(uiState, onRefreshClick, onErrorClear, snackbarHostState)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -304,34 +295,5 @@ private fun FixturesWidget(
     LeagueHeader(leagueFixturesData.league, onLeagueClick)
     leagueFixturesData.fixtures.forEach { fixtureItem ->
         FixtureCard(fixtureItem, onFixtureClick)
-    }
-}
-
-@Composable
-private fun ErrorSnackbar(
-    uiState: HomeUiState,
-    onRefreshClick: () -> Unit,
-    onErrorClear: () -> Unit,
-    snackbarHostState: SnackbarHostState
-) {
-    when (val error = uiState.error) {
-        is HomeError.NoError -> {}
-        is HomeError.RemoteError -> {
-            val errorMessageText =
-                remember(uiState) { error.responseStatus.statusMessage.orEmpty() }
-            val retryMessageText = stringResource(id = R.string.retry)
-            val onRefreshPostStates by rememberUpdatedState(onRefreshClick)
-            val onErrorDismissState by rememberUpdatedState(onErrorClear)
-            LaunchedEffect(errorMessageText, retryMessageText) {
-                val snackbarResult = snackbarHostState.showSnackbar(
-                    message = errorMessageText,
-                    actionLabel = retryMessageText
-                )
-                if (snackbarResult == SnackbarResult.ActionPerformed) {
-                    onRefreshPostStates()
-                }
-                onErrorDismissState()
-            }
-        }
     }
 }

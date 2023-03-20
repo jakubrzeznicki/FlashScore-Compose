@@ -11,11 +11,14 @@ import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.data.players.PlayersDataSource
 import com.kuba.flashscorecompose.data.team.information.TeamDataSource
 import com.kuba.flashscorecompose.data.team.information.model.Venue
+import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
 import com.kuba.flashscorecompose.explore.model.CoachCountry
 import com.kuba.flashscorecompose.explore.model.ExploreError
 import com.kuba.flashscorecompose.explore.model.TeamCountry
 import com.kuba.flashscorecompose.teamdetails.players.model.PlayerCountry
 import com.kuba.flashscorecompose.ui.component.chips.FilterChip
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import com.kuba.flashscorecompose.utils.containsQuery
 import kotlinx.coroutines.flow.*
@@ -29,7 +32,8 @@ class ExploreViewModel(
     private val teamRepository: TeamDataSource,
     private val playersRepository: PlayersDataSource,
     private val countryRepository: CountryDataSource,
-    private val leagueRepository: LeagueDataSource
+    private val leagueRepository: LeagueDataSource,
+    private val userPreferencesRepository: UserPreferencesDataSource
 ) : ViewModel() {
     private val viewModelState = MutableStateFlow(ExploreViewModelState())
     val uiState = viewModelState
@@ -40,7 +44,9 @@ class ExploreViewModel(
         observeCountries()
         observeLiveFixtures()
         observeTeams()
+        observeFavoriteTeams()
         observePlayers()
+        observeFavoritePlayers()
         observeCoaches()
         observeVenues()
     }
@@ -89,6 +95,29 @@ class ExploreViewModel(
         }
     }
 
+    private fun observeFavoriteTeams() {
+        viewModelScope.launch {
+            val countries = countryRepository.getCountries()
+            val userPreferences = userPreferencesRepository.getUserPreferences()
+            teamRepository.observeFavoriteTeams(userPreferences?.favoriteTeamIds.orEmpty())
+                .collect { teams ->
+                    val teamCountries = teams.map {
+                        TeamCountry(
+                            team = it,
+                            country = countries.firstOrNull { country -> country.name == it.country }
+                                ?: Country.EMPTY_COUNTRY)
+                    }
+                    val filteredFavoriteTeams = filterFavoriteTeams(teamCountries)
+                    viewModelState.update {
+                        it.copy(
+                            favoriteTeams = teamCountries,
+                            filteredFavoriteTeams = filteredFavoriteTeams
+                        )
+                    }
+                }
+        }
+    }
+
     private fun observePlayers() {
         viewModelScope.launch {
             val countries = countryRepository.getCountries()
@@ -104,6 +133,29 @@ class ExploreViewModel(
                     it.copy(players = playerCountries, filteredPlayers = filteredPlayers)
                 }
             }
+        }
+    }
+
+    private fun observeFavoritePlayers() {
+        viewModelScope.launch {
+            val countries = countryRepository.getCountries()
+            val userPreferences = userPreferencesRepository.getUserPreferences()
+            playersRepository.observeFavoritePlayers(userPreferences?.favoritePlayerIds.orEmpty())
+                .collect { players ->
+                    val playerCountries = players.map {
+                        PlayerCountry(
+                            player = it,
+                            country = countries.firstOrNull { country -> country.name == it.nationality }
+                                ?: Country.EMPTY_COUNTRY)
+                    }
+                    val filteredFavoritePlayers = filterFavoritePlayers(playerCountries)
+                    viewModelState.update {
+                        it.copy(
+                            favoritePlayers = playerCountries,
+                            filteredFavoritePlayers = filteredFavoritePlayers
+                        )
+                    }
+                }
         }
     }
 
@@ -149,10 +201,13 @@ class ExploreViewModel(
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
-                    is RepositoryResult.Error -> it.copy(
-                        isLoading = false,
-                        error = ExploreError.RemoteError(result.error)
-                    )
+                    is RepositoryResult.Error -> {
+                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        it.copy(
+                            isLoading = false,
+                            error = ExploreError.RemoteError(result.error)
+                        )
+                    }
                 }
             }
         }
@@ -167,7 +222,12 @@ class ExploreViewModel(
                 }
                 is FilterChip.Explore.Teams -> {
                     val filteredTeams = filterTeams(query = newQuery)
-                    it.copy(filteredTeams = filteredTeams, exploreQuery = newQuery)
+                    val filteredFavoriteTeams = filterFavoriteTeams(query = newQuery)
+                    it.copy(
+                        filteredTeams = filteredTeams,
+                        filteredFavoriteTeams = filteredFavoriteTeams,
+                        exploreQuery = newQuery
+                    )
                 }
                 is FilterChip.Explore.Venues -> {
                     val filteredVenues = filterVenues(query = newQuery)
@@ -175,7 +235,12 @@ class ExploreViewModel(
                 }
                 is FilterChip.Explore.Players -> {
                     val filteredPlayers = filterPlayers(query = newQuery)
-                    it.copy(filteredPlayers = filteredPlayers, exploreQuery = newQuery)
+                    val filteredFavoritePlayers = filterFavoritePlayers(query = newQuery)
+                    it.copy(
+                        filteredPlayers = filteredPlayers,
+                        filteredFavoritePlayers = filteredFavoritePlayers,
+                        exploreQuery = newQuery
+                    )
                 }
                 is FilterChip.Explore.Coaches -> {
                     val filteredCoaches = filterCoaches(query = newQuery)
@@ -211,6 +276,15 @@ class ExploreViewModel(
         query: String = viewModelState.value.exploreQuery
     ): List<TeamCountry> {
         return teams.filter {
+            it.team.name.containsQuery(query) || it.team.country.containsQuery(query)
+        }
+    }
+
+    private fun filterFavoriteTeams(
+        favoriteTeams: List<TeamCountry> = viewModelState.value.favoriteTeams,
+        query: String = viewModelState.value.exploreQuery
+    ): List<TeamCountry> {
+        return favoriteTeams.filter {
             it.team.name.containsQuery(query) || it.team.country.containsQuery(query)
         }
     }
@@ -253,7 +327,14 @@ class ExploreViewModel(
         }
     }
 
-    fun cleanError() {
-        viewModelState.update { it.copy(error = ExploreError.NoError) }
+    private fun filterFavoritePlayers(
+        favoritePlayers: List<PlayerCountry> = viewModelState.value.favoritePlayers,
+        query: String = viewModelState.value.exploreQuery
+    ): List<PlayerCountry> {
+        return favoritePlayers.filter {
+            it.player.name.containsQuery(query) || it.player.nationality.containsQuery(query)
+                    || it.player.firstname.containsQuery(query)
+                    || it.player.lastname.containsQuery(query)
+        }
     }
 }

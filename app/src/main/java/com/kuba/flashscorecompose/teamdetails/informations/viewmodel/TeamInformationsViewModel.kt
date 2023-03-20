@@ -7,6 +7,8 @@ import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.team.information.TeamDataSource
 import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.teamdetails.informations.model.TeamInformationsError
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -79,10 +81,13 @@ class TeamInformationsViewModel(
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
-                    is RepositoryResult.Error -> it.copy(
-                        isLoading = false,
-                        error = TeamInformationsError.RemoteError(result.error),
-                    )
+                    is RepositoryResult.Error -> {
+                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        it.copy(
+                            isLoading = false,
+                            error = TeamInformationsError.RemoteError(result.error),
+                        )
+                    }
                 }
             }
         }
@@ -95,10 +100,13 @@ class TeamInformationsViewModel(
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
-                    is RepositoryResult.Error -> it.copy(
-                        isLoading = false,
-                        error = TeamInformationsError.RemoteError(result.error),
-                    )
+                    is RepositoryResult.Error -> {
+                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        it.copy(
+                            isLoading = false,
+                            error = TeamInformationsError.RemoteError(result.error),
+                        )
+                    }
                 }
             }
         }

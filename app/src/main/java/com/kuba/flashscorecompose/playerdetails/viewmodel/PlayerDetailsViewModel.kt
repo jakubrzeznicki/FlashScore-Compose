@@ -1,11 +1,12 @@
 package com.kuba.flashscorecompose.playerdetails.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.data.players.PlayersDataSource
 import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.playerdetails.model.PlayerDetailsError
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -48,21 +49,19 @@ class PlayerDetailsViewModel(
     private fun refreshPlayers() {
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            Log.d("TEST_LOG", "team = $team")
             val result = playersRepository.loadPlayer(playerId, team, season)
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
-                    is RepositoryResult.Error -> it.copy(
-                        isLoading = false,
-                        error = PlayerDetailsError.RemoteError(result.error),
-                    )
+                    is RepositoryResult.Error -> {
+                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        it.copy(
+                            isLoading = false,
+                            error = PlayerDetailsError.RemoteError(result.error),
+                        )
+                    }
                 }
             }
         }
-    }
-
-    fun cleanError() {
-        viewModelState.update { it.copy(error = PlayerDetailsError.NoError) }
     }
 }

@@ -24,14 +24,12 @@ import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.destinations.*
-import com.kuba.flashscorecompose.explore.model.ExploreError
 import com.kuba.flashscorecompose.explore.model.ExploreUiState
 import com.kuba.flashscorecompose.explore.model.TeamCountry
 import com.kuba.flashscorecompose.explore.viewmodel.ExploreViewModel
 import com.kuba.flashscorecompose.teamdetails.players.model.PlayerCountry
 import com.kuba.flashscorecompose.ui.component.*
 import com.kuba.flashscorecompose.ui.component.chips.FilterChip
-import com.kuba.flashscorecompose.ui.component.snackbar.FlashScoreSnackbarHost
 import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
 import com.kuba.flashscorecompose.ui.theme.RedDark
 import com.kuba.flashscorecompose.ui.theme.YellowCorn
@@ -52,11 +50,9 @@ fun ExploreRoute(
     viewModel: ExploreViewModel = getViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(key1 = SETUP_EXPLORE_KEY) { viewModel.setup() }
     ExploreScreen(
         uiState = uiState,
-        snackbarHostState = snackbarHostState,
         onRefreshClick = { viewModel.refresh() },
         onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it)) },
         onTeamClick = {
@@ -81,7 +77,6 @@ fun ExploreRoute(
         onLeagueClick = { navigator.navigate(LeagueDetailsRouteDestination(it)) },
         onExploreQueryChanged = { viewModel.updateExploreQuery(it) },
         onExploreChipClick = { viewModel.changeExploreView(it as FilterChip.Explore) },
-        onErrorClear = { viewModel.cleanError() }
     )
 }
 
@@ -90,20 +85,15 @@ fun ExploreRoute(
 fun ExploreScreen(
     modifier: Modifier = Modifier,
     uiState: ExploreUiState,
-    snackbarHostState: SnackbarHostState,
     onRefreshClick: () -> Unit,
     onFixtureClick: (FixtureItem) -> Unit,
     onTeamClick: (TeamCountry) -> Unit,
     onPlayerClick: (PlayerCountry) -> Unit,
     onLeagueClick: (League) -> Unit,
     onExploreQueryChanged: (String) -> Unit,
-    onExploreChipClick: (FilterChip) -> Unit,
-    onErrorClear: () -> Unit
+    onExploreChipClick: (FilterChip) -> Unit
 ) {
-    Scaffold(
-        topBar = { TopBar() },
-        snackbarHost = { FlashScoreSnackbarHost(hostState = snackbarHostState) }
-    ) { paddingValues ->
+    Scaffold(topBar = { TopBar() }) { paddingValues ->
         LoadingContent(
             modifier = modifier.padding(paddingValues),
             empty = when (uiState) {
@@ -220,7 +210,7 @@ fun ExploreScreen(
                             favoriteTeams = uiState.favoriteTeams,
                             state = teamsLazyListState,
                             color = MaterialTheme.colorScheme.onSecondary,
-                            favoriteColor = YellowCorn,
+                            favoriteColor = MaterialTheme.colorScheme.primary,
                             textId = R.string.teams,
                             favoriteTextId = R.string.favorites,
                             onTeamClick = onTeamClick
@@ -258,8 +248,8 @@ fun ExploreScreen(
                             favoritePlayers = uiState.favoritePlayers,
                             state = playersLazyListState,
                             color = MaterialTheme.colorScheme.onSecondary,
-                            favoriteColor = YellowCorn,
-                            textId = R.string.favorites,
+                            favoriteColor = MaterialTheme.colorScheme.primary,
+                            textId = R.string.players,
                             favoriteTextId = R.string.favorites,
                             onPlayerClick = onPlayerClick
                         )
@@ -370,12 +360,6 @@ fun ExploreScreen(
             }
         }
     }
-    ErrorSnackbar(
-        uiState = uiState,
-        onRefreshClick = onRefreshClick,
-        onErrorClear = onErrorClear,
-        snackbarHostState = snackbarHostState
-    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -458,41 +442,4 @@ private fun FilterExploreChip(
         ),
         onClick = { onStateChanged(exploreFilterChip) }
     )
-}
-
-@Composable
-private fun ErrorSnackbar(
-    uiState: ExploreUiState,
-    onRefreshClick: () -> Unit,
-    onErrorClear: () -> Unit,
-    snackbarHostState: SnackbarHostState
-) {
-    when (val error = uiState.error) {
-        is ExploreError.NoError -> {}
-        is ExploreError.EmptyTeam -> {
-            val errorMessageText = stringResource(id = R.string.empty_leagues)
-            val onErrorDismissState by rememberUpdatedState(onErrorClear)
-            LaunchedEffect(errorMessageText) {
-                snackbarHostState.showSnackbar(message = errorMessageText)
-                onErrorDismissState()
-            }
-        }
-        is ExploreError.RemoteError -> {
-            val errorMessageText =
-                remember(uiState) { error.responseStatus.statusMessage.orEmpty() }
-            val retryMessageText = stringResource(id = R.string.retry)
-            val onRefreshPostStates by rememberUpdatedState(onRefreshClick)
-            val onErrorDismissState by rememberUpdatedState(onErrorClear)
-            LaunchedEffect(errorMessageText, retryMessageText) {
-                val snackbarResult = snackbarHostState.showSnackbar(
-                    message = errorMessageText,
-                    actionLabel = retryMessageText
-                )
-                if (snackbarResult == SnackbarResult.ActionPerformed) {
-                    onRefreshPostStates()
-                }
-                onErrorDismissState()
-            }
-        }
-    }
 }

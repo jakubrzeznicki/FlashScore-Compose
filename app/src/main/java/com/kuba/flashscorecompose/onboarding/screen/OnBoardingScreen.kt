@@ -77,7 +77,6 @@ fun OnBoardingRpute(
             viewModel.setOnBoardingAsCompleted()
             navigator.navigate(HomeScreenRouteDestination())
         },
-        onErrorClear = { viewModel.cleanError() },
         teamsScrollState = teamsScrollState,
         playersScrollState = playersScrollState
     )
@@ -95,7 +94,6 @@ fun OnBoardingScreen(
     onPreviousPressed: () -> Unit,
     onNextPressed: () -> Unit,
     onDonePressed: () -> Unit,
-    onErrorClear: () -> Unit,
     teamsScrollState: LazyGridState,
     playersScrollState: LazyGridState
 ) {
@@ -278,7 +276,6 @@ private fun TopAppBarTitle(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TeamCard(
     team: Team = Team.EMPTY_TEAM,
@@ -336,7 +333,6 @@ private fun TeamCard(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PlayerCard(
     player: Player = Player.EMPTY_PLAYER,

@@ -10,5 +10,6 @@ interface PlayersLocalDataSource {
     fun observePlayer(playerId: Int): Flow<PlayerEntity?>
     fun observePlayers(teamId: Int, season: Int): Flow<List<PlayerEntity>>
     fun observePlayers(): Flow<List<PlayerEntity>>
+    fun observeFavoritePlayers(ids: List<Int>): Flow<List<PlayerEntity>>
     suspend fun savePlayers(players: List<PlayerEntity>)
 }

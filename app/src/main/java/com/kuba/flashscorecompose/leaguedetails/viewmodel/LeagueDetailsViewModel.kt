@@ -6,6 +6,8 @@ import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesDataSource
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.leaguedetails.model.LeagueDetailsError
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -72,16 +74,15 @@ class LeagueDetailsViewModel(
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
-                    is RepositoryResult.Error -> it.copy(
-                        isLoading = false,
-                        error = LeagueDetailsError.RemoteError(result.error)
-                    )
+                    is RepositoryResult.Error -> {
+                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        it.copy(
+                            isLoading = false,
+                            error = LeagueDetailsError.RemoteError(result.error)
+                        )
+                    }
                 }
             }
         }
-    }
-
-    fun cleanError() {
-        viewModelState.update { it.copy(error = LeagueDetailsError.NoError) }
     }
 }

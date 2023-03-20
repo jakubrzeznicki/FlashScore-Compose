@@ -6,9 +6,11 @@ import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.authentication.AuthenticationDataSource
 import com.kuba.flashscorecompose.data.user.UserDataSource
 import com.kuba.flashscorecompose.data.user.model.User
+import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
 import com.kuba.flashscorecompose.signin.model.SignInError
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
-import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import com.kuba.flashscorecompose.utils.isValidEmail
 import kotlinx.coroutines.flow.*
@@ -19,7 +21,8 @@ import kotlinx.coroutines.launch
  */
 class SignInViewModel(
     private val authenticationRepository: AuthenticationDataSource,
-    private val userRepository: UserDataSource
+    private val userRepository: UserDataSource,
+    private val userPreferencesRepository: UserPreferencesDataSource
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow((SignInViewModelState()))
@@ -51,7 +54,7 @@ class SignInViewModel(
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             if (!email.isValidEmail()) {
-                SnackbarManager.showMessage(R.string.email_error)
+                SnackbarManager.showMessage(R.string.email_error, SnackbarMessageType.Error)
                 viewModelState.update {
                     it.copy(
                         error = SignInError.InvalidEmail(R.string.email_error),
@@ -61,7 +64,10 @@ class SignInViewModel(
                 return@launch
             }
             if (password.isBlank()) {
-                SnackbarManager.showMessage(R.string.empty_password_error)
+                SnackbarManager.showMessage(
+                    R.string.empty_password_error,
+                    SnackbarMessageType.Error
+                )
                 viewModelState.update {
                     it.copy(
                         error = SignInError.BlankPassword(R.string.empty_password_error),
@@ -85,21 +91,23 @@ class SignInViewModel(
                             phone = currentUser?.phoneNumber.orEmpty(),
                             isAnonymous = currentUser?.isAnonymous ?: false
                         )
-                        userRepository.saveCurrentUserId(currentUserId, isKeepLogged)
+                        SnackbarManager.showMessage(
+                            R.string.successfully_signed_in,
+                            SnackbarMessageType.Success
+                        )
                         userRepository.saveUser(user)
-                        if (userRepository.getIsOnBoardingCompleted()) openHomeScreen() else openOnBoardingScreen()
+                        userPreferencesRepository.saveCurrentUserId(currentUserId, isKeepLogged)
+                        if (userPreferencesRepository.getIsOnBoardingCompleted() == true) {
+                            openHomeScreen()
+                        } else {
+                            openOnBoardingScreen()
+                        }
                         it.copy(isLoading = false)
                     }
                     is RepositoryResult.Error -> {
-                        val message = result.error.statusMessage?.let { statusMessage ->
-                            SnackbarMessage.StringSnackbar(statusMessage)
-                        } ?: SnackbarMessage.ResourceSnackbar(R.string.generic_error)
-                        SnackbarManager.showMessage(message)
+                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
                         it.copy(
-                            error = SignInError.AuthenticationError(
-                                result.error,
-                                R.string.generic_error
-                            ),
+                            error = SignInError.AuthenticationError(result.error),
                             isLoading = false
                         )
                     }
@@ -109,9 +117,10 @@ class SignInViewModel(
     }
 
     fun onForgotPasswordClick() {
+        viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             if (!email.isValidEmail()) {
-                SnackbarManager.showMessage(R.string.email_error)
+                SnackbarManager.showMessage(R.string.email_error, SnackbarMessageType.Error)
                 viewModelState.update {
                     it.copy(
                         error = SignInError.InvalidEmail(R.string.email_error),
@@ -123,19 +132,16 @@ class SignInViewModel(
             viewModelState.update {
                 when (val result = authenticationRepository.sendRecoveryEmail(email)) {
                     is RepositoryResult.Success -> {
-                        SnackbarManager.showMessage(R.string.recovery_email_sent)
+                        SnackbarManager.showMessage(
+                            R.string.recovery_email_sent,
+                            SnackbarMessageType.Success
+                        )
                         it.copy(isLoading = false)
                     }
                     is RepositoryResult.Error -> {
-                        val message = result.error.statusMessage?.let { statusMessage ->
-                            SnackbarMessage.StringSnackbar(statusMessage)
-                        } ?: SnackbarMessage.ResourceSnackbar(R.string.generic_error)
-                        SnackbarManager.showMessage(message)
+                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
                         it.copy(
-                            error = SignInError.AuthenticationError(
-                                result.error,
-                                R.string.generic_error
-                            ),
+                            error = SignInError.AuthenticationError(result.error),
                             isLoading = false
                         )
                     }

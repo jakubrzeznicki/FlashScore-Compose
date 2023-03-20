@@ -9,6 +9,8 @@ import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesDataSource
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.home.model.HomeError
 import com.kuba.flashscorecompose.home.model.LeagueFixturesData
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import com.kuba.flashscorecompose.utils.containsQuery
 import kotlinx.coroutines.flow.*
@@ -59,10 +61,13 @@ class HomeViewModel(
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
-                    is RepositoryResult.Error -> it.copy(
-                        isLoading = false,
-                        error = HomeError.RemoteError(result.error)
-                    )
+                    is RepositoryResult.Error -> {
+                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        it.copy(
+                            isLoading = false,
+                            error = HomeError.RemoteError(result.error)
+                        )
+                    }
                 }
             }
         }
@@ -138,17 +143,16 @@ class HomeViewModel(
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
-                    is RepositoryResult.Error -> it.copy(
-                        isLoading = false,
-                        error = HomeError.RemoteError(result.error)
-                    )
+                    is RepositoryResult.Error -> {
+                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        it.copy(
+                            isLoading = false,
+                            error = HomeError.RemoteError(result.error)
+                        )
+                    }
                 }
             }
         }
-    }
-
-    fun cleanError() {
-        viewModelState.update { it.copy(error = HomeError.NoError) }
     }
 
     companion object {

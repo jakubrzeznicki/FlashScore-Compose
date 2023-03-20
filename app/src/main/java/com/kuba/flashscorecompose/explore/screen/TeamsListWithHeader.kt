@@ -75,7 +75,7 @@ fun TeamsDoubleListWithHeader(
         }
         item {
             Text(
-                modifier = Modifier.padding(bottom = 8.dp),
+                modifier = Modifier.padding(bottom = 8.dp, top = 16.dp),
                 text = stringResource(id = textId),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,

@@ -11,5 +11,6 @@ data class User(
     val phone: String = "",
     val address: String = "",
     val photoUri: String = "",
-    val isAnonymous: Boolean = false
+    val isAnonymous: Boolean = false,
+    val isOnBoardingCompleted: Boolean = false
 )

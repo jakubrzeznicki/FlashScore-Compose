@@ -11,8 +11,5 @@ sealed class SignUpError {
     data class InvalidEmail(@StringRes val messageId: Int) : SignUpError()
     data class InvalidPassword(@StringRes val messageId: Int) : SignUpError()
     data class NotMatchesPassword(@StringRes val messageId: Int) : SignUpError()
-    data class AuthenticationError(
-        val responseStatus: ResponseStatus,
-        @StringRes val messageId: Int
-    ) : SignUpError()
+    data class AuthenticationError(val responseStatus: ResponseStatus) : SignUpError()
 }

@@ -5,8 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.authentication.AuthenticationDataSource
 import com.kuba.flashscorecompose.signup.model.SignUpError
+import com.kuba.flashscorecompose.signup.model.SignUpType
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
-import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import com.kuba.flashscorecompose.utils.isValidEmail
 import com.kuba.flashscorecompose.utils.isValidPassword
@@ -17,8 +19,10 @@ import kotlinx.coroutines.launch
 /**
  * Created by jrzeznicki on 05/02/2023.
  */
-class SignUpViewModel(private val authenticationRepository: AuthenticationDataSource) :
-    ViewModel() {
+class SignUpViewModel(
+    private val signUpType: SignUpType,
+    private val authenticationRepository: AuthenticationDataSource
+) : ViewModel() {
 
     private val viewModelState = MutableStateFlow((SignUpViewModelState()))
     val uiState = viewModelState
@@ -55,7 +59,7 @@ class SignUpViewModel(private val authenticationRepository: AuthenticationDataSo
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             if (!email.isValidEmail()) {
-                SnackbarManager.showMessage(R.string.email_error)
+                SnackbarManager.showMessage(R.string.email_error, SnackbarMessageType.Error)
                 viewModelState.update {
                     it.copy(
                         error = SignUpError.InvalidEmail(R.string.email_error),
@@ -65,7 +69,7 @@ class SignUpViewModel(private val authenticationRepository: AuthenticationDataSo
                 return@launch
             }
             if (!password.isValidPassword()) {
-                SnackbarManager.showMessage(R.string.password_error)
+                SnackbarManager.showMessage(R.string.password_error, SnackbarMessageType.Error)
                 viewModelState.update {
                     it.copy(
                         error = SignUpError.InvalidPassword(R.string.password_error),
@@ -75,7 +79,10 @@ class SignUpViewModel(private val authenticationRepository: AuthenticationDataSo
                 return@launch
             }
             if (!password.passwordMatches(uiState.value.repeatPassword)) {
-                SnackbarManager.showMessage(R.string.password_match_error)
+                SnackbarManager.showMessage(
+                    R.string.password_match_error,
+                    SnackbarMessageType.Error
+                )
                 viewModelState.update {
                     it.copy(
                         error = SignUpError.NotMatchesPassword(R.string.password_match_error),
@@ -85,22 +92,25 @@ class SignUpViewModel(private val authenticationRepository: AuthenticationDataSo
                 return@launch
             }
             viewModelState.update {
-                when (val result =
-                    authenticationRepository.signUpWithEmailAndPassword(email, password)) {
+                val result = when (signUpType) {
+                    SignUpType.New ->
+                        authenticationRepository.signUpWithEmailAndPassword(email, password)
+                    SignUpType.Anonymous ->
+                        authenticationRepository.linkAccount(email, password)
+                }
+                when (result) {
                     is RepositoryResult.Success -> {
+                        SnackbarManager.showMessage(
+                            R.string.successfully_signed_up,
+                            SnackbarMessageType.Success
+                        )
                         openWelcomeScreen()
                         it.copy(isLoading = false)
                     }
                     is RepositoryResult.Error -> {
-                        val message = result.error.statusMessage?.let { statusMessage ->
-                            SnackbarMessage.StringSnackbar(statusMessage)
-                        } ?: SnackbarMessage.ResourceSnackbar(R.string.generic_error)
-                        SnackbarManager.showMessage(message)
+                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
                         it.copy(
-                            error = SignUpError.AuthenticationError(
-                                result.error,
-                                R.string.generic_error
-                            ),
+                            error = SignUpError.AuthenticationError(result.error),
                             isLoading = false
                         )
                     }

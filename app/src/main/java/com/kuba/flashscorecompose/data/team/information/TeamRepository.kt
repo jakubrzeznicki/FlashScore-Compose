@@ -36,6 +36,12 @@ class TeamRepository(
         return local.observeCoach(teamId).map { it?.toCoach() }
     }
 
+    override fun observeFavoriteTeams(ids: List<Int>): Flow<List<Team>> {
+        return local.observeFavoriteTeams(ids).map { teamEntities ->
+            teamEntities.map { it.toTeam() }
+        }
+    }
+
     override fun observeTeams(): Flow<List<Team>> {
         return local.observeTeams().map { teamEntities ->
             teamEntities.map { it.toTeam() }

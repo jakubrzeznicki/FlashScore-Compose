@@ -33,9 +33,11 @@ data class ExploreViewModelState(
     val favoriteTeams: List<TeamCountry> = emptyList(),
     val teams: List<TeamCountry> = emptyList(),
     val filteredTeams: List<TeamCountry> = emptyList(),
+    val filteredFavoriteTeams: List<TeamCountry> = emptyList(),
     val favoritePlayers: List<PlayerCountry> = emptyList(),
     val players: List<PlayerCountry> = emptyList(),
     val filteredPlayers: List<PlayerCountry> = emptyList(),
+    val filteredFavoritePlayers: List<PlayerCountry> = emptyList(),
     val venues: List<Venue> = emptyList(),
     val filteredVenues: List<Venue> = emptyList(),
     val coaches: List<CoachCountry> = emptyList(),
@@ -85,7 +87,7 @@ data class ExploreViewModelState(
         }
         is FilterChip.Explore.Teams -> {
             when {
-                favoriteTeams.isNotEmpty() && filteredTeams.isNotEmpty() ->
+                filteredFavoriteTeams.isNotEmpty() && filteredTeams.isNotEmpty() ->
                     ExploreUiState.Teams.HasFullData(
                         isLoading,
                         error,
@@ -93,7 +95,7 @@ data class ExploreViewModelState(
                         exploreQuery,
                         exploreFilterChips,
                         filteredTeams,
-                        favoriteTeams
+                        filteredFavoriteTeams
                     )
                 filteredTeams.isNotEmpty() ->
                     ExploreUiState.Teams.HasWithoutFavorite(
@@ -115,7 +117,7 @@ data class ExploreViewModelState(
         }
         is FilterChip.Explore.Players -> {
             when {
-                favoritePlayers.isNotEmpty() && filteredPlayers.isNotEmpty() ->
+                filteredFavoritePlayers.isNotEmpty() && filteredPlayers.isNotEmpty() ->
                     ExploreUiState.Players.HasFullData(
                         isLoading,
                         error,
@@ -123,7 +125,7 @@ data class ExploreViewModelState(
                         exploreQuery,
                         exploreFilterChips,
                         filteredPlayers,
-                        favoritePlayers
+                        filteredFavoritePlayers
                     )
                 filteredTeams.isNotEmpty() ->
                     ExploreUiState.Players.HasWithoutFavorite(
