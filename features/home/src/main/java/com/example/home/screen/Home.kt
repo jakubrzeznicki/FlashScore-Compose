@@ -47,7 +47,7 @@ private const val SETUP_HOME_KEY = "SETUP_HOME_KEY"
 
 @Destination
 @Composable
-fun HomeScreenRoute(
+fun Home(
     navigator: HomeNavigator,
     viewModel: HomeViewModel = getViewModel()
 ) {

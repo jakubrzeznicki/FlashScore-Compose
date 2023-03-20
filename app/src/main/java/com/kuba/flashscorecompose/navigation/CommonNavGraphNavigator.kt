@@ -6,7 +6,7 @@ import com.example.explore.navigation.ExploreNavigator
 import com.example.fixturedetails.container.screen.destinations.FixtureDetailsRouteDestination
 import com.example.fixturedetails.navigation.FixtureDetailsNavigator
 import com.example.home.navigation.HomeNavigator
-import com.example.home.screen.destinations.HomeScreenRouteDestination
+import com.example.home.screen.destinations.HomeDestination
 import com.example.leaguedetails.navigation.LeagueDetailsNavigator
 import com.example.leaguedetails.screen.destinations.LeagueDetailsRouteDestination
 import com.example.model.league.League
@@ -28,6 +28,7 @@ import com.example.teamdetails.container.destinations.TeamDetailsRouteDestinatio
 import com.example.teamdetails.navigation.TeamDetailsNavigator
 import com.example.welcome.destinations.WelcomeRouteDestination
 import com.example.welcome.navigation.WelcomeNavigator
+import com.ramcosta.composedestinations.dynamic.within
 import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.spec.NavGraphSpec
 
@@ -52,19 +53,25 @@ class CommonNavGraphNavigator(
     WelcomeNavigator {
 
     override fun openTeamDetails(team: Team, leagueId: Int, season: Int) {
-        navController.navigate(TeamDetailsRouteDestination(team, leagueId, season))
+        navController.navigate(TeamDetailsRouteDestination(team, leagueId, season) within navGraph)
     }
 
     override fun openLeagueDetails(league: League) {
-        navController.navigate(LeagueDetailsRouteDestination(league))
+        navController.navigate(LeagueDetailsRouteDestination(league) within navGraph)
     }
 
     override fun openPlayerDetails(playerId: Int, team: Team, season: Int) {
-        navController.navigate(PlayerDetailsRouteDestination(playerId, team, season))
+        navController.navigate(
+            PlayerDetailsRouteDestination(
+                playerId,
+                team,
+                season
+            ) within navGraph
+        )
     }
 
     override fun openFixtureDetails(fixtureId: Int) {
-        navController.navigate(FixtureDetailsRouteDestination(fixtureId))
+        navController.navigate(FixtureDetailsRouteDestination(fixtureId) within navGraph)
     }
 
     override fun navigateUp() {
@@ -72,34 +79,34 @@ class CommonNavGraphNavigator(
     }
 
     override fun openStandingsDetails(league: League) {
-        navController.navigate(StandingsDetailsRouteDestination(league))
+        navController.navigate(StandingsDetailsRouteDestination(league) within navGraph)
     }
 
     override fun openNotifications() {
-        navController.navigate(NotificationsRouteDestination() )
+        navController.navigate(NotificationsRouteDestination())
     }
 
     override fun openOnBoarding(onBoardingBackStackType: OnBoardingBackStackType) {
-        navController.navigate(OnBoardingRouteDestination() )
+        navController.navigate(OnBoardingRouteDestination() within navGraph)
     }
 
     override fun openHome(homeBackStackType: HomeBackStackType) {
-        navController.navigate(HomeScreenRouteDestination) //Dorobić Back Stack w zalenzosci od typu
+        navController.navigate(HomeDestination within navGraph) //Dorobić Back Stack w zalenzosci od typu
     }
 
     override fun openSignIn(signInBackStackType: SignInBackStackType) {
-        navController.navigate(SignInRouteDestination ) //Dorobić Back Stack w zalenzosci od typu
+        navController.navigate(SignInRouteDestination within navGraph) //Dorobić Back Stack w zalenzosci od typu
     }
 
     override fun openWelcome(welcomeBackStackType: WelcomeBackStackType) {
-        navController.navigate(WelcomeRouteDestination )  //Dorobić Back Stack w zalenzosci od typu
+        navController.navigate(WelcomeRouteDestination within navGraph)  //Dorobić Back Stack w zalenzosci od typu
     }
 
     override fun openSignUp(signUpType: SignUpType) {
-        navController.navigate(SignUpRouteDestination(signUpType) )
+        navController.navigate(SignUpRouteDestination(signUpType) within navGraph)
     }
 
     override fun openOnBoarding() {
-        navController.navigate(OnBoardingRouteDestination() )
+        navController.navigate(OnBoardingRouteDestination() within navGraph)
     }
 }

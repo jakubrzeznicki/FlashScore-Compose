@@ -10,7 +10,7 @@ import androidx.navigation.NavGraph
 import androidx.navigation.NavHostController
 import com.example.explore.screen.destinations.ExploreRouteDestination
 import com.example.fixturedetails.container.screen.destinations.FixtureDetailsRouteDestination
-import com.example.home.screen.destinations.HomeScreenRouteDestination
+import com.example.home.screen.destinations.HomeDestination
 import com.example.leaguedetails.screen.destinations.LeagueDetailsRouteDestination
 import com.example.notifications.screen.destinations.NotificationsRouteDestination
 import com.example.onboarding.screen.destinations.OnBoardingRouteDestination
@@ -28,6 +28,7 @@ import com.kuba.flashscorecompose.main.view.navGraph
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
+import com.ramcosta.composedestinations.dynamic.routedIn
 import com.ramcosta.composedestinations.navigation.dependency
 import com.ramcosta.composedestinations.scope.DestinationScopeWithNoDependencies
 import com.ramcosta.composedestinations.spec.DestinationSpec
@@ -60,9 +61,10 @@ object NavGraphs {
             TeamDetailsRouteDestination,
             PlayerDetailsRouteDestination,
             LeagueDetailsRouteDestination
-        ).associateBy { it.route }
+        ).routedIn(this)
+            .associateBy { it.route }
         override val route: String = EXPLORE
-        override val startRoute = ExploreRouteDestination
+        override val startRoute = ExploreRouteDestination routedIn this
     }
 
     //    val fixtureDetails = object : NavGraphSpec {
@@ -77,13 +79,14 @@ object NavGraphs {
 //    }
     val home = object : NavGraphSpec {
         override val destinationsByRoute = listOf<DestinationSpec<*>>(
-            HomeScreenRouteDestination,
-            //FixtureDetailsRouteDestination,
-            // LeagueDetailsRouteDestination,
+            HomeDestination,
+            FixtureDetailsRouteDestination,
+            LeagueDetailsRouteDestination,
             NotificationsRouteDestination
-        ).associateBy { it.route }
+        ).routedIn(this)
+            .associateBy { it.route }
         override val route: String = HOME
-        override val startRoute = HomeScreenRouteDestination
+        override val startRoute = HomeDestination routedIn this
     }
 
     //    val leagueDetails = object : NavGraphSpec {
@@ -107,10 +110,11 @@ object NavGraphs {
     val onBoarding = object : NavGraphSpec {
         override val destinationsByRoute = listOf<DestinationSpec<*>>(
             OnBoardingRouteDestination,
-            HomeScreenRouteDestination
-        ).associateBy { it.route }
+            HomeDestination
+        ).routedIn(this)
+            .associateBy { it.route }
         override val route: String = ON_BOARDING
-        override val startRoute = OnBoardingRouteDestination
+        override val startRoute = OnBoardingRouteDestination routedIn this
     }
 
     //    val playerDetails = object : NavGraphSpec {
@@ -127,9 +131,10 @@ object NavGraphs {
             SignInRouteDestination,
             SignUpRouteDestination,
             WelcomeRouteDestination
-        ).associateBy { it.route }
+        ).routedIn(this)
+            .associateBy { it.route }
         override val route: String = PROFILE
-        override val startRoute = ProfileRouteDestination
+        override val startRoute = ProfileRouteDestination routedIn this
     }
 
     //    val signIn = object : NavGraphSpec {
@@ -148,9 +153,10 @@ object NavGraphs {
             StandingsRouteDestination,
             StandingsDetailsRouteDestination,
             LeagueDetailsRouteDestination
-        ).associateBy { it.route }
+        ).routedIn(this)
+            .associateBy { it.route }
         override val route: String = STANDINGS
-        override val startRoute: Route = StandingsRouteDestination
+        override val startRoute: Route = StandingsRouteDestination routedIn this
     }
 
     //    val standingsDetails = object : NavGraphSpec {
@@ -188,18 +194,23 @@ object NavGraphs {
         override val destinationsByRoute = listOf<DestinationSpec<*>>(
             SplashScreenDestination,
             WelcomeRouteDestination,
-            HomeScreenRouteDestination
-        ).associateBy { it.route }
+            HomeDestination
+        ).routedIn(this)
+            .associateBy { it.route }
         override val route: String = SPLASH
-        override val startRoute = SplashScreenDestination
+        override val startRoute = SplashScreenDestination routedIn this
     }
     val root = object : NavGraphSpec {
-        override val destinationsByRoute = emptyMap<String, DestinationSpec<*>>()
-        override val route: String = ROOT
-        override val startRoute = splash
-        override val nestedNavGraphs: List<NavGraphSpec> = listOf(
-            splash,
-            welcome,
+        override val destinationsByRoute = listOf<DestinationSpec<*>>(
+            SplashScreenDestination,
+            WelcomeRouteDestination,
+            HomeDestination
+        ).associateBy { it.route }
+        override val route: String = "root"
+        override val startRoute = SplashScreenDestination
+        override val nestedNavGraphs = listOf(
+//            SplashScreenDestination,
+            //welcome,
             //onBoarding,
             //signIn,
             home,
@@ -222,7 +233,7 @@ object NavGraphs {
         println("$prefix = $stack")
     }
 
-    fun DestinationScopeWithNoDependencies<*>.currentNavigator(navController: NavHostController): CommonNavGraphNavigator {
+    fun DestinationScopeWithNoDependencies<*>.currentNavigator(): CommonNavGraphNavigator {
         return CommonNavGraphNavigator(
             navBackStackEntry.destination.navGraph(),
             navController
@@ -249,7 +260,7 @@ object NavGraphs {
             navGraph = root,
             modifier = modifier,
             dependenciesContainerBuilder = {
-                dependency(currentNavigator(navController = navController))
+                dependency(currentNavigator())
             }
         )
     }

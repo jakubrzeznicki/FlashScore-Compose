@@ -8,7 +8,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.TravelExplore
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.explore.screen.destinations.ExploreRouteDestination
-import com.example.home.screen.destinations.HomeScreenRouteDestination
+import com.example.home.screen.destinations.HomeDestination
 import com.example.profile.container.screen.destinations.ProfileRouteDestination
 import com.example.standings.screen.destinations.StandingsRouteDestination
 import com.ramcosta.composedestinations.spec.DirectionDestinationSpec
@@ -22,7 +22,7 @@ sealed class NavigationItem(
     @StringRes val label: Int
 ) {
     object Home :
-        NavigationItem(HomeScreenRouteDestination, Icons.Filled.Home, com.example.ui.R.string.home)
+        NavigationItem(HomeDestination, Icons.Filled.Home, com.example.ui.R.string.home)
 
     object Explore : NavigationItem(
             ExploreRouteDestination,

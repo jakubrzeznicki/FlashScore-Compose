@@ -1,6 +1,7 @@
 package com.kuba.flashscorecompose.main.view
 
 import android.content.res.Resources
+import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.widthIn
@@ -14,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
@@ -26,7 +26,6 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.kuba.flashscorecompose.navigation.NavGraphs
 import com.kuba.flashscorecompose.navigation.NavGraphs.AppNavigation
-import com.kuba.flashscorecompose.navigation.NavGraphs.print
 import com.kuba.flashscorecompose.ui.component.BottomNavigationBar
 import com.kuba.flashscorecompose.ui.component.NavigationScaffold
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
@@ -120,27 +119,29 @@ fun resources(): Resources {
     LocalConfiguration.current
     return LocalContext.current.resources
 }
-
-@Stable
-@Composable
-private fun NavController.currentScreenAsState(): State<NavGraphSpec> {
-    val selectedItem = remember { mutableStateOf(NavGraphs.home) }
-    DisposableEffect(this) {
-        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
-            backQueue.print()
-            selectedItem.value = destination.navGraph()
-        }
-        addOnDestinationChangedListener(listener)
-        onDispose {
-            removeOnDestinationChangedListener(listener)
-        }
-    }
-    return selectedItem
-}
+//
+//@Stable
+//@Composable
+//private fun NavController.currentScreenAsState(): State<NavGraphSpec> {
+//    val selectedItem = remember { mutableStateOf(NavGraphs.home) }
+//    DisposableEffect(this) {
+//        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
+//            //backQueue.print()
+//            selectedItem.value = destination.navGraph()
+//        }
+//        addOnDestinationChangedListener(listener)
+//        onDispose {
+//            removeOnDestinationChangedListener(listener)
+//        }
+//    }
+//    return selectedItem
+//}
 
 fun NavDestination.navGraph(): NavGraphSpec {
     hierarchy.forEach { destination ->
+        Log.d("TEST_LOG", "destination - route - ${destination.route}, id - ${destination.id}")
         NavGraphs.root.nestedNavGraphs.forEach { navGraph ->
+            Log.d("TEST_LOG", "NavGraphs.root.nestedNavGraphs - route - ${navGraph.route}, startRoute - ${navGraph.startRoute}")
             if (destination.route == navGraph.route) {
                 return navGraph
             }
