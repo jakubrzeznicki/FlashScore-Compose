@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-    compileSdk Config.compileSdk
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.kuba.flashscorecompose"
