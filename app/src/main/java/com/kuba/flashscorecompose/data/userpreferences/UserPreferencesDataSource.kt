@@ -11,6 +11,7 @@ interface UserPreferencesDataSource {
     suspend fun saveIsOnBoardingCompleted(isOnBoardingCompleted: Boolean)
     suspend fun saveCurrentUserId(userId: String, isKeepLogged: Boolean)
     suspend fun getCurrentUserId(): String
+    fun observeCurrentUserId(): Flow<String>
     suspend fun saveFavoriteTeamIds(teamIds: List<Int>)
     suspend fun saveFavoritePlayerIds(playerIds: List<Int>)
     suspend fun saveFavoriteFixturesIds(fixtureIds: List<Int>)

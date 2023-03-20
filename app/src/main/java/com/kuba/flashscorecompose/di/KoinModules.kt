@@ -79,6 +79,8 @@ import com.kuba.flashscorecompose.standingsdetails.viewmodel.StandingsDetailsVie
 import com.kuba.flashscorecompose.teamdetails.fixturesteam.viewmodel.FixturesTeamViewModel
 import com.kuba.flashscorecompose.teamdetails.informations.viewmodel.TeamInformationsViewModel
 import com.kuba.flashscorecompose.teamdetails.players.viewmodel.PlayersViewModel
+import com.kuba.flashscorecompose.ui.component.snackbar.DefaultSnackbarManager
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
 import com.kuba.flashscorecompose.welcome.viewmodel.WelcomeViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -91,37 +93,40 @@ import java.time.LocalDate
 class KoinModules {
 
     private val viewModelsModule = module {
-        viewModel { HomeViewModel(get(), get(), get(), get()) }
+        viewModel { HomeViewModel(get(), get(), get(), get(), get()) }
         viewModel { CountriesViewModel(get()) }
         viewModel { (countryCode: String) -> LeaguesViewModel(countryCode, get(), get()) }
         viewModel { (fixtureId: Int, leagueId: Int, round: String, season: Int) ->
-            StatisticsViewModel(fixtureId, leagueId, round, season, get(), get(), get())
+            StatisticsViewModel(fixtureId, leagueId, round, season, get(), get(), get(), get())
         }
-        viewModel { (fixtureId: Int) -> LineupViewModel(fixtureId, get()) }
+        viewModel { (fixtureId: Int) -> LineupViewModel(fixtureId, get(), get()) }
         viewModel { (homeTeamId: Int, awayTeamId: Int, season: Int) ->
             HeadToHeadViewModel(
                 homeTeamId,
                 awayTeamId,
                 season,
+                get(),
                 get()
             )
         }
-        viewModel { StandingsViewModel(get(), get(), get()) }
+        viewModel { StandingsViewModel(get(), get(), get(), get()) }
         viewModel { (leagueId: Int, season: Int) ->
             StandingsDetailsViewModel(
                 leagueId,
                 season,
+                get(),
                 get()
             )
         }
-        viewModel { (league: League) -> LeagueDetailsViewModel(league, get(), get()) }
+        viewModel { (league: League) -> LeagueDetailsViewModel(league, get(), get(), get()) }
         viewModel { (team: Team, leagueId: Int, season: Int) ->
-            TeamInformationsViewModel(team, leagueId, season, get(), get())
+            TeamInformationsViewModel(team, leagueId, season, get(), get(), get())
         }
         viewModel { (team: Team, season: Int) ->
             PlayersViewModel(
                 team,
                 season,
+                get(),
                 get(),
                 get(),
                 get()
@@ -132,6 +137,7 @@ class KoinModules {
                 teamId,
                 season,
                 get(),
+                get(),
                 get()
             )
         }
@@ -140,23 +146,33 @@ class KoinModules {
                 playerId,
                 team,
                 season,
+                get(),
                 get()
             )
         }
-        viewModel { ExploreViewModel(get(), get(), get(), get(), get(), get()) }
-        viewModel { SignInViewModel(get(), get(), get()) }
-        viewModel { (signUpType: SignUpType) -> SignUpViewModel(signUpType, get()) }
-        viewModel { WelcomeViewModel(get(), get(), get()) }
+        viewModel { ExploreViewModel(get(), get(), get(), get(), get(), get(), get()) }
+        viewModel { SignInViewModel(get(), get(), get(), get()) }
+        viewModel { (signUpType: SignUpType) -> SignUpViewModel(signUpType, get(), get()) }
+        viewModel { WelcomeViewModel(get(), get(), get(), get()) }
         viewModel { SplashViewModel(get()) }
-        viewModel { OnBoardingViewModel(get(), get(), get()) }
-        viewModel { ProfileViewModel(get(), get(), get()) }
-        viewModel { ProfileDetailsViewModel(get(), get(), get()) }
-        viewModel { (userId: String) -> ProfileSettingsViewModel(userId, get(), get(), get()) }
+        viewModel { OnBoardingViewModel(get(), get(), get(), get()) }
+        viewModel { ProfileViewModel(get(), get(), get(), get()) }
+        viewModel { ProfileDetailsViewModel(get(), get(), get(), get()) }
+        viewModel { (userId: String) ->
+            ProfileSettingsViewModel(
+                userId,
+                get(),
+                get(),
+                get(),
+                get()
+            )
+        }
     }
 
     private val componentsModule = module {
         single<UuidSource> { UuidData() }
         single<LocalDate> { LocalDate.now() }
+        single<SnackbarManager> { DefaultSnackbarManager() }
     }
 
     private val repositoryModule = module {

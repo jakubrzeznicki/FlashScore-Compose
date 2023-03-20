@@ -1,5 +1,6 @@
 package com.kuba.flashscorecompose.signup.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.R
@@ -7,7 +8,6 @@ import com.kuba.flashscorecompose.data.authentication.AuthenticationDataSource
 import com.kuba.flashscorecompose.signup.model.SignUpError
 import com.kuba.flashscorecompose.signup.model.SignUpType
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
-import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import com.kuba.flashscorecompose.utils.isValidEmail
@@ -21,7 +21,8 @@ import kotlinx.coroutines.launch
  */
 class SignUpViewModel(
     private val signUpType: SignUpType,
-    private val authenticationRepository: AuthenticationDataSource
+    private val authenticationRepository: AuthenticationDataSource,
+    private val snackbarManager: SnackbarManager
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow((SignUpViewModelState()))
@@ -58,10 +59,12 @@ class SignUpViewModel(
     }
 
     fun onSignUpClick(openWelcomeScreen: () -> Unit) {
+        Log.d("TEST_LOG", "currentUserId - ${authenticationRepository.currentUserId}")
+        Log.d("TEST_LOG", "hasUser - ${authenticationRepository.hasUser}")
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             if (!email.isValidEmail()) {
-                SnackbarManager.showMessage(R.string.email_error, SnackbarMessageType.Error)
+                snackbarManager.showMessage(R.string.email_error, SnackbarMessageType.Error)
                 viewModelState.update {
                     it.copy(
                         error = SignUpError.InvalidEmail(R.string.email_error),
@@ -71,7 +74,7 @@ class SignUpViewModel(
                 return@launch
             }
             if (!password.isValidPassword()) {
-                SnackbarManager.showMessage(R.string.password_error, SnackbarMessageType.Error)
+                snackbarManager.showMessage(R.string.password_error, SnackbarMessageType.Error)
                 viewModelState.update {
                     it.copy(
                         error = SignUpError.InvalidPassword(R.string.password_error),
@@ -81,7 +84,7 @@ class SignUpViewModel(
                 return@launch
             }
             if (!password.passwordMatches(uiState.value.repeatPassword)) {
-                SnackbarManager.showMessage(
+                snackbarManager.showMessage(
                     R.string.password_match_error,
                     SnackbarMessageType.Error
                 )
@@ -102,7 +105,7 @@ class SignUpViewModel(
                 }
                 when (result) {
                     is RepositoryResult.Success -> {
-                        SnackbarManager.showMessage(
+                        snackbarManager.showMessage(
                             R.string.successfully_signed_up,
                             SnackbarMessageType.Success
                         )
@@ -110,7 +113,10 @@ class SignUpViewModel(
                         it.copy(isLoading = false)
                     }
                     is RepositoryResult.Error -> {
-                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        snackbarManager.showSnackbarMessage(
+                            result.error.statusMessage,
+                            SnackbarMessageType.Error
+                        )
                         it.copy(
                             error = SignUpError.AuthenticationError(result.error),
                             isLoading = false

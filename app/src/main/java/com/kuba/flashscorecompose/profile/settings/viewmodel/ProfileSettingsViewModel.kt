@@ -8,7 +8,6 @@ import com.kuba.flashscorecompose.data.user.UserDataSource
 import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
 import com.kuba.flashscorecompose.signup.model.SignUpError
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
-import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessage
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
@@ -25,7 +24,8 @@ class ProfileSettingsViewModel(
     private val userId: String,
     private val userRepository: UserDataSource,
     private val userPreferencesRepository: UserPreferencesDataSource,
-    private val authenticationRepository: AuthenticationDataSource
+    private val authenticationRepository: AuthenticationDataSource,
+    private val snackbarManager: SnackbarManager
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(ProfileSettingsViewModelState())
@@ -77,7 +77,7 @@ class ProfileSettingsViewModel(
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             if (!password.isValidPassword()) {
-                SnackbarManager.showMessage(R.string.password_error, SnackbarMessageType.Error)
+                snackbarManager.showMessage(R.string.password_error, SnackbarMessageType.Error)
                 viewModelState.update {
                     it.copy(
                         error = SignUpError.InvalidPassword(R.string.password_error),
@@ -87,7 +87,7 @@ class ProfileSettingsViewModel(
                 return@launch
             }
             if (!password.passwordMatches(uiState.value.repeatPassword)) {
-                SnackbarManager.showMessage(
+                snackbarManager.showMessage(
                     R.string.password_match_error,
                     SnackbarMessageType.Error
                 )
@@ -112,7 +112,10 @@ class ProfileSettingsViewModel(
                         it.copy(isLoading = false)
                     }
                     is RepositoryResult.Error -> {
-                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        snackbarManager.showSnackbarMessage(
+                            result.error.statusMessage,
+                            SnackbarMessageType.Error
+                        )
                         it.copy(
                             error = SignUpError.AuthenticationError(result.error),
                             isLoading = false
@@ -129,7 +132,7 @@ class ProfileSettingsViewModel(
             viewModelState.update {
                 when (val result = authenticationRepository.signOut()) {
                     is RepositoryResult.Success -> {
-                        SnackbarManager.showMessage(
+                        snackbarManager.showMessage(
                             R.string.successfully_signed_out,
                             SnackbarMessageType.Success
                         )
@@ -137,7 +140,10 @@ class ProfileSettingsViewModel(
                         it.copy(isLoading = false)
                     }
                     is RepositoryResult.Error -> {
-                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        snackbarManager.showSnackbarMessage(
+                            result.error.statusMessage,
+                            SnackbarMessageType.Error
+                        )
                         it.copy(
                             error = SignUpError.AuthenticationError(result.error),
                             isLoading = false
@@ -154,7 +160,7 @@ class ProfileSettingsViewModel(
             viewModelState.update {
                 when (val result = authenticationRepository.deleteAccount()) {
                     is RepositoryResult.Success -> {
-                        SnackbarManager.showMessage(
+                        snackbarManager.showMessage(
                             R.string.account_deleted,
                             SnackbarMessageType.Success
                         )
@@ -163,7 +169,10 @@ class ProfileSettingsViewModel(
                         it.copy(isLoading = false)
                     }
                     is RepositoryResult.Error -> {
-                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        snackbarManager.showSnackbarMessage(
+                            result.error.statusMessage,
+                            SnackbarMessageType.Error
+                        )
                         it.copy(
                             error = SignUpError.AuthenticationError(result.error),
                             isLoading = false

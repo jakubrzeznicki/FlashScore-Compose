@@ -8,7 +8,7 @@ import com.kuba.flashscorecompose.data.fixtures.statistics.model.Statistics
 import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
 import com.kuba.flashscorecompose.fixturedetails.statistics.model.StatisticsError
 import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
-import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
@@ -24,7 +24,8 @@ class StatisticsViewModel(
     private val season: Int,
     private val statisticsRepository: StatisticsDataSource,
     private val fixturesRepository: FixturesDataSource,
-    private val userPreferencesRepository: UserPreferencesDataSource
+    private val userPreferencesRepository: UserPreferencesDataSource,
+    private val snackbarManager: SnackbarManager
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(StatisticsViewModelState())
@@ -92,7 +93,10 @@ class StatisticsViewModel(
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
                     is RepositoryResult.Error -> {
-                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        snackbarManager.showSnackbarMessage(
+                            result.error.statusMessage,
+                            SnackbarMessageType.Error
+                        )
                         it.copy(
                             isLoading = false,
                             error = StatisticsError.RemoteError(result.error)
@@ -111,7 +115,10 @@ class StatisticsViewModel(
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
                     is RepositoryResult.Error -> {
-                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        snackbarManager.showSnackbarMessage(
+                            result.error.statusMessage,
+                            SnackbarMessageType.Error
+                        )
                         it.copy(
                             isLoading = false,
                             error = StatisticsError.RemoteError(result.error)

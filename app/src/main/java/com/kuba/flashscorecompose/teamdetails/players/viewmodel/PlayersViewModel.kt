@@ -9,7 +9,7 @@ import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
 import com.kuba.flashscorecompose.teamdetails.players.model.PlayerWrapper
 import com.kuba.flashscorecompose.teamdetails.players.model.PlayersError
-import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
@@ -23,7 +23,8 @@ class PlayersViewModel(
     private val season: Int,
     private val playersRepository: PlayersDataSource,
     private val countryRepository: CountryDataSource,
-    private val userPreferencesRepository: UserPreferencesDataSource
+    private val userPreferencesRepository: UserPreferencesDataSource,
+    private val snackbarManager: SnackbarManager
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(PlayersViewModelState())
@@ -79,7 +80,10 @@ class PlayersViewModel(
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
                     is RepositoryResult.Error -> {
-                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        snackbarManager.showSnackbarMessage(
+                            result.error.statusMessage,
+                            SnackbarMessageType.Error
+                        )
                         it.copy(
                             isLoading = false,
                             error = PlayersError.RemoteError(result.error),

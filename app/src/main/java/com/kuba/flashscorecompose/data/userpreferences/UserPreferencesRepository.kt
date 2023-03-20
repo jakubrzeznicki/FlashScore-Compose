@@ -28,6 +28,10 @@ class UserPreferencesRepository(private val local: UserPreferencesLocalDataSourc
         return local.getCurrentUserId()
     }
 
+    override fun observeCurrentUserId(): Flow<String> {
+        return local.observeCurrentUserId()
+    }
+
     override suspend fun saveFavoriteTeamIds(teamIds: List<Int>) {
         local.saveFavoriteTeamIds(teamIds)
     }

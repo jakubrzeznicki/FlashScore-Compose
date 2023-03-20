@@ -7,7 +7,7 @@ import com.kuba.flashscorecompose.data.standings.StandingsDataSource
 import com.kuba.flashscorecompose.data.standings.model.StandingItem
 import com.kuba.flashscorecompose.standingsdetails.model.StandingsDetailsError
 import com.kuba.flashscorecompose.ui.component.chips.FilterChip
-import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
+import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.flow.*
@@ -19,7 +19,8 @@ import kotlinx.coroutines.launch
 class StandingsDetailsViewModel(
     private val leagueId: Int,
     private val season: Int,
-    private val standingsRepository: StandingsDataSource
+    private val standingsRepository: StandingsDataSource,
+    private val snackbarManager: SnackbarManager
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(StandingsDetailsViewModelState())
@@ -76,7 +77,10 @@ class StandingsDetailsViewModel(
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
                     is RepositoryResult.Error -> {
-                        result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)
+                        snackbarManager.showSnackbarMessage(
+                            result.error.statusMessage,
+                            SnackbarMessageType.Error
+                        )
                         it.copy(
                             isLoading = false,
                             error = StandingsDetailsError.RemoteError(result.error)
