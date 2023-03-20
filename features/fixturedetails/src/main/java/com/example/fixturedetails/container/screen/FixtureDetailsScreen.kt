@@ -32,6 +32,8 @@ import com.example.fixturedetails.navigation.FixtureDetailsNavigator
 import com.example.fixturedetails.statistics.screen.StatisticsScreen
 import com.example.model.fixture.FixtureItem
 import com.example.model.team.Team
+import com.example.notificationservice.notification.DefaultFixtureNotification.Companion.FIXTURE_ID_ARGS
+import com.example.notificationservice.notification.DefaultFixtureNotification.Companion.MY_URI
 import com.example.ui.composables.CenterAppTopBar
 import com.example.ui.composables.EmptyState
 import com.example.ui.composables.FullScreenLoading
@@ -41,6 +43,7 @@ import com.example.ui.composables.tabs.Tabs
 import com.example.ui.composables.tabs.TabsContent
 import com.example.ui.theme.FlashScoreTypography
 import com.google.accompanist.pager.*
+import com.ramcosta.composedestinations.annotation.DeepLink
 import com.ramcosta.composedestinations.annotation.Destination
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
@@ -50,12 +53,11 @@ import org.koin.core.parameter.parametersOf
  */
 private const val SETUP_FIXTURE_DETAILS_KEY = "SETUP_FIXTURE_DETAILS_KEY"
 
-//@Destination(
-//    deepLinks = [
-//        DeepLink(uriPattern = "$MY_URI/$FIXTURE_ID_ARGS={fixtureId}")
-//    ]
-//)
-@Destination
+@Destination(
+    deepLinks = [
+        DeepLink(uriPattern = "$MY_URI/$FIXTURE_ID_ARGS={fixtureId}")
+    ]
+)
 @Composable
 fun FixtureDetailsRoute(
     fixtureId: Int,

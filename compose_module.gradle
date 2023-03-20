@@ -1,17 +1,5 @@
-kotlin {
-    sourceSets {
-        debug {
-            kotlin.srcDir("build/generated/ksp/debug/kotlin")
-        }
-        release {
-            kotlin.srcDir("build/generated/ksp/release/kotlin")
-        }
-    }
-}
-
 android {
     compileSdk Config.compileSdk
-    //buildToolsVersion Config.buildTools
 
     defaultConfig {
         minSdk Config.minSdk
@@ -23,10 +11,6 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
-
-        Properties properties = new Properties()
-        properties.load(project.rootProject.file("local.properties").newDataInputStream())
-        buildConfigField "String", "API_KEY", "\"${properties.getProperty("API_KEY")}\""
     }
     buildTypes {
         release {
@@ -46,7 +30,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.4.1'
+        kotlinCompilerExtensionVersion Versions.kotlinCompilerExtensionVersion
     }
     packagingOptions {
         resources {

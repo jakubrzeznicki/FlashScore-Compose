@@ -37,7 +37,6 @@ val FlashScoreTypography = Typography(
         letterSpacing = 0.03.sp
     ),
     bodyLarge = TextStyle(
-        // fontFamily = Roboto,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         letterSpacing = 0.5.sp

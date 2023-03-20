@@ -17,6 +17,7 @@ import com.example.onboarding.navigation.OnBoardingNavigator
 import com.example.onboarding.screen.destinations.OnBoardingRouteDestination
 import com.example.playerdetails.navigation.PlayerDetailsNavigator
 import com.example.playerdetails.screen.destinations.PlayerDetailsRouteDestination
+import com.example.profile.container.screen.destinations.ProfileRouteDestination
 import com.example.profile.navigation.ProfileNavigator
 import com.example.signin.destinations.SignInRouteDestination
 import com.example.signin.destinations.SignUpRouteDestination
@@ -26,6 +27,7 @@ import com.example.standingsdetails.navigation.StandingsDetailsNavigator
 import com.example.standingsdetails.screen.destinations.StandingsDetailsRouteDestination
 import com.example.teamdetails.container.destinations.TeamDetailsRouteDestination
 import com.example.teamdetails.navigation.TeamDetailsNavigator
+import com.example.welcome.destinations.SplashScreenDestination
 import com.example.welcome.destinations.WelcomeRouteDestination
 import com.example.welcome.navigation.WelcomeNavigator
 import com.ramcosta.composedestinations.navigation.navigate
@@ -33,9 +35,7 @@ import com.ramcosta.composedestinations.navigation.navigate
 /**
  * Created by jrzeznicki on 16/03/2023.
  */
-class CommonNavGraphNavigator(
-    private val navController: NavController
-) : ExploreNavigator,
+class CommonNavGraphNavigator(private val navController: NavController) : ExploreNavigator,
     FixtureDetailsNavigator,
     HomeNavigator,
     LeagueDetailsNavigator,
@@ -84,23 +84,62 @@ class CommonNavGraphNavigator(
     }
 
     override fun openOnBoarding(onBoardingBackStackType: OnBoardingBackStackType) {
-        navController.navigate(OnBoardingRouteDestination())
+        navController.navigate(OnBoardingRouteDestination()) {
+            when (onBoardingBackStackType) {
+                is OnBoardingBackStackType.SignIn ->
+                    popUpTo(SignInRouteDestination.route) { inclusive = true }
+            }
+        }
     }
 
     override fun openHome(homeBackStackType: HomeBackStackType) {
-        navController.navigate(HomeDestination) //Dorobić Back Stack w zalenzosci od typu
+        navController.navigate(HomeDestination) {
+            when (homeBackStackType) {
+                is HomeBackStackType.Splash ->
+                    popUpTo(SplashScreenDestination.route) { inclusive = true }
+                is HomeBackStackType.SignIn ->
+                    popUpTo(SignInRouteDestination.route) { inclusive = true }
+                is HomeBackStackType.OnBoarding ->
+                    popUpTo(OnBoardingRouteDestination.route) { inclusive = true }
+                is HomeBackStackType.Welcome ->
+                    popUpTo(WelcomeRouteDestination.route) { inclusive = true }
+            }
+        }
     }
 
     override fun openSignIn(signInBackStackType: SignInBackStackType) {
-        navController.navigate(SignInRouteDestination) //Dorobić Back Stack w zalenzosci od typu
+        when (signInBackStackType) {
+            SignInBackStackType.Profile ->
+                navController.navigate(SignInRouteDestination) {
+                    popUpTo(ProfileRouteDestination.route) { inclusive = true }
+                }
+            SignInBackStackType.Welcome ->
+                navController.navigate(SignInRouteDestination)
+        }
     }
 
     override fun openWelcome(welcomeBackStackType: WelcomeBackStackType) {
-        navController.navigate(WelcomeRouteDestination)  //Dorobić Back Stack w zalenzosci od typu
+        navController.navigate(WelcomeRouteDestination) {
+            when (welcomeBackStackType) {
+                is WelcomeBackStackType.Profile ->
+                    popUpTo(ProfileRouteDestination.route) { inclusive = true }
+                is WelcomeBackStackType.Splash ->
+                    popUpTo(SplashScreenDestination.route) { inclusive = true }
+                is WelcomeBackStackType.SignUp ->
+                    popUpTo(SignUpRouteDestination.route) { inclusive = true }
+            }
+        }
     }
 
     override fun openSignUp(signUpType: SignUpType) {
-        navController.navigate(SignUpRouteDestination(signUpType))
+        when (signUpType) {
+            SignUpType.Anonymous ->
+                navController.navigate(SignUpRouteDestination(signUpType)) {
+                    popUpTo(ProfileRouteDestination.route) { inclusive = true }
+                }
+            SignUpType.New ->
+                navController.navigate(SignUpRouteDestination(signUpType))
+        }
     }
 
     override fun openOnBoarding() {

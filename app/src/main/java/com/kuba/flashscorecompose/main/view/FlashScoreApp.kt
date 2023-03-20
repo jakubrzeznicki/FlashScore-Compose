@@ -2,7 +2,7 @@ package com.kuba.flashscorecompose.main.view
 
 import android.content.res.Resources
 import android.util.Log
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.*
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -15,9 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavDestination
+import androidx.navigation.*
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavHostController
 import com.example.ui.composables.FlashScoreSnackbar
 import com.example.ui.snackbar.SnackbarManager
 import com.example.ui.snackbar.SnackbarMessageType
@@ -28,10 +27,15 @@ import com.kuba.flashscorecompose.navigation.NavGraphs
 import com.kuba.flashscorecompose.navigation.NavGraphs.AppNavigation
 import com.kuba.flashscorecompose.ui.component.BottomNavigationBar
 import com.kuba.flashscorecompose.ui.component.NavigationScaffold
+import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
-import com.ramcosta.composedestinations.spec.NavGraphSpec
-import com.ramcosta.composedestinations.spec.NavHostEngine
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.spec.*
+import com.ramcosta.composedestinations.utils.destination
+import com.ramcosta.composedestinations.utils.startDestination
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import org.koin.androidx.compose.inject
 
 /**
@@ -76,7 +80,7 @@ fun FlashScoreApp() {
             }
         }
     ) {
-        AppNavigation(navController = appState.navController)
+        AppNavigation(navController = appState.navController, engine = appState.engine)
 //        DestinationsNavHost(
 //            engine = appState.engine,
 //            navController = appState.navController,
@@ -90,7 +94,14 @@ fun FlashScoreApp() {
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialNavigationApi::class)
 @Composable
 fun rememberAppState(
-    engine: NavHostEngine = rememberAnimatedNavHostEngine(),
+    engine: NavHostEngine = rememberAnimatedNavHostEngine(
+        rootDefaultAnimations = RootNavGraphDefaultAnimations(
+            enterTransition = { defaultTiviEnterTransition(initialState, targetState) },
+            exitTransition = { defaultTiviExitTransition(initialState, targetState) },
+            popEnterTransition = { defaultTiviPopEnterTransition() },
+            popExitTransition = { defaultTiviPopExitTransition() },
+        )
+    ),
     navController: NavHostController = rememberAnimatedNavController(),
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     snackbarMessageType: MutableState<SnackbarMessageType> = remember {
@@ -124,36 +135,71 @@ fun resources(): Resources {
     LocalConfiguration.current
     return LocalContext.current.resources
 }
-//
-//@Stable
-//@Composable
-//private fun NavController.currentScreenAsState(): State<NavGraphSpec> {
-//    val selectedItem = remember { mutableStateOf(NavGraphs.home) }
-//    DisposableEffect(this) {
-//        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
-//            //backQueue.print()
-//            selectedItem.value = destination.navGraph()
-//        }
-//        addOnDestinationChangedListener(listener)
-//        onDispose {
-//            removeOnDestinationChangedListener(listener)
-//        }
-//    }
-//    return selectedItem
-//}
+
+@Stable
+@Composable
+private fun NavController.currentScreenAsState(): State<NavGraphSpec> {
+    val selectedItem = remember { mutableStateOf(NavGraphs.home) }
+    DisposableEffect(this) {
+        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
+            //backQueue.print()
+            selectedItem.value = destination.navGraph()
+        }
+        addOnDestinationChangedListener(listener)
+        onDispose {
+            removeOnDestinationChangedListener(listener)
+        }
+    }
+    return selectedItem
+}
 
 fun NavDestination.navGraph(): NavGraphSpec {
     hierarchy.forEach { destination ->
-        Log.d("TEST_LOG", "destination - route - ${destination.route}, id - ${destination.id}")
         NavGraphs.root.nestedNavGraphs.forEach { navGraph ->
-            Log.d(
-                "TEST_LOG",
-                "NavGraphs.root.nestedNavGraphs - route - ${navGraph.route}, startRoute - ${navGraph.startRoute}"
-            )
             if (destination.route == navGraph.route) {
                 return navGraph
             }
         }
     }
     throw RuntimeException("Unknown nav graph for destination $route")
+}
+
+
+@ExperimentalAnimationApi
+private fun AnimatedContentScope<*>.defaultTiviEnterTransition(
+    initial: NavBackStackEntry,
+    target: NavBackStackEntry,
+): EnterTransition {
+    val initialNavGraph = initial.destination.hostNavGraph
+    val targetNavGraph = target.destination.hostNavGraph
+    if (initialNavGraph.id != targetNavGraph.id) {
+        return fadeIn()
+    }
+    return fadeIn() + slideIntoContainer(AnimatedContentScope.SlideDirection.Start)
+}
+
+@ExperimentalAnimationApi
+private fun AnimatedContentScope<*>.defaultTiviExitTransition(
+    initial: NavBackStackEntry,
+    target: NavBackStackEntry,
+): ExitTransition {
+    val initialNavGraph = initial.destination.hostNavGraph
+    val targetNavGraph = target.destination.hostNavGraph
+    if (initialNavGraph.id != targetNavGraph.id) {
+        return fadeOut()
+    }
+    return fadeOut() + slideOutOfContainer(AnimatedContentScope.SlideDirection.Start)
+}
+
+private val NavDestination.hostNavGraph: NavGraph
+    get() = hierarchy.first { it is NavGraph } as NavGraph
+
+@ExperimentalAnimationApi
+private fun AnimatedContentScope<*>.defaultTiviPopEnterTransition(): EnterTransition {
+    return fadeIn() + slideIntoContainer(AnimatedContentScope.SlideDirection.End)
+}
+
+@ExperimentalAnimationApi
+private fun AnimatedContentScope<*>.defaultTiviPopExitTransition(): ExitTransition {
+    return fadeOut() + slideOutOfContainer(AnimatedContentScope.SlideDirection.End)
 }

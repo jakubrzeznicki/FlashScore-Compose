@@ -1,6 +1,5 @@
 android {
     compileSdk Config.compileSdk
-    //buildToolsVersion Config.buildTools
 
     defaultConfig {
         minSdk Config.minSdk
@@ -9,13 +8,6 @@ android {
         versionName Environments.appVersionName
 
         testInstrumentationRunner Config.testInstrumentationRunner
-        vectorDrawables {
-            useSupportLibrary true
-        }
-
-        Properties properties = new Properties()
-        properties.load(project.rootProject.file("local.properties").newDataInputStream())
-        buildConfigField "String", "API_KEY", "\"${properties.getProperty("API_KEY")}\""
     }
     buildTypes {
         release {

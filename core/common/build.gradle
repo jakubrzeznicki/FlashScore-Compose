@@ -12,6 +12,5 @@ apply {
 }
 
 dependencies {
-    //Compose
     implementation Compose.runtime
 }

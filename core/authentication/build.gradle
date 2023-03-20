@@ -19,7 +19,6 @@ dependencies {
     testImplementation Koin.test
     implementation Koin.android
 
-
     //Firebase
     implementation Firebase.auth
     implementation Firebase.crashlytics

@@ -5,8 +5,10 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.TaskStackBuilder
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.net.toUri
 import com.example.common.utils.getPendingIntentFlag
 import com.example.model.notificationdata.NotificationData
 import com.example.notificationservice.R
@@ -28,14 +30,14 @@ class DefaultFixtureNotification(private val applicationContext: Context) : Fixt
     }
 
     private fun getPendingIntent(id: Int): PendingIntent {
-//        val intent = Intent(
-//            Intent.ACTION_VIEW,
-//            "$MY_URI/$FIXTURE_ID_ARGS=$id".toUri(),
-//            applicationContext,
-//            MainActivity::class.java
-//        )
+        val intent = Intent(
+            Intent.ACTION_VIEW,
+            "$MY_URI/$FIXTURE_ID_ARGS=$id".toUri(),
+            applicationContext,
+            Class.forName("com.kuba.flashscorecompose.main.view.MainActivity")
+        )
         return TaskStackBuilder.create(applicationContext).run {
-            //addNextIntentWithParentStack(intent)
+            addNextIntentWithParentStack(intent)
             getPendingIntent(0, getPendingIntentFlag())
         }
     }

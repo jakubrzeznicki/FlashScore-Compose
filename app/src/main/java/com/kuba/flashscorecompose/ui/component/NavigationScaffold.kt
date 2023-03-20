@@ -27,7 +27,7 @@ fun NavigationScaffold(
     bottomBar: @Composable (DestinationSpec<*>) -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
-    val test = startRoute.startDestination
+    val startDestination = startRoute.startDestination
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     navController.navigatorProvider += bottomSheetNavigator
     ModalBottomSheetLayout(
@@ -36,7 +36,7 @@ fun NavigationScaffold(
     ) {
         Scaffold(
             snackbarHost = snackbarHost,
-            bottomBar = { bottomBar(test) },
+            bottomBar = { bottomBar(startDestination) },
             containerColor = MaterialTheme.colorScheme.background,
             contentColor = MaterialTheme.colorScheme.onSecondary,
             content = content

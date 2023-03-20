@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.example.data.notification.repository.NotificationsDataSource
 import com.example.notificationservice.manager.ReminderManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +17,7 @@ import org.koin.java.KoinJavaComponent.inject
 class BootReceiver : BroadcastReceiver() {
 
     private val reminderManager by inject<ReminderManager>(ReminderManager::class.java)
-    //private val notificationsRepository by inject<NotificationsDataSource>(NotificationsDataSource::class.java)
+    private val notificationsRepository by inject<NotificationsDataSource>(NotificationsDataSource::class.java)
 
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == Intent.ACTION_BOOT_COMPLETED ||
@@ -24,10 +25,10 @@ class BootReceiver : BroadcastReceiver() {
         ) {
             CoroutineScope(Dispatchers.Main).launch {
                 val currentTimestamp = System.currentTimeMillis()
-//                val reminders = notificationsRepository.getActiveReminders(currentTimestamp)
-//                reminders.forEach { notificationData ->
-//                    reminderManager.startReminder(notificationData)
-//                }
+                val reminders = notificationsRepository.getActiveReminders(currentTimestamp)
+                reminders.forEach { notificationData ->
+                    reminderManager.startReminder(notificationData)
+                }
             }
         }
     }
