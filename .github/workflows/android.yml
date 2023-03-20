@@ -133,12 +133,6 @@ jobs:
           VERSION_CODE=$((INITIAL_VERSION_CODE + RUN_NUMBER))
           echo "version_code=$VERSION_CODE" >> $GITHUB_ENV        
 
-      #      - name: Update version code
-      #        uses: chkfung/android-version-actions@v1.1
-      #        with:
-      #          gradlePath: android/app/build.gradle
-      #          versionCode: ${{ env.version_code }}
-
       - name: Build debug apk
         run: ./gradlew assembleDebug --stacktrace
 
@@ -174,16 +168,6 @@ jobs:
         with:
           name: UploadAPK
 
-#      - name: Upload APK to release
-#        uses: svenstaro/upload-release-action@v2
-#          with:
-#            repo_token: ${{ secrets.GITHUB_TOKEN }}
-#            file: UploadAPK/app-debug.apk
-#            asset_name: UploadAPK.apk
-#            tag: ${{ github.ref }}
-#            overwrite: true
-#            body: "This is my release text"
-
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -207,15 +191,6 @@ jobs:
           asset_path: UploadAPK/app-debug.apk
           asset_name: UploadAPK.apk
           asset_content_type: application/zip
-
- #     - name: Send APK to Slack
- #         uses: adrey/slack-file-upload-action@1.0.5
- #         with:
- #           token: ${{ secrets.SLACK_TOKEN }}
- #           path: app/app-debug.apk
- #           channel: general
- #           filename: Github Actions App.apk
- #           initial_comment: ${{ github.event.head_commit.message }}
 
   deploy-firebase:
     needs: [build]
