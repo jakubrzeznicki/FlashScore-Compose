@@ -6,9 +6,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.team.information.model.Team
+import com.kuba.flashscorecompose.data.user.model.User
 import com.kuba.flashscorecompose.fixturedetails.headtohead.screen.HeadToHeadScreen
 import com.kuba.flashscorecompose.fixturedetails.lineup.screen.LineupScreen
 import com.kuba.flashscorecompose.fixturedetails.statistics.screen.StatisticsScreen
+import com.kuba.flashscorecompose.profile.details.screen.ProfileDetailsScreen
 import com.kuba.flashscorecompose.teamdetails.fixturesteam.screen.FixturesTeamScreen
 import com.kuba.flashscorecompose.teamdetails.informations.screen.TeamInformationsScreen
 import com.kuba.flashscorecompose.teamdetails.players.screen.PlayersScreen
@@ -100,5 +102,13 @@ sealed class TabItem(var icon: ImageVector, var titleId: Int, var screen: Compos
             R.string.transfers,
             {}
         )
+    }
+
+    sealed interface Profile {
+        class Details(user: User) :
+            TabItem(Icons.Default.Info, R.string.my_profile, { ProfileDetailsScreen(user = user) })
+
+        class Activity(user: User) : TabItem(Icons.Default.LocalActivity, R.string.activity, { })
+        class Settings(user: User) : TabItem(Icons.Default.Settings, R.string.settings, { })
     }
 }

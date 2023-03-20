@@ -1,12 +1,14 @@
 package com.kuba.flashscorecompose.ui.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.kuba.flashscorecompose.NavGraphs
@@ -22,9 +24,9 @@ import com.ramcosta.composedestinations.utils.isRouteOnBackStack
 @Composable
 fun BottomNavigationBar(tabs: List<NavigationItem>, navController: NavHostController) {
     NavigationBar(
-        modifier = Modifier.background(
-            color = MaterialTheme.colorScheme.surface
-        ),
+        modifier = Modifier
+            .background(color = MaterialTheme.colorScheme.surface)
+            .height(68.dp),
         containerColor = Color.Transparent,
         contentColor = MaterialTheme.colorScheme.inverseOnSurface
     ) {

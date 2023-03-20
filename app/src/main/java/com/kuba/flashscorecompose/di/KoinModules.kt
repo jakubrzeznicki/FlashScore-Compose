@@ -49,8 +49,10 @@ import com.kuba.flashscorecompose.data.team.information.model.Team
 import com.kuba.flashscorecompose.data.team.information.remote.TeamRemote
 import com.kuba.flashscorecompose.data.user.UserDataSource
 import com.kuba.flashscorecompose.data.user.UserRepository
-import com.kuba.flashscorecompose.data.user.preferences.DefaultUserDataStore
-import com.kuba.flashscorecompose.data.user.preferences.UserDataStore
+import com.kuba.flashscorecompose.data.user.local.UserLocal
+import com.kuba.flashscorecompose.data.user.local.preferences.DefaultUserDataStore
+import com.kuba.flashscorecompose.data.user.local.preferences.UserDataStore
+import com.kuba.flashscorecompose.data.user.model.User
 import com.kuba.flashscorecompose.explore.viewmodel.ExploreViewModel
 import com.kuba.flashscorecompose.fixturedetails.headtohead.viewmodel.HeadToHeadViewModel
 import com.kuba.flashscorecompose.fixturedetails.lineup.viewmodel.LineupViewModel
@@ -62,6 +64,8 @@ import com.kuba.flashscorecompose.network.uuidsource.UuidData
 import com.kuba.flashscorecompose.network.uuidsource.UuidSource
 import com.kuba.flashscorecompose.onboarding.viewmodel.OnBoardingViewModel
 import com.kuba.flashscorecompose.playerdetails.viewmodel.PlayerDetailsViewModel
+import com.kuba.flashscorecompose.profile.container.viewmodel.ProfileViewModel
+import com.kuba.flashscorecompose.profile.details.viewmodel.ProfileDetailsViewModel
 import com.kuba.flashscorecompose.signin.viewmodel.SignInViewModel
 import com.kuba.flashscorecompose.signup.viewmodel.SignUpViewModel
 import com.kuba.flashscorecompose.splash.viewmodel.SplashViewModel
@@ -122,9 +126,11 @@ class KoinModules {
         viewModel { ExploreViewModel(get(), get(), get(), get(), get()) }
         viewModel { SignInViewModel(get(), get()) }
         viewModel { SignUpViewModel(get()) }
-        viewModel { WelcomeViewModel(get()) }
+        viewModel { WelcomeViewModel(get(), get()) }
         viewModel { SplashViewModel(get()) }
         viewModel { OnBoardingViewModel(get(), get(), get()) }
+        viewModel { ProfileViewModel(get(), get()) }
+        viewModel { (user: User) -> ProfileDetailsViewModel(user, get(), get()) }
     }
 
     private val componentsModule = module {
@@ -183,7 +189,8 @@ class KoinModules {
             AuthenticationRepository(auth, get())
         }
         single<UserDataSource> {
-            UserRepository(get())
+            val local = UserLocal(get(), get())
+            UserRepository(local)
         }
     }
 

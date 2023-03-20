@@ -22,9 +22,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.destinations.HomeScreenRouteDestination
+import com.kuba.flashscorecompose.destinations.OnBoardingRputeDestination
 import com.kuba.flashscorecompose.destinations.SignInRouteDestination
 import com.kuba.flashscorecompose.destinations.SignUpRouteDestination
-import com.kuba.flashscorecompose.destinations.WelcomeRouteDestination
 import com.kuba.flashscorecompose.ui.theme.FlashScoreComposeTheme
 import com.kuba.flashscorecompose.welcome.model.WelcomeError
 import com.kuba.flashscorecompose.welcome.model.WelcomeUiState
@@ -48,11 +48,18 @@ fun WelcomeRoute(
         onSignInClick = { navigator.navigate(SignInRouteDestination()) },
         onSignUpClick = { navigator.navigate(SignUpRouteDestination()) },
         onSignInAsGuest = {
-            viewModel.createAnonymousAccount {
-                navigator.navigate(HomeScreenRouteDestination()) {
-                    popUpTo(WelcomeRouteDestination.route) { inclusive = true }
+            viewModel.createAnonymousAccount(
+                openHomeScreen = {
+                    navigator.navigate(HomeScreenRouteDestination()) {
+                        popUpTo(SignInRouteDestination.route) { inclusive = true }
+                    }
+                },
+                openOnBoardingScreen = {
+                    navigator.navigate(OnBoardingRputeDestination()) {
+                        popUpTo(SignInRouteDestination.route) { inclusive = true }
+                    }
                 }
-            }
+            )
         }
     )
 }
@@ -220,6 +227,6 @@ fun BasicButton(@StringRes text: Int, modifier: Modifier, action: () -> Unit) {
 @Composable
 fun WelcomeScreenPreview() {
     FlashScoreComposeTheme {
-       // WelcomeScreen()
+        // WelcomeScreen()
     }
 }

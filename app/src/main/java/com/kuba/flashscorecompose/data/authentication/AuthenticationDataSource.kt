@@ -1,5 +1,6 @@
 package com.kuba.flashscorecompose.data.authentication
 
+import android.net.Uri
 import com.google.firebase.auth.FirebaseUser
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import kotlinx.coroutines.CoroutineScope
@@ -27,5 +28,9 @@ interface AuthenticationDataSource {
     suspend fun linkAccount(email: String, password: String): RepositoryResult<FirebaseUser>
     suspend fun deleteAccount(): RepositoryResult<Boolean>
     suspend fun signOut(): RepositoryResult<Boolean>
+    suspend fun updateName(name: String): RepositoryResult<Boolean>
+    suspend fun updatePhotoUrl(photoUri: Uri?): RepositoryResult<Boolean>
+    suspend fun updateEmail(email: String): RepositoryResult<Boolean>
+    suspend fun updatePassword(password: String): RepositoryResult<Boolean>
     fun getAuthState(viewModelScope: CoroutineScope): StateFlow<Boolean>
 }

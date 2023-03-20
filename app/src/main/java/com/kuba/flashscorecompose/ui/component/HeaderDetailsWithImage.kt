@@ -1,5 +1,6 @@
 package com.kuba.flashscorecompose.ui.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -47,20 +48,33 @@ fun HeaderDetailsWithImage(name: String, image: String, onHeaderClick: (() -> Un
                 )
                 .size(112.dp)
         ) {
-            AsyncImage(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .align(Alignment.Center)
-                    .size(90.dp),
-                model = ImageRequest.Builder(LocalContext.current)
-                    .decoderFactory(SvgDecoder.Factory())
-                    .data(image)
-                    .crossfade(true)
-                    .build(),
-                placeholder = painterResource(id = R.drawable.ic_close),
-                contentDescription = null,
-                contentScale = ContentScale.FillHeight
-            )
+            if (image.isEmpty()) {
+                Image(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .align(Alignment.Center)
+                        .size(90.dp),
+                    alignment = Alignment.Center,
+                    painter = painterResource(id = R.drawable.ic_profile),
+                    contentDescription = "",
+                    contentScale = ContentScale.FillHeight
+                )
+            } else {
+                AsyncImage(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .align(Alignment.Center)
+                        .size(90.dp),
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .decoderFactory(SvgDecoder.Factory())
+                        .data(image)
+                        .crossfade(true)
+                        .build(),
+                    placeholder = painterResource(id = R.drawable.ic_profile),
+                    contentDescription = null,
+                    contentScale = ContentScale.FillHeight
+                )
+            }
         }
         Spacer(modifier = Modifier.size(16.dp))
         Text1(

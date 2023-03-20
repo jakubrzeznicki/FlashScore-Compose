@@ -25,5 +25,5 @@ sealed class NavigationItem(
     object Standings :
         NavigationItem(StandingsRouteDestination, Icons.Filled.Leaderboard, R.string.standings)
 
-    object Profile : NavigationItem(ProfileScreenDestination, Icons.Filled.Person, R.string.profile)
+    object Profile : NavigationItem(ProfileRouteDestination, Icons.Filled.Person, R.string.profile)
 }

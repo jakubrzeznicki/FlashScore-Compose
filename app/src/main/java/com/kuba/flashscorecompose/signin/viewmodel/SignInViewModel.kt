@@ -1,11 +1,11 @@
 package com.kuba.flashscorecompose.signin.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.authentication.AuthenticationDataSource
 import com.kuba.flashscorecompose.data.user.UserDataSource
+import com.kuba.flashscorecompose.data.user.model.User
 import com.kuba.flashscorecompose.signin.model.SignInError
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessage
@@ -30,14 +30,6 @@ class SignInViewModel(
         get() = viewModelState.value.email
     private val password
         get() = viewModelState.value.password
-    val isOnBoardingCompleted by lazy {
-        userRepository.getIsOnBoardingCompleted()
-            .map {
-                Log.d("TEST_LOG", "getIsOnBoardingCompleted - i$it in signin viewmodel")
-                it
-            }
-            .stateIn(viewModelScope, SharingStarted.Eagerly, false)
-    }
 
     fun onEmailChange(newValue: String) {
         viewModelState.update { it.copy(email = newValue) }
@@ -55,7 +47,7 @@ class SignInViewModel(
         viewModelState.update { it.copy(keepLogged = !it.keepLogged) }
     }
 
-    fun onSignInClick(openScreen: () -> Unit) {
+    fun onSignInClick(openHomeScreen: () -> Unit, openOnBoardingScreen: () -> Unit) {
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             if (!email.isValidEmail()) {
@@ -82,8 +74,20 @@ class SignInViewModel(
                 when (val result =
                     authenticationRepository.signInWithEmailAndPassword(email, password)) {
                     is RepositoryResult.Success -> {
-                        openScreen()
-                        //if (isOnBoardingCompleted.value) openHomeScreen() else openOnBoardingScreen()
+                        val currentUserId = authenticationRepository.currentUserId
+                        val isKeepLogged = viewModelState.value.keepLogged
+                        val currentUser = authenticationRepository.currentUser
+                        val user = User(
+                            id = currentUserId,
+                            name = currentUser?.displayName.orEmpty(),
+                            email = email,
+                            password = password,
+                            phone = currentUser?.phoneNumber.orEmpty(),
+                            isAnonymous = currentUser?.isAnonymous ?: false
+                        )
+                        userRepository.saveCurrentUserId(currentUserId, isKeepLogged)
+                        userRepository.saveUser(user)
+                        if (userRepository.getIsOnBoardingCompleted()) openHomeScreen() else openOnBoardingScreen()
                         it.copy(isLoading = false)
                     }
                     is RepositoryResult.Error -> {
