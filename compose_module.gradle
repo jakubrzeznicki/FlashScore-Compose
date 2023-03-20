@@ -1,3 +1,6 @@
+import com.example.buildsrc.AndroidX
+import com.example.buildsrc.Testing
+
 android {
     compileSdk 33
 

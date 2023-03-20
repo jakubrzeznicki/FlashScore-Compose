@@ -1,3 +1,19 @@
+import com.example.buildsrc.Accompanist
+import com.example.buildsrc.AppCenter
+import com.example.buildsrc.CalendarDialog
+import com.example.buildsrc.Coil
+import com.example.buildsrc.Compose
+import com.example.buildsrc.Koin
+import com.example.buildsrc.Lifecycle
+import com.example.buildsrc.Modules
+import com.example.buildsrc.NavigationCompose
+import com.example.buildsrc.Retrofit
+import com.example.buildsrc.Room
+import com.example.buildsrc.AndroidX
+import com.example.buildsrc.Coroutines
+import com.example.buildsrc.Firebase
+import com.example.buildsrc.Testing
+
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
@@ -72,10 +88,7 @@ android {
 }
 
 dependencies {
-    ext {
-        model_module = Modules.model
-    }
-    implementation project(model_module)
+    implementation project(Modules.model)
     implementation project(Modules.common)
     implementation project(Modules.data)
     implementation project(Modules.database)
@@ -110,11 +123,11 @@ dependencies {
     implementation Coroutines.coroutines
     implementation Coroutines.test
 
-    // Coil
+    // com.example.buildsrc.Coil
     implementation Coil.compose
     implementation Coil.svg
 
-    // Lifecycle
+    // com.example.buildsrc.Lifecycle
     implementation Lifecycle.lifecycleCompose
     implementation Lifecycle.lifecycleExtensions
     implementation Lifecycle.lifecycleLiveData
@@ -122,11 +135,11 @@ dependencies {
     implementation Lifecycle.lifecycleJava8
     implementation Lifecycle.lifecycleCompose
 
-    // Navigation Compose
+    // Navigation com.example.buildsrc.Compose
     implementation NavigationCompose.animations
-    //ksp NavigationCompose.ksp
+    //ksp com.example.buildsrc.NavigationCompose.ksp
 
-    // Compose
+    // com.example.buildsrc.Compose
     implementation Compose.material3
     implementation Compose.material3WindowSize
     implementation Compose.toolingPreview
@@ -140,7 +153,7 @@ dependencies {
     implementation Compose.foundation
     implementation Compose.testJUnit
 
-    // Koin
+    // com.example.buildsrc.Koin
     implementation Koin.core
     implementation Koin.android
     testImplementation Koin.test
@@ -150,19 +163,19 @@ dependencies {
     implementation AppCenter.analytics
     implementation AppCenter.crashes
 
-    // Room
+    // com.example.buildsrc.Room
     api Room.runtime
     implementation Room.ktx
     kapt Room.compiler
 
-    // Retrofit
+    // com.example.buildsrc.Retrofit
     api Retrofit.retrofit
     implementation Retrofit.converterGson
     implementation Retrofit.converterScalars
     implementation Retrofit.okhttp
     implementation Retrofit.loggingInterceptor
 
-    //Accompanist
+    //com.example.buildsrc.Accompanist
     implementation Accompanist.swipeRefresh
     implementation Accompanist.permissions
     implementation Accompanist.pager

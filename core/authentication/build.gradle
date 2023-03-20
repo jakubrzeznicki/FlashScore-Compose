@@ -1,3 +1,7 @@
+import com.example.buildsrc.Koin
+import com.example.buildsrc.Modules
+import com.example.buildsrc.Firebase
+
 plugins {
     id "com.android.library"
     id 'org.jetbrains.kotlin.android'
@@ -14,7 +18,7 @@ apply {
 dependencies {
     implementation project(Modules.common)
 
-    //Koin
+    //com.example.buildsrc.Koin
     implementation Koin.core
     testImplementation Koin.test
     implementation Koin.android

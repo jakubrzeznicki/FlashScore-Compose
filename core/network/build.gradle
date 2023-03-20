@@ -1,3 +1,7 @@
+import com.example.buildsrc.Koin
+import com.example.buildsrc.Modules
+import com.example.buildsrc.Retrofit
+
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
@@ -19,12 +23,12 @@ apply {
 dependencies {
     implementation project(Modules.model)
 
-    //Koin
+    //com.example.buildsrc.Koin
     implementation Koin.core
     testImplementation Koin.test
     implementation Koin.android
 
-    // Retrofit
+    // com.example.buildsrc.Retrofit
     api Retrofit.retrofit
     implementation Retrofit.converterGson
     implementation Retrofit.converterScalars

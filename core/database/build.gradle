@@ -1,3 +1,8 @@
+import com.example.buildsrc.Koin
+import com.example.buildsrc.Modules
+import com.example.buildsrc.Retrofit
+import com.example.buildsrc.Room
+
 plugins {
     id "com.android.library"
     id 'org.jetbrains.kotlin.android'
@@ -15,12 +20,12 @@ apply {
 dependencies {
     implementation project(Modules.model)
 
-    //Room
+    //com.example.buildsrc.Room
     api Room.runtime
     implementation Room.ktx
     kapt Room.compiler
 
-    //Koin
+    //com.example.buildsrc.Koin
     implementation Koin.core
     testImplementation Koin.test
     implementation Koin.android
