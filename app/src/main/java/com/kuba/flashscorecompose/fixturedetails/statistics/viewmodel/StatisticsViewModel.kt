@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesDataSource
 import com.kuba.flashscorecompose.data.fixtures.statistics.StatisticsDataSource
 import com.kuba.flashscorecompose.data.fixtures.statistics.model.Statistics
+import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
 import com.kuba.flashscorecompose.fixturedetails.statistics.model.StatisticsError
+import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
@@ -21,13 +23,18 @@ class StatisticsViewModel(
     private val round: String,
     private val season: Int,
     private val statisticsRepository: StatisticsDataSource,
-    private val fixturesRepository: FixturesDataSource
+    private val fixturesRepository: FixturesDataSource,
+    private val userPreferencesRepository: UserPreferencesDataSource
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(StatisticsViewModelState())
     val uiState = viewModelState
         .map { it.toUiState() }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5_000),
+            viewModelState.value.toUiState()
+        )
 
     fun setup() {
         // loadStatistics()
@@ -59,10 +66,21 @@ class StatisticsViewModel(
 
     private fun observeFixtures() {
         viewModelScope.launch {
-            fixturesRepository.observeFixturesFilteredByRound(leagueId, season, round)
-                .collect { fixtures ->
-                    viewModelState.update { it.copy(fixtures = fixtures) }
+            val currentUserId = userPreferencesRepository.getCurrentUserId()
+            val userPreferencesFlow =
+                userPreferencesRepository.observeUserPreferences(currentUserId)
+            val fixturesFlow =
+                fixturesRepository.observeFixturesFilteredByRound(leagueId, season, round)
+            combine(flow = fixturesFlow, flow2 = userPreferencesFlow) { fixtures, userPreferences ->
+                val favoriteFixtureIds = userPreferences.favoriteFixtureIds
+                val fixtureItemWrappers = fixtures.map {
+                    FixtureItemWrapper(
+                        fixtureItem = it,
+                        isFavorite = favoriteFixtureIds.contains(it.id)
+                    )
                 }
+                viewModelState.update { it.copy(fixtureItemWrappers = fixtureItemWrappers) }
+            }.collect()
         }
     }
 
@@ -101,6 +119,21 @@ class StatisticsViewModel(
                     }
                 }
             }
+        }
+    }
+
+    fun addFixtureToFavorite(fixtureItemWrapper: FixtureItemWrapper) {
+        viewModelScope.launch {
+            val favoriteFixtureItemWrappers =
+                viewModelState.value.fixtureItemWrappers.filter { it.isFavorite }.toMutableList()
+            if (fixtureItemWrapper.isFavorite) {
+                favoriteFixtureItemWrappers.remove(fixtureItemWrapper)
+            } else {
+                favoriteFixtureItemWrappers.add(fixtureItemWrapper.copy(isFavorite = true))
+            }
+            userPreferencesRepository.saveFavoriteFixturesIds(
+                favoriteFixtureItemWrappers.map { it.fixtureItem.id }
+            )
         }
     }
 }

@@ -5,6 +5,7 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.storage.FirebaseStorage
 import com.kuba.flashscorecompose.account.service.LogService
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import com.kuba.flashscorecompose.utils.ResponseStatus
@@ -20,6 +21,7 @@ import kotlinx.coroutines.tasks.await
  */
 class AuthenticationRepository(
     private val firebaseAuth: FirebaseAuth,
+    private val firebaseStorage: FirebaseStorage,
     private val logService: LogService
 ) : AuthenticationDataSource {
 
@@ -148,12 +150,14 @@ class AuthenticationRepository(
         }
     }
 
-    override suspend fun updatePhotoUrl(photoUri: Uri?): RepositoryResult<Boolean> {
+    override suspend fun uploadPhoto(photoUri: Uri?): RepositoryResult<Uri> {
         return try {
-            val request =
-                UserProfileChangeRequest.Builder().setPhotoUri(photoUri ?: Uri.EMPTY).build()
-            firebaseAuth.currentUser!!.updateProfile(request).await()
-            RepositoryResult.Success(true)
+            val uploadTask = firebaseStorage.reference
+                .child("$STORAGE_AVATARS_PATH${photoUri?.lastPathSegment.orEmpty()}")
+                .putFile(photoUri ?: Uri.EMPTY)
+                .await()
+            val downloadUri = uploadTask.metadata?.reference?.downloadUrl?.await()
+            RepositoryResult.Success(downloadUri)
         } catch (e: Exception) {
             logService.logNonFatalCrash(e)
             RepositoryResult.Error(ResponseStatus().apply {
@@ -198,4 +202,8 @@ class AuthenticationRepository(
             firebaseAuth.removeAuthStateListener(authStateListener)
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), firebaseAuth.currentUser == null)
+
+    private companion object {
+        const val STORAGE_AVATARS_PATH = "avatars/"
+    }
 }

@@ -1,8 +1,10 @@
 package com.kuba.flashscorecompose.data.userpreferences.local
 
+import android.util.Log
 import com.kuba.flashscorecompose.data.RoomStorage
 import com.kuba.flashscorecompose.data.userpreferences.local.model.UserPreferencesEntity
 import com.kuba.flashscorecompose.data.userpreferences.local.preferences.UserDataStore
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Created by jrzeznicki on 10/02/2023.
@@ -39,9 +41,14 @@ class UserPreferencesLocal(
 
     override suspend fun saveFavoriteTeamIds(teamIds: List<Int>) {
         val userPreferencesEntity = getUserPreferences()
+        teamIds.forEach {
+            Log.d("TEST_LOG", "saveFavoriteTeamIds local -- $it")
+        }
         val updateUserPreferencesEntity = userPreferencesEntity?.copy(
-            favoriteTeamIds = teamIds as ArrayList<Int>
+            favoriteTeamIds = teamIds
         )
+        roomStorage.getDatabase().userPreferencesDao()
+            .getUserPreferences(userPreferencesEntity?.userId.orEmpty())
         updateUserPreferencesEntity?.let {
             roomStorage.getDatabase().userPreferencesDao()
                 .saveUserPreferences(it)
@@ -59,20 +66,24 @@ class UserPreferencesLocal(
         }
     }
 
-    override suspend fun getFavoriteTeamIds(): List<Int> {
-        val currentUserId = userDataStore.getCurrentUserId()
-        return emptyList()
-    }
-
-    override suspend fun getFavoritePlayerIds(): List<Int>? {
-        val currentUserId = userDataStore.getCurrentUserId()
-        return emptyList()
-        //return roomStorage.getDatabase().userPreferencesDao().getFavoritePlayerIds(currentUserId)
+    override suspend fun saveFavoriteFixtureIds(fixtureIds: List<Int>) {
+        val userPreferencesEntity = getUserPreferences()
+        val updateUserPreferencesEntity = userPreferencesEntity?.copy(
+            favoriteFixtureIds = fixtureIds
+        )
+        updateUserPreferencesEntity?.let {
+            roomStorage.getDatabase().userPreferencesDao()
+                .saveUserPreferences(it)
+        }
     }
 
     override suspend fun getUserPreferences(): UserPreferencesEntity? {
         val currentUserId = userDataStore.getCurrentUserId()
         return roomStorage.getDatabase().userPreferencesDao().getUserPreferences(currentUserId)
+    }
+
+    override fun observeUserPreferences(currentUserId: String): Flow<UserPreferencesEntity?> {
+        return roomStorage.getDatabase().userPreferencesDao().observeUserPreferences(currentUserId)
     }
 
     override suspend fun saveUserPreferences(userPreferencesEntity: UserPreferencesEntity) {

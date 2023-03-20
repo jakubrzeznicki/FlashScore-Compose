@@ -1,8 +1,8 @@
 package com.kuba.flashscorecompose.fixturedetails.statistics.model
 
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.fixtures.statistics.model.Statistic
 import com.kuba.flashscorecompose.data.team.information.model.Team
+import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
 
 /**
  * Created by jrzeznicki on 12/01/2023.
@@ -17,7 +17,7 @@ interface StatisticsUiState {
         val homeTeam: Team,
         val awayTeam: Team,
         val statistics: List<Pair<Statistic, Statistic>>,
-        val fixtures: List<FixtureItem>
+        val fixtureItemWrappers: List<FixtureItemWrapper>
     ) : StatisticsUiState
 
     data class HasOnlyStatistics(
@@ -33,7 +33,7 @@ interface StatisticsUiState {
         override val error: StatisticsError,
         val homeTeam: Team,
         val awayTeam: Team,
-        val fixtures: List<FixtureItem>
+        val fixtureItemWrappers: List<FixtureItemWrapper>
     ) : StatisticsUiState
 
     data class NoData(

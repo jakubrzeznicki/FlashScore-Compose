@@ -15,7 +15,6 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +28,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.profile.details.model.ProfileDetailsUiState
 import com.kuba.flashscorecompose.profile.details.model.ProfileItem
@@ -45,7 +45,7 @@ private const val PROFILE_DETAILS_KEY = "PROFILE_DETAILS_KEY"
 
 @Composable
 fun ProfileDetailsScreen(viewModel: ProfileDetailsViewModel = getViewModel()) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
     LaunchedEffect(key1 = PROFILE_DETAILS_KEY) { viewModel.setup() }
     DetailsScreen(

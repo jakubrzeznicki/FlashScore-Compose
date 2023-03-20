@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
@@ -62,7 +63,7 @@ fun ProfileRoute(
     navigator: DestinationsNavigator,
     viewModel: ProfileViewModel = getViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current.applicationContext
     LaunchedEffect(key1 = SETUP_PROFILE_KEY) { viewModel.setup() }
     ProfileScreen(
@@ -94,7 +95,7 @@ private fun ProfileScreen(
                 ProfileHeader(
                     context,
                     uiState.user.name,
-                    Uri.parse(uiState.user.photoUri),
+                    uiState.user.photoUri,
                     onPhotoUriPicked
                 )
                 ProfileTabs(user = uiState.user, navigator = navigator)
@@ -137,7 +138,7 @@ private fun ProfileTabs(user: User, navigator: DestinationsNavigator) {
 }
 
 @Composable
-fun ProfileHeader(
+private fun ProfileHeader(
     context: Context,
     name: String,
     userPhotoUri: Uri,
@@ -163,7 +164,7 @@ fun ProfileHeader(
 }
 
 @Composable
-fun ProfileImage(context: Context, userPhotoUri: Uri, onPhotoUriPicked: (Uri) -> Unit) {
+private fun ProfileImage(context: Context, userPhotoUri: Uri, onPhotoUriPicked: (Uri) -> Unit) {
     val photoLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
             uri?.let { onPhotoUriPicked(it) }
@@ -206,7 +207,6 @@ fun ProfileImage(context: Context, userPhotoUri: Uri, onPhotoUriPicked: (Uri) ->
         )
     }
 }
-
 
 @Composable
 private fun ProfileItemIcon(

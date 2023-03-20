@@ -25,7 +25,11 @@ class StandingsDetailsViewModel(
     private val viewModelState = MutableStateFlow(StandingsDetailsViewModelState())
     val uiState = viewModelState
         .map { it.toUiState() }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5_000),
+            viewModelState.value.toUiState()
+        )
 
     fun setup() {
         observeStandings()

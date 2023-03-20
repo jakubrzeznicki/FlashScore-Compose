@@ -20,12 +20,11 @@ class PlayersLocal(private val roomStorage: RoomStorage) : PlayersLocalDataSourc
         return roomStorage.getDatabase().playerDao().observePlayers()
     }
 
-    override fun observeFavoritePlayers(ids: List<Int>): Flow<List<PlayerEntity>> {
-        return roomStorage.getDatabase().playerDao().observeFavoritePlayers(ids)
+    override suspend fun getFavoritePlayers(ids: List<Int>): List<PlayerEntity> {
+        return roomStorage.getDatabase().playerDao().getFavoritePlayers(ids)
     }
 
     override suspend fun savePlayers(players: List<PlayerEntity>) {
         roomStorage.getDatabase().playerDao().savePlayers(players)
     }
-
 }

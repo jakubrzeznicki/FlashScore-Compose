@@ -4,6 +4,8 @@ import com.kuba.flashscorecompose.data.userpreferences.local.UserPreferencesLoca
 import com.kuba.flashscorecompose.data.userpreferences.mapper.toUserPreferences
 import com.kuba.flashscorecompose.data.userpreferences.mapper.toUserPreferencesEntity
 import com.kuba.flashscorecompose.data.userpreferences.model.UserPreferences
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.mapNotNull
 
 /**
  * Created by jrzeznicki on 10/02/2023.
@@ -34,16 +36,16 @@ class UserPreferencesRepository(private val local: UserPreferencesLocalDataSourc
         local.saveFavoritePlayerIds(playerIds)
     }
 
-    override suspend fun getFavoriteTeamIds(): List<Int>? {
-        return local.getFavoriteTeamIds()
-    }
-
-    override suspend fun getFavoritePlayerIds(): List<Int>? {
-        return local.getFavoritePlayerIds()
+    override suspend fun saveFavoriteFixturesIds(fixtureIds: List<Int>) {
+        local.saveFavoriteFixtureIds(fixtureIds)
     }
 
     override suspend fun getUserPreferences(): UserPreferences? {
         return local.getUserPreferences()?.toUserPreferences()
+    }
+
+    override fun observeUserPreferences(currentUserId: String): Flow<UserPreferences> {
+        return local.observeUserPreferences(currentUserId).mapNotNull { it?.toUserPreferences() }
     }
 
     override suspend fun saveUserPreferences(userPreferences: UserPreferences) {

@@ -120,12 +120,14 @@ fun StandingsDto.toStandings(): Standing {
         leagueId = id ?: 0,
         season = season ?: 0,
         standingItems = standings.flatMap {
-            it?.map { it.toStandingItem(id ?: 0, season ?: 0) }.orEmpty()
+            it?.map { standingItemDto ->
+                standingItemDto.toStandingItem(id ?: 0, season ?: 0, country.orEmpty())
+            }.orEmpty()
         }
     )
 }
 
-fun StandingItemDto.toStandingItem(leagueId: Int, season: Int): StandingItem {
+fun StandingItemDto.toStandingItem(leagueId: Int, season: Int, countryName: String): StandingItem {
     return StandingItem(
         all = all?.toInformationStanding() ?: InformationStanding.EMPTY_INFORMATION_STANDING,
         away = away?.toInformationStanding() ?: InformationStanding.EMPTY_INFORMATION_STANDING,
@@ -139,7 +141,7 @@ fun StandingItemDto.toStandingItem(leagueId: Int, season: Int): StandingItem {
         points = points ?: 0,
         rank = rank ?: 0,
         status = status.orEmpty(),
-        team = team?.toTeam(leagueId, season) ?: Team.EMPTY_TEAM,
+        team = team?.toTeam(leagueId, season, countryName) ?: Team.EMPTY_TEAM,
         update = update.orEmpty()
     )
 }

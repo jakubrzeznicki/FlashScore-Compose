@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
@@ -52,7 +53,7 @@ fun LineupScreen(
     navigator: DestinationsNavigator,
     viewModel: LineupViewModel = getViewModel { parametersOf(fixtureId) }
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(key1 = LINEUP_KEYS) { viewModel.setup() }
     LineupList(
         uiState = uiState,

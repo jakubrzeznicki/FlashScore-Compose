@@ -13,7 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
+import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
 import com.kuba.flashscorecompose.ui.component.FixtureCard
 
 /**
@@ -21,11 +21,12 @@ import com.kuba.flashscorecompose.ui.component.FixtureCard
  */
 @Composable
 fun FixturesListWithHeader(
-    fixtures: List<FixtureItem>,
+    fixtures: List<FixtureItemWrapper>,
     state: LazyListState,
     color: Color,
     textId: Int,
-    onFixtureClick: (FixtureItem) -> Unit
+    onFixtureClick: (FixtureItemWrapper) -> Unit,
+    onFavoriteClick: (FixtureItemWrapper) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -41,21 +42,26 @@ fun FixturesListWithHeader(
             )
         }
         items(items = fixtures) {
-            FixtureCard(fixtureItem = it, onFixtureClick = onFixtureClick)
+            FixtureCard(
+                fixtureItemWrapper = it,
+                onFixtureClick = onFixtureClick,
+                onFavoriteClick = onFavoriteClick
+            )
         }
     }
 }
 
 @Composable
 fun FixturesDoubleListWithHeader(
-    fixtures: List<FixtureItem>,
-    favoriteFixtures: List<FixtureItem>,
+    fixtures: List<FixtureItemWrapper>,
+    favoriteFixtures: List<FixtureItemWrapper>,
     state: LazyListState,
     color: Color,
     favoriteColor: Color,
     textId: Int,
     favoriteTextId: Int,
-    onFixtureClick: (FixtureItem) -> Unit
+    onFixtureClick: (FixtureItemWrapper) -> Unit,
+    onFavoriteClick: (FixtureItemWrapper) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -71,7 +77,11 @@ fun FixturesDoubleListWithHeader(
             )
         }
         items(items = favoriteFixtures) {
-            FixtureCard(fixtureItem = it, onFixtureClick = onFixtureClick)
+            FixtureCard(
+                fixtureItemWrapper = it,
+                onFixtureClick = onFixtureClick,
+                onFavoriteClick = onFavoriteClick
+            )
         }
         item {
             Text(
@@ -83,7 +93,11 @@ fun FixturesDoubleListWithHeader(
             )
         }
         items(items = fixtures) {
-            FixtureCard(fixtureItem = it, onFixtureClick = onFixtureClick)
+            FixtureCard(
+                fixtureItemWrapper = it,
+                onFixtureClick = onFixtureClick,
+                onFavoriteClick = onFavoriteClick
+            )
         }
     }
 }

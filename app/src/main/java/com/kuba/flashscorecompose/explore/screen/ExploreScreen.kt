@@ -18,21 +18,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.flowlayout.FlowMainAxisAlignment
 import com.google.accompanist.flowlayout.FlowRow
 import com.kuba.flashscorecompose.R
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.destinations.*
 import com.kuba.flashscorecompose.explore.model.ExploreUiState
-import com.kuba.flashscorecompose.explore.model.TeamCountry
+import com.kuba.flashscorecompose.explore.model.TeamWrapper
 import com.kuba.flashscorecompose.explore.viewmodel.ExploreViewModel
-import com.kuba.flashscorecompose.teamdetails.players.model.PlayerCountry
+import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
+import com.kuba.flashscorecompose.teamdetails.players.model.PlayerWrapper
 import com.kuba.flashscorecompose.ui.component.*
 import com.kuba.flashscorecompose.ui.component.chips.FilterChip
 import com.kuba.flashscorecompose.ui.theme.FlashScoreTypography
-import com.kuba.flashscorecompose.ui.theme.RedDark
-import com.kuba.flashscorecompose.ui.theme.YellowCorn
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
@@ -49,12 +48,13 @@ fun ExploreRoute(
     navigator: DestinationsNavigator,
     viewModel: ExploreViewModel = getViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(key1 = SETUP_EXPLORE_KEY) { viewModel.setup() }
     ExploreScreen(
         uiState = uiState,
         onRefreshClick = { viewModel.refresh() },
-        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it)) },
+        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixtureItem)) },
+        onFixtureFavoriteClick = { viewModel.addFixtureToFavorite(it) },
         onTeamClick = {
             navigator.navigate(
                 TeamDetailsRouteDestination(
@@ -64,6 +64,7 @@ fun ExploreRoute(
                 )
             )
         },
+        onTeamFavoriteClick = { viewModel.addTeamToFavorite(it) },
         onPlayerClick = {
             navigator.navigate(
                 PlayerDetailsRouteDestination(
@@ -74,6 +75,7 @@ fun ExploreRoute(
                 )
             )
         },
+        onPlayerFavoriteClick = { viewModel.addPlayerToFavorite(it) },
         onLeagueClick = { navigator.navigate(LeagueDetailsRouteDestination(it)) },
         onExploreQueryChanged = { viewModel.updateExploreQuery(it) },
         onExploreChipClick = { viewModel.changeExploreView(it as FilterChip.Explore) },
@@ -86,9 +88,12 @@ fun ExploreScreen(
     modifier: Modifier = Modifier,
     uiState: ExploreUiState,
     onRefreshClick: () -> Unit,
-    onFixtureClick: (FixtureItem) -> Unit,
-    onTeamClick: (TeamCountry) -> Unit,
-    onPlayerClick: (PlayerCountry) -> Unit,
+    onFixtureClick: (FixtureItemWrapper) -> Unit,
+    onFixtureFavoriteClick: (FixtureItemWrapper) -> Unit,
+    onTeamClick: (TeamWrapper) -> Unit,
+    onTeamFavoriteClick: (TeamWrapper) -> Unit,
+    onPlayerClick: (PlayerWrapper) -> Unit,
+    onPlayerFavoriteClick: (PlayerWrapper) -> Unit,
     onLeagueClick: (League) -> Unit,
     onExploreQueryChanged: (String) -> Unit,
     onExploreChipClick: (FilterChip) -> Unit
@@ -156,29 +161,32 @@ fun ExploreScreen(
                             fixtures = uiState.liveFixtures,
                             favoriteFixtures = uiState.favoriteFixtures,
                             state = fixturesLazyListState,
-                            color = RedDark,
-                            favoriteColor = YellowCorn,
+                            color = MaterialTheme.colorScheme.error,
+                            favoriteColor = MaterialTheme.colorScheme.primary,
                             textId = R.string.live_score,
                             favoriteTextId = R.string.favorites,
-                            onFixtureClick = onFixtureClick
+                            onFixtureClick = onFixtureClick,
+                            onFavoriteClick = onFixtureFavoriteClick
                         )
                     }
                     is ExploreUiState.Fixtures.HasOnlyLiveFixtures -> {
                         FixturesListWithHeader(
                             fixtures = uiState.liveFixtures,
                             state = fixturesLazyListState,
-                            color = RedDark,
+                            color = MaterialTheme.colorScheme.error,
                             textId = R.string.live_score,
-                            onFixtureClick = onFixtureClick
+                            onFixtureClick = onFixtureClick,
+                            onFavoriteClick = onFixtureFavoriteClick
                         )
                     }
                     is ExploreUiState.Fixtures.HasOnlyFavoriteFixtures -> {
                         FixturesListWithHeader(
                             fixtures = uiState.favoriteFixtures,
                             state = fixturesLazyListState,
-                            color = YellowCorn,
+                            color = MaterialTheme.colorScheme.primary,
                             textId = R.string.favorites,
-                            onFixtureClick = onFixtureClick
+                            onFixtureClick = onFixtureClick,
+                            onFavoriteClick = onFixtureFavoriteClick
                         )
                     }
                     is ExploreUiState.Fixtures.NoData -> {
@@ -206,14 +214,15 @@ fun ExploreScreen(
                     }
                     is ExploreUiState.Teams.HasFullData -> {
                         TeamsDoubleListWithHeader(
-                            teams = uiState.teams,
-                            favoriteTeams = uiState.favoriteTeams,
+                            teamWrappers = uiState.teams,
+                            favoriteTeamWrappers = uiState.favoriteTeams,
                             state = teamsLazyListState,
                             color = MaterialTheme.colorScheme.onSecondary,
                             favoriteColor = MaterialTheme.colorScheme.primary,
                             textId = R.string.teams,
                             favoriteTextId = R.string.favorites,
-                            onTeamClick = onTeamClick
+                            onTeamClick = onTeamClick,
+                            onTeamFavoriteClick = onTeamFavoriteClick
                         )
                     }
                     is ExploreUiState.Teams.HasWithoutFavorite -> {
@@ -222,7 +231,8 @@ fun ExploreScreen(
                             state = teamsLazyListState,
                             color = MaterialTheme.colorScheme.onSecondary,
                             textId = R.string.teams,
-                            onTeamClick = onTeamClick
+                            onTeamClick = onTeamClick,
+                            onTeamFavoriteClick = onTeamFavoriteClick
                         )
                     }
                     is ExploreUiState.Teams.NoData -> {
@@ -251,7 +261,8 @@ fun ExploreScreen(
                             favoriteColor = MaterialTheme.colorScheme.primary,
                             textId = R.string.players,
                             favoriteTextId = R.string.favorites,
-                            onPlayerClick = onPlayerClick
+                            onPlayerClick = onPlayerClick,
+                            onPlayerFavoriteClick = onPlayerFavoriteClick
                         )
                     }
                     is ExploreUiState.Players.HasWithoutFavorite -> {
@@ -260,7 +271,8 @@ fun ExploreScreen(
                             color = MaterialTheme.colorScheme.onSecondary,
                             state = playersLazyListState,
                             textId = R.string.players,
-                            onPlayerClick = onPlayerClick
+                            onPlayerClick = onPlayerClick,
+                            onPlayerFavoriteClick = onPlayerFavoriteClick
                         )
                     }
                     is ExploreUiState.Players.NoData -> {
@@ -377,7 +389,6 @@ private fun TopBar() {
             )
         })
 }
-
 
 @Composable
 private fun ExploreFilterChips(

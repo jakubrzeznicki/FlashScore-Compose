@@ -15,7 +15,6 @@ import androidx.compose.material.icons.filled.Key
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,12 +30,13 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.relay.compose.ColumnScopeInstanceImpl.align
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.destinations.ProfileRouteDestination
 import com.kuba.flashscorecompose.destinations.SignInRouteDestination
 import com.kuba.flashscorecompose.destinations.SignUpRouteDestination
 import com.kuba.flashscorecompose.destinations.WelcomeRouteDestination
-import com.kuba.flashscorecompose.profile.settings.model.ProfileSettingsItem
 import com.kuba.flashscorecompose.profile.settings.model.ProfileSettingsUiState
 import com.kuba.flashscorecompose.profile.settings.viewmodel.ProfileSettingsViewModel
 import com.kuba.flashscorecompose.signup.model.SignUpError
@@ -61,7 +61,7 @@ fun ProfileSettingsScreen(
     navigator: DestinationsNavigator,
     viewModel: ProfileSettingsViewModel = getViewModel { parametersOf(userId) }
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
     LaunchedEffect(key1 = PROFILE_SETTINGS_KEY) { viewModel.setup() }
     SettingsScreen(
@@ -71,7 +71,7 @@ fun ProfileSettingsScreen(
         onRepeatPasswordChange = { viewModel.onRepeatPasswordChange(it) },
         togglePasswordVisibility = { viewModel.togglePasswordVisibility() },
         toggleRepeatPasswordVisibility = { viewModel.toggleRepeatPasswordVisibility() },
-        onCardClick = { viewModel.onCardClick(it) },
+        onPasswordClick = { viewModel.onPasswordClick() },
         onSignInClick = { navigator.navigate(SignInRouteDestination()) },
         onSignUpClick = { navigator.navigate(SignUpRouteDestination(SignUpType.Anonymous)) },
         onDeleteAccountClick = {
@@ -102,7 +102,7 @@ private fun SettingsScreen(
     onRepeatPasswordChange: (String) -> Unit,
     togglePasswordVisibility: () -> Unit,
     toggleRepeatPasswordVisibility: () -> Unit,
-    onCardClick: (ProfileSettingsItem) -> Unit,
+    onPasswordClick: () -> Unit,
     onSavePasswordClick: () -> Unit,
     onSignInClick: () -> Unit,
     onSignUpClick: () -> Unit,
@@ -132,34 +132,7 @@ private fun SettingsScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     if (uiState.user.isAnonymous) {
-                        OutlinedButton(
-                            onClick = onSignInClick,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 8.dp, bottom = 8.dp),
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                containerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.8f),
-                                contentColor = MaterialTheme.colorScheme.onSecondary
-                            )
-                        ) {
-                            Text(text = stringResource(id = R.string.sign_in))
-                        }
-                        OutlinedButton(
-                            onClick = onSignUpClick,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 8.dp, bottom = 16.dp),
-                            border = BorderStroke(
-                                width = 2.dp,
-                                color = MaterialTheme.colorScheme.tertiary
-                            ),
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                containerColor = Color.Transparent,
-                                contentColor = MaterialTheme.colorScheme.onSecondary
-                            )
-                        ) {
-                            Text(text = stringResource(id = R.string.create_account))
-                        }
+                        AnonymousSettings(onSignInClick, onSignUpClick)
                     } else {
                         PasswordCard(
                             uiState = uiState,
@@ -168,67 +141,125 @@ private fun SettingsScreen(
                             onRepeatPasswordChange = onRepeatPasswordChange,
                             togglePasswordVisibility = togglePasswordVisibility,
                             toggleRepeatPasswordVisibility = toggleRepeatPasswordVisibility,
-                            onCardClick = onCardClick,
+                            onPasswordClick = onPasswordClick,
                             onSaveClick = onSavePasswordClick
                         )
-                        Divider(
-                            color = MaterialTheme.colorScheme.inverseSurface,
-                            thickness = 2.dp,
-                            modifier = Modifier
-                                .fillMaxWidth(0.8f)
-                                .align(Alignment.CenterHorizontally)
+                        SignInButton(
+                            uiState.shouldShowConfirmSignOutDialog,
+                            showSignOutDialog,
+                            onSignOutClick
                         )
-                        OutlinedButton(
-                            onClick = { showSignOutDialog(true) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 16.dp, bottom = 8.dp),
-                        ) {
-                            Text(text = stringResource(id = R.string.sign_out))
-                        }
-                        if (uiState.shouldShowConfirmSignOutDialog) {
-                            InformationDialog(
-                                titleId = R.string.sign_out_title,
-                                textId = R.string.sign_out_description,
-                                confirmButtonTextId = R.string.sign_out,
-                                confirmButtonAction = onSignOutClick,
-                                dismissAction = showSignOutDialog
-                            )
-                        }
-                        Spacer(modifier = Modifier.size(8.dp))
-                        Divider(
-                            color = MaterialTheme.colorScheme.inverseSurface,
-                            thickness = 2.dp,
-                            modifier = Modifier
-                                .fillMaxWidth(0.8f)
-                                .align(Alignment.CenterHorizontally)
+                        DeleteAccountButton(
+                            uiState.shouldShowConfirmDeleteAccountDialog,
+                            showDeleteAccountDialog,
+                            onDeleteAccountClick
                         )
-                        OutlinedButton(
-                            onClick = { showDeleteAccountDialog(true) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 16.dp, bottom = 8.dp),
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                containerColor = MaterialTheme.colorScheme.error.copy(alpha = 0.7f),
-                                contentColor = MaterialTheme.colorScheme.onSecondary
-                            )
-                        ) {
-                            Text(text = stringResource(id = R.string.delete_account))
-                        }
-                        if (uiState.shouldShowConfirmDeleteAccountDialog) {
-                            InformationDialog(
-                                titleId = R.string.delete_account_title,
-                                textId = R.string.delete_account_description,
-                                confirmButtonTextId = R.string.delete_account,
-                                confirmButtonAction = onDeleteAccountClick,
-                                dismissAction = showDeleteAccountDialog
-                            )
-                        }
                     }
                 }
             }
         }
         CircularProgressBar(uiState.isLoading)
+    }
+}
+
+@Composable
+private fun SignInButton(
+    shouldShowConfirmSignOutDialog: Boolean,
+    showSignOutDialog: (Boolean) -> Unit,
+    onSignOutClick: () -> Unit
+) {
+    Divider(
+        color = MaterialTheme.colorScheme.inverseSurface,
+        thickness = 2.dp,
+        modifier = Modifier
+            .fillMaxWidth(0.8f)
+            .align(Alignment.CenterHorizontally)
+    )
+    OutlinedButton(
+        onClick = { showSignOutDialog(true) },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 16.dp, bottom = 8.dp),
+    ) {
+        Text(text = stringResource(id = R.string.sign_out))
+    }
+    if (shouldShowConfirmSignOutDialog) {
+        InformationDialog(
+            titleId = R.string.sign_out_title,
+            textId = R.string.sign_out_description,
+            confirmButtonTextId = R.string.sign_out,
+            confirmButtonAction = onSignOutClick,
+            dismissAction = showSignOutDialog
+        )
+    }
+    Spacer(modifier = Modifier.size(8.dp))
+}
+
+@Composable
+private fun DeleteAccountButton(
+    shouldShowConfirmDeleteAccountDialog: Boolean,
+    showDeleteAccountDialog: (Boolean) -> Unit,
+    onDeleteAccountClick: () -> Unit
+) {
+    Divider(
+        color = MaterialTheme.colorScheme.inverseSurface,
+        thickness = 2.dp,
+        modifier = Modifier
+            .fillMaxWidth(0.8f)
+            .align(Alignment.CenterHorizontally)
+    )
+    OutlinedButton(
+        onClick = { showDeleteAccountDialog(true) },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 16.dp, bottom = 8.dp),
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = MaterialTheme.colorScheme.error.copy(alpha = 0.7f),
+            contentColor = MaterialTheme.colorScheme.onSecondary
+        )
+    ) {
+        Text(text = stringResource(id = R.string.delete_account))
+    }
+    if (shouldShowConfirmDeleteAccountDialog) {
+        InformationDialog(
+            titleId = R.string.delete_account_title,
+            textId = R.string.delete_account_description,
+            confirmButtonTextId = R.string.delete_account,
+            confirmButtonAction = onDeleteAccountClick,
+            dismissAction = showDeleteAccountDialog
+        )
+    }
+}
+
+@Composable
+private fun AnonymousSettings(onSignInClick: () -> Unit, onSignUpClick: () -> Unit) {
+    OutlinedButton(
+        onClick = onSignInClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp, bottom = 8.dp),
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.8f),
+            contentColor = MaterialTheme.colorScheme.onSecondary
+        )
+    ) {
+        Text(text = stringResource(id = R.string.sign_in))
+    }
+    OutlinedButton(
+        onClick = onSignUpClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp, bottom = 16.dp),
+        border = BorderStroke(
+            width = 2.dp,
+            color = MaterialTheme.colorScheme.tertiary
+        ),
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = Color.Transparent,
+            contentColor = MaterialTheme.colorScheme.onSecondary
+        )
+    ) {
+        Text(text = stringResource(id = R.string.create_account))
     }
 }
 
@@ -240,7 +271,7 @@ fun PasswordCard(
     onRepeatPasswordChange: (String) -> Unit,
     togglePasswordVisibility: () -> Unit,
     toggleRepeatPasswordVisibility: () -> Unit,
-    onCardClick: (ProfileSettingsItem) -> Unit,
+    onPasswordClick: () -> Unit,
     onSaveClick: () -> Unit
 ) {
     Column(
@@ -252,7 +283,7 @@ fun PasswordCard(
                     easing = LinearOutSlowInEasing
                 )
             )
-            .clickable { onCardClick(ProfileSettingsItem.Password) }
+            .clickable { onPasswordClick() }
     ) {
         Row(
             modifier = Modifier
@@ -270,8 +301,7 @@ fun PasswordCard(
             )
             ProfileSettingsItemIcon(
                 icon = Icons.Default.Key,
-                profileSettingsItem = ProfileSettingsItem.Password,
-                onCardClick = onCardClick
+                onPasswordClick = onPasswordClick
             )
         }
     }
@@ -344,7 +374,6 @@ fun PasswordCard(
                     contentColor = MaterialTheme.colorScheme.onTertiary
                 ),
                 shape = RoundedCornerShape(16.dp)
-                // enabled = emailState.isValid && passwordState.isValid
             ) {
                 Text(
                     modifier = Modifier.padding(vertical = 12.dp),
@@ -361,8 +390,7 @@ fun PasswordCard(
 @Composable
 private fun ProfileSettingsItemIcon(
     icon: ImageVector,
-    profileSettingsItem: ProfileSettingsItem,
-    onCardClick: (ProfileSettingsItem) -> Unit
+    onPasswordClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -373,7 +401,7 @@ private fun ProfileSettingsItemIcon(
                 color = MaterialTheme.colorScheme.inverseSurface
             )
             .size(40.dp)
-            .clickable { onCardClick(profileSettingsItem) },
+            .clickable { onPasswordClick() },
         contentAlignment = Alignment.Center
     ) {
         IconButton(
@@ -382,7 +410,7 @@ private fun ProfileSettingsItemIcon(
                 .clip(CircleShape)
                 .align(Alignment.Center)
                 .padding(8.dp),
-            onClick = { onCardClick(profileSettingsItem) }
+            onClick = { onPasswordClick() }
         ) {
             Icon(
                 modifier = Modifier.size(24.dp),

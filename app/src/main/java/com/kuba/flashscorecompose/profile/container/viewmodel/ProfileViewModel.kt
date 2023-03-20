@@ -25,7 +25,11 @@ class ProfileViewModel(
     private val viewModelState = MutableStateFlow(ProfileViewModelState())
     val uiState = viewModelState
         .map { it.toUiState() }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5_000),
+            viewModelState.value.toUiState()
+        )
 
     fun setup() {
         observeUser()
@@ -44,15 +48,16 @@ class ProfileViewModel(
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             viewModelState.update {
-                when (val result = authenticationRepository.updatePhotoUrl(photoUri = photoUri)) {
+                when (val result = authenticationRepository.uploadPhoto(photoUri = photoUri)) {
                     is RepositoryResult.Success -> {
                         SnackbarManager.showMessage(
                             R.string.successfully_updated_photo,
                             SnackbarMessageType.Success
                         )
-                        userRepository.saveUser(viewModelState.value.user.copy(photoUri = photoUri.toString()))
+                        userRepository.saveUser(
+                            viewModelState.value.user.copy(photoUri = result.data ?: Uri.EMPTY)
+                        )
                         it.copy(isLoading = false)
-
                     }
                     is RepositoryResult.Error -> {
                         result.error.statusMessage?.showSnackbarMessage(SnackbarMessageType.Error)

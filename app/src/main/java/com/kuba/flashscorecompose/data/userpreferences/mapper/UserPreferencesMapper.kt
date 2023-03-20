@@ -11,7 +11,8 @@ fun UserPreferencesEntity.toUserPreferences(): UserPreferences {
         userId = userId,
         isOnBoardingCompleted = isOnBoardingCompleted,
         favoriteTeamIds = favoriteTeamIds,
-        favoritePlayerIds = favoritePlayerIds
+        favoritePlayerIds = favoritePlayerIds,
+        favoriteFixtureIds = favoriteFixtureIds
     )
 }
 
@@ -20,6 +21,7 @@ fun UserPreferences.toUserPreferencesEntity(): UserPreferencesEntity {
         userId = userId,
         isOnBoardingCompleted = isOnBoardingCompleted,
         favoriteTeamIds = favoriteTeamIds,
-        favoritePlayerIds = favoritePlayerIds
+        favoritePlayerIds = favoritePlayerIds,
+        favoriteFixtureIds = favoriteFixtureIds
     )
 }

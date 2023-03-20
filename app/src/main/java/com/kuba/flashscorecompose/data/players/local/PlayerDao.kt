@@ -23,7 +23,7 @@ interface PlayerDao {
     fun observePlayers(): Flow<List<PlayerEntity>>
 
     @Query("SELECT * FROM player WHERE id IN(:ids)")
-    fun observeFavoritePlayers(ids: List<Int>): Flow<List<PlayerEntity>>
+    suspend fun getFavoritePlayers(ids: List<Int>): List<PlayerEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun savePlayers(players: List<PlayerEntity>)

@@ -13,7 +13,7 @@ interface PlayersUiState {
         override val isLoading: Boolean,
         override val error: PlayersError,
         val team: Team,
-        val playerCountries: List<PlayerCountry>
+        val playerWrappers: List<PlayerWrapper>
     ) : PlayersUiState
 
     data class NoData(

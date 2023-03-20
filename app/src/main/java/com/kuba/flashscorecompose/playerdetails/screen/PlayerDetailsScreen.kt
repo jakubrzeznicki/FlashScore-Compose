@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.players.model.Player
 import com.kuba.flashscorecompose.data.team.information.model.Team
@@ -43,7 +44,7 @@ fun PlayerDetailsRoute(
     navigator: DestinationsNavigator,
     viewModel: PlayerDetailsViewModel = getViewModel { parametersOf(playerId, team, season) }
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(key1 = SETUP_PLAYER_DETAILS_KEY) { viewModel.setup() }
     PlayerDetailsScreen(
         uiState = uiState,

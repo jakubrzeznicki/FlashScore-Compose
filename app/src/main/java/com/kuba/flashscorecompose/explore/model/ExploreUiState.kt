@@ -1,9 +1,9 @@
 package com.kuba.flashscorecompose.explore.model
 
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.data.team.information.model.Venue
-import com.kuba.flashscorecompose.teamdetails.players.model.PlayerCountry
+import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
+import com.kuba.flashscorecompose.teamdetails.players.model.PlayerWrapper
 import com.kuba.flashscorecompose.ui.component.chips.FilterChip
 
 /**
@@ -23,8 +23,8 @@ interface ExploreUiState {
             override val exploreFilterChip: FilterChip.Explore,
             override val exploreQuery: String,
             override val exploreFilterChips: List<FilterChip.Explore>,
-            val liveFixtures: List<FixtureItem>,
-            val favoriteFixtures: List<FixtureItem>
+            val liveFixtures: List<FixtureItemWrapper>,
+            val favoriteFixtures: List<FixtureItemWrapper>
         ) : ExploreUiState
 
         data class HasOnlyLiveFixtures(
@@ -33,7 +33,7 @@ interface ExploreUiState {
             override val exploreFilterChip: FilterChip.Explore,
             override val exploreQuery: String,
             override val exploreFilterChips: List<FilterChip.Explore>,
-            val liveFixtures: List<FixtureItem>
+            val liveFixtures: List<FixtureItemWrapper>
         ) : ExploreUiState
 
         data class HasOnlyFavoriteFixtures(
@@ -42,7 +42,7 @@ interface ExploreUiState {
             override val exploreFilterChip: FilterChip.Explore,
             override val exploreQuery: String,
             override val exploreFilterChips: List<FilterChip.Explore>,
-            val favoriteFixtures: List<FixtureItem>
+            val favoriteFixtures: List<FixtureItemWrapper>
         ) : ExploreUiState
 
         data class NoData(
@@ -61,8 +61,8 @@ interface ExploreUiState {
             override val exploreFilterChip: FilterChip.Explore,
             override val exploreQuery: String,
             override val exploreFilterChips: List<FilterChip.Explore>,
-            val teams: List<TeamCountry>,
-            val favoriteTeams: List<TeamCountry>
+            val teams: List<TeamWrapper>,
+            val favoriteTeams: List<TeamWrapper>
         ) : ExploreUiState
 
         data class HasWithoutFavorite(
@@ -71,7 +71,7 @@ interface ExploreUiState {
             override val exploreFilterChip: FilterChip.Explore,
             override val exploreQuery: String,
             override val exploreFilterChips: List<FilterChip.Explore>,
-            val teams: List<TeamCountry>
+            val teams: List<TeamWrapper>
         ) : ExploreUiState
 
         data class NoData(
@@ -90,8 +90,8 @@ interface ExploreUiState {
             override val exploreFilterChip: FilterChip.Explore,
             override val exploreQuery: String,
             override val exploreFilterChips: List<FilterChip.Explore>,
-            val players: List<PlayerCountry>,
-            val favoritePlayers: List<PlayerCountry>
+            val players: List<PlayerWrapper>,
+            val favoritePlayers: List<PlayerWrapper>
         ) : ExploreUiState
 
         data class HasWithoutFavorite(
@@ -100,7 +100,7 @@ interface ExploreUiState {
             override val exploreFilterChip: FilterChip.Explore,
             override val exploreQuery: String,
             override val exploreFilterChips: List<FilterChip.Explore>,
-            val players: List<PlayerCountry>,
+            val players: List<PlayerWrapper>,
         ) : ExploreUiState
 
         data class NoData(

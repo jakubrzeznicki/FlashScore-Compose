@@ -11,7 +11,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +26,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
@@ -57,13 +57,12 @@ fun OnBoardingRpute(
     navigator: DestinationsNavigator,
     viewModel: OnBoardingViewModel = getViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val teamsScrollState = rememberLazyGridState()
     val playersScrollState = rememberLazyGridState()
     LaunchedEffect(key1 = SETUP_ON_BOARDING_KEY) { viewModel.setup() }
     OnBoardingScreen(
         uiState = uiState,
-        navigator = navigator,
         onRefreshClick = { viewModel.refresh() },
         onTeamClick = { viewModel.teamClicked(it) },
         onPlayerClick = { viewModel.playerClicked(it) },
@@ -86,7 +85,6 @@ fun OnBoardingRpute(
 @Composable
 fun OnBoardingScreen(
     uiState: OnBoardingUiState,
-    navigator: DestinationsNavigator,
     onRefreshClick: () -> Unit,
     onTeamClick: (Team) -> Unit,
     onPlayerClick: (Player) -> Unit,
@@ -122,59 +120,25 @@ fun OnBoardingScreen(
                     .verticalScroll(rememberScrollState())
                     .padding(start = 16.dp, end = 16.dp, top = 32.dp)
             ) {
-                Text(
-                    text = stringResource(
-                        id = R.string.what_favorite,
-                        stringResource(id = uiState.onBoardingQuestionsData.onBoardingQuestion.titleId)
-                    ),
-                    color = MaterialTheme.colorScheme.onSecondary,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 36.sp,
-                )
-                Spacer(modifier = Modifier.size(16.dp))
-                Text(
-                    text = stringResource(id = R.string.on_boarding_subtitle),
-                    color = MaterialTheme.colorScheme.inverseOnSurface,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 16.sp,
-                )
-                Spacer(modifier = Modifier.size(32.dp))
+                OnBoardingTitle(titleId = uiState.onBoardingQuestionsData.onBoardingQuestion.titleId)
                 when (uiState) {
                     is OnBoardingUiState.HasAllData -> {
                         when (uiState.onBoardingQuestionsData.onBoardingQuestion) {
                             is OnBoardingQuestion.Teams -> {
-                                LazyHorizontalGrid(
-                                    rows = GridCells.Fixed(2),
-                                    state = teamsScrollState,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(260.dp)
-                                ) {
-                                    items(items = uiState.teams) {
-                                        TeamCard(
-                                            team = it,
-                                            onTeamClick = onTeamClick,
-                                            isSelected = uiState.selectedTeams.contains(it)
-                                        )
-                                    }
-                                }
+                                TeamsGridList(
+                                    teams = uiState.teams,
+                                    selectedTeams = uiState.selectedTeams,
+                                    teamsScrollState = teamsScrollState,
+                                    onTeamClick = onTeamClick
+                                )
                             }
                             is OnBoardingQuestion.Players -> {
-                                LazyHorizontalGrid(
-                                    rows = GridCells.Fixed(2),
-                                    state = playersScrollState,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(260.dp)
-                                ) {
-                                    items(items = uiState.players) {
-                                        PlayerCard(
-                                            player = it,
-                                            onPlayerClick = onPlayerClick,
-                                            isSelected = uiState.selectedPlayers.contains(it)
-                                        )
-                                    }
-                                }
+                                PlayersGridList(
+                                    players = uiState.players,
+                                    selectedPlayers = uiState.selectedPlayers,
+                                    playersScrollState = playersScrollState,
+                                    onPlayerClick = onPlayerClick
+                                )
                             }
                         }
                     }
@@ -213,6 +177,75 @@ fun OnBoardingScreen(
     }
 }
 
+@Composable
+private fun OnBoardingTitle(titleId: Int) {
+    Text(
+        text = stringResource(
+            id = R.string.what_favorite,
+            stringResource(id = titleId)
+        ),
+        color = MaterialTheme.colorScheme.onSecondary,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 36.sp,
+    )
+    Spacer(modifier = Modifier.size(16.dp))
+    Text(
+        text = stringResource(id = R.string.on_boarding_subtitle),
+        color = MaterialTheme.colorScheme.inverseOnSurface,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+    )
+    Spacer(modifier = Modifier.size(32.dp))
+}
+
+@Composable
+private fun TeamsGridList(
+    teams: List<Team>,
+    selectedTeams: List<Team>,
+    teamsScrollState: LazyGridState,
+    onTeamClick: (Team) -> Unit
+) {
+    LazyHorizontalGrid(
+        rows = GridCells.Fixed(2),
+        state = teamsScrollState,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(260.dp)
+    ) {
+        items(items = teams) {
+            TeamCard(
+                team = it,
+                onTeamClick = onTeamClick,
+                isSelected = selectedTeams.contains(it)
+            )
+        }
+    }
+}
+
+@Composable
+private fun PlayersGridList(
+    players: List<Player>,
+    selectedPlayers: List<Player>,
+    playersScrollState: LazyGridState,
+    onPlayerClick: (Player) -> Unit
+) {
+    LazyHorizontalGrid(
+        rows = GridCells.Fixed(2),
+        state = playersScrollState,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(260.dp)
+    ) {
+        items(items = players) {
+            PlayerCard(
+                player = it,
+                onPlayerClick = onPlayerClick,
+                isSelected = selectedPlayers.contains(it)
+            )
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTopBar(
@@ -241,7 +274,6 @@ fun AppTopBar(
                 }
             }
         )
-
         val animatedProgress by animateFloatAsState(
             targetValue = (questionIndex + 1) / totalQuestionsCount.toFloat(),
             animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec

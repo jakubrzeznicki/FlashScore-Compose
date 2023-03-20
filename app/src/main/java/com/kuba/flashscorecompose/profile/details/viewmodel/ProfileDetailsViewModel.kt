@@ -26,7 +26,11 @@ class ProfileDetailsViewModel(
     private val viewModelState = MutableStateFlow(ProfileDetailsViewModelState())
     val uiState = viewModelState
         .map { it.toUiState() }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5_000),
+            viewModelState.value.toUiState()
+        )
 
     fun setup() {
         observeUser()

@@ -12,10 +12,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.flowlayout.FlowRow
 import com.kuba.flashscorecompose.R
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.destinations.FixtureDetailsRouteDestination
+import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
 import com.kuba.flashscorecompose.teamdetails.fixturesteam.model.FixturesTeamUiState
 import com.kuba.flashscorecompose.teamdetails.fixturesteam.viewmodel.FixturesTeamViewModel
 import com.kuba.flashscorecompose.ui.component.*
@@ -37,11 +38,12 @@ fun FixturesTeamScreen(
     navigator: DestinationsNavigator,
     viewModel: FixturesTeamViewModel = getViewModel { parametersOf(teamId, season) }
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(key1 = SETUP_FIXTURES_TEAM_KEY) { viewModel.setup() }
     FixturesTeamListScreen(
         uiState = uiState,
-        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it)) },
+        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.fixtureItem)) },
+        onFixtureFavoriteClick = { viewModel.addFixtureToFavorite(it) },
         onFixturesFilterClick = { viewModel.filterFixtures(it as FilterChip.Fixtures) },
         onRefreshClick = { viewModel.refresh() }
     )
@@ -50,7 +52,8 @@ fun FixturesTeamScreen(
 @Composable
 fun FixturesTeamListScreen(
     uiState: FixturesTeamUiState,
-    onFixtureClick: (FixtureItem) -> Unit,
+    onFixtureClick: (FixtureItemWrapper) -> Unit,
+    onFixtureFavoriteClick: (FixtureItemWrapper) -> Unit,
     onFixturesFilterClick: (FilterChip) -> Unit,
     onRefreshClick: () -> Unit
 ) {
@@ -80,8 +83,12 @@ fun FixturesTeamListScreen(
                             onFixturesFilterClick
                         )
                     }
-                    items(items = uiState.fixtureItems) {
-                        FixtureCard(fixtureItem = it, onFixtureClick = onFixtureClick)
+                    items(items = uiState.fixtureItemWrappers) {
+                        FixtureCard(
+                            fixtureItemWrapper = it,
+                            onFixtureClick = onFixtureClick,
+                            onFavoriteClick = onFixtureFavoriteClick
+                        )
                     }
                 }
                 is FixturesTeamUiState.NoData -> {

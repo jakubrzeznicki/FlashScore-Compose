@@ -18,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
@@ -50,7 +51,7 @@ fun StandingsRoute(
     navigator: DestinationsNavigator,
     viewModel: StandingsViewModel = getViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val fixturesScrollState = rememberLazyListState()
     val countryScrollState = rememberLazyListState()
     LaunchedEffect(key1 = SETUP_STANDINGS_KEY) { viewModel.setup() }

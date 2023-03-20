@@ -13,10 +13,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.explore.model.CoachCountry
 import com.kuba.flashscorecompose.ui.component.CoachCard
-import com.kuba.flashscorecompose.ui.component.FixtureCard
 
 /**
  * Created by jrzeznicki on 03/02/2023.

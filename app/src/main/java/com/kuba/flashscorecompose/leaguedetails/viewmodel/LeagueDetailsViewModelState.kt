@@ -1,6 +1,6 @@
 package com.kuba.flashscorecompose.leaguedetails.viewmodel
 
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
+import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
 import com.kuba.flashscorecompose.leaguedetails.model.LeagueDetailsError
 import com.kuba.flashscorecompose.leaguedetails.model.LeagueDetailsUiState
 import java.time.LocalDate
@@ -12,15 +12,15 @@ data class LeagueDetailsViewModelState(
     val isLoading: Boolean = false,
     val error: LeagueDetailsError = LeagueDetailsError.NoError,
     val date: LocalDate = LocalDate.now(),
-    val fixtureItems: List<FixtureItem> = emptyList(),
-    val filteredFixtureItems: List<FixtureItem> = emptyList(),
+    val fixtureItemWrappers: List<FixtureItemWrapper> = emptyList(),
+    val filteredFixtureItemWrappers: List<FixtureItemWrapper> = emptyList(),
 ) {
-    fun toUiState(): LeagueDetailsUiState = if (filteredFixtureItems.isNotEmpty()) {
+    fun toUiState(): LeagueDetailsUiState = if (filteredFixtureItemWrappers.isNotEmpty()) {
         LeagueDetailsUiState.HasData(
             isLoading = isLoading,
             error = error,
             date = date,
-            fixtureItems = filteredFixtureItems
+            fixtureItemWrappers = filteredFixtureItemWrappers
         )
     } else {
         LeagueDetailsUiState.NoData(

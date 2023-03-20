@@ -1,7 +1,7 @@
 package com.kuba.flashscorecompose.teamdetails.players.viewmodel
 
 import com.kuba.flashscorecompose.data.team.information.model.Team
-import com.kuba.flashscorecompose.teamdetails.players.model.PlayerCountry
+import com.kuba.flashscorecompose.teamdetails.players.model.PlayerWrapper
 import com.kuba.flashscorecompose.teamdetails.players.model.PlayersError
 import com.kuba.flashscorecompose.teamdetails.players.model.PlayersUiState
 
@@ -12,10 +12,10 @@ data class PlayersViewModelState(
     val isLoading: Boolean = false,
     val error: PlayersError = PlayersError.NoError,
     val team: Team = Team.EMPTY_TEAM,
-    val playerCountries: List<PlayerCountry> = emptyList()
+    val playerWrappers: List<PlayerWrapper> = emptyList()
 ) {
-    fun toUiState(): PlayersUiState = if (playerCountries.isNotEmpty()) {
-        PlayersUiState.HasData(isLoading, error, team, playerCountries)
+    fun toUiState(): PlayersUiState = if (playerWrappers.isNotEmpty()) {
+        PlayersUiState.HasData(isLoading, error, team, playerWrappers)
     } else {
         PlayersUiState.NoData(isLoading, error)
     }

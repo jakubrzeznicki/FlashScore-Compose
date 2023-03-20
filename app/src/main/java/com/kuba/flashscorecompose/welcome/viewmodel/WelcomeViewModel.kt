@@ -26,7 +26,11 @@ class WelcomeViewModel(
     private val viewModelState = MutableStateFlow(WelcomeViewModelState())
     val uiState = viewModelState
         .map { it.toUiState() }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5_000),
+            viewModelState.value.toUiState()
+        )
 
     fun createAnonymousAccount(openHomeScreen: () -> Unit, openOnBoardingScreen: () -> Unit) {
         viewModelState.update { it.copy(isLoading = true) }

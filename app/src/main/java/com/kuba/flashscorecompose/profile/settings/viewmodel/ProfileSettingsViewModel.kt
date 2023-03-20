@@ -6,7 +6,6 @@ import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.authentication.AuthenticationDataSource
 import com.kuba.flashscorecompose.data.user.UserDataSource
 import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
-import com.kuba.flashscorecompose.profile.settings.model.ProfileSettingsItem
 import com.kuba.flashscorecompose.signup.model.SignUpError
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager.showSnackbarMessage
@@ -14,6 +13,7 @@ import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessage
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import com.kuba.flashscorecompose.utils.isValidPassword
+import com.kuba.flashscorecompose.utils.md5
 import com.kuba.flashscorecompose.utils.passwordMatches
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -31,7 +31,11 @@ class ProfileSettingsViewModel(
     private val viewModelState = MutableStateFlow(ProfileSettingsViewModelState())
     val uiState = viewModelState
         .map { it.toUiState() }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, viewModelState.value.toUiState())
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5_000),
+            viewModelState.value.toUiState()
+        )
     private val password
         get() = viewModelState.value.password
 
@@ -63,15 +67,9 @@ class ProfileSettingsViewModel(
         viewModelState.update { it.copy(shouldShowConfirmSignOutDialog = showDialog) }
     }
 
-    fun onCardClick(profileSettingsItem: ProfileSettingsItem) {
+    fun onPasswordClick() {
         viewModelState.update {
-            when (profileSettingsItem) {
-                is ProfileSettingsItem.Password ->
-                    it.copy(isPasswordCardExpanded = !it.isPasswordCardExpanded)
-                else -> {
-                    it.copy()
-                }
-            }
+            it.copy(isPasswordCardExpanded = !it.isPasswordCardExpanded)
         }
     }
 
@@ -107,6 +105,9 @@ class ProfileSettingsViewModel(
                         SnackbarMessage.ResourceSnackbar(
                             R.string.successfully_updated_password,
                             SnackbarMessageType.Success
+                        )
+                        userRepository.saveUser(
+                            viewModelState.value.user.copy(password = password.md5())
                         )
                         it.copy(isLoading = false)
                     }

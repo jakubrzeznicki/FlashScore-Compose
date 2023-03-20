@@ -1,6 +1,6 @@
 package com.kuba.flashscorecompose.leaguedetails.model
 
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
+import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
 import java.time.LocalDate
 
 /**
@@ -15,7 +15,7 @@ sealed interface LeagueDetailsUiState {
         override val isLoading: Boolean,
         override val error: LeagueDetailsError,
         override val date: LocalDate,
-        val fixtureItems: List<FixtureItem>
+        val fixtureItemWrappers: List<FixtureItemWrapper>
     ) : LeagueDetailsUiState
 
     data class NoData(

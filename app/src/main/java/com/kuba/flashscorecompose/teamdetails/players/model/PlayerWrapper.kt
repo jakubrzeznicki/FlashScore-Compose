@@ -6,4 +6,4 @@ import com.kuba.flashscorecompose.data.players.model.Player
 /**
  * Created by jrzeznicki on 29/01/2023.
  */
-data class PlayerCountry(val player: Player, val country: Country)
+data class PlayerWrapper(val player: Player, val country: Country, val isFavorite: Boolean)

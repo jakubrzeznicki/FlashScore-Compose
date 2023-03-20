@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.kuba.flashscorecompose.data.userpreferences.local.model.UserPreferencesEntity
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Created by jrzeznicki on 10/02/2023.
@@ -13,7 +14,7 @@ import com.kuba.flashscorecompose.data.userpreferences.local.model.UserPreferenc
 interface UserPreferencesDao {
 //
 //    @Query("SELECT favorite_team_ids FROM user_preferences WHERE user_id = :id")
-//    suspend fun getFavoriteTeamIds(id: String): ArrayList<Int>
+//    suspend fun getFavoriteTeamIds(id: String): Flow<List<Int>>
 
 //    @Query("SELECT favorite_player_ids FROM user_preferences WHERE user_id = :id")
 //    suspend fun getFavoritePlayerIds(id: String): List<Int>?
@@ -24,6 +25,12 @@ interface UserPreferencesDao {
     @Query("SELECT * FROM user_preferences WHERE user_id = :id")
     suspend fun getUserPreferences(id: String): UserPreferencesEntity?
 
+    @Query("SELECT * FROM user_preferences WHERE user_id = :id")
+    fun observeUserPreferences(id: String): Flow<UserPreferencesEntity?>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveUserPreferences(userPreferencesEntity: UserPreferencesEntity)
+
+    @Query("DELETE FROM user_preferences WHERE user_id = :userId")
+    fun deleteUserPreferences(userId: String)
 }

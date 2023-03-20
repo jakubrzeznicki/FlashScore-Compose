@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
@@ -55,7 +56,7 @@ fun TeamInformationsScreen(
         parametersOf(team, leagueId, season)
     }
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(key1 = TEAM_INFORMATIONS_KEY) { viewModel.setup() }
     InformationsScreen(uiState = uiState, onRefreshClick = { viewModel.refresh() })
 }

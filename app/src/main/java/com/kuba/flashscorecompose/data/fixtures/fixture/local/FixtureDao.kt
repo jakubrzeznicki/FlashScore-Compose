@@ -38,6 +38,9 @@ interface FixtureDao {
     @Query("SELECT * FROM fixture WHERE fixture_info_is_live = 1")
     fun observeFixturesLive(): Flow<List<FixtureEntity>>
 
+    @Query("SELECT * FROM fixture WHERE id IN(:ids)")
+    fun observeFavoriteFixtures(ids: List<Int>): Flow<List<FixtureEntity>>
+
     @Query("SELECT * FROM fixture WHERE fixture_info_id = :fixtureId")
     suspend fun getFixture(fixtureId: Int): FixtureEntity?
 

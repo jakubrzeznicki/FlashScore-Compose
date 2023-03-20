@@ -82,8 +82,12 @@ fun FixtureDto.toFixtureItem(
         goals = goals?.toGoals() ?: Goals.EMPTY_GOALS,
         league = league?.toLeague() ?: League.EMPTY_LEAGUE,
         score = score?.toScore() ?: Score.EMPTY_SCORE,
-        homeTeam = teams?.home?.toTeam(league?.id ?: 0, season ?: 0) ?: Team.EMPTY_TEAM,
-        awayTeam = teams?.away?.toTeam(league?.id ?: 0, season ?: 0) ?: Team.EMPTY_TEAM,
+        homeTeam = teams?.home?.toTeam(
+            league?.id ?: 0, season ?: 0, league?.countryName.orEmpty()
+        ) ?: Team.EMPTY_TEAM,
+        awayTeam = teams?.away?.toTeam(
+            league?.id ?: 0, season ?: 0, league?.countryName.orEmpty()
+        ) ?: Team.EMPTY_TEAM,
     )
 }
 

@@ -1,13 +1,13 @@
 package com.kuba.flashscorecompose.explore.viewmodel
 
-import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.data.team.information.model.Venue
 import com.kuba.flashscorecompose.explore.model.CoachCountry
 import com.kuba.flashscorecompose.explore.model.ExploreError
 import com.kuba.flashscorecompose.explore.model.ExploreUiState
-import com.kuba.flashscorecompose.explore.model.TeamCountry
-import com.kuba.flashscorecompose.teamdetails.players.model.PlayerCountry
+import com.kuba.flashscorecompose.explore.model.TeamWrapper
+import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
+import com.kuba.flashscorecompose.teamdetails.players.model.PlayerWrapper
 import com.kuba.flashscorecompose.ui.component.chips.FilterChip
 
 /**
@@ -27,17 +27,18 @@ data class ExploreViewModelState(
             FilterChip.Explore.Venues,
             FilterChip.Explore.Leagues
         ),
-    val liveFixtures: List<FixtureItem> = emptyList(),
-    val favoriteFixtures: List<FixtureItem> = emptyList(),
-    val filteredLiveFixtures: List<FixtureItem> = emptyList(),
-    val favoriteTeams: List<TeamCountry> = emptyList(),
-    val teams: List<TeamCountry> = emptyList(),
-    val filteredTeams: List<TeamCountry> = emptyList(),
-    val filteredFavoriteTeams: List<TeamCountry> = emptyList(),
-    val favoritePlayers: List<PlayerCountry> = emptyList(),
-    val players: List<PlayerCountry> = emptyList(),
-    val filteredPlayers: List<PlayerCountry> = emptyList(),
-    val filteredFavoritePlayers: List<PlayerCountry> = emptyList(),
+    val liveFixtures: List<FixtureItemWrapper> = emptyList(),
+    val favoriteFixtures: List<FixtureItemWrapper> = emptyList(),
+    val filteredLiveFixtures: List<FixtureItemWrapper> = emptyList(),
+    val filteredFavoriteFixtures: List<FixtureItemWrapper> = emptyList(),
+    val favoriteTeams: List<TeamWrapper> = emptyList(),
+    val teams: List<TeamWrapper> = emptyList(),
+    val filteredTeams: List<TeamWrapper> = emptyList(),
+    val filteredFavoriteTeams: List<TeamWrapper> = emptyList(),
+    val favoritePlayers: List<PlayerWrapper> = emptyList(),
+    val players: List<PlayerWrapper> = emptyList(),
+    val filteredPlayers: List<PlayerWrapper> = emptyList(),
+    val filteredFavoritePlayers: List<PlayerWrapper> = emptyList(),
     val venues: List<Venue> = emptyList(),
     val filteredVenues: List<Venue> = emptyList(),
     val coaches: List<CoachCountry> = emptyList(),
@@ -48,7 +49,7 @@ data class ExploreViewModelState(
     fun toUiState(): ExploreUiState = when (exploreFilterChip) {
         is FilterChip.Explore.Fixtures -> {
             when {
-                favoriteFixtures.isNotEmpty() && filteredLiveFixtures.isNotEmpty() ->
+                filteredFavoriteFixtures.isNotEmpty() && filteredLiveFixtures.isNotEmpty() ->
                     ExploreUiState.Fixtures.HasFullData(
                         isLoading,
                         error,
@@ -56,16 +57,16 @@ data class ExploreViewModelState(
                         exploreQuery,
                         exploreFilterChips,
                         filteredLiveFixtures,
-                        favoriteFixtures
+                        filteredFavoriteFixtures
                     )
-                favoriteFixtures.isNotEmpty() ->
+                filteredFavoriteFixtures.isNotEmpty() ->
                     ExploreUiState.Fixtures.HasOnlyFavoriteFixtures(
                         isLoading,
                         error,
                         exploreFilterChip,
                         exploreQuery,
                         exploreFilterChips,
-                        favoriteFixtures
+                        filteredFavoriteFixtures
                     )
                 filteredLiveFixtures.isNotEmpty() ->
                     ExploreUiState.Fixtures.HasOnlyLiveFixtures(
