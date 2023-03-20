@@ -1,7 +1,6 @@
-package com.kuba.flashscorecompose.main.view
+package com.kuba.flashscorecompose.main
 
 import android.content.res.Resources
-import android.util.Log
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -13,7 +12,6 @@ import com.example.ui.snackbar.SnackbarMessage.Companion.toMessage
 import com.example.ui.snackbar.SnackbarMessageType
 import com.kuba.flashscorecompose.navigation.model.NavigationItem
 import com.ramcosta.composedestinations.spec.NavHostEngine
-import com.ramcosta.composedestinations.spec.Route
 import com.ramcosta.composedestinations.utils.route
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.filterNotNull
@@ -52,40 +50,4 @@ class FlashScoreAppState(
     val shouldShowBottomBar: Boolean
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.route() in bottomBarDirections
-
-    val test22: Route?
-        @Composable get() = navController
-            .currentBackStackEntryAsState().value?.route()
-
-    @Composable
-    fun test() {
-        Log.d("TEST_LOG", "AppState ")
-        Log.d("TEST_LOG", "route - ${test22} ")
-        Log.d("TEST_LOG", "route.route - ${test22?.route} ")
-        bottomBarDirections.forEach {
-            Log.d("TEST_LOG", "route - ${it.route}, baseRoute - ${it.baseRoute}")
-        }
-    }
-
-    fun popUp() {
-        navController.popBackStack()
-    }
-
-    fun navigate(route: String) {
-        navController.navigate(route) { launchSingleTop = true }
-    }
-
-    fun navigateAndPopUp(route: String, popUp: String) {
-        navController.navigate(route) {
-            launchSingleTop = true
-            popUpTo(popUp) { inclusive = true }
-        }
-    }
-
-    fun clearAndNavigate(route: String) {
-        navController.navigate(route) {
-            launchSingleTop = true
-            popUpTo(0) { inclusive = true }
-        }
-    }
 }

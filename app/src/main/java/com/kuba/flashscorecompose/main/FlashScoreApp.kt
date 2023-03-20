@@ -1,7 +1,6 @@
-package com.kuba.flashscorecompose.main.view
+package com.kuba.flashscorecompose.main
 
 import android.content.res.Resources
-import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.widthIn
@@ -29,13 +28,8 @@ import com.kuba.flashscorecompose.ui.component.BottomNavigationBar
 import com.kuba.flashscorecompose.ui.component.NavigationScaffold
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
-import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.spec.*
-import com.ramcosta.composedestinations.utils.destination
-import com.ramcosta.composedestinations.utils.startDestination
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import org.koin.androidx.compose.inject
 
 /**
@@ -46,7 +40,6 @@ import org.koin.androidx.compose.inject
 fun FlashScoreApp() {
     val snackbarManager: SnackbarManager by inject()
     val appState = rememberAppState(snackbarManager = snackbarManager)
-    Log.d("TEST_LOG", "FlashScoreApp - startRoute - ${NavGraphs.root.startRoute}")
     NavigationScaffold(
         navController = appState.navController,
         startRoute = NavGraphs.root.startRoute,
@@ -71,23 +64,11 @@ fun FlashScoreApp() {
         },
         bottomBar = {
             if (appState.shouldShowBottomBar) {
-                Log.d("TEST_LOG", "FlashScoreApp - shouldShowBottomBar - true")
-                appState.test()
                 BottomNavigationBar(appState.bottomBarTabs, appState.navController)
-            } else {
-                Log.d("TEST_LOG", "FlashScoreApp - shouldShowBottomBar - false")
-                appState.test()
             }
         }
     ) {
         AppNavigation(navController = appState.navController, engine = appState.engine)
-//        DestinationsNavHost(
-//            engine = appState.engine,
-//            navController = appState.navController,
-//            navGraph = NavGraphs.root,
-//            modifier = Modifier.padding(it),
-//            startRoute = NavGraphs.root.startRoute
-//        )
     }
 }
 
@@ -96,10 +77,10 @@ fun FlashScoreApp() {
 fun rememberAppState(
     engine: NavHostEngine = rememberAnimatedNavHostEngine(
         rootDefaultAnimations = RootNavGraphDefaultAnimations(
-            enterTransition = { defaultTiviEnterTransition(initialState, targetState) },
-            exitTransition = { defaultTiviExitTransition(initialState, targetState) },
-            popEnterTransition = { defaultTiviPopEnterTransition() },
-            popExitTransition = { defaultTiviPopExitTransition() },
+            enterTransition = { defaultEnterTransition(initialState, targetState) },
+            exitTransition = { defaultExitTransition(initialState, targetState) },
+            popEnterTransition = { defaultPopEnterTransition() },
+            popExitTransition = { defaultPopExitTransition() },
         )
     ),
     navController: NavHostController = rememberAnimatedNavController(),
@@ -136,37 +117,8 @@ fun resources(): Resources {
     return LocalContext.current.resources
 }
 
-@Stable
-@Composable
-private fun NavController.currentScreenAsState(): State<NavGraphSpec> {
-    val selectedItem = remember { mutableStateOf(NavGraphs.home) }
-    DisposableEffect(this) {
-        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
-            //backQueue.print()
-            selectedItem.value = destination.navGraph()
-        }
-        addOnDestinationChangedListener(listener)
-        onDispose {
-            removeOnDestinationChangedListener(listener)
-        }
-    }
-    return selectedItem
-}
-
-fun NavDestination.navGraph(): NavGraphSpec {
-    hierarchy.forEach { destination ->
-        NavGraphs.root.nestedNavGraphs.forEach { navGraph ->
-            if (destination.route == navGraph.route) {
-                return navGraph
-            }
-        }
-    }
-    throw RuntimeException("Unknown nav graph for destination $route")
-}
-
-
 @ExperimentalAnimationApi
-private fun AnimatedContentScope<*>.defaultTiviEnterTransition(
+private fun AnimatedContentScope<*>.defaultEnterTransition(
     initial: NavBackStackEntry,
     target: NavBackStackEntry,
 ): EnterTransition {
@@ -179,7 +131,7 @@ private fun AnimatedContentScope<*>.defaultTiviEnterTransition(
 }
 
 @ExperimentalAnimationApi
-private fun AnimatedContentScope<*>.defaultTiviExitTransition(
+private fun AnimatedContentScope<*>.defaultExitTransition(
     initial: NavBackStackEntry,
     target: NavBackStackEntry,
 ): ExitTransition {
@@ -195,11 +147,11 @@ private val NavDestination.hostNavGraph: NavGraph
     get() = hierarchy.first { it is NavGraph } as NavGraph
 
 @ExperimentalAnimationApi
-private fun AnimatedContentScope<*>.defaultTiviPopEnterTransition(): EnterTransition {
+private fun AnimatedContentScope<*>.defaultPopEnterTransition(): EnterTransition {
     return fadeIn() + slideIntoContainer(AnimatedContentScope.SlideDirection.End)
 }
 
 @ExperimentalAnimationApi
-private fun AnimatedContentScope<*>.defaultTiviPopExitTransition(): ExitTransition {
+private fun AnimatedContentScope<*>.defaultPopExitTransition(): ExitTransition {
     return fadeOut() + slideOutOfContainer(AnimatedContentScope.SlideDirection.End)
 }

@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FlashScoreCompose">
         <activity
-            android:name=".main.view.MainActivity"
+            android:name=".main.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.FlashScoreCompose">
             <intent-filter>

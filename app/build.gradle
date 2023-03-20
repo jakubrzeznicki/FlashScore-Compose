@@ -63,6 +63,11 @@ android {
             }
         }
     }
+    defaultConfig {
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file("local.properties").newDataInputStream())
+        buildConfigField "String", "APP_CENTER_KEY", "\"${properties.getProperty("APP_CENTER_KEY")}\""
+    }
     namespace 'com.kuba.flashscorecompose'
 }
 

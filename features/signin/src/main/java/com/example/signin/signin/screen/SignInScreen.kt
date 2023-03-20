@@ -52,7 +52,6 @@ fun SignInRoute(
         onEmailChange = { viewModel.onEmailChange(it) },
         onPasswordChange = { viewModel.onPasswordChange(it) },
         togglePasswordVisibility = { viewModel.togglePasswordVisibility() },
-        toggleKeepLogged = { viewModel.toggleKeepLogged() },
         onSignInClick = {
             viewModel.onSignInClick(
                 openHomeScreen = { navigator.openHome(HomeBackStackType.SignIn) },
@@ -74,7 +73,6 @@ fun SignInScreen(
     onEmailChange: (String) -> Unit = {},
     onPasswordChange: (String) -> Unit = {},
     togglePasswordVisibility: () -> Unit = {},
-    toggleKeepLogged: () -> Unit = {},
     onSignInClick: () -> Unit = {},
     onForgetPasswordClick: () -> Unit = {}
 ) {

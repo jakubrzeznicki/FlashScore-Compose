@@ -28,9 +28,9 @@ class StatisticsRepository(
         }
     }
 
-    override suspend fun saveStatistics(statistics: List<Statistics>, fixtureId: Int) {
+    override suspend fun saveStatistics(statisticsParam: List<Statistics>, fixtureId: Int) {
         local.saveStatistics(
-            statistics.mapIndexed { index, statistics ->
+            statisticsParam.mapIndexed { index, statistics ->
                 statistics.toStatisticsEntity(fixtureId, isHome = index == 0)
             }
         )
@@ -43,7 +43,7 @@ class StatisticsRepository(
                 statisticsTeamDto.toStatistics(fixtureId)
             }.orEmpty()
             withContext(Dispatchers.IO) {
-                saveStatistics(statistics = statistics, fixtureId = fixtureId)
+                saveStatistics(statisticsParam = statistics, fixtureId = fixtureId)
             }
             RepositoryResult.Success(statistics)
         } catch (e: HttpException) {

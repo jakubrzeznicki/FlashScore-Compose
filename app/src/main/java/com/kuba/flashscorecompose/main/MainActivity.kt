@@ -1,9 +1,10 @@
-package com.kuba.flashscorecompose.main.view
+package com.kuba.flashscorecompose.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.example.ui.theme.FlashScoreComposeTheme
+import com.kuba.flashscorecompose.BuildConfig
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
 import com.microsoft.appcenter.crashes.Crashes
@@ -18,7 +19,7 @@ class MainActivity : ComponentActivity() {
         }
         AppCenter.start(
             application,
-            "bd4b6475-87b1-4e34-b8d9-635973489f20",
+            BuildConfig.APP_CENTER_KEY,
             Analytics::class.java,
             Crashes::class.java
         )

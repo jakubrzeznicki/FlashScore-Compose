@@ -1,7 +1,6 @@
 package com.example.home.viewmodel
 
 import android.os.Build
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.common.utils.RepositoryResult
@@ -20,6 +19,7 @@ import com.example.ui.snackbar.SnackbarMessageType
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 /**
  * Created by jrzeznicki on 05/01/2023.
@@ -89,13 +89,11 @@ class HomeViewModel(
     private fun observeFixtures() {
         viewModelScope.launch {
             val formattedDate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                "2023-03-19"
+                localDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT))
             } else {
                 TESTING_DATE
             }
-            Log.d("TEST_LOG", "observeFixtures")
             val currentUserId = userPreferencesRepository.getCurrentUserId()
-            Log.d("TEST_LOG", "currentUserId = $currentUserId")
             val userPreferencesFlow =
                 userPreferencesRepository.observeUserPreferences(currentUserId)
             val fixturesFlow =
@@ -104,12 +102,11 @@ class HomeViewModel(
                 val favoriteFixtureIds = userPreferences.favoriteFixtureIds
                 val leagueFixturesList = fixtures.toLeagueFixturesData(favoriteFixtureIds)
                 val filteredLeagueFixturesList = filterLeagueFixturesData(leagueFixturesList)
-                Log.d("TEST_LOG", "observeFixtures in combine")
                 viewModelState.update {
                     it.copy(
                         leagueFixturesDataList = leagueFixturesList,
                         filteredLeagueFixtureDataList = filteredLeagueFixturesList,
-                        date = "2023-03-19"
+                        date = formattedDate
                     )
                 }
             }.collect()
@@ -141,7 +138,7 @@ class HomeViewModel(
         val filterFixtureItemWrappers = filterFixtureItemWrappers(leagueFixturesDataList, query)
         return filterFixtureItemWrappers.filter {
             it.league.countryCode.containsQuery(countryCode) ||
-                it.league.countryName.containsQuery(countryName)
+                    it.league.countryName.containsQuery(countryName)
         }
     }
 
@@ -152,10 +149,10 @@ class HomeViewModel(
         return leagueFixturesDataList.map {
             val fixtureWrappers = it.fixtureWrappers.filter { fixtureItemWrapper ->
                 fixtureItemWrapper.fixtureItem.league.name.containsQuery(query) ||
-                    fixtureItemWrapper.fixtureItem.fixture.venue.city.containsQuery(query) ||
-                    fixtureItemWrapper.fixtureItem.fixture.venue.name.containsQuery(query) ||
-                    fixtureItemWrapper.fixtureItem.homeTeam.name.containsQuery(query) ||
-                    fixtureItemWrapper.fixtureItem.awayTeam.name.containsQuery(query)
+                        fixtureItemWrapper.fixtureItem.fixture.venue.city.containsQuery(query) ||
+                        fixtureItemWrapper.fixtureItem.fixture.venue.name.containsQuery(query) ||
+                        fixtureItemWrapper.fixtureItem.homeTeam.name.containsQuery(query) ||
+                        fixtureItemWrapper.fixtureItem.awayTeam.name.containsQuery(query)
             }
             LeagueFixturesData(
                 league = it.league,
@@ -182,7 +179,7 @@ class HomeViewModel(
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             val formattedDate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                "2023-03-19"
+                localDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT))
             } else {
                 TESTING_DATE
             }

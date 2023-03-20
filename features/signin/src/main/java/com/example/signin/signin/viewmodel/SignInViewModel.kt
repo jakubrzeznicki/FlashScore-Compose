@@ -51,10 +51,6 @@ class SignInViewModel(
         viewModelState.update { it.copy(isPasswordVisible = !it.isPasswordVisible) }
     }
 
-    fun toggleKeepLogged() {
-        viewModelState.update { it.copy(keepLogged = !it.keepLogged) }
-    }
-
     fun onSignInClick(openHomeScreen: () -> Unit, openOnBoardingScreen: () -> Unit) {
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
