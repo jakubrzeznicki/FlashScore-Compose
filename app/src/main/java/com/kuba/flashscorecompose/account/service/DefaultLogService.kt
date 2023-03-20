@@ -3,7 +3,6 @@ package com.kuba.flashscorecompose.account.service
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 
-
 /**
  * Created by jrzeznicki on 06/02/2023.
  */

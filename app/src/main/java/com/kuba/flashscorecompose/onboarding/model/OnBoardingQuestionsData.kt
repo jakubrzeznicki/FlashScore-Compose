@@ -9,5 +9,5 @@ data class OnBoardingQuestionsData(
     val shouldShowPreviousButton: Boolean = false,
     val isNextEnabledButton: Boolean = false,
     val shouldShowDoneButton: Boolean = false,
-    val onBoardingQuestion: OnBoardingQuestion = OnBoardingQuestion.Teams,
+    val onBoardingQuestion: OnBoardingQuestion = OnBoardingQuestion.Teams
 )

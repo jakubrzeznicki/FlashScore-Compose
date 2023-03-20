@@ -25,7 +25,7 @@ interface StatisticsUiState {
         override val error: StatisticsError,
         val homeTeam: Team,
         val awayTeam: Team,
-        val statistics: List<Pair<Statistic, Statistic>>,
+        val statistics: List<Pair<Statistic, Statistic>>
     ) : StatisticsUiState
 
     data class HasOnlyOtherFixtures(

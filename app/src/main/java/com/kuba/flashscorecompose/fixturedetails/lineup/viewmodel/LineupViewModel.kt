@@ -83,7 +83,7 @@ class LineupViewModel(
 
     private fun getLineup(
         lineups: List<Lineup> = viewModelState.value.lineups,
-        selectedLineup: Lineup = viewModelState.value.selectedLineup,
+        selectedLineup: Lineup = viewModelState.value.selectedLineup
     ): Lineup {
         return if (selectedLineup.team == lineups.firstOrNull()?.team) {
             lineups.firstOrNull() ?: Lineup.EMPTY_LINEUP

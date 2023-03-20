@@ -9,11 +9,6 @@ import com.google.firebase.storage.FirebaseStorage
 import com.kuba.flashscorecompose.account.service.LogService
 import com.kuba.flashscorecompose.utils.RepositoryResult
 import com.kuba.flashscorecompose.utils.ResponseStatus
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.tasks.await
 
 /**
@@ -43,10 +38,12 @@ class AuthenticationRepository(
             RepositoryResult.Success(result.user)
         } catch (e: Exception) {
             logService.logNonFatalCrash(e)
-            RepositoryResult.Error(ResponseStatus().apply {
-                statusMessage = e.message
-                internalStatus = e.hashCode()
-            })
+            RepositoryResult.Error(
+                ResponseStatus().apply {
+                    statusMessage = e.message
+                    internalStatus = e.hashCode()
+                }
+            )
         }
     }
 
@@ -59,10 +56,12 @@ class AuthenticationRepository(
             RepositoryResult.Success(result.user)
         } catch (e: Exception) {
             logService.logNonFatalCrash(e)
-            RepositoryResult.Error(ResponseStatus().apply {
-                statusMessage = e.message
-                internalStatus = e.hashCode()
-            })
+            RepositoryResult.Error(
+                ResponseStatus().apply {
+                    statusMessage = e.message
+                    internalStatus = e.hashCode()
+                }
+            )
         }
     }
 
@@ -72,10 +71,12 @@ class AuthenticationRepository(
             RepositoryResult.Success(true)
         } catch (e: Exception) {
             logService.logNonFatalCrash(e)
-            RepositoryResult.Error(ResponseStatus().apply {
-                statusMessage = e.message
-                internalStatus = e.hashCode()
-            })
+            RepositoryResult.Error(
+                ResponseStatus().apply {
+                    statusMessage = e.message
+                    internalStatus = e.hashCode()
+                }
+            )
         }
     }
 
@@ -85,10 +86,12 @@ class AuthenticationRepository(
             RepositoryResult.Success(result.user)
         } catch (e: Exception) {
             logService.logNonFatalCrash(e)
-            RepositoryResult.Error(ResponseStatus().apply {
-                statusMessage = e.message
-                internalStatus = e.hashCode()
-            })
+            RepositoryResult.Error(
+                ResponseStatus().apply {
+                    statusMessage = e.message
+                    internalStatus = e.hashCode()
+                }
+            )
         }
     }
 
@@ -102,10 +105,12 @@ class AuthenticationRepository(
             RepositoryResult.Success(result.user)
         } catch (e: Exception) {
             logService.logNonFatalCrash(e)
-            RepositoryResult.Error(ResponseStatus().apply {
-                statusMessage = e.message
-                internalStatus = e.hashCode()
-            })
+            RepositoryResult.Error(
+                ResponseStatus().apply {
+                    statusMessage = e.message
+                    internalStatus = e.hashCode()
+                }
+            )
         }
     }
 
@@ -115,10 +120,12 @@ class AuthenticationRepository(
             RepositoryResult.Success(true)
         } catch (e: Exception) {
             logService.logNonFatalCrash(e)
-            RepositoryResult.Error(ResponseStatus().apply {
-                statusMessage = e.message
-                internalStatus = e.hashCode()
-            })
+            RepositoryResult.Error(
+                ResponseStatus().apply {
+                    statusMessage = e.message
+                    internalStatus = e.hashCode()
+                }
+            )
         }
     }
 
@@ -129,10 +136,12 @@ class AuthenticationRepository(
             RepositoryResult.Success(true)
         } catch (e: Exception) {
             logService.logNonFatalCrash(e)
-            RepositoryResult.Error(ResponseStatus().apply {
-                statusMessage = e.message
-                internalStatus = e.hashCode()
-            })
+            RepositoryResult.Error(
+                ResponseStatus().apply {
+                    statusMessage = e.message
+                    internalStatus = e.hashCode()
+                }
+            )
         }
     }
 
@@ -143,10 +152,12 @@ class AuthenticationRepository(
             RepositoryResult.Success(true)
         } catch (e: Exception) {
             logService.logNonFatalCrash(e)
-            RepositoryResult.Error(ResponseStatus().apply {
-                statusMessage = e.message
-                internalStatus = e.hashCode()
-            })
+            RepositoryResult.Error(
+                ResponseStatus().apply {
+                    statusMessage = e.message
+                    internalStatus = e.hashCode()
+                }
+            )
         }
     }
 
@@ -160,10 +171,12 @@ class AuthenticationRepository(
             RepositoryResult.Success(downloadUri)
         } catch (e: Exception) {
             logService.logNonFatalCrash(e)
-            RepositoryResult.Error(ResponseStatus().apply {
-                statusMessage = e.message
-                internalStatus = e.hashCode()
-            })
+            RepositoryResult.Error(
+                ResponseStatus().apply {
+                    statusMessage = e.message
+                    internalStatus = e.hashCode()
+                }
+            )
         }
     }
 
@@ -173,10 +186,12 @@ class AuthenticationRepository(
             RepositoryResult.Success(true)
         } catch (e: Exception) {
             logService.logNonFatalCrash(e)
-            RepositoryResult.Error(ResponseStatus().apply {
-                statusMessage = e.message
-                internalStatus = e.hashCode()
-            })
+            RepositoryResult.Error(
+                ResponseStatus().apply {
+                    statusMessage = e.message
+                    internalStatus = e.hashCode()
+                }
+            )
         }
     }
 
@@ -186,10 +201,12 @@ class AuthenticationRepository(
             RepositoryResult.Success(true)
         } catch (e: Exception) {
             logService.logNonFatalCrash(e)
-            RepositoryResult.Error(ResponseStatus().apply {
-                statusMessage = e.message
-                internalStatus = e.hashCode()
-            })
+            RepositoryResult.Error(
+                ResponseStatus().apply {
+                    statusMessage = e.message
+                    internalStatus = e.hashCode()
+                }
+            )
         }
     }
 

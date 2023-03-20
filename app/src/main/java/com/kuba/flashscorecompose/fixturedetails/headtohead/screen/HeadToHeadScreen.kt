@@ -12,7 +12,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +29,6 @@ import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import coil.size.Size
-import com.google.relay.compose.RowScopeInstanceImpl.align
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.team.information.model.Team
@@ -67,7 +65,7 @@ fun HeadToHeadScreen(
         awayTeam,
         uiState = uiState,
         onRefreshClick = { viewModel.refresh() },
-        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it)) }
+        onFixtureClick = { navigator.navigate(FixtureDetailsRouteDestination(it.id)) }
     )
 }
 
@@ -84,7 +82,8 @@ fun HeadToHeadList(
         empty = when (uiState) {
             is HeadToHeadUiState.HasData -> false
             else -> uiState.isLoading
-        }, emptyContent = { FullScreenLoading() },
+        },
+        emptyContent = { FullScreenLoading() },
         loading = uiState.isLoading,
         onRefresh = onRefreshClick
     ) {
@@ -288,14 +287,15 @@ private fun FixtureResultIcon(scoreStyle: ScoreStyle) {
                 shape = RoundedCornerShape(2.dp)
             )
             .size(16.dp)
-            .align(Alignment.CenterVertically)
-            .padding(1.dp)
+            .padding(1.dp),
+        contentAlignment = Alignment.Center
     ) {
         Text(
             text = scoreStyle.text,
             modifier = Modifier.align(Alignment.Center),
             style = TextStyle(
-                fontSize = 10.sp, fontWeight = FontWeight.SemiBold
+                fontSize = 10.sp,
+                fontWeight = FontWeight.SemiBold
             ),
             color = MaterialTheme.colorScheme.onSecondary
         )

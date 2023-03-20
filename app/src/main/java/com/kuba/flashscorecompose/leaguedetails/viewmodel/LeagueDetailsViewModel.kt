@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesDataSource
 import com.kuba.flashscorecompose.data.league.model.League
 import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
+import com.kuba.flashscorecompose.home.interactor.FavoriteFixtureInteractor
 import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
 import com.kuba.flashscorecompose.leaguedetails.model.LeagueDetailsError
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
@@ -21,7 +22,8 @@ class LeagueDetailsViewModel(
     private val league: League,
     private val fixturesRepository: FixturesDataSource,
     private val userPreferencesRepository: UserPreferencesDataSource,
-    private val snackbarManager: SnackbarManager
+    private val snackbarManager: SnackbarManager,
+    private val favoriteFixtureInteractor: FavoriteFixtureInteractor
 ) : ViewModel() {
     private val viewModelState = MutableStateFlow(LeagueDetailsViewModelState())
     val uiState = viewModelState
@@ -73,7 +75,7 @@ class LeagueDetailsViewModel(
                 filteredFixtureItemWrappers = filterFixtureItems(date = newDate)
             )
         }
-        //refreshFixtures()
+        // refreshFixtures()
     }
 
     private fun filterFixtureItems(
@@ -109,16 +111,7 @@ class LeagueDetailsViewModel(
 
     fun addFixtureToFavorite(fixtureItemWrapper: FixtureItemWrapper) {
         viewModelScope.launch {
-            val favoriteFixtureItemWrappers =
-                viewModelState.value.fixtureItemWrappers.filter { it.isFavorite }.toMutableList()
-            if (fixtureItemWrapper.isFavorite) {
-                favoriteFixtureItemWrappers.remove(fixtureItemWrapper)
-            } else {
-                favoriteFixtureItemWrappers.add(fixtureItemWrapper.copy(isFavorite = true))
-            }
-            userPreferencesRepository.saveFavoriteFixturesIds(
-                favoriteFixtureItemWrappers.map { it.fixtureItem.id }
-            )
+            favoriteFixtureInteractor.addFixtureToFavorite(fixtureItemWrapper)
         }
     }
 }

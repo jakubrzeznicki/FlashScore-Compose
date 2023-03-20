@@ -114,7 +114,7 @@ fun StandingsScreen(
                             border = BorderStroke(
                                 width = 2.dp,
                                 color = MaterialTheme.colorScheme.inverseSurface
-                            ),
+                            )
                         ),
                     label = stringResource(id = R.string.search_standings),
                     query = uiState.standingsQuery,
@@ -215,7 +215,8 @@ fun StandingWithLeagueItem(
     ) {
         LeagueHeader(
             league = standing.league,
-            onLeagueClick = { onLeagueClick(standing.league) })
+            onLeagueClick = { onLeagueClick(standing.league) }
+        )
         StandingCard(standing.standingItems)
     }
 }
@@ -230,7 +231,7 @@ fun StandingCard(standingItems: List<StandingItem>) {
         Column(
             modifier = Modifier
                 .background(color = MaterialTheme.colorScheme.surface)
-                .padding(16.dp),
+                .padding(16.dp)
         ) {
             StandingHeaderRow()
             Divider(
@@ -267,7 +268,8 @@ private fun TopBar() {
                 color = MaterialTheme.colorScheme.onSecondary,
                 style = FlashScoreTypography.headlineSmall
             )
-        })
+        }
+    )
 }
 
 @Composable

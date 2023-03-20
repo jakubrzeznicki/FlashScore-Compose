@@ -34,13 +34,15 @@ sealed class TabItem(var icon: ImageVector, var titleId: Int, var screen: Compos
         ) : TabItem(
             Icons.Default.QueryStats,
             R.string.statistics,
-            { StatisticsScreen(fixtureId, leagueId, round, season, navigator) })
+            { StatisticsScreen(fixtureId, leagueId, round, season, navigator) }
+        )
 
         class LineUp(fixtureId: Int, leagueId: Int, season: Int, navigator: DestinationsNavigator) :
             TabItem(
                 Icons.Default.Square,
                 R.string.lineups,
-                { LineupScreen(fixtureId, leagueId ,season, navigator) })
+                { LineupScreen(fixtureId, leagueId, season, navigator) }
+            )
 
         class HeadToHead(
             homeTeam: Team,
@@ -50,7 +52,8 @@ sealed class TabItem(var icon: ImageVector, var titleId: Int, var screen: Compos
         ) : TabItem(
             Icons.Default.Headset,
             R.string.head_to_head,
-            { HeadToHeadScreen(homeTeam, awayTeam, season, navigator) })
+            { HeadToHeadScreen(homeTeam, awayTeam, season, navigator) }
+        )
     }
 
     sealed interface TeamDetails {
@@ -112,6 +115,7 @@ sealed class TabItem(var icon: ImageVector, var titleId: Int, var screen: Compos
             TabItem(
                 Icons.Default.Settings,
                 R.string.settings,
-                { ProfileSettingsScreen(userId = user.id, navigator = navigator) })
+                { ProfileSettingsScreen(userId = user.id, navigator = navigator) }
+            )
     }
 }

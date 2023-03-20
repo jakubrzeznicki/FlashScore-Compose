@@ -1,0 +1,100 @@
+version: 2.1
+
+orbs:
+  android: circleci/android@2.2.0
+  ruby: circleci/ruby@2.0.0
+
+jobs:
+  lint:
+    executor:
+      name: android/android-docker
+      tag: 2022.12.1
+    steps:
+      - checkout
+      - run:
+          name: Create local properties
+          command: |
+            touch local.properties
+            echo "apiKey=\"\"" >> local.properties
+      - android/restore-gradle-cache
+      - run: ./gradlew lintDebug
+      - android/save-gradle-cache
+
+  unit_test:
+    executor:
+      name: android/android-docker
+      tag: 2022.12.1
+    steps:
+      - checkout
+      - run:
+          name: Create local properties
+          command: |
+            touch local.properties
+            echo "apiKey=\"\"" >> local.properties
+      - android/restore-gradle-cache
+      - run: ./gradlew testDebugUnitTest
+      - run:
+          name: Install fastlane
+          command: bundle install
+      - run:
+          name: Run the unit tests
+          command: bundle exec fastlane test
+      - android/save-gradle-cache
+      - store_test_results:
+          path: ./app/build/test-results/testDebugUnitTest
+
+  build_assemble:
+    executor:
+      name: android/android-docker
+      tag: 2022.12.1
+    steps:
+      - checkout
+      - run:
+          name: Create local properties
+          command: |
+            touch local.properties
+            echo "apiKey=\"\"" >> local.properties
+      - android/restore-gradle-cache
+      - run:
+          name: Install fastlane
+          command: bundle install
+      - run:
+          name: Build Assemble
+          command: ./gradlew assembleDebug --stacktrace
+      # - run:
+      #     name: Build Assemble
+      #     command: bundle exec fastlane assemble_debug
+      #      - run:
+      #        command: bundle exec fastlane build
+      - store_artifacts:
+          path: app/build/outputs/apk/
+          destination: apks/
+      - android/save-gradle-cache
+
+  beta:
+    executor:
+      name: android/android-docker
+      tag: 2022.12.1
+    steps:
+      - checkout
+      - run:
+          name: Create local properties
+          command: |
+            touch local.properties
+            echo "apiKey=\"\"" >> local.properties
+      - android/restore-gradle-cache
+      - run:
+          name: Install fastlane
+          command: bundle install
+      - run:
+          name: Distribute to Firebase
+          command: bundle exec fastlane firebase_beta
+      - android/save-gradle-cache
+
+workflows:
+  main:
+    jobs:
+      - lint
+      - unit_test
+      - build_assemble
+      - beta

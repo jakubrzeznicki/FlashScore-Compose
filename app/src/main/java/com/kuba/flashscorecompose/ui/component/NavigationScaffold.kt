@@ -18,16 +18,15 @@ import com.kuba.flashscorecompose.destinations.Destination
 import com.kuba.flashscorecompose.startAppDestination
 import com.ramcosta.composedestinations.spec.Route
 
-
 @OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalMaterial3Api::class)
 @SuppressLint("RestrictedApi")
 @Composable
 fun NavigationScaffold(
     startRoute: Route,
-    snackbarHost:  @Composable () -> Unit,
+    snackbarHost: @Composable () -> Unit,
     navController: NavHostController,
     bottomBar: @Composable (Destination) -> Unit,
-    content: @Composable (PaddingValues) -> Unit,
+    content: @Composable (PaddingValues) -> Unit
 ) {
     val destination = navController.appCurrentDestinationAsState().value
         ?: startRoute.startAppDestination

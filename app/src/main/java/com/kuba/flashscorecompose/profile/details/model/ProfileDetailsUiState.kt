@@ -2,7 +2,6 @@ package com.kuba.flashscorecompose.profile.details.model
 
 import com.kuba.flashscorecompose.data.user.model.User
 
-
 /**
  * Created by jrzeznicki on 08/02/2023.
  */

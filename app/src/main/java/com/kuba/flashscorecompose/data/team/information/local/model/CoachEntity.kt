@@ -11,7 +11,9 @@ import com.kuba.flashscorecompose.data.players.local.model.BirthEntity
  */
 @Entity(tableName = "coach")
 data class CoachEntity(
-    @PrimaryKey @ColumnInfo(name = "id") val id: Int,
+    @PrimaryKey
+    @ColumnInfo(name = "id")
+    val id: Int,
     @ColumnInfo(name = "team_id") val teamId: Int,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "photo") val photo: String,

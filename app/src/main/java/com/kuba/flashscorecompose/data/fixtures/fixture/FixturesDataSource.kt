@@ -24,6 +24,7 @@ interface FixturesDataSource {
     fun observeFixtureByLeague(leagueId: Int): Flow<List<FixtureItem>>
     fun observeFixturesLive(): Flow<List<FixtureItem>>
     fun observeFavoriteFixtures(ids: List<Int>): Flow<List<FixtureItem>>
+    fun observeFixtureById(id: Int): Flow<FixtureItem?>
     suspend fun saveFixtureItem(fixtureItems: List<FixtureItem>)
     suspend fun loadFixturesFilteredByRound(
         leagueId: Int,
@@ -45,6 +46,7 @@ interface FixturesDataSource {
         count: Int
     ): RepositoryResult<List<FixtureItem>>
 
+    suspend fun loadFixtureById(id: Int): RepositoryResult<FixtureItem>
     suspend fun loadFixturesByTeam(teamId: Int, season: Int): RepositoryResult<List<FixtureItem>>
     suspend fun loadFixturesLive(): RepositoryResult<List<FixtureItem>>
 }

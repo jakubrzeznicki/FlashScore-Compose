@@ -1,6 +1,5 @@
 package com.kuba.flashscorecompose.ui.component
 
-
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -99,7 +98,6 @@ fun PasswordTextField(
     )
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileTextField(
@@ -145,7 +143,7 @@ fun ProfileTextField(
             label = {
                 Text(
                     text = stringResource(id = labelId),
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyMedium
                 )
             },
             shape = RoundedCornerShape(16.dp),
@@ -197,7 +195,7 @@ private fun CustomTextField(
             label = {
                 Text(
                     text = stringResource(id = labelId),
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyMedium
                 )
             },
             shape = RoundedCornerShape(16.dp),

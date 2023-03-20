@@ -1,5 +1,10 @@
 package com.kuba.flashscorecompose.ui.component
 
+import android.Manifest
+import android.content.Context
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.NotificationManagerCompat
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
@@ -26,6 +32,7 @@ import coil.size.Size
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
+import com.kuba.flashscorecompose.utils.toast
 
 /**
  * Created by jrzeznicki on 17/01/2023.
@@ -38,6 +45,7 @@ const val DASH = "-"
 @Composable
 fun FixtureCard(
     fixtureItemWrapper: FixtureItemWrapper,
+    context: Context,
     onFixtureClick: (FixtureItemWrapper) -> Unit,
     onFavoriteClick: (FixtureItemWrapper) -> Unit
 ) {
@@ -81,6 +89,7 @@ fun FixtureCard(
                     )
                     .size(72.dp)
                     .padding(vertical = 4.dp),
+                context = context,
                 fixtureItemWrapper = fixtureItemWrapper,
                 onFavoriteClick = onFavoriteClick
             )
@@ -228,7 +237,7 @@ fun FixtureDetailsColumn(
                 text = secondLine,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = MaterialTheme.colorScheme.onSecondary
             )
         }
     }
@@ -237,10 +246,20 @@ fun FixtureDetailsColumn(
 @Composable
 fun FixtureStatus(
     modifier: Modifier,
+    context: Context,
     fixtureItemWrapper: FixtureItemWrapper,
     onFavoriteClick: (FixtureItemWrapper) -> Unit
 ) {
     val isLive = fixtureItemWrapper.fixtureItem.fixture.isLive
+    val permissionLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { wasGranted ->
+            if (wasGranted) {
+                context.toast(R.string.permission_granted)
+                onFavoriteClick(fixtureItemWrapper)
+            } else {
+                context.toast(R.string.permission_denied)
+            }
+        }
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -250,10 +269,20 @@ fun FixtureStatus(
             text = fixtureItemWrapper.fixtureItem.fixture.status.short,
             fontWeight = FontWeight.SemiBold,
             fontSize = 14.sp,
-            color = if (isLive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSecondary,
+            color = if (isLive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSecondary
         )
         IconButton(
-            onClick = { onFavoriteClick(fixtureItemWrapper) },
+            onClick = {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    if (NotificationManagerCompat.from(context).areNotificationsEnabled()) {
+                        onFavoriteClick(fixtureItemWrapper)
+                    } else {
+                        permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    }
+                } else {
+                    onFavoriteClick(fixtureItemWrapper)
+                }
+            },
             modifier = Modifier.size(24.dp)
         ) {
             val (icon, color) = if (fixtureItemWrapper.isFavorite) {

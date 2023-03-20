@@ -125,7 +125,7 @@ fun StandingsDto.toStandings(): Standing {
             season = season ?: 0,
             type = "",
             countryCode = "",
-            round = "",
+            round = ""
         ),
         leagueId = id ?: 0,
         season = season ?: 0,

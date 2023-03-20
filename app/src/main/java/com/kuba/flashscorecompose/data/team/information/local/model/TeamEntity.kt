@@ -6,7 +6,9 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "team")
 data class TeamEntity(
-    @PrimaryKey @ColumnInfo(name = "id") val id: Int,
+    @PrimaryKey
+    @ColumnInfo(name = "id")
+    val id: Int,
     @ColumnInfo(name = "logo") val logo: String,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "winner") val isWinner: Boolean,

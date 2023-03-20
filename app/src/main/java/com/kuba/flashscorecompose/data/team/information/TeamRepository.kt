@@ -89,10 +89,12 @@ class TeamRepository(
             saveVenue(venue?.toVenue(teamId) ?: Venue.EMPTY_VENUE)
             RepositoryResult.Success(teamWithVenue)
         } catch (e: HttpException) {
-            RepositoryResult.Error(ResponseStatus().apply {
-                statusMessage = e.message()
-                internalStatus = e.code()
-            })
+            RepositoryResult.Error(
+                ResponseStatus().apply {
+                    statusMessage = e.message()
+                    internalStatus = e.code()
+                }
+            )
         }
     }
 
@@ -103,10 +105,12 @@ class TeamRepository(
             saveCoach(coach)
             RepositoryResult.Success(coach)
         } catch (e: HttpException) {
-            RepositoryResult.Error(ResponseStatus().apply {
-                statusMessage = e.message()
-                internalStatus = e.code()
-            })
+            RepositoryResult.Error(
+                ResponseStatus().apply {
+                    statusMessage = e.message()
+                    internalStatus = e.code()
+                }
+            )
         }
     }
 
@@ -127,10 +131,12 @@ class TeamRepository(
             saveVenues(teamWIthVenues?.map { it.venue }.orEmpty())
             RepositoryResult.Success(teamWIthVenues)
         } catch (e: HttpException) {
-            RepositoryResult.Error(ResponseStatus().apply {
-                statusMessage = e.message()
-                internalStatus = e.code()
-            })
+            RepositoryResult.Error(
+                ResponseStatus().apply {
+                    statusMessage = e.message()
+                    internalStatus = e.code()
+                }
+            )
         }
     }
 }

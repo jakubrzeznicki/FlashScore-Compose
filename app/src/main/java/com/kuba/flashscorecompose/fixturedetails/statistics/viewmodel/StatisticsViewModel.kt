@@ -7,6 +7,7 @@ import com.kuba.flashscorecompose.data.fixtures.statistics.StatisticsDataSource
 import com.kuba.flashscorecompose.data.fixtures.statistics.model.Statistics
 import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
 import com.kuba.flashscorecompose.fixturedetails.statistics.model.StatisticsError
+import com.kuba.flashscorecompose.home.interactor.FavoriteFixtureInteractor
 import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarMessageType
@@ -25,6 +26,7 @@ class StatisticsViewModel(
     private val statisticsRepository: StatisticsDataSource,
     private val fixturesRepository: FixturesDataSource,
     private val userPreferencesRepository: UserPreferencesDataSource,
+    private val favoriteFixtureInteractor: FavoriteFixtureInteractor,
     private val snackbarManager: SnackbarManager
 ) : ViewModel() {
 
@@ -131,16 +133,7 @@ class StatisticsViewModel(
 
     fun addFixtureToFavorite(fixtureItemWrapper: FixtureItemWrapper) {
         viewModelScope.launch {
-            val favoriteFixtureItemWrappers =
-                viewModelState.value.fixtureItemWrappers.filter { it.isFavorite }.toMutableList()
-            if (fixtureItemWrapper.isFavorite) {
-                favoriteFixtureItemWrappers.remove(fixtureItemWrapper)
-            } else {
-                favoriteFixtureItemWrappers.add(fixtureItemWrapper.copy(isFavorite = true))
-            }
-            userPreferencesRepository.saveFavoriteFixturesIds(
-                favoriteFixtureItemWrappers.map { it.fixtureItem.id }
-            )
+            favoriteFixtureInteractor.addFixtureToFavorite(fixtureItemWrapper)
         }
     }
 }

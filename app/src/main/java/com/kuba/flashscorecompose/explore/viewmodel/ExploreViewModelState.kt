@@ -105,7 +105,7 @@ data class ExploreViewModelState(
                         exploreFilterChip,
                         exploreQuery,
                         exploreFilterChips,
-                        filteredTeams,
+                        filteredTeams
                     )
                 else -> ExploreUiState.Teams.NoData(
                     isLoading,
@@ -135,7 +135,7 @@ data class ExploreViewModelState(
                         exploreFilterChip,
                         exploreQuery,
                         exploreFilterChips,
-                        filteredPlayers,
+                        filteredPlayers
                     )
                 else -> ExploreUiState.Players.NoData(
                     isLoading,
@@ -155,7 +155,7 @@ data class ExploreViewModelState(
                         exploreFilterChip,
                         exploreQuery,
                         exploreFilterChips,
-                        filteredVenues,
+                        filteredVenues
                     )
                 else -> ExploreUiState.Venues.NoData(
                     isLoading,

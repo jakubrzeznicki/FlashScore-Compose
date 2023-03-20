@@ -16,9 +16,9 @@ data class OnBoardingViewModelState(
     val teams: List<Team> = emptyList(),
     val players: List<Player> = emptyList(),
     val selectedTeams: List<Team> = emptyList(),
-    val selectedPlayers: List<Player> = emptyList(),
+    val selectedPlayers: List<Player> = emptyList()
 
-    ) {
+) {
     fun toUiState(): OnBoardingUiState = when {
         teams.isNotEmpty() || players.isNotEmpty() ->
             OnBoardingUiState.HasAllData(

@@ -100,7 +100,7 @@ fun OnBoardingScreen(
             AppTopBar(
                 questionIndex = uiState.onBoardingQuestionsData.questionIndex,
                 totalQuestionsCount = uiState.onBoardingQuestionsData.questionCount,
-                onClosePressed = onClosePressed,
+                onClosePressed = onClosePressed
             )
         }
     ) { paddingValues ->
@@ -186,14 +186,14 @@ private fun OnBoardingTitle(titleId: Int) {
         ),
         color = MaterialTheme.colorScheme.onSecondary,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 36.sp,
+        fontSize = 36.sp
     )
     Spacer(modifier = Modifier.size(16.dp))
     Text(
         text = stringResource(id = R.string.on_boarding_subtitle),
         color = MaterialTheme.colorScheme.inverseOnSurface,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
+        fontSize = 16.sp
     )
     Spacer(modifier = Modifier.size(32.dp))
 }
@@ -258,7 +258,7 @@ fun AppTopBar(
             title = {
                 TopAppBarTitle(
                     questionIndex = questionIndex,
-                    totalQuestionsCount = totalQuestionsCount,
+                    totalQuestionsCount = totalQuestionsCount
                 )
             },
             actions = {
@@ -283,7 +283,7 @@ fun AppTopBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp),
-            trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+            trackColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
         )
     }
 }
@@ -420,7 +420,6 @@ private fun PlayerCard(
         )
     }
 }
-
 
 @Composable
 private fun NavigationButtons(

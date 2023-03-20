@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
  * Created by jrzeznicki on 03/01/2023.
  */
 class FixtureLocal(private val roomStorage: RoomStorage) : FixtureLocalDataSource {
+
     override fun observeFixturesFilteredByRound(
         leagueId: Int,
         season: Int,
@@ -47,6 +48,10 @@ class FixtureLocal(private val roomStorage: RoomStorage) : FixtureLocalDataSourc
 
     override fun observeFavoriteFixtures(ids: List<Int>): Flow<List<FixtureEntity>> {
         return roomStorage.getDatabase().fixtureDao().observeFavoriteFixtures(ids)
+    }
+
+    override fun observeFixtureById(id: Int): Flow<FixtureEntity?> {
+        return roomStorage.getDatabase().fixtureDao().observeFixtureById(id)
     }
 
     override suspend fun saveFixtures(fixtures: List<FixtureEntity>) {

@@ -100,7 +100,7 @@ interface ExploreUiState {
             override val exploreFilterChip: FilterChip.Explore,
             override val exploreQuery: String,
             override val exploreFilterChips: List<FilterChip.Explore>,
-            val players: List<PlayerWrapper>,
+            val players: List<PlayerWrapper>
         ) : ExploreUiState
 
         data class NoData(

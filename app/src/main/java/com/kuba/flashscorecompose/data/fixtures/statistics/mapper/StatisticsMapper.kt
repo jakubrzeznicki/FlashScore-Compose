@@ -44,23 +44,25 @@ fun StatisticsTeamDto.toStatistics(fixtureId: Int): Statistics {
     return Statistics(
         fixtureId = fixtureId,
         statistics = statistics?.map { it.toStatistic() }.orEmpty(),
-        team = team?.toTeam() ?: Team.EMPTY_TEAM,
+        team = team?.toTeam() ?: Team.EMPTY_TEAM
     )
 }
 
 fun StatisticDto.toStatistic(): Statistic {
     return Statistic(
         type = type.orEmpty(),
-        value = (if (value != null) {
-            when (value) {
-                is Float -> value.toInt()
-                is Double -> value.toInt()
-                is Int -> value.toInt()
-                is String -> value.toString()
-                else -> value
+        value = (
+            if (value != null) {
+                when (value) {
+                    is Float -> value.toInt()
+                    is Double -> value.toInt()
+                    is Int -> value.toInt()
+                    is String -> value.toString()
+                    else -> value
+                }
+            } else {
+                0
             }
-        } else {
-            0
-        }).toString()
+            ).toString()
     )
 }

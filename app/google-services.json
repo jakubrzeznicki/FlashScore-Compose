@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:322077523128:android:ae8d6375d62edf332a084d",
+        "mobilesdk_app_id": "1:322077523128:android:daacedacb7d7d0722a084d",
         "android_client_info": {
-          "package_name": "com.kuba.flashscorecompose.debug"
+          "package_name": "com.kuba.flashscorecompose"
         }
       },
       "oauth_client": [

@@ -8,6 +8,7 @@ import com.kuba.flashscorecompose.data.country.model.Country
 import com.kuba.flashscorecompose.data.fixtures.fixture.FixturesDataSource
 import com.kuba.flashscorecompose.data.fixtures.fixture.model.FixtureItem
 import com.kuba.flashscorecompose.data.userpreferences.UserPreferencesDataSource
+import com.kuba.flashscorecompose.home.interactor.FavoriteFixtureInteractor
 import com.kuba.flashscorecompose.home.model.FixtureItemWrapper
 import com.kuba.flashscorecompose.home.model.HomeError
 import com.kuba.flashscorecompose.home.model.LeagueFixturesData
@@ -28,6 +29,7 @@ class HomeViewModel(
     private val fixturesRepository: FixturesDataSource,
     private val userPreferencesRepository: UserPreferencesDataSource,
     private val snackbarManager: SnackbarManager,
+    private val favoriteFixtureInteractor: FavoriteFixtureInteractor,
     private val localDate: LocalDate
 ) : ViewModel() {
 
@@ -129,14 +131,14 @@ class HomeViewModel(
     private fun filterLeagueFixturesData(
         leagueFixturesDataList: List<LeagueFixturesData> = viewModelState.value.leagueFixturesDataList,
         query: String = viewModelState.value.searchQuery,
-        selectedCountry: Country = viewModelState.value.selectedCountry,
+        selectedCountry: Country = viewModelState.value.selectedCountry
     ): List<LeagueFixturesData> {
         val countryName = selectedCountry.name
         val countryCode = selectedCountry.code
         val filterFixtureItemWrappers = filterFixtureItemWrappers(leagueFixturesDataList, query)
         return filterFixtureItemWrappers.filter {
-            it.league.countryCode.containsQuery(countryCode)
-                    || it.league.countryName.containsQuery(countryName)
+            it.league.countryCode.containsQuery(countryCode) ||
+                it.league.countryName.containsQuery(countryName)
         }
     }
 
@@ -146,11 +148,11 @@ class HomeViewModel(
     ): List<LeagueFixturesData> {
         return leagueFixturesDataList.map {
             val fixtureWrappers = it.fixtureWrappers.filter { fixtureItemWrapper ->
-                fixtureItemWrapper.fixtureItem.league.name.containsQuery(query)
-                        || fixtureItemWrapper.fixtureItem.fixture.venue.city.containsQuery(query)
-                        || fixtureItemWrapper.fixtureItem.fixture.venue.name.containsQuery(query)
-                        || fixtureItemWrapper.fixtureItem.homeTeam.name.containsQuery(query)
-                        || fixtureItemWrapper.fixtureItem.awayTeam.name.containsQuery(query)
+                fixtureItemWrapper.fixtureItem.league.name.containsQuery(query) ||
+                    fixtureItemWrapper.fixtureItem.fixture.venue.city.containsQuery(query) ||
+                    fixtureItemWrapper.fixtureItem.fixture.venue.name.containsQuery(query) ||
+                    fixtureItemWrapper.fixtureItem.homeTeam.name.containsQuery(query) ||
+                    fixtureItemWrapper.fixtureItem.awayTeam.name.containsQuery(query)
             }
             LeagueFixturesData(
                 league = it.league,
@@ -202,19 +204,7 @@ class HomeViewModel(
 
     fun addFixtureToFavorite(fixtureItemWrapper: FixtureItemWrapper) {
         viewModelScope.launch {
-            val favoriteFixtureItemWrappers =
-                viewModelState.value.leagueFixturesDataList.map { it.fixtureWrappers }
-                    .flatten()
-                    .filter { it.isFavorite }
-                    .toMutableList()
-            if (fixtureItemWrapper.isFavorite) {
-                favoriteFixtureItemWrappers.remove(fixtureItemWrapper)
-            } else {
-                favoriteFixtureItemWrappers.add(fixtureItemWrapper.copy(isFavorite = true))
-            }
-            userPreferencesRepository.saveFavoriteFixturesIds(
-                favoriteFixtureItemWrappers.map { it.fixtureItem.id }
-            )
+            favoriteFixtureInteractor.addFixtureToFavorite(fixtureItemWrapper)
         }
     }
 

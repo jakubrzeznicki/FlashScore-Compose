@@ -5,9 +5,10 @@ plugins {
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
     id 'com.google.devtools.ksp' version '1.8.0-1.0.9'
-    id 'com.google.relay'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
+//    id 'org.jlleitschuh.gradle.ktlint' version '11.3.1'
+//    id "io.gitlab.arturbosch.detekt" version "1.22.0"
 }
 
 kotlin {
@@ -39,17 +40,17 @@ android {
         Properties properties = new Properties()
         properties.load(project.rootProject.file("local.properties").newDataInputStream())
         buildConfigField "String", "API_KEY", "\"${properties.getProperty("API_KEY")}\""
-
-        signingConfig signingConfigs.debug
     }
     buildTypes {
         debug {
             resValue "string", "flashscore_app_name", "FlashScore Debug"
             testCoverageEnabled true
-            applicationIdSuffix ".debug"
             versionNameSuffix '-debug'
+            signingConfig signingConfigs.debug
         }
         release {
+            resValue "string", "flashscore_app_name", "@string/flashscorecompose_app_name_release"
+            debuggable false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }

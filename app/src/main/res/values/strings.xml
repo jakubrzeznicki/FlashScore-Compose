@@ -1,4 +1,5 @@
 <resources>
+    <string name="flashscorecompose_app_name_release">FlashScore Compose App</string>
     <string name="app_name">FlashScoreCompose</string>
     <string name="countries">Countries</string>
     <string name="leagues">Leagues</string>
@@ -172,4 +173,12 @@
 
     <!-- Errors -->
     <string name="problem_with_upload_avatar">There was a problem with upload avatar.</string>
+
+    <!-- Notifications -->
+    <string name="round">Round:</string>
+    <string name="fixture">Fixture:</string>
+    <string name="start">Start:</string>
+    <string name="vs">vs</string>
+    <string name="no_notifications">No notifications</string>
+    <string name="cancel_notification">Successfully cancel notification</string>
 </resources>

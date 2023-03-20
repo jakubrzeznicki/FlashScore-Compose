@@ -48,13 +48,13 @@ fun InfoRowWithIcon(modifier: Modifier, labelId: Int, title: String, icon: Image
                 text = stringResource(id = labelId),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onBackground,
+                color = MaterialTheme.colorScheme.onBackground
             )
             Text(
                 text = title,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.inverseOnSurface,
+                color = MaterialTheme.colorScheme.inverseOnSurface
             )
         }
     }
@@ -93,20 +93,20 @@ fun InfoRowWithImage(title: String, labelId: Int, image: String) {
                 text = stringResource(id = labelId),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = MaterialTheme.colorScheme.onSecondary
             )
             Text(
                 text = title,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.inverseOnSurface,
+                color = MaterialTheme.colorScheme.inverseOnSurface
             )
         }
     }
 }
 
 @Composable
-fun SimpleInfoRowWithImage(modifier: Modifier,title: String, labelId: Int, image: String) {
+fun SimpleInfoRowWithImage(modifier: Modifier, title: String, labelId: Int, image: String) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -132,13 +132,13 @@ fun SimpleInfoRowWithImage(modifier: Modifier,title: String, labelId: Int, image
                 text = stringResource(id = labelId),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = MaterialTheme.colorScheme.onSecondary
             )
             Text(
                 text = title,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.inverseOnSurface,
+                color = MaterialTheme.colorScheme.inverseOnSurface
             )
         }
     }

@@ -49,7 +49,7 @@ fun PlayerDetailsRoute(
         uiState = uiState,
         team = team,
         navigator = navigator,
-        onRefreshClick = { viewModel.refresh() },
+        onRefreshClick = { viewModel.refresh() }
     )
 }
 
@@ -97,7 +97,7 @@ fun PlayerDetailsScreen(
                             text = stringResource(id = R.string.info),
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 14.sp,
-                            color = MaterialTheme.colorScheme.onSecondary,
+                            color = MaterialTheme.colorScheme.onSecondary
                         )
                         TeamInfoCard(uiState.player, uiState.country?.flag.orEmpty(), team)
                         Spacer(modifier = Modifier.size(16.dp))
@@ -106,7 +106,7 @@ fun PlayerDetailsScreen(
                             text = stringResource(id = R.string.details),
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 14.sp,
-                            color = MaterialTheme.colorScheme.onSecondary,
+                            color = MaterialTheme.colorScheme.onSecondary
                         )
                         PlayerDetailsInfoCard(player = uiState.player)
                     }
@@ -134,9 +134,10 @@ private fun TopBar(navigator: DestinationsNavigator, title: String) {
                 modifier = Modifier
                     .padding(horizontal = 12.dp)
                     .size(24.dp),
-                onClick = { navigator.popBackStack() }) {
+                onClick = { navigator.popBackStack() }
+            ) {
                 Icon(
-                    imageVector = Icons.Filled.ArrowBack,
+                    imageVector = Icons.Filled.ChevronLeft,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSecondary
                 )
@@ -157,7 +158,7 @@ fun TeamInfoCard(player: Player, countryLogo: String, team: Team) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Column(
             modifier = Modifier
@@ -228,7 +229,7 @@ fun PlayerDetailsInfoCard(player: Player) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         Column(
             modifier = Modifier

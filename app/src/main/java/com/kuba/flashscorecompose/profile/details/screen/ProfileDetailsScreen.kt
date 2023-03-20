@@ -269,14 +269,13 @@ private fun ProfileItemRow(
                     Icon(
                         modifier = Modifier.size(32.dp),
                         imageVector = Icons.Filled.Save,
-                        contentDescription = "",
+                        contentDescription = ""
                     )
                 }
             }
         }
     }
 }
-
 
 @Composable
 private fun ProfileItemIcon(

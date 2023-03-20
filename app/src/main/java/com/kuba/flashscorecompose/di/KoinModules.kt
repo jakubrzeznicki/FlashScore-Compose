@@ -29,6 +29,9 @@ import com.kuba.flashscorecompose.data.league.LeagueDataSource
 import com.kuba.flashscorecompose.data.league.LeagueRepository
 import com.kuba.flashscorecompose.data.league.local.LeagueLocal
 import com.kuba.flashscorecompose.data.league.model.League
+import com.kuba.flashscorecompose.data.notifications.NotificationsDataSource
+import com.kuba.flashscorecompose.data.notifications.NotificationsRepository
+import com.kuba.flashscorecompose.data.notifications.local.NotificationsLocal
 import com.kuba.flashscorecompose.data.players.PlayersDataSource
 import com.kuba.flashscorecompose.data.players.PlayersRepository
 import com.kuba.flashscorecompose.data.players.local.PlayersLocal
@@ -51,13 +54,20 @@ import com.kuba.flashscorecompose.data.userpreferences.local.UserPreferencesLoca
 import com.kuba.flashscorecompose.data.userpreferences.local.preferences.DefaultUserDataStore
 import com.kuba.flashscorecompose.data.userpreferences.local.preferences.UserDataStore
 import com.kuba.flashscorecompose.explore.viewmodel.ExploreViewModel
+import com.kuba.flashscorecompose.fixturedetails.container.viewmodel.FixtureDetailsViewModel
 import com.kuba.flashscorecompose.fixturedetails.headtohead.viewmodel.HeadToHeadViewModel
 import com.kuba.flashscorecompose.fixturedetails.lineup.viewmodel.LineupViewModel
 import com.kuba.flashscorecompose.fixturedetails.statistics.viewmodel.StatisticsViewModel
+import com.kuba.flashscorecompose.home.interactor.DefaultFavoriteFixtureInteractor
 import com.kuba.flashscorecompose.home.viewmodel.HomeViewModel
 import com.kuba.flashscorecompose.leaguedetails.viewmodel.LeagueDetailsViewModel
 import com.kuba.flashscorecompose.network.uuidsource.UuidData
 import com.kuba.flashscorecompose.network.uuidsource.UuidSource
+import com.kuba.flashscorecompose.notifications.DefaultFixtureNotification
+import com.kuba.flashscorecompose.notifications.DefaultReminderManager
+import com.kuba.flashscorecompose.notifications.FixtureNotification
+import com.kuba.flashscorecompose.notifications.ReminderManager
+import com.kuba.flashscorecompose.notifications.viewmodel.NotificationsViewModel
 import com.kuba.flashscorecompose.onboarding.viewmodel.OnBoardingViewModel
 import com.kuba.flashscorecompose.playerdetails.viewmodel.PlayerDetailsViewModel
 import com.kuba.flashscorecompose.profile.container.viewmodel.ProfileViewModel
@@ -76,6 +86,7 @@ import com.kuba.flashscorecompose.ui.component.snackbar.DefaultSnackbarManager
 import com.kuba.flashscorecompose.ui.component.snackbar.SnackbarManager
 import com.kuba.flashscorecompose.welcome.viewmodel.WelcomeViewModel
 import org.koin.android.ext.koin.androidApplication
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import java.time.LocalDate
@@ -86,9 +97,23 @@ import java.time.LocalDate
 class KoinModules {
 
     private val viewModelsModule = module {
-        viewModel { HomeViewModel(get(), get(), get(), get(), get()) }
+        viewModel {
+            val favoriteFixtureInteractor = DefaultFavoriteFixtureInteractor(get(), get(), get())
+            HomeViewModel(get(), get(), get(), get(), favoriteFixtureInteractor, get())
+        }
         viewModel { (fixtureId: Int, leagueId: Int, round: String, season: Int) ->
-            StatisticsViewModel(fixtureId, leagueId, round, season, get(), get(), get(), get())
+            val favoriteFixtureInteractor = DefaultFavoriteFixtureInteractor(get(), get(), get())
+            StatisticsViewModel(
+                fixtureId,
+                leagueId,
+                round,
+                season,
+                get(),
+                get(),
+                get(),
+                favoriteFixtureInteractor,
+                get()
+            )
         }
         viewModel { (fixtureId: Int, leagueId: Int, season: Int) ->
             LineupViewModel(
@@ -117,7 +142,11 @@ class KoinModules {
                 get()
             )
         }
-        viewModel { (league: League) -> LeagueDetailsViewModel(league, get(), get(), get()) }
+        viewModel { (league: League) ->
+            val favoriteFixtureInteractor = DefaultFavoriteFixtureInteractor(get(), get(), get())
+            LeagueDetailsViewModel(league, get(), get(), get(), favoriteFixtureInteractor)
+        }
+        viewModel { (fixtureId: Int) -> FixtureDetailsViewModel(fixtureId, get(), get()) }
         viewModel { (team: Team, leagueId: Int, season: Int) ->
             TeamInformationsViewModel(team, leagueId, season, get(), get(), get())
         }
@@ -132,11 +161,13 @@ class KoinModules {
             )
         }
         viewModel { (teamId: Int, season: Int) ->
+            val favoriteFixtureInteractor = DefaultFavoriteFixtureInteractor(get(), get(), get())
             FixturesTeamViewModel(
                 teamId,
                 season,
                 get(),
                 get(),
+                favoriteFixtureInteractor,
                 get()
             )
         }
@@ -167,14 +198,14 @@ class KoinModules {
                 get()
             )
         }
+        viewModel { NotificationsViewModel(get(), get()) }
     }
-
     private val componentsModule = module {
         single<UuidSource> { UuidData() }
         single<LocalDate> { LocalDate.now() }
         single<SnackbarManager> { DefaultSnackbarManager() }
+        single<ReminderManager> { DefaultReminderManager(androidApplication()) }
     }
-
     private val repositoryModule = module {
         single<CountryDataSource> {
             val local = CountryLocal(get())
@@ -228,8 +259,11 @@ class KoinModules {
             val local = UserPreferencesLocal(get(), get())
             UserPreferencesRepository(local)
         }
+        single<NotificationsDataSource> {
+            val local = NotificationsLocal(get())
+            NotificationsRepository(local)
+        }
     }
-
     private val storageModule = module {
         single<RoomStorage> {
             LocalRoomStorage(androidApplication())
@@ -238,11 +272,13 @@ class KoinModules {
             DefaultUserDataStore(get())
         }
     }
-
     private val serviceModule = module {
         single<LogService> {
             DefaultLogService()
         }
+    }
+    private val notificationModule = module {
+        single<FixtureNotification> { DefaultFixtureNotification(androidContext()) }
     }
 
     fun getAllModules() = listOf(
@@ -252,6 +288,7 @@ class KoinModules {
         networkModule,
         repositoryModule,
         viewModelsModule,
-        serviceModule
+        serviceModule,
+        notificationModule
     )
 }

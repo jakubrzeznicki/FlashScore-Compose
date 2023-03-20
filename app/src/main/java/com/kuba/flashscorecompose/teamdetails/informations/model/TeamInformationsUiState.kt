@@ -34,7 +34,7 @@ interface TeamInformationsUiState {
         override val error: TeamInformationsError,
         val team: Team,
         val country: Country
-        ) : TeamInformationsUiState
+    ) : TeamInformationsUiState
 
     data class NoData(
         override val isLoading: Boolean,

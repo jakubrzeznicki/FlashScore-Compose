@@ -19,7 +19,6 @@ import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import coil.size.Size
-import com.google.relay.compose.BoxScopeInstanceImpl.align
 import com.kuba.flashscorecompose.R
 import com.kuba.flashscorecompose.data.team.information.model.Venue
 /**
@@ -35,8 +34,7 @@ fun VenueCard(venue: Venue = Venue.EMPTY_VENUE, onVenueClick: (Venue) -> Unit = 
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         modifier = Modifier
             .size(width = 140.dp, height = 160.dp)
-            .padding(8.dp)
-            .align(Alignment.Center),
+            .padding(8.dp),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
@@ -46,7 +44,7 @@ fun VenueCard(venue: Venue = Venue.EMPTY_VENUE, onVenueClick: (Venue) -> Unit = 
                 .background(color = MaterialTheme.colorScheme.surface)
                 .padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.Center
         ) {
             AsyncImage(
                 modifier = Modifier.size(100.dp),

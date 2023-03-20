@@ -36,6 +36,5 @@ data class StandingsViewModelState(
                 countries
             )
         else -> StandingsUiState.NoData(isLoading, error, standingsQuery)
-
     }
 }

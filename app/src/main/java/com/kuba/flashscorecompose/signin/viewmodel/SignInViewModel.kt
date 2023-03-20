@@ -83,8 +83,10 @@ class SignInViewModel(
                 return@launch
             }
             viewModelState.update {
-                when (val result =
-                    authenticationRepository.signInWithEmailAndPassword(email, password)) {
+                when (
+                    val result =
+                        authenticationRepository.signInWithEmailAndPassword(email, password)
+                ) {
                     is RepositoryResult.Success -> {
                         val currentUserId = authenticationRepository.currentUserId
                         val isKeepLogged = viewModelState.value.keepLogged

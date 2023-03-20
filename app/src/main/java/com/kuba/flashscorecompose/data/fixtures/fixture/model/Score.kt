@@ -9,7 +9,7 @@ data class Score(
     val fulltime: Goals,
     val halftime: Goals,
     val penalty: Goals
-) : Parcelable{
+) : Parcelable {
     companion object {
         val EMPTY_SCORE =
             Score(Goals.EMPTY_GOALS, Goals.EMPTY_GOALS, Goals.EMPTY_GOALS, Goals.EMPTY_GOALS)

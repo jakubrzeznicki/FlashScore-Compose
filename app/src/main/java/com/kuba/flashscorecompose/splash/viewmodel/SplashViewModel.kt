@@ -16,8 +16,8 @@ class SplashViewModel(
 
     fun onAppStart(openHomeScreen: () -> Unit, openWelcomeScreen: () -> Unit) {
         viewModelScope.launch {
-            if (authenticationRepository.hasUser
-                && userPreferencesRepository.getCurrentUserId().isNotEmpty()
+            if (authenticationRepository.hasUser &&
+                userPreferencesRepository.getCurrentUserId().isNotEmpty()
             ) {
                 openHomeScreen()
             } else {
