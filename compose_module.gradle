@@ -2,12 +2,13 @@ android {
     compileSdk Config.compileSdk
 
     defaultConfig {
-        minSdk Config.minSdk
-        targetSdk Config.targetSdk
-        versionCode Environments.appVersionCode
-        versionName Environments.appVersionName
+        applicationId "com.kuba.flashscorecompose"
+        minSdk 21
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
 
-        testInstrumentationRunner Config.testInstrumentationRunner
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
         }
