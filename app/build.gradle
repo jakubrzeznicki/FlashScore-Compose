@@ -72,7 +72,10 @@ android {
 }
 
 dependencies {
-    implementation project(Modules.model)
+    ext {
+        model_module = Modules.model
+    }
+    implementation project(model_module)
     implementation project(Modules.common)
     implementation project(Modules.data)
     implementation project(Modules.database)
