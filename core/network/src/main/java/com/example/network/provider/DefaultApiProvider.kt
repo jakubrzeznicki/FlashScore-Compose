@@ -1,5 +1,6 @@
 package com.example.network.provider
 
+import com.example.network.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -20,7 +21,7 @@ class DefaultApiProvider : ApiProvider {
         get() {
             val header = Interceptor { chain ->
                 val builder = chain.request().newBuilder()
-               // builder.header(KEY_NAME, BuildConfig.API_KEY)
+                builder.header(KEY_NAME, BuildConfig.API_KEY)
                 builder.header(HOST_NAME, HOST_VALUE)
                 return@Interceptor chain.proceed(builder.build())
             }

@@ -28,15 +28,12 @@ import com.example.teamdetails.container.destinations.TeamDetailsRouteDestinatio
 import com.example.teamdetails.navigation.TeamDetailsNavigator
 import com.example.welcome.destinations.WelcomeRouteDestination
 import com.example.welcome.navigation.WelcomeNavigator
-import com.ramcosta.composedestinations.dynamic.within
 import com.ramcosta.composedestinations.navigation.navigate
-import com.ramcosta.composedestinations.spec.NavGraphSpec
 
 /**
  * Created by jrzeznicki on 16/03/2023.
  */
 class CommonNavGraphNavigator(
-    private val navGraph: NavGraphSpec,
     private val navController: NavController
 ) : ExploreNavigator,
     FixtureDetailsNavigator,
@@ -53,11 +50,11 @@ class CommonNavGraphNavigator(
     WelcomeNavigator {
 
     override fun openTeamDetails(team: Team, leagueId: Int, season: Int) {
-        navController.navigate(TeamDetailsRouteDestination(team, leagueId, season) within navGraph)
+        navController.navigate(TeamDetailsRouteDestination(team, leagueId, season))
     }
 
     override fun openLeagueDetails(league: League) {
-        navController.navigate(LeagueDetailsRouteDestination(league) within navGraph)
+        navController.navigate(LeagueDetailsRouteDestination(league))
     }
 
     override fun openPlayerDetails(playerId: Int, team: Team, season: Int) {
@@ -66,12 +63,12 @@ class CommonNavGraphNavigator(
                 playerId,
                 team,
                 season
-            ) within navGraph
+            )
         )
     }
 
     override fun openFixtureDetails(fixtureId: Int) {
-        navController.navigate(FixtureDetailsRouteDestination(fixtureId) within navGraph)
+        navController.navigate(FixtureDetailsRouteDestination(fixtureId))
     }
 
     override fun navigateUp() {
@@ -79,7 +76,7 @@ class CommonNavGraphNavigator(
     }
 
     override fun openStandingsDetails(league: League) {
-        navController.navigate(StandingsDetailsRouteDestination(league) within navGraph)
+        navController.navigate(StandingsDetailsRouteDestination(league))
     }
 
     override fun openNotifications() {
@@ -87,26 +84,26 @@ class CommonNavGraphNavigator(
     }
 
     override fun openOnBoarding(onBoardingBackStackType: OnBoardingBackStackType) {
-        navController.navigate(OnBoardingRouteDestination() within navGraph)
+        navController.navigate(OnBoardingRouteDestination())
     }
 
     override fun openHome(homeBackStackType: HomeBackStackType) {
-        navController.navigate(HomeDestination within navGraph) //Dorobić Back Stack w zalenzosci od typu
+        navController.navigate(HomeDestination) //Dorobić Back Stack w zalenzosci od typu
     }
 
     override fun openSignIn(signInBackStackType: SignInBackStackType) {
-        navController.navigate(SignInRouteDestination within navGraph) //Dorobić Back Stack w zalenzosci od typu
+        navController.navigate(SignInRouteDestination) //Dorobić Back Stack w zalenzosci od typu
     }
 
     override fun openWelcome(welcomeBackStackType: WelcomeBackStackType) {
-        navController.navigate(WelcomeRouteDestination within navGraph)  //Dorobić Back Stack w zalenzosci od typu
+        navController.navigate(WelcomeRouteDestination)  //Dorobić Back Stack w zalenzosci od typu
     }
 
     override fun openSignUp(signUpType: SignUpType) {
-        navController.navigate(SignUpRouteDestination(signUpType) within navGraph)
+        navController.navigate(SignUpRouteDestination(signUpType))
     }
 
     override fun openOnBoarding() {
-        navController.navigate(OnBoardingRouteDestination() within navGraph)
+        navController.navigate(OnBoardingRouteDestination())
     }
 }

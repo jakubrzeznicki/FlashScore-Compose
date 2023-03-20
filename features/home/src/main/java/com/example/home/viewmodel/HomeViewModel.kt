@@ -1,6 +1,7 @@
 package com.example.home.viewmodel
 
 import android.os.Build
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.common.utils.RepositoryResult
@@ -19,7 +20,6 @@ import com.example.ui.snackbar.SnackbarMessageType
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 /**
  * Created by jrzeznicki on 05/01/2023.
@@ -89,11 +89,13 @@ class HomeViewModel(
     private fun observeFixtures() {
         viewModelScope.launch {
             val formattedDate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                localDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT))
+                "2023-03-19"
             } else {
                 TESTING_DATE
             }
+            Log.d("TEST_LOG", "observeFixtures")
             val currentUserId = userPreferencesRepository.getCurrentUserId()
+            Log.d("TEST_LOG", "currentUserId = $currentUserId")
             val userPreferencesFlow =
                 userPreferencesRepository.observeUserPreferences(currentUserId)
             val fixturesFlow =
@@ -102,11 +104,12 @@ class HomeViewModel(
                 val favoriteFixtureIds = userPreferences.favoriteFixtureIds
                 val leagueFixturesList = fixtures.toLeagueFixturesData(favoriteFixtureIds)
                 val filteredLeagueFixturesList = filterLeagueFixturesData(leagueFixturesList)
+                Log.d("TEST_LOG", "observeFixtures in combine")
                 viewModelState.update {
                     it.copy(
                         leagueFixturesDataList = leagueFixturesList,
                         filteredLeagueFixtureDataList = filteredLeagueFixturesList,
-                        date = TESTING_DATE
+                        date = "2023-03-19"
                     )
                 }
             }.collect()
@@ -179,7 +182,7 @@ class HomeViewModel(
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             val formattedDate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                localDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT))
+                "2023-03-19"
             } else {
                 TESTING_DATE
             }

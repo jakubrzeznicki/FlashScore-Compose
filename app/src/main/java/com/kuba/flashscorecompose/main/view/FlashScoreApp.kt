@@ -40,9 +40,9 @@ import org.koin.androidx.compose.inject
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun FlashScoreApp() {
-    val navController = rememberAnimatedNavController()
     val snackbarManager: SnackbarManager by inject()
     val appState = rememberAppState(snackbarManager = snackbarManager)
+    Log.d("TEST_LOG", "FlashScoreApp - startRoute - ${NavGraphs.root.startRoute}")
     NavigationScaffold(
         navController = appState.navController,
         startRoute = NavGraphs.root.startRoute,
@@ -67,11 +67,16 @@ fun FlashScoreApp() {
         },
         bottomBar = {
             if (appState.shouldShowBottomBar) {
+                Log.d("TEST_LOG", "FlashScoreApp - shouldShowBottomBar - true")
+                appState.test()
                 BottomNavigationBar(appState.bottomBarTabs, appState.navController)
+            } else {
+                Log.d("TEST_LOG", "FlashScoreApp - shouldShowBottomBar - false")
+                appState.test()
             }
         }
     ) {
-        AppNavigation(navController = navController)
+        AppNavigation(navController = appState.navController)
 //        DestinationsNavHost(
 //            engine = appState.engine,
 //            navController = appState.navController,
@@ -141,7 +146,10 @@ fun NavDestination.navGraph(): NavGraphSpec {
     hierarchy.forEach { destination ->
         Log.d("TEST_LOG", "destination - route - ${destination.route}, id - ${destination.id}")
         NavGraphs.root.nestedNavGraphs.forEach { navGraph ->
-            Log.d("TEST_LOG", "NavGraphs.root.nestedNavGraphs - route - ${navGraph.route}, startRoute - ${navGraph.startRoute}")
+            Log.d(
+                "TEST_LOG",
+                "NavGraphs.root.nestedNavGraphs - route - ${navGraph.route}, startRoute - ${navGraph.startRoute}"
+            )
             if (destination.route == navGraph.route) {
                 return navGraph
             }

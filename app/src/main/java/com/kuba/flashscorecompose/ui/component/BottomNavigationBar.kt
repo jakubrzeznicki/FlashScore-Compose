@@ -13,9 +13,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.kuba.flashscorecompose.navigation.NavGraphs
 import com.kuba.flashscorecompose.navigation.model.NavigationItem
-import com.ramcosta.composedestinations.navigation.navigateTo
+import com.ramcosta.composedestinations.navigation.navigate
+import com.ramcosta.composedestinations.navigation.popBackStack
 import com.ramcosta.composedestinations.navigation.popUpTo
-
+import com.ramcosta.composedestinations.utils.isRouteOnBackStack
 
 /**
  * Created by jrzeznicki on 23/12/2022.
@@ -32,14 +33,14 @@ fun BottomNavigationBar(tabs: List<NavigationItem>, navController: NavHostContro
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination
         tabs.forEach { tab ->
-            //val isCurrentDestOnBackStack = navController.isRouteOnBackStack(tab.direction)
+            val isCurrentDestOnBackStack = navController.isRouteOnBackStack(tab.direction)
             NavigationBarItem(
                 icon = {
                     Icon(tab.icon, contentDescription = stringResource(id = tab.label))
                 },
                 label = { Text(text = stringResource(id = tab.label)) },
-                alwaysShowLabel = true,
-                selected = true,
+                alwaysShowLabel = isCurrentDestOnBackStack,
+                selected = isCurrentDestOnBackStack,
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.tertiary,
                     unselectedIconColor = MaterialTheme.colorScheme.inverseOnSurface,
@@ -48,11 +49,11 @@ fun BottomNavigationBar(tabs: List<NavigationItem>, navController: NavHostContro
                     indicatorColor = MaterialTheme.colorScheme.surface
                 ),
                 onClick = {
-//                    if (isCurrentDestOnBackStack) {
-//                        navController.popBackStack(tab.direction, false)
-//                        return@NavigationBarItem
-//                    }
-                    navController.navigateTo(tab.direction) {
+                    if (isCurrentDestOnBackStack) {
+                        navController.popBackStack(tab.direction, false)
+                        return@NavigationBarItem
+                    }
+                    navController.navigate(tab.direction) {
                         popUpTo(NavGraphs.root) {
                             saveState = true
                         }
