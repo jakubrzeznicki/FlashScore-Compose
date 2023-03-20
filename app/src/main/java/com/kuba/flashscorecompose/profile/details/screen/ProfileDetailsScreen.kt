@@ -62,7 +62,7 @@ fun ProfileDetailsScreen(
 }
 
 @Composable
-fun DetailsScreen(
+private fun DetailsScreen(
     uiState: ProfileDetailsUiState,
     onItemClick: (ProfileItem) -> Unit,
     onDoneClick: (ProfileItem) -> Unit,

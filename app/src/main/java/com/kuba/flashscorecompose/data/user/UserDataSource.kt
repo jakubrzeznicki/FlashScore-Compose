@@ -16,4 +16,5 @@ interface UserDataSource {
     suspend fun getUserById(id: String): User?
     fun getUserByEmail(email: String): Flow<User>
     suspend fun saveUser(user: User)
+    suspend fun deleteUser(id: String)
 }

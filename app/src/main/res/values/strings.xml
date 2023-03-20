@@ -154,4 +154,20 @@
     <string name="successfully_updated_phone">Successfully updated phone</string>
     <string name="permission_granted">Permission Granted</string>
     <string name="permission_denied">Permission Denied</string>
+
+
+    <!-- ProfileScreen Settings -->
+    <string name="change_password">Change password</string>
+    <string name="save">Save</string>
+    <string name="sign_out">Sign out</string>
+    <string name="delete_account">Delete account</string>
+    <string name="account_deleted">Account was deleted</string>
+    <string name="error_account_deleted">There was a problem to delete account</string>
+    <string name="successfully_signed_out">You are signed out. Try to sign in again.</string>
+    <string name="error_signed_out">There was a problem with sign out</string>
+    <string name="cancel">Cancel</string>
+    <string name="sign_out_title">Sign out?</string>
+    <string name="sign_out_description">You will have to sign in again to use the app.</string>
+    <string name="delete_account_title">Delete account?</string>
+    <string name="delete_account_description">You will lose all your data and your account will be deleted. This action is irreversible.</string>
 </resources>

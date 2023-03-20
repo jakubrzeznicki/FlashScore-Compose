@@ -11,6 +11,5 @@ data class ProfileDetailsUiState(
     val isNameExpanded: Boolean,
     val isEmailExpanded: Boolean,
     val isPhoneExpanded: Boolean,
-    val isAddressExpanded: Boolean,
-    val actualField: ProfileItem
+    val isAddressExpanded: Boolean
 )

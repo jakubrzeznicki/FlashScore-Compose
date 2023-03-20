@@ -2,7 +2,6 @@ package com.kuba.flashscorecompose.profile.details.viewmodel
 
 import com.kuba.flashscorecompose.data.user.model.User
 import com.kuba.flashscorecompose.profile.details.model.ProfileDetailsUiState
-import com.kuba.flashscorecompose.profile.details.model.ProfileItem
 
 /**
  * Created by jrzeznicki on 08/02/2023.
@@ -12,15 +11,13 @@ data class ProfileDetailsViewModelState(
     val isNameExpanded: Boolean = false,
     val isEmailExpanded: Boolean = false,
     val isPhoneExpanded: Boolean = false,
-    val isAddressExpanded: Boolean = false,
-    val actualField: ProfileItem = ProfileItem.Name("")
+    val isAddressExpanded: Boolean = false
 ) {
     fun toUiState(): ProfileDetailsUiState = ProfileDetailsUiState(
         user,
         isNameExpanded,
         isEmailExpanded,
         isPhoneExpanded,
-        isAddressExpanded,
-        actualField
+        isAddressExpanded
     )
 }

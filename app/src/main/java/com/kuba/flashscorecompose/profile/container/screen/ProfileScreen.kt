@@ -68,6 +68,7 @@ fun ProfileRoute(
     ProfileScreen(
         context = context,
         uiState = uiState,
+        navigator = navigator,
         onPhotoUriPicked = { viewModel.updatePhoto(it) }
     )
 }
@@ -78,6 +79,7 @@ fun ProfileRoute(
 private fun ProfileScreen(
     context: Context,
     uiState: ProfileUiState,
+    navigator: DestinationsNavigator,
     onPhotoUriPicked: (Uri) -> Unit
 ) {
     Scaffold(
@@ -94,7 +96,7 @@ private fun ProfileScreen(
                 Uri.parse(uiState.user.photoUri),
                 onPhotoUriPicked
             )
-            ProfileTabs(user = uiState.user)
+            ProfileTabs(user = uiState.user, navigator = navigator)
         }
     }
 }
@@ -117,11 +119,11 @@ private fun TopBar() {
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-private fun ProfileTabs(user: User) {
+private fun ProfileTabs(user: User, navigator: DestinationsNavigator) {
     val tabs = listOf(
         TabItem.Profile.Details(user),
         TabItem.Profile.Activity(user),
-        TabItem.Profile.Settings(user)
+        TabItem.Profile.Settings(user, navigator)
     )
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()

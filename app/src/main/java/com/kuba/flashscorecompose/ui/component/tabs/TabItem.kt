@@ -11,6 +11,7 @@ import com.kuba.flashscorecompose.fixturedetails.headtohead.screen.HeadToHeadScr
 import com.kuba.flashscorecompose.fixturedetails.lineup.screen.LineupScreen
 import com.kuba.flashscorecompose.fixturedetails.statistics.screen.StatisticsScreen
 import com.kuba.flashscorecompose.profile.details.screen.ProfileDetailsScreen
+import com.kuba.flashscorecompose.profile.settings.screen.ProfileSettingsScreen
 import com.kuba.flashscorecompose.teamdetails.fixturesteam.screen.FixturesTeamScreen
 import com.kuba.flashscorecompose.teamdetails.informations.screen.TeamInformationsScreen
 import com.kuba.flashscorecompose.teamdetails.players.screen.PlayersScreen
@@ -109,6 +110,10 @@ sealed class TabItem(var icon: ImageVector, var titleId: Int, var screen: Compos
             TabItem(Icons.Default.Info, R.string.my_profile, { ProfileDetailsScreen(user = user) })
 
         class Activity(user: User) : TabItem(Icons.Default.LocalActivity, R.string.activity, { })
-        class Settings(user: User) : TabItem(Icons.Default.Settings, R.string.settings, { })
+        class Settings(user: User, navigator: DestinationsNavigator) :
+            TabItem(
+                Icons.Default.Settings,
+                R.string.settings,
+                { ProfileSettingsScreen(userId = user.id, navigator = navigator) })
     }
 }

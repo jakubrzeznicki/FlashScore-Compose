@@ -47,4 +47,8 @@ class UserLocal(
     override suspend fun saveUser(user: UserEntity) {
         roomStorage.getDatabase().userDao().saveUser(user)
     }
+
+    override suspend fun deleteUser(id: String) {
+        roomStorage.getDatabase().userDao().deleteUser(id)
+    }
 }

@@ -1,6 +1,5 @@
 package com.kuba.flashscorecompose.data.user
 
-import android.util.Log
 import com.kuba.flashscorecompose.data.user.local.UserLocalDataSource
 import com.kuba.flashscorecompose.data.user.mapper.toUser
 import com.kuba.flashscorecompose.data.user.mapper.toUserEntity
@@ -45,7 +44,10 @@ class UserRepository(private val local: UserLocalDataSource) : UserDataSource {
     }
 
     override suspend fun saveUser(user: User) {
-        Log.d("TEST_LOG", "saveUser - $user")
         local.saveUser(user.toUserEntity())
+    }
+
+    override suspend fun deleteUser(id: String) {
+        local.deleteUser(id)
     }
 }
