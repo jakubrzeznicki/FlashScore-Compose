@@ -16,7 +16,7 @@ dependencies {
     implementation project(":core:model")
 
     //Room
-    implementation libs.room
+    api libs.room
     kapt libs.room.compiler
     implementation libs.room.ktx
 

@@ -144,12 +144,12 @@ dependencies {
     implementation libs.app.center.crashes
 
     // Room
-    implementation libs.room
+    api libs.room
     kapt libs.room.compiler
     implementation libs.room.ktx
 
     // Retrofit
-    implementation libs.retrofit
+    api libs.retrofit
     implementation libs.retrofit.converter.gson
     implementation libs.retrofit.converter.scalars
     implementation libs.okhttp

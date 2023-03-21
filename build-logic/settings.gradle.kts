@@ -10,4 +10,4 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "pluginss"
+rootProject.name = "build-logic"
