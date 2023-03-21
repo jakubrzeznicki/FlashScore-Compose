@@ -1,10 +1,3 @@
-import com.example.buildsrc.Accompanist
-import com.example.buildsrc.Coil
-import com.example.buildsrc.Compose
-import com.example.buildsrc.Koin
-import com.example.buildsrc.Lifecycle
-import com.example.buildsrc.Modules
-
 plugins {
     id "com.android.library"
     id 'org.jetbrains.kotlin.android'
@@ -22,17 +15,17 @@ dependencies {
     implementation project(Modules.common)
     implementation project(Modules.model)
 
-    //com.example.buildsrc.Koin
+    //Koin
     implementation Koin.core
     testImplementation Koin.test
     implementation Koin.android
     implementation Koin.compose
 
-    //com.example.buildsrc.Coil
+    //Coil
     implementation Coil.compose
     implementation Coil.svg
 
-    //com.example.buildsrc.Lifecycle
+    //Lifecycle
     implementation Lifecycle.lifecycleCompose
     implementation Lifecycle.lifecycleExtensions
     implementation Lifecycle.lifecycleLiveData
@@ -40,7 +33,7 @@ dependencies {
     implementation Lifecycle.lifecycleJava8
     implementation Lifecycle.lifecycleCompose
 
-    //com.example.buildsrc.Compose
+    //Compose
     implementation Compose.material3
     implementation Compose.material3WindowSize
     implementation Compose.toolingPreview
@@ -51,7 +44,7 @@ dependencies {
     implementation Compose.runtime
     implementation Compose.animation
 
-    //com.example.buildsrc.Accompanist
+    //Accompanist
     implementation Accompanist.swipeRefresh
     implementation Accompanist.permissions
     implementation Accompanist.pager

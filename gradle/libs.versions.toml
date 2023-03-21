@@ -1,0 +1,122 @@
+[versions]
+# plugins
+android-gradle                      = "7.4.2"
+detekt                              = "1.22.0"
+detekt-compose-rules                = "0.1.2"
+junit                               = "1.8.2.1"
+ksp                                 = "1.8.10-1.0.9"
+ktlint                              = "3.13.0"
+
+# production libraries
+core-ktx                            = "1.9.0"
+app-compat                          = "1.6.0"
+material                            = "1.8.0"
+data-store                          = "1.0.0"
+accompanist                         = "0.28.0"
+coil                                = "2.2.2"
+compose-bom                         = "2023.01.00"
+compose-compiler                    = "1.4.2"
+desugar                             = "1.2.2"
+hilt                                = "2.45"
+kotlin                              = "1.8.0"
+kotlin-coroutines                   = "1.6.4"
+kotlin-coroutines-core              = "1.6.1"
+kotlin-serialization                = "1.5.0"
+kotlin-serialization-converter      = "0.8.0"
+lifecycle                           = "2.6.0"
+navigation                          = "2.5.3"
+navigation-hilt                     = "1.0.0"
+okhttp-logging-interceptor          = "4.10.0"
+retrofit                            = "2.9.0"
+room                                = "2.5.0"
+
+# test libraries
+test-mockk                          = "1.13.4"
+test-junit                          = "4.13.2"
+test-ext-junit                      = "1.1.5"
+test-expresso-core                  = "3.5.1"
+test-app-center-esspresso           = "1.4"
+
+# android test libraries
+test-android-runner                 = "1.5.2"
+
+
+[plugins]
+android-application                 = { id = "com.android.application", version.ref = "android-gradle" }
+android-library                     = { id = "com.android.library", version.ref = "android-gradle" }
+detekt                              = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+hilt                                = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+junit                               = { id = "de.mannodermaus.android-junit5", version.ref = "junit" }
+kotlin                              = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-gradle                       = { id = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlin-kapt                         = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
+kotlin-parcelize                    = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+kotlin-serialization                = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ksp                                 = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+ktlint                              = { id = "org.jmailen.kotlinter", version.ref = "ktlint" }
+
+
+[libraries]
+# production libraries
+android-core-ktx                    = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
+android-app-compat                  = { module = "androidx.appcompat:appcompat", version.ref = "app-compat" }
+material                            = { module = "com.google.android.material:material", version.ref = "material" }
+datastore                           = { module = "androidx.datastore:datastore-preferences", version.ref = "data-store" }
+accompanist-swipe-refresh           = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
+#accompanist-system-ui-controller           = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
+#accompanist-pager = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
+#accompanist-pager-indicators          = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
+#accompanist-flow-layout    = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
+#accompanist-swipe-refresh           = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
+#accompanist-swipe-refresh           = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
+coil                                = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+compose-bom                         = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
+compose-material3                   = { group = "androidx.compose.material3", name = "material3" }
+desugar                             = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
+detekt-compose-rules                = { module = "io.nlopez.compose.rules:detekt", version.ref = "detekt-compose-rules" }
+hilt                                = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hilt-compiler                       = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+kotlin-coroutines                   = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlin-coroutines" }
+kotlin-coroutines-core              = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines-core" }
+kotlin-serialization                = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlin-serialization" }
+kotlin-serialization-converter      = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "kotlin-serialization-converter" }
+lifecycle-runtime-compose           = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
+navigation                          = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
+navigation-hilt                     = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "navigation-hilt" }
+okhttp-logging-interceptor          = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp-logging-interceptor" }
+retrofit                            = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+room                                = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-compiler                       = { module = "androidx.room:room-compiler", version.ref = "room" }
+room-ktx                            = { module = "androidx.room:room-ktx", version.ref = "room" }
+
+# test libraries
+test-kotlin                         = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+test-kotlin-coroutines              = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlin-coroutines" }
+test-mockk                          = { module = "io.mockk:mockk", version.ref = "test-mockk" }
+test-junit                          = { module = "junit:junit", version.ref = "test-junit" }
+test-ext-junit                      = { module = "androidx.test.ext:junit", version.ref = "test-ext-junit" }
+test-espresso-core                  = { module = "androidx.test.espresso:espresso-core", version.ref = "test-expresso-core" }
+test-app-center-espresso            = { module = "com.microsoft.appcenter:espresso-test-extension", version.ref = "test-app-center-esspresso" }
+
+# android test libraries
+test-android-compose                = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+test-android-hilt                   = { module = "com.google.dagger:hilt-android-testing", version.ref = "hilt" }
+test-android-hilt-compiler          = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+test-android-runner                 = { module = "androidx.test:runner", version.ref = "test-android-runner" }
+
+# debug libraries
+debug-compose-manifest              = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+
+
+[bundles]
+common-test = [
+    "test-junit",
+    "test-kotlin",
+    "test-kotlin-coroutines",
+    "test-mockk"
+]
+common-android-test = [
+    "test-android-compose",
+    "test-android-hilt",
+    "test-android-runner"
+]

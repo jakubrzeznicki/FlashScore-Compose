@@ -4,6 +4,17 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <compositeConfiguration>
+          <compositeBuild compositeDefinitionSource="SCRIPT">
+            <builds>
+              <build path="$PROJECT_DIR$/pluginss" name="pluginss">
+                <projects>
+                  <project path="$PROJECT_DIR$/pluginss" />
+                </projects>
+              </build>
+            </builds>
+          </compositeBuild>
+        </compositeConfiguration>
         <option name="testRunner" value="GRADLE" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -39,6 +50,7 @@
             <option value="$PROJECT_DIR$/features/standingsdetails" />
             <option value="$PROJECT_DIR$/features/teamdetails" />
             <option value="$PROJECT_DIR$/features/welcome" />
+            <option value="$PROJECT_DIR$/pluginss" />
           </set>
         </option>
       </GradleProjectSettings>

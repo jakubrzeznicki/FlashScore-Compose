@@ -1,7 +1,3 @@
-import com.example.buildsrc.AndroidX
-import com.example.buildsrc.Testing
-import com.example.buildsrc.Coroutines
-
 android {
     compileSdk 33
 
@@ -30,12 +26,13 @@ android {
 }
 
 dependencies {
-    implementation AndroidX.coreKtx
-    implementation AndroidX.appCompat
-    implementation AndroidX.material
-    implementation Coroutines.coroutines
-    coreLibraryDesugaring AndroidX.desugar
-    testImplementation Testing.jUnit
-    testImplementation Testing.extJUnit
-    testImplementation Testing.espressoCore
+    implementation libs.android.core.ktx
+    implementation libs.android.app.compat
+    implementation libs.material
+    implementation libs.kotlin.coroutines.core
+    coreLibraryDesugaring libs.desugar
+    testImplementation libs.test.junit
+    testImplementation libs.test.ext.junit
+    testImplementation libs.test.espresso.core
+    testImplementation libs.test.app.center.espresso
 }

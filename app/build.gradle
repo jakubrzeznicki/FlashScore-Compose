@@ -1,19 +1,3 @@
-import com.example.buildsrc.Accompanist
-import com.example.buildsrc.AppCenter
-import com.example.buildsrc.CalendarDialog
-import com.example.buildsrc.Coil
-import com.example.buildsrc.Compose
-import com.example.buildsrc.Koin
-import com.example.buildsrc.Lifecycle
-import com.example.buildsrc.Modules
-import com.example.buildsrc.NavigationCompose
-import com.example.buildsrc.Retrofit
-import com.example.buildsrc.Room
-import com.example.buildsrc.AndroidX
-import com.example.buildsrc.Coroutines
-import com.example.buildsrc.Firebase
-import com.example.buildsrc.Testing
-
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
@@ -88,46 +72,45 @@ android {
 }
 
 dependencies {
-    implementation project(Modules.model)
-    implementation project(Modules.common)
-    implementation project(Modules.data)
-    implementation project(Modules.database)
-    implementation project(Modules.datastore)
-    implementation project(Modules.ui)
-    implementation project(Modules.network)
-    implementation project(Modules.notificationService)
-    implementation project(Modules.authentication)
-    implementation project(Modules.favoriteFixtureInteractor)
-    implementation project(Modules.onboarding)
-    implementation project(Modules.home)
-    implementation project(Modules.standings)
-    implementation project(Modules.standingsDetails)
-    implementation project(Modules.explore)
-    implementation project(Modules.signIn)
-    implementation project(Modules.welcome)
-    implementation project(Modules.profile)
-    implementation project(Modules.fixtureDetails)
-    implementation project(Modules.teamDetails)
-    implementation project(Modules.playerDetails)
-    implementation project(Modules.leagueDetails)
-    implementation project(Modules.notifications)
+    implementation project(":core:model")
+    implementation project(":core:common")
+    implementation project(":core:data")
+    implementation project(":core:database")
+    implementation project(":core:datastore")
+    implementation project(":core:ui")
+    implementation project(":core:network")
+    implementation project(":core:notificationservice")
+    implementation project(":core:authentication")
+    implementation project(":core:favoritefixtureinteractor")
+    implementation project(":features:onboarding")
+    implementation project(":features:home")
+    implementation project(":features:standings")
+    implementation project(":features:standingsdetails")
+    implementation project(":features:explore")
+    implementation project(":features:signin")
+    implementation project(":features:welcome")
+    implementation project(":features:profile")
+    implementation project(":features:fixturedetails")
+    implementation project(":features:teamdetails")
+    implementation project(":features:playerdetails")
+    implementation project(":features:leaguedetails")
+    implementation project(":features:notifications")
 
     // AndroidX
-    implementation AndroidX.coreKtx
-    implementation AndroidX.appCompat
-    implementation AndroidX.material
-    implementation AndroidX.dataStore
-    coreLibraryDesugaring AndroidX.desugar
+    implementation libs.android.core.ktx
+    implementation libs.android.app.compat
+    implementation libs.material
+    coreLibraryDesugaring libs.desugar
 
     // Coroutines
-    implementation Coroutines.coroutines
+    implementation libs.kotlin.coroutines.core
     implementation Coroutines.test
 
-    // com.example.buildsrc.Coil
+    // Coil
     implementation Coil.compose
     implementation Coil.svg
 
-    // com.example.buildsrc.Lifecycle
+    // Lifecycle
     implementation Lifecycle.lifecycleCompose
     implementation Lifecycle.lifecycleExtensions
     implementation Lifecycle.lifecycleLiveData
@@ -135,11 +118,11 @@ dependencies {
     implementation Lifecycle.lifecycleJava8
     implementation Lifecycle.lifecycleCompose
 
-    // Navigation com.example.buildsrc.Compose
+    // Navigation Compose
     implementation NavigationCompose.animations
-    //ksp com.example.buildsrc.NavigationCompose.ksp
+    //ksp NavigationCompose.ksp
 
-    // com.example.buildsrc.Compose
+    // Compose
     implementation Compose.material3
     implementation Compose.material3WindowSize
     implementation Compose.toolingPreview
@@ -153,7 +136,7 @@ dependencies {
     implementation Compose.foundation
     implementation Compose.testJUnit
 
-    // com.example.buildsrc.Koin
+    // Koin
     implementation Koin.core
     implementation Koin.android
     testImplementation Koin.test
@@ -163,19 +146,19 @@ dependencies {
     implementation AppCenter.analytics
     implementation AppCenter.crashes
 
-    // com.example.buildsrc.Room
+    // Room
     api Room.runtime
     implementation Room.ktx
     kapt Room.compiler
 
-    // com.example.buildsrc.Retrofit
+    // Retrofit
     api Retrofit.retrofit
     implementation Retrofit.converterGson
     implementation Retrofit.converterScalars
     implementation Retrofit.okhttp
     implementation Retrofit.loggingInterceptor
 
-    //com.example.buildsrc.Accompanist
+    //Accompanist
     implementation Accompanist.swipeRefresh
     implementation Accompanist.permissions
     implementation Accompanist.pager

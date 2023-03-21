@@ -1,6 +1,3 @@
-import com.example.buildsrc.Koin
-import com.example.buildsrc.Modules
-
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
@@ -21,7 +18,7 @@ dependencies {
     implementation project(Modules.data)
     implementation project(Modules.notificationService)
 
-    //com.example.buildsrc.Koin
+    //Koin
     implementation Koin.core
     testImplementation Koin.test
     implementation Koin.android
