@@ -3,6 +3,7 @@ package com.example.buildsrc
 /**
  * Created by jrzeznicki on 13/03/2023.
  */
+
 object Accompanist {
     private const val accompanistVersion = "0.28.0"
     const val swipeRefresh = "com.google.accompanist:accompanist-swiperefresh:0.24.13-rc"
