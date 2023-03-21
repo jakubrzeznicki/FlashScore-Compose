@@ -104,85 +104,84 @@ dependencies {
 
     // Coroutines
     implementation libs.kotlin.coroutines.core
-    implementation Coroutines.test
+    implementation libs.kotlin.coroutines
 
     // Coil
-    implementation Coil.compose
-    implementation Coil.svg
+    implementation libs.coil.compose
+    implementation libs.coil.svg
 
     // Lifecycle
-    implementation Lifecycle.lifecycleCompose
-    implementation Lifecycle.lifecycleExtensions
-    implementation Lifecycle.lifecycleLiveData
-    implementation Lifecycle.lifecycleViewModel
-    implementation Lifecycle.lifecycleJava8
-    implementation Lifecycle.lifecycleCompose
+    implementation libs.lifecycle.runtime.compose
+    implementation libs.lifecycle.extensions
+    implementation libs.lifecycle.livedata
+    implementation libs.lifecycle.viewmodel
+    implementation libs.lifecycle.common.java8
 
     // Navigation Compose
-    implementation NavigationCompose.animations
-    //ksp NavigationCompose.ksp
+    implementation libs.navigation.animations
 
     // Compose
-    implementation Compose.material3
-    implementation Compose.material3WindowSize
-    implementation Compose.toolingPreview
-    implementation Compose.uiTooling
-    implementation Compose.viewModelCompose
-    implementation Compose.materialIcons
-    implementation Compose.activityCompose
-    implementation Compose.runtime
-    implementation Compose.animation
-    implementation Compose.ui
-    implementation Compose.foundation
-    implementation Compose.testJUnit
+    implementation libs.compose.material3
+    implementation libs.compose.material3.window.size
+    implementation libs.compose.tooling.preview
+    implementation libs.compose.ui
+    implementation libs.compose.ui.tooling
+    implementation libs.compose.foundation
+    implementation libs.compose.animation
+    implementation libs.compose.activity
+    implementation libs.compose.viewmodel
+    implementation libs.compose.material.icons
+    implementation libs.compose.runtime
 
     // Koin
-    implementation Koin.core
-    implementation Koin.android
-    testImplementation Koin.test
-    implementation Koin.compose
+    implementation libs.koin.core
+    implementation libs.koin.android
+    implementation libs.koin.compose
 
     // App Center
-    implementation AppCenter.analytics
-    implementation AppCenter.crashes
+    implementation libs.app.center.analytics
+    implementation libs.app.center.crashes
 
     // Room
-    api Room.runtime
-    implementation Room.ktx
-    kapt Room.compiler
+    implementation libs.room
+    kapt libs.room.compiler
+    implementation libs.room.ktx
 
     // Retrofit
-    api Retrofit.retrofit
-    implementation Retrofit.converterGson
-    implementation Retrofit.converterScalars
-    implementation Retrofit.okhttp
-    implementation Retrofit.loggingInterceptor
+    implementation libs.retrofit
+    implementation libs.retrofit.converter.gson
+    implementation libs.retrofit.converter.scalars
+    implementation libs.okhttp
+    implementation libs.okhttp.logging.interceptor
 
     //Accompanist
-    implementation Accompanist.swipeRefresh
-    implementation Accompanist.permissions
-    implementation Accompanist.pager
-    implementation Accompanist.pagerIndicators
-    implementation Accompanist.systemUiController
-    implementation Accompanist.flowLayout
-    implementation Accompanist.insets
-    implementation Accompanist.navigationMaterial
-    implementation Accompanist.navigationAnimation
+    implementation libs.accompanist.swipe.refresh
+    implementation libs.accompanist.permissions
+    implementation libs.accompanist.pager
+    implementation libs.accompanist.pager.indicators
+    implementation libs.accompanist.system.ui.controller
+    implementation libs.accompanist.flow.layout
+    implementation libs.accompanist.insets
+    implementation libs.accompanist.navigation.animation
+    implementation libs.accompanist.navigation.material
 
     //Calendar Dialog
-    implementation CalendarDialog.core
-    implementation CalendarDialog.calendar
+    implementation libs.calendar.dialog.core
+    implementation libs.calendar.dialog.calendar
 
     //Firebase
-    implementation Firebase.auth
-    implementation Firebase.crashlytics
-    implementation Firebase.storage
-    implementation Firebase.analytics
-    implementation Firebase.perf
+    implementation libs.firebase.crashlytics
+    implementation libs.firebase.analytics
+    implementation libs.firebase.auth
+    implementation libs.firebase.perf
+    implementation libs.firebase.storage
 
     //Testing
-    testImplementation Testing.jUnit
-    testImplementation Testing.extJUnit
-    testImplementation Testing.espressoCore
-    testImplementation Testing.appCenterEspresso
+    testImplementation libs.test.junit
+    testImplementation libs.test.ext.junit
+    testImplementation libs.test.espresso.core
+    testImplementation libs.test.app.center.espresso
+    testImplementation libs.test.kotlin.coroutines
+    testImplementation libs.test.android.compose
+    testImplementation libs.test.koin
 }
