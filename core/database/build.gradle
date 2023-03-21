@@ -13,18 +13,17 @@ apply {
 }
 
 dependencies {
-    implementation project(Modules.model)
+    implementation project(":core:model")
 
     //Room
-    api Room.runtime
-    implementation Room.ktx
-    kapt Room.compiler
+    implementation libs.room
+    kapt libs.room.compiler
+    implementation libs.room.ktx
 
-    //Koin
-    implementation Koin.core
-    testImplementation Koin.test
-    implementation Koin.android
+    // Koin
+    implementation libs.koin.core
+    implementation libs.koin.android
 
     //Gson
-    implementation Retrofit.converterGson
+    implementation libs.retrofit.converter.gson
 }

@@ -13,22 +13,9 @@ apply {
 }
 
 dependencies {
-    implementation project(Modules.model)
+    implementation project(":core:model")
 
-    implementation AndroidX.coreKtx
-    implementation AndroidX.appCompat
-    implementation AndroidX.material
-    coreLibraryDesugaring AndroidX.desugar
-    testImplementation Testing.jUnit
-    testImplementation Testing.extJUnit
-    testImplementation Testing.espressoCore
-
-    //Koin
-    implementation Koin.core
-    testImplementation Koin.test
-    implementation Koin.android
-    implementation Koin.compose
-
-    // DataStore
-    implementation AndroidX.dataStore
+    // Koin
+    implementation libs.koin.core
+    implementation libs.koin.android
 }

@@ -7,7 +7,6 @@ object Config {
     const val compileSdk = 33
     const val minSdk = 21
     const val targetSdk = 33
-    const val buildTools = "33.0.1"
     const val androidApplication = "com.android.application"
     const val jetbrainsKotlinAndroid = "org.jetbrains.kotlin.android"
     const val kotlinAndroid = "kotlin-android"

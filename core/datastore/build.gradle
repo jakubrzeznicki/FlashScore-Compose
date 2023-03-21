@@ -12,13 +12,12 @@ apply {
 }
 
 dependencies {
-    implementation project(Modules.model)
+    implementation project(":core:model")
 
-    //Koin
-    implementation Koin.core
-    testImplementation Koin.test
-    implementation Koin.android
+    // Koin
+    implementation libs.koin.core
+    implementation libs.koin.android
 
     // DataStore
-    implementation AndroidX.dataStore
+    implementation libs.datastore
 }

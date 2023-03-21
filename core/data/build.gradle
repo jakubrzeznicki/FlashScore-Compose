@@ -15,16 +15,15 @@ apply {
 }
 
 dependencies {
-    implementation project(Modules.model)
-    implementation project(Modules.common)
-    implementation project(Modules.database)
-    implementation project(Modules.datastore)
-    implementation project(Modules.network)
+    implementation project(":core:model")
+    implementation project(":core:common")
+    implementation project(":core:database")
+    implementation project(":core:datastore")
+    implementation project(":core:network")
 
-    //Koin
-    implementation Koin.core
-    testImplementation Koin.test
-    implementation Koin.android
+    // Koin
+    implementation libs.koin.core
+    implementation libs.koin.android
 
-    implementation Retrofit.retrofit
+    implementation libs.retrofit
 }

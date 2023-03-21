@@ -12,5 +12,5 @@ apply {
 }
 
 dependencies {
-    implementation Compose.runtime
+    implementation libs.lifecycle.runtime.compose
 }

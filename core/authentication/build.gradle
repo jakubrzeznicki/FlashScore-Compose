@@ -12,15 +12,14 @@ apply {
 }
 
 dependencies {
-    implementation project(Modules.common)
+    implementation project(":core:common")
 
-    //Koin
-    implementation Koin.core
-    testImplementation Koin.test
-    implementation Koin.android
+    // Koin
+    implementation libs.koin.core
+    implementation libs.koin.android
 
-    //Firebase
-    implementation Firebase.auth
-    implementation Firebase.crashlytics
-    implementation Firebase.storage
+    // Firebase
+    implementation libs.firebase.crashlytics
+    implementation libs.firebase.auth
+    implementation libs.firebase.storage
 }

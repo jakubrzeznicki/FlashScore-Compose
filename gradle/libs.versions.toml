@@ -1,13 +1,23 @@
 [versions]
-# plugins
+# Config
+android-compile-sdk                 = "33"
+android-min-sdk                     = "21"
+android-target-sdk                  = "33"
+android-app-id                      = "com.kuba.flashscorecompose"
+android-version-name                = "1.0"
+
+# Plugins
 android-gradle                      = "7.4.2"
 detekt                              = "1.22.0"
 detekt-compose-rules                = "0.1.2"
 junit                               = "1.8.2.1"
 ksp                                 = "1.8.10-1.0.9"
 ktlint                              = "3.13.0"
+kotlin                              = "1.8.0"
+compose-compiler                    = "1.4.1"
+jvn-target                          = "1.8"
 
-# production libraries
+# Production libraries
 core-ktx                            = "1.9.0"
 app-compat                          = "1.6.0"
 material                            = "1.8.0"
@@ -24,8 +34,6 @@ activiy-compose                     = "1.6.1"
 viewmodel-compose                   = "2.5.1"
 materail-icons                      = "1.3.1"
 desugar                             = "1.2.2"
-hilt                                = "2.45"
-kotlin                              = "1.8.0"
 kotlin-coroutines                   = "1.6.4"
 kotlin-serialization                = "1.5.0"
 kotlin-serialization-converter      = "0.8.0"
@@ -57,7 +65,6 @@ test-android-runner                 = "1.5.2"
 android-application                 = { id = "com.android.application", version.ref = "android-gradle" }
 android-library                     = { id = "com.android.library", version.ref = "android-gradle" }
 detekt                              = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
-hilt                                = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 junit                               = { id = "de.mannodermaus.android-junit5", version.ref = "junit" }
 kotlin                              = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-gradle                       = { id = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -69,12 +76,14 @@ ktlint                              = { id = "org.jmailen.kotlinter", version.re
 
 
 [libraries]
-# production libraries
+
+# AndroidX
 android-core-ktx                    = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
 android-app-compat                  = { module = "androidx.appcompat:appcompat", version.ref = "app-compat" }
 material                            = { module = "com.google.android.material:material", version.ref = "material" }
 datastore                           = { module = "androidx.datastore:datastore-preferences", version.ref = "data-store" }
 
+# Accompanist
 accompanist-swipe-refresh           = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
 accompanist-system-ui-controller    = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 accompanist-pager                   = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
@@ -85,23 +94,29 @@ accompanist-navigation-animation    = { module = "com.google.accompanist:accompa
 accompanist-navigation-material     = { module = "com.google.accompanist:accompanist-navigation-material", version.ref = "accompanist" }
 accompanist-permissions             = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
 
+# Coil
 coil-compose                        = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 coil-svg                            = { module = "io.coil-kt:coil-svg", version.ref = "coil" }
 
+# Desugar
 desugar                             = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
 
+# Coroutines
 kotlin-coroutines                   = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlin-coroutines" }
 kotlin-coroutines-core              = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
 
+# Lifecycle
 lifecycle-extensions                = { module = "androidx.lifecycle:lifecycle-extensions", version.ref = "lifecycle-extensions" }
 lifecycle-viewmodel                 = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 lifecycle-livedata                  = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
 lifecycle-common-java8              = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "lifecycle" }
 lifecycle-runtime-compose           = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle-compose" }
 
+# Navigation
 navigation-animations               = { module = "io.github.raamcosta.compose-destinations:animations-core", version.ref = "navigation" }
 navigation-ksp                      = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "navigation" }
 
+# Compose
 compose-material3                   = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 compose-material3-window-size       = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material3-window-size" }
 compose-tooling-preview             = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
@@ -111,29 +126,35 @@ compose-foundation                  = { module = "androidx.compose.foundation:fo
 compose-animation                   = { module = "androidx.compose.animation:animation", version.ref = "compose" }
 compose-activity                    = { module = "androidx.activity:activity-compose", version.ref = "activiy-compose" }
 compose-viewmodel                   = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "viewmodel-compose" }
-compose-material-icons               = { module = "androidx.compose.material:material-icons-extended", version.ref = "materail-icons" }
+compose-material-icons              = { module = "androidx.compose.material:material-icons-extended", version.ref = "materail-icons" }
 compose-runtime                     = { module = "androidx.compose.runtime:runtime", version.ref = "compose" }
 
+# Koin
 koin-core                           = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-android                        = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-compose                        = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 
+# AppCenter
 app-center-analytics                = { module = "com.microsoft.appcenter:appcenter-analytics", version.ref = "app-center" }
 app-center-crashes                  = { module = "com.microsoft.appcenter:appcenter-crashes", version.ref = "app-center" }
 
+# Retrofit
 okhttp-logging-interceptor          = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
 okhttp                              = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 retrofit                            = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
-retrofit-converter-gson                      = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
-retrofit-converter-scalars                   = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "retrofit" }
+retrofit-converter-gson             = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
+retrofit-converter-scalars          = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "retrofit" }
 
+# Room
 room                                = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-compiler                       = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-ktx                            = { module = "androidx.room:room-ktx", version.ref = "room" }
 
+# Calendar Dialog
 calendar-dialog-core                = { module = "com.maxkeppeler.sheets-compose-dialogs:core", version.ref = "calendar-dialog" }
 calendar-dialog-calendar            = { module = "com.maxkeppeler.sheets-compose-dialogs:calendar", version.ref = "calendar-dialog" }
 
+# Firebase
 firebase-crashlytics                = { module = "com.google.firebase:firebase-crashlytics-ktx", version.ref = "crashlytics" }
 firebase-analytics                  = { module = "com.google.firebase:firebase-analytics-ktx", version.ref = "analytics" }
 firebase-auth                       = { module = "com.google.firebase:firebase-auth-ktx", version.ref = "auth" }
@@ -155,6 +176,3 @@ test-android-runner                 = { module = "androidx.test:runner", version
 
 # debug libraries
 debug-compose-manifest              = { group = "androidx.compose.ui", name = "ui-test-manifest" }
-
-
-[bundles]

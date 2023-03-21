@@ -18,57 +18,54 @@ ksp {
 }
 
 dependencies {
-    implementation project(Modules.model)
-    implementation project(Modules.common)
-    implementation project(Modules.data)
-    implementation project(Modules.ui)
-    implementation project(Modules.favoriteFixtureInteractor)
-    implementation project(Modules.notificationService)
+    implementation project(":core:model")
+    implementation project(":core:common")
+    implementation project(":core:data")
+    implementation project(":core:ui")
+    implementation project(":core:notificationservice")
+    implementation project(":core:favoritefixtureinteractor")
 
-    //Koin
-    implementation Koin.core
-    implementation Koin.android
-    testImplementation Koin.test
-    implementation Koin.compose
+    // Koin
+    implementation libs.koin.core
+    implementation libs.koin.android
+    implementation libs.koin.compose
 
-    //Coil
-    implementation Coil.compose
-    implementation Coil.svg
+    // Coil
+    implementation libs.coil.compose
+    implementation libs.coil.svg
 
-    //Lifecycle
-    implementation Lifecycle.lifecycleCompose
-    implementation Lifecycle.lifecycleExtensions
-    implementation Lifecycle.lifecycleLiveData
-    implementation Lifecycle.lifecycleViewModel
-    implementation Lifecycle.lifecycleJava8
-    implementation Lifecycle.lifecycleCompose
+    // Lifecycle
+    implementation libs.lifecycle.runtime.compose
+    implementation libs.lifecycle.extensions
+    implementation libs.lifecycle.livedata
+    implementation libs.lifecycle.viewmodel
+    implementation libs.lifecycle.common.java8
 
-    //Navigation Compose
-    implementation NavigationCompose.animations
-    ksp NavigationCompose.ksp
+    // Navigation Compose
+    implementation libs.navigation.animations
+    ksp libs.navigation.ksp
 
-    //Compose
-    implementation Compose.material3
-    implementation Compose.material3WindowSize
-    implementation Compose.toolingPreview
-    implementation Compose.uiTooling
-    implementation Compose.viewModelCompose
-    implementation Compose.materialIcons
-    implementation Compose.activityCompose
-    implementation Compose.runtime
-    implementation Compose.animation
-    implementation Compose.ui
-    implementation Compose.foundation
-    implementation Compose.testJUnit
+    // Compose
+    implementation libs.compose.material3
+    implementation libs.compose.material3.window.size
+    implementation libs.compose.tooling.preview
+    implementation libs.compose.ui
+    implementation libs.compose.ui.tooling
+    implementation libs.compose.foundation
+    implementation libs.compose.animation
+    implementation libs.compose.activity
+    implementation libs.compose.viewmodel
+    implementation libs.compose.material.icons
+    implementation libs.compose.runtime
 
-    //Accompanist
-    implementation Accompanist.swipeRefresh
-    implementation Accompanist.permissions
-    implementation Accompanist.pager
-    implementation Accompanist.pagerIndicators
-    implementation Accompanist.systemUiController
-    implementation Accompanist.flowLayout
-    implementation Accompanist.insets
-    implementation Accompanist.navigationMaterial
-    implementation Accompanist.navigationAnimation
+    // Accompanist
+    implementation libs.accompanist.swipe.refresh
+    implementation libs.accompanist.permissions
+    implementation libs.accompanist.pager
+    implementation libs.accompanist.pager.indicators
+    implementation libs.accompanist.system.ui.controller
+    implementation libs.accompanist.flow.layout
+    implementation libs.accompanist.insets
+    implementation libs.accompanist.navigation.animation
+    implementation libs.accompanist.navigation.material
 }

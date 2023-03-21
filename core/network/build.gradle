@@ -17,17 +17,16 @@ apply {
 }
 
 dependencies {
-    implementation project(Modules.model)
+    implementation project(":core:model")
 
-    //Koin
-    implementation Koin.core
-    testImplementation Koin.test
-    implementation Koin.android
+    // Koin
+    implementation libs.koin.core
+    implementation libs.koin.android
 
     // Retrofit
-    api Retrofit.retrofit
-    implementation Retrofit.converterGson
-    implementation Retrofit.converterScalars
-    implementation Retrofit.okhttp
-    implementation Retrofit.loggingInterceptor
+    api libs.retrofit
+    implementation libs.retrofit.converter.gson
+    implementation libs.retrofit.converter.scalars
+    implementation libs.okhttp
+    implementation libs.okhttp.logging.interceptor
 }
