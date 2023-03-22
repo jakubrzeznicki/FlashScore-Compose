@@ -5,6 +5,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -39,6 +42,7 @@ import org.koin.core.parameter.parametersOf
 
 private const val STATISTICS_KEY = "STATISTICS_KEY"
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun StatisticsScreen(
     fixtureId: Int,
@@ -57,11 +61,15 @@ fun StatisticsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = uiState.isLoading,
+        onRefresh = { viewModel.refresh() }
+    )
     LaunchedEffect(key1 = STATISTICS_KEY) { viewModel.setup() }
     StatisticsList(
         uiState = uiState,
         context = context,
-        onRefreshClick = { viewModel.refresh() },
+        pullRefreshState = pullRefreshState,
         onFixtureClick = {
             navigator.openFixtureDetails(it.fixtureItem.id)
         },
@@ -69,10 +77,11 @@ fun StatisticsScreen(
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun StatisticsList(
     uiState: StatisticsUiState,
-    onRefreshClick: () -> Unit,
+    pullRefreshState: PullRefreshState,
     context: Context,
     onFixtureClick: (FixtureItemWrapper) -> Unit,
     onFavoriteClick: (FixtureItemWrapper) -> Unit
@@ -85,9 +94,9 @@ private fun StatisticsList(
             is StatisticsUiState.HasOnlyOtherFixtures -> false
             else -> uiState.isLoading
         },
+        pullRefreshState = pullRefreshState,
         emptyContent = { FullScreenLoading() },
-        loading = uiState.isLoading,
-        onRefresh = onRefreshClick
+        loading = uiState.isLoading
     ) {
         LazyColumn(
             modifier = Modifier

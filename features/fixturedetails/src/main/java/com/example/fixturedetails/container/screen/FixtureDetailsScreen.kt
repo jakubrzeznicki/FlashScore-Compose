@@ -1,11 +1,13 @@
 package com.example.fixturedetails.container.screen
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -53,6 +55,7 @@ import org.koin.core.parameter.parametersOf
  */
 private const val SETUP_FIXTURE_DETAILS_KEY = "SETUP_FIXTURE_DETAILS_KEY"
 
+@OptIn(ExperimentalMaterialApi::class)
 @Destination(
     deepLinks = [
         DeepLink(uriPattern = "$MY_URI/$FIXTURE_ID_ARGS={fixtureId}")
@@ -65,25 +68,28 @@ fun FixtureDetailsRoute(
     viewModel: FixtureDetailsViewModel = getViewModel { parametersOf(fixtureId) }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = uiState.isLoading,
+        onRefresh = { viewModel.refreshFixtureItem() }
+    )
     LaunchedEffect(key1 = SETUP_FIXTURE_DETAILS_KEY) { viewModel.setup() }
     FixtureDetailsScreen(
         uiState = uiState,
         navigator = navigator,
-        onRefreshClick = { viewModel.refreshFixtureItem() },
+        pullRefreshState = pullRefreshState,
         onTeamClick = { team, leagueId, season ->
             navigator.openTeamDetails(team, leagueId, season)
         }
     )
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 private fun FixtureDetailsScreen(
     modifier: Modifier = Modifier,
     uiState: FixtureDetailsUiState,
     navigator: FixtureDetailsNavigator,
-    onRefreshClick: () -> Unit,
+    pullRefreshState: PullRefreshState,
     onTeamClick: (Team, Int, Int) -> Unit
 ) {
     Scaffold(
@@ -97,16 +103,16 @@ private fun FixtureDetailsScreen(
                 }
             )
         }
-    ) {
+    ) { paddingValues ->
         LoadingContent(
-            modifier = Modifier.padding(top = 36.dp),
+            modifier = Modifier.padding(paddingValues),
+            pullRefreshState = pullRefreshState,
             empty = when (uiState) {
                 is FixtureDetailsUiState.HasData -> false
                 else -> uiState.isLoading
             },
             emptyContent = { FullScreenLoading() },
-            loading = uiState.isLoading,
-            onRefresh = onRefreshClick
+            loading = uiState.isLoading
         ) {
             Column(Modifier.fillMaxSize()) {
                 when (uiState) {
@@ -131,16 +137,17 @@ private fun FixtureDetailsScreen(
 private fun TopBar(navigator: FixtureDetailsNavigator, round: String) {
     CenterAppTopBar(
         modifier = Modifier
-            .height(58.dp)
-            .padding(vertical = 8.dp),
+            .height(48.dp)
+            .padding(top = 8.dp),
         navigationIcon = {
             IconButton(
                 modifier = Modifier
                     .padding(horizontal = 12.dp)
-                    .size(24.dp),
+                    .size(32.dp),
                 onClick = { navigator.navigateUp() }
             ) {
                 Icon(
+                    modifier = Modifier.size(32.dp),
                     imageVector = Icons.Filled.ChevronLeft,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSecondary

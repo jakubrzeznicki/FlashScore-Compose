@@ -1,5 +1,7 @@
-package com.example.database
+package com.example.database.di
 
+import com.example.database.LocalRoomStorage
+import com.example.database.RoomStorage
 import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 

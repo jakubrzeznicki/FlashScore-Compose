@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,6 +32,7 @@ import org.koin.core.parameter.parametersOf
  */
 private const val PLAYERS_KEY = "PLAYERS_KEY"
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PlayersScreen(
     team: Team,
@@ -37,6 +41,10 @@ fun PlayersScreen(
     viewModel: PlayersViewModel = getViewModel { parametersOf(team, season) }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = uiState.isLoading,
+        onRefresh = { viewModel.refresh() }
+    )
     LaunchedEffect(key1 = PLAYERS_KEY) { viewModel.setup() }
     PlayersListScreen(
         uiState = uiState,
@@ -44,26 +52,27 @@ fun PlayersScreen(
             navigator.openPlayerDetails(it.player.id, it.player.team, it.player.season)
         },
         onPlayerFavoriteClick = { viewModel.addPlayerToFavorite(it) },
-        onRefreshClick = { viewModel.refresh() }
+        pullRefreshState = pullRefreshState
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PlayersListScreen(
     uiState: PlayersUiState,
     onPlayerClick: (PlayerWrapper) -> Unit,
     onPlayerFavoriteClick: (PlayerWrapper) -> Unit,
-    onRefreshClick: () -> Unit
+    pullRefreshState: PullRefreshState
 ) {
     val scrollState = rememberLazyListState()
     LoadingContent(
+        pullRefreshState = pullRefreshState,
         empty = when (uiState) {
             is PlayersUiState.HasData -> false
             else -> uiState.isLoading
         },
         emptyContent = { FullScreenLoading() },
-        loading = uiState.isLoading,
-        onRefresh = onRefreshClick
+        loading = uiState.isLoading
     ) {
         LazyColumn(
             modifier = Modifier

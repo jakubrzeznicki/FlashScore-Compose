@@ -47,21 +47,7 @@ class StandingsRepository(
             val standings = result.body()?.response?.map { leagueStandingsDto ->
                 leagueStandingsDto.league?.toStandings() ?: Standing.EMPTY_STANDING
             }.orEmpty()
-            withContext(Dispatchers.IO) {
-                saveStandings(standings = standings)
-                local.saveLeagues(standings.map { it.league.toLeagueEntity() })
-                val leagueSeason = LeagueSeason(leagueId, season)
-                val standingItemsWithLeague = standings.map { leagueSeason to it.standingItems }
-                standingItemsWithLeague.forEach { (leagueSeason, standingItems) ->
-                    val teams = standingItems.map { standingItem ->
-                        standingItem.team.toTeamEntity(
-                            leagueSeason.leagueId,
-                            leagueSeason.season
-                        )
-                    }
-                    local.saveTeams(teams)
-                }
-            }
+            saveData(standings, leagueId, season)
             RepositoryResult.Success(standings)
         } catch (e: HttpException) {
             RepositoryResult.Error(
@@ -70,6 +56,24 @@ class StandingsRepository(
                     this.internalStatus = e.code()
                 }
             )
+        }
+    }
+
+    private suspend fun saveData(standings: List<Standing>, leagueId: Int, season: Int) {
+        withContext(Dispatchers.IO) {
+            saveStandings(standings = standings)
+            local.saveLeagues(standings.map { it.league.toLeagueEntity() })
+            val leagueSeason = LeagueSeason(leagueId, season)
+            val standingItemsWithLeague = standings.map { leagueSeason to it.standingItems }
+            standingItemsWithLeague.forEach { (leagueSeason, standingItems) ->
+                val teams = standingItems.map { standingItem ->
+                    standingItem.team.toTeamEntity(
+                        leagueSeason.leagueId,
+                        leagueSeason.season
+                    )
+                }
+                local.saveTeams(teams)
+            }
         }
     }
 }

@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -41,6 +44,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 import java.time.LocalDate
+import com.example.ui.R as uiR
 
 /**
  * Created by jrzeznicki on 25/01/2023.
@@ -48,6 +52,7 @@ import java.time.LocalDate
 
 private const val SETUP_LEAGUE_DETAILS_KEY = "SETUP_LEAGUE_DETAILS_KEY"
 
+@OptIn(ExperimentalMaterialApi::class)
 @Destination
 @Composable
 fun LeagueDetailsRoute(
@@ -57,13 +62,17 @@ fun LeagueDetailsRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = uiState.isLoading,
+        onRefresh = { viewModel.refresh() }
+    )
     LaunchedEffect(key1 = SETUP_LEAGUE_DETAILS_KEY) { viewModel.setup() }
     LeagueDetailsScreen(
         uiState = uiState,
         league = league,
         navigator = navigator,
         context = context,
-        onRefreshClick = { viewModel.refresh() },
+        pullRefreshState = pullRefreshState,
         onFixtureClick = { navigator.openFixtureDetails(it.fixtureItem.id) },
         onFixtureFavoriteClick = { viewModel.addFixtureToFavorite(it) },
         onDateClick = { viewModel.changeDate(it) },
@@ -71,14 +80,14 @@ fun LeagueDetailsRoute(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun LeagueDetailsScreen(
     uiState: LeagueDetailsUiState,
     league: League,
     navigator: LeagueDetailsNavigator,
     context: Context,
-    onRefreshClick: () -> Unit,
+    pullRefreshState: PullRefreshState,
     onFixtureClick: (FixtureItemWrapper) -> Unit,
     onFixtureFavoriteClick: (FixtureItemWrapper) -> Unit,
     onDateClick: (LocalDate) -> Unit,
@@ -95,18 +104,18 @@ fun LeagueDetailsScreen(
     ) { paddingValues ->
         LoadingContent(
             modifier = Modifier.padding(paddingValues),
+            pullRefreshState = pullRefreshState,
             empty = when (uiState) {
                 is LeagueDetailsUiState.HasData -> false
                 is LeagueDetailsUiState.NoData -> uiState.isLoading
             },
             emptyContent = { FullScreenLoading() },
-            loading = uiState.isLoading,
-            onRefresh = onRefreshClick
+            loading = uiState.isLoading
         ) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
                 state = scrollState
             ) {
                 item {
@@ -206,7 +215,7 @@ fun StandingsRow(onStandingClick: () -> Unit) {
         }
         Text(
             modifier = Modifier.weight(1f),
-            text = stringResource(id = com.example.ui.R.string.standings),
+            text = stringResource(id = uiR.string.standings),
             fontWeight = FontWeight.SemiBold,
             fontSize = 16.sp,
             color = MaterialTheme.colorScheme.onSecondary
@@ -232,16 +241,17 @@ fun StandingsRow(onStandingClick: () -> Unit) {
 private fun TopBar(navigator: LeagueDetailsNavigator, league: League) {
     CenterAppTopBar(
         modifier = Modifier
-            .height(58.dp)
-            .padding(vertical = 8.dp),
+            .height(48.dp)
+            .padding(top = 8.dp),
         navigationIcon = {
             IconButton(
                 modifier = Modifier
                     .padding(start = 12.dp)
-                    .size(24.dp),
+                    .size(32.dp),
                 onClick = { navigator.navigateUp() }
             ) {
                 Icon(
+                    modifier = Modifier.size(32.dp),
                     imageVector = Icons.Filled.ChevronLeft,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSecondary
@@ -263,7 +273,7 @@ private fun TopBar(navigator: LeagueDetailsNavigator, league: League) {
                         .size(Size.ORIGINAL)
                         .crossfade(true)
                         .build(),
-                    placeholder = painterResource(id = com.example.ui.R.drawable.ic_close),
+                    placeholder = painterResource(id = uiR.drawable.ic_close),
                     contentDescription = null,
                     contentScale = ContentScale.Fit
                 )

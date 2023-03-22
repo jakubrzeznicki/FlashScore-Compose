@@ -15,6 +15,15 @@ data class Venue(
     val teamId: Int
 ) : Parcelable {
     companion object {
-        val EMPTY_VENUE = Venue("", 0, "", "", 0, "", "", 0)
+        val EMPTY_VENUE = Venue(
+            "",
+            0,
+            "",
+            "",
+            0,
+            "",
+            "",
+            0
+        )
     }
 }

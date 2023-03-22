@@ -19,8 +19,8 @@ interface VenueDao {
     fun observeVenues(): Flow<List<VenueEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveVenue(venues: List<VenueEntity>)
+    suspend fun saveVenues(venues: List<VenueEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveVenue(venue: VenueEntity)
+    suspend fun saveVenues(venue: VenueEntity)
 }

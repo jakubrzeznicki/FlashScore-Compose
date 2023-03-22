@@ -20,7 +20,7 @@ fun LocalDateTime.format(pattern: String): String {
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun Long.formatTimestampToLocalDateTime() =
+fun Long.formatTimestampToLocalDateTime(): LocalDateTime =
     Instant.ofEpochSecond(this)
         .atZone(ZoneId.systemDefault())
         .toLocalDateTime()

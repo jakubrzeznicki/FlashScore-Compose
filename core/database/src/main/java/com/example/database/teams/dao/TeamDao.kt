@@ -14,9 +14,6 @@ import kotlinx.coroutines.flow.Flow
 interface TeamDao {
 
     @Query("SELECT * FROM team WHERE id = :teamId")
-    suspend fun getTeam(teamId: Int): TeamEntity?
-
-    @Query("SELECT * FROM team WHERE id = :teamId")
     fun observeTeam(teamId: Int): Flow<TeamEntity?>
 
     @Query("SELECT * FROM team")

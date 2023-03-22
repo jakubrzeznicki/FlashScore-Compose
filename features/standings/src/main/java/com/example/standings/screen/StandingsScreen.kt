@@ -4,8 +4,11 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -43,6 +46,7 @@ import org.koin.androidx.compose.getViewModel
 private const val SETUP_STANDINGS_KEY = "SETUP_STANDINGS_KEY"
 private const val TEAMS = 4
 
+@OptIn(ExperimentalMaterialApi::class)
 @Destination
 @Composable
 fun StandingsRoute(
@@ -52,12 +56,16 @@ fun StandingsRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val fixturesScrollState = rememberLazyListState()
     val countryScrollState = rememberLazyListState()
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = uiState.isLoading,
+        onRefresh = { viewModel.refresh() }
+    )
     LaunchedEffect(key1 = SETUP_STANDINGS_KEY) { viewModel.setup() }
     StandingsScreen(
         uiState = uiState,
         fixturesScrollState = fixturesScrollState,
         countryScrollState = countryScrollState,
-        onRefreshClick = { viewModel.refresh() },
+        pullRefreshState = pullRefreshState,
         onCountryClick = { country, isSelected ->
             viewModel.updateSelectedCountry(country, isSelected)
         },
@@ -67,14 +75,14 @@ fun StandingsRoute(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun StandingsScreen(
     modifier: Modifier = Modifier,
     fixturesScrollState: LazyListState,
     countryScrollState: LazyListState,
     uiState: StandingsUiState,
-    onRefreshClick: () -> Unit,
+    pullRefreshState: PullRefreshState,
     onCountryClick: (Country, Boolean) -> Unit,
     onStandingsClick: (Standing) -> Unit,
     onLeagueClick: (League) -> Unit,
@@ -85,14 +93,14 @@ fun StandingsScreen(
     ) { paddingValues ->
         LoadingContent(
             modifier = modifier.padding(paddingValues),
+            pullRefreshState = pullRefreshState,
             empty = when (uiState) {
                 is StandingsUiState.HasAllData -> false
                 is StandingsUiState.HasOnlyCountries -> false
                 is StandingsUiState.NoData -> uiState.isLoading
             },
             emptyContent = { FullScreenLoading() },
-            loading = uiState.isLoading,
-            onRefresh = onRefreshClick
+            loading = uiState.isLoading
         ) {
             val scrollState = rememberScrollState()
             Column(
@@ -257,7 +265,7 @@ private fun TopBar() {
     AppTopBar(
         modifier = Modifier
             .height(48.dp)
-            .padding(vertical = 8.dp),
+            .padding(top = 8.dp),
         title = {
             Text(
                 text = stringResource(id = com.example.ui.R.string.standings),

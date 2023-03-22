@@ -1,7 +1,6 @@
 package com.example.profile.container.screen
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -75,7 +74,6 @@ fun ProfileRoute(
     )
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ProfileScreen(
@@ -86,12 +84,17 @@ private fun ProfileScreen(
 ) {
     Scaffold(
         topBar = { TopBar() }
-    ) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            contentAlignment = Alignment.Center
+        ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 48.dp)
+                    .padding(top = 8.dp)
             ) {
                 ProfileHeader(
                     context,
@@ -112,7 +115,7 @@ private fun TopBar() {
     AppTopBar(
         modifier = Modifier
             .height(48.dp)
-            .padding(vertical = 8.dp),
+            .padding(top = 8.dp),
         title = {
             Text(
                 text = stringResource(id = com.example.ui.R.string.profile),

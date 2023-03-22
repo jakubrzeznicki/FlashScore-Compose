@@ -2,7 +2,7 @@ package com.example.welcome.navigation
 
 import com.example.data.navigation.HomeBackStackType
 import com.example.data.navigation.SignInBackStackType
-import com.example.data.navigation.SignUpType
+import com.example.data.navigation.SignUpBackStackType
 import com.example.data.navigation.WelcomeBackStackType
 
 /**
@@ -12,6 +12,6 @@ interface WelcomeNavigator {
     fun openHome(homeBackStackType: HomeBackStackType)
     fun openWelcome(welcomeBackStackType: WelcomeBackStackType)
     fun openSignIn(signInBackStackType: SignInBackStackType)
-    fun openSignUp(signUpType: SignUpType)
+    fun openSignUp(signUpBackStackType: SignUpBackStackType)
     fun openOnBoarding()
 }

@@ -27,8 +27,8 @@ jobs:
       - name: Add Api Key
         run: echo "apiKey=\"\"" >> local.properties
 
-#      - name: Build Lint
-#        run: ./gradlew lint
+      - name: Build Lint
+        run: ./gradlew lint
 
       #- name: Build Ktlint
       #run: bash ./gradlew ktlintCheck

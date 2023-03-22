@@ -16,6 +16,18 @@ data class Coach(
     val birth: Birth
 ) {
     companion object {
-        val EMPTY_COACH = Coach(0, 0, "", "", "", "", 0, "", "", "", Birth.EMPTY_BIRTH)
+        val EMPTY_COACH = Coach(
+            0,
+            0,
+            "",
+            "",
+            "",
+            "",
+            0,
+            "",
+            "",
+            "",
+            Birth.EMPTY_BIRTH
+        )
     }
 }

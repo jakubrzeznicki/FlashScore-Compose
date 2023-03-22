@@ -1,6 +1,5 @@
 package com.example.teamdetails.container
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
@@ -43,7 +42,6 @@ fun TeamDetailsRoute(
     )
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeamDetailsScreen(
@@ -56,11 +54,11 @@ fun TeamDetailsScreen(
     Scaffold(
         modifier = modifier,
         topBar = { TopBar(navigator = navigator, title = team.name) }
-    ) {
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 36.dp)
+                .padding(paddingValues)
         ) {
             HeaderDetails(team.logo)
             TeamDetailsTabs(team, leagueId, season, navigator)
@@ -73,16 +71,17 @@ fun TeamDetailsScreen(
 private fun TopBar(navigator: TeamDetailsNavigator, title: String) {
     CenterAppTopBar(
         modifier = Modifier
-            .height(42.dp)
-            .padding(vertical = 8.dp),
+            .height(48.dp)
+            .padding(top = 8.dp),
         navigationIcon = {
             IconButton(
                 modifier = Modifier
                     .padding(horizontal = 12.dp)
-                    .size(24.dp),
+                    .size(32.dp),
                 onClick = { navigator.navigateUp() }
             ) {
                 Icon(
+                    modifier = Modifier.size(32.dp),
                     imageVector = Icons.Filled.ChevronLeft,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSecondary

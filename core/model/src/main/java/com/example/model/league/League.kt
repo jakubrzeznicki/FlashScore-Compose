@@ -20,6 +20,16 @@ data class League(
     val round: String
 ) : Parcelable {
     companion object {
-        val EMPTY_LEAGUE = League(0, "", "", "", "", "", "", 0, "")
+        val EMPTY_LEAGUE = League(
+            0,
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            0,
+            ""
+        )
     }
 }

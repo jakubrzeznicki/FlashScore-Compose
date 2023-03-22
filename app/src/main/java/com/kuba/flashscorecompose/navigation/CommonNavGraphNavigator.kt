@@ -59,11 +59,7 @@ class CommonNavGraphNavigator(private val navController: NavController) : Explor
 
     override fun openPlayerDetails(playerId: Int, team: Team, season: Int) {
         navController.navigate(
-            PlayerDetailsRouteDestination(
-                playerId,
-                team,
-                season
-            )
+            PlayerDetailsRouteDestination(playerId, team, season)
         )
     }
 
@@ -131,14 +127,14 @@ class CommonNavGraphNavigator(private val navController: NavController) : Explor
         }
     }
 
-    override fun openSignUp(signUpType: SignUpType) {
-        when (signUpType) {
-            SignUpType.Anonymous ->
-                navController.navigate(SignUpRouteDestination(signUpType)) {
+    override fun openSignUp(signUpBackStackType: SignUpBackStackType) {
+        when (signUpBackStackType) {
+            SignUpBackStackType.Anonymous ->
+                navController.navigate(SignUpRouteDestination(signUpBackStackType)) {
                     popUpTo(ProfileRouteDestination.route) { inclusive = true }
                 }
-            SignUpType.New ->
-                navController.navigate(SignUpRouteDestination(signUpType))
+            SignUpBackStackType.New ->
+                navController.navigate(SignUpRouteDestination(signUpBackStackType))
         }
     }
 

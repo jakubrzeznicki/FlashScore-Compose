@@ -17,6 +17,17 @@ data class Team(
     val season: Int
 ) : Parcelable {
     companion object {
-        val EMPTY_TEAM = Team(0, "", "", false, "", "", 0, false, 0, 0)
+        val EMPTY_TEAM = Team(
+            0,
+            "",
+            "",
+            false,
+            "",
+            "",
+            0,
+            false,
+            0,
+            0
+        )
     }
 }

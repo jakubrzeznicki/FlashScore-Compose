@@ -2,8 +2,8 @@ package com.kuba.flashscorecompose.di
 
 import com.example.authentication.di.authenticationModule
 import com.example.data.di.repositoryModule
-import com.example.database.storageModule
-import com.example.datastore.dataStoreModule
+import com.example.database.di.storageModule
+import com.example.datastore.di.dataStoreModule
 import com.example.explore.di.exploreViewModelModule
 import com.example.fixturedetails.di.fixtureDetailsViewModelModule
 import com.example.home.di.homeViewModelModule

@@ -149,8 +149,7 @@ class FixturesRepository(
     ): RepositoryResult<List<FixtureItem>> {
         val result = remote.loadFixturesByDate(date)
         return try {
-            val fixtureItems =
-                result.body()?.response?.map { it.toFixtureItem(season = season) }
+            val fixtureItems = result.body()?.response?.map { it.toFixtureItem(season = season) }
             saveData(fixtureItems)
             RepositoryResult.Success(fixtureItems)
         } catch (e: HttpException) {
@@ -238,16 +237,12 @@ class FixturesRepository(
         withContext(Dispatchers.IO) {
             saveFixtureItem(fixtureItems.orEmpty())
             local.saveLeagues(fixtureItems?.map { it.league.toLeagueEntity() }.orEmpty())
-            local.saveTeams(
-                fixtureItems?.map {
-                    it.homeTeam.toTeamEntity(it.league.id, it.league.season)
-                }.orEmpty()
-            )
-            local.saveTeams(
-                fixtureItems?.map {
-                    it.awayTeam.toTeamEntity(it.league.id, it.league.season)
-                }.orEmpty()
-            )
+            val homeTeams =
+                fixtureItems?.map { it.homeTeam.toTeamEntity(it.league.id, it.league.season) }
+            val awayTeams =
+                fixtureItems?.map { it.awayTeam.toTeamEntity(it.league.id, it.league.season) }
+            local.saveTeams(homeTeams.orEmpty())
+            local.saveTeams(awayTeams.orEmpty())
         }
     }
 }

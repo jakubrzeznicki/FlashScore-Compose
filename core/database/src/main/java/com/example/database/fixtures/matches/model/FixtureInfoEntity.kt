@@ -3,7 +3,6 @@ package com.example.database.fixtures.matches.model
 import androidx.room.*
 import com.example.database.teams.model.VenueEntity
 
-@SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
 @Entity(tableName = "fixture_info")
 data class FixtureInfoEntity(
     @ColumnInfo(name = "date") val date: String,

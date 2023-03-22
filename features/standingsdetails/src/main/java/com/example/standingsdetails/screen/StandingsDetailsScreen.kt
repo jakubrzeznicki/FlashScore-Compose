@@ -7,8 +7,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -50,6 +53,7 @@ import org.koin.core.parameter.parametersOf
 private const val SETUP_STANDINGS_DETAILS_KEY = "SETUP_STANDINGS_DETAILS_KEY"
 private const val HASZTAG = "#"
 
+@OptIn(ExperimentalMaterialApi::class)
 @Destination
 @Composable
 fun StandingsDetailsRoute(
@@ -58,28 +62,34 @@ fun StandingsDetailsRoute(
     viewModel: StandingsDetailsViewModel = getViewModel { parametersOf(league.id, league.season) }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = uiState.isLoading,
+        onRefresh = { viewModel.refresh() }
+    )
     LaunchedEffect(key1 = SETUP_STANDINGS_DETAILS_KEY) { viewModel.setup() }
     StandingsDetailsScreen(
         uiState = uiState,
         league = league,
         navigator = navigator,
+        pullRefreshState = pullRefreshState,
         onTeamClick = { navigator.openTeamDetails(it, league.id, league.season) },
         onLeagueClick = { navigator.openLeagueDetails(league) },
-        onRefreshClick = { viewModel.refresh() },
         onStandingsFilterClick = { viewModel.filterStandings(it as FilterChip.Standings) }
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class,
+    ExperimentalMaterialApi::class
+)
 @Composable
 private fun StandingsDetailsScreen(
     modifier: Modifier = Modifier,
     uiState: StandingsDetailsUiState,
     league: League,
     navigator: StandingsDetailsNavigator,
+    pullRefreshState: PullRefreshState,
     onTeamClick: (Team) -> Unit,
     onLeagueClick: () -> Unit,
-    onRefreshClick: () -> Unit,
     onStandingsFilterClick: (FilterChip) -> Unit
 ) {
     val scrollState = rememberLazyListState()
@@ -94,13 +104,13 @@ private fun StandingsDetailsScreen(
     ) { paddingValues ->
         LoadingContent(
             modifier = modifier.padding(paddingValues),
+            pullRefreshState = pullRefreshState,
             empty = when (uiState) {
                 is StandingsDetailsUiState.HasData -> false
                 else -> uiState.isLoading
             },
             emptyContent = { FullScreenLoading() },
-            loading = uiState.isLoading,
-            onRefresh = onRefreshClick
+            loading = uiState.isLoading
         ) {
             LazyColumn(
                 modifier = Modifier
@@ -169,17 +179,18 @@ private fun TopBar(navigator: StandingsDetailsNavigator, league: League) {
     CenterAppTopBar(
         modifier = Modifier
             .height(48.dp)
-            .padding(vertical = 8.dp),
+            .padding(top = 8.dp),
         navigationIcon = {
             IconButton(
                 modifier = Modifier
                     .padding(start = 12.dp)
-                    .size(24.dp),
+                    .size(32.dp),
                 onClick = { navigator.navigateUp() }
             ) {
                 Icon(
+                    modifier = Modifier.size(32.dp),
                     imageVector = Icons.Filled.ChevronLeft,
-                    contentDescription = "",
+                    contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSecondary
                 )
             }

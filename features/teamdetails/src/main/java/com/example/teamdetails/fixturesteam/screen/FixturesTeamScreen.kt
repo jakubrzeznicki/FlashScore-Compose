@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -35,6 +38,7 @@ import org.koin.core.parameter.parametersOf
 
 private const val SETUP_FIXTURES_TEAM_KEY = "SETUP_FIXTURES_TEAM_KEY"
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FixturesTeamScreen(
     teamId: Int,
@@ -44,36 +48,41 @@ fun FixturesTeamScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = uiState.isLoading,
+        onRefresh = { viewModel.refresh() }
+    )
     LaunchedEffect(key1 = SETUP_FIXTURES_TEAM_KEY) { viewModel.setup() }
     FixturesTeamListScreen(
         uiState = uiState,
         context = context,
+        pullRefreshState = pullRefreshState,
         onFixtureClick = { navigator.openFixtureDetails(it.fixtureItem.id) },
         onFixtureFavoriteClick = { viewModel.addFixtureToFavorite(it) },
-        onFixturesFilterClick = { viewModel.filterFixtures(it as FilterChip.Fixtures) },
-        onRefreshClick = { viewModel.refresh() }
+        onFixturesFilterClick = { viewModel.filterFixtures(it as FilterChip.Fixtures) }
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FixturesTeamListScreen(
     uiState: FixturesTeamUiState,
     context: Context,
+    pullRefreshState: PullRefreshState,
     onFixtureClick: (FixtureItemWrapper) -> Unit,
     onFixtureFavoriteClick: (FixtureItemWrapper) -> Unit,
-    onFixturesFilterClick: (FilterChip) -> Unit,
-    onRefreshClick: () -> Unit
+    onFixturesFilterClick: (FilterChip) -> Unit
 ) {
     val scrollState = rememberLazyListState()
     LoadingContent(
         modifier = Modifier.padding(),
+        pullRefreshState = pullRefreshState,
         empty = when (uiState) {
             is FixturesTeamUiState.HasData -> false
             else -> uiState.isLoading
         },
         emptyContent = { FullScreenLoading() },
-        loading = uiState.isLoading,
-        onRefresh = onRefreshClick
+        loading = uiState.isLoading
     ) {
         LazyColumn(
             modifier = Modifier

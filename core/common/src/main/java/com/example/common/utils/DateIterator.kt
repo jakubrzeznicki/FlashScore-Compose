@@ -8,9 +8,9 @@ import java.time.LocalDate
  * Created by jrzeznicki on 19/12/2022.
  */
 class DateIterator(
-    val startDate: LocalDate,
-    val endDateInclusive: LocalDate,
-    val stepDays: Long
+    startDate: LocalDate,
+    private val endDateInclusive: LocalDate,
+    private val stepDays: Long
 ) : Iterator<LocalDate> {
     private var currentDate = startDate
 

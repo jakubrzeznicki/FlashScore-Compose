@@ -9,6 +9,5 @@ import retrofit2.Response
  * Created by jrzeznicki on 9/7/2022
  */
 class CountryRemote(private val footballApi: FootballApi) : CountryRemoteDataSource {
-
     override suspend fun loadCountries(): Response<CountryDataDto> = footballApi.getCountries()
 }

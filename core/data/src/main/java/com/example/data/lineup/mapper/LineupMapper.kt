@@ -35,12 +35,10 @@ fun LineupDto.toLineup(fixtureId: Int, leagueId: Int, season: Int): Lineup {
         coach = coach?.toCoach(team?.id ?: 0) ?: Coach.EMPTY_COACH,
         formation = formation.orEmpty(),
         startXI = startXI?.map {
-            it.player?.toPlayer(team = team?.toTeam() ?: Team.EMPTY_TEAM, season = season)
-                ?: Player.EMPTY_PLAYER
+            it.player?.toPlayer(team?.toTeam() ?: Team.EMPTY_TEAM, season) ?: Player.EMPTY_PLAYER
         }.orEmpty(),
         substitutes = substitutes?.map {
-            it.player?.toPlayer(team = team?.toTeam() ?: Team.EMPTY_TEAM, season = season)
-                ?: Player.EMPTY_PLAYER
+            it.player?.toPlayer(team?.toTeam() ?: Team.EMPTY_TEAM, season) ?: Player.EMPTY_PLAYER
         }.orEmpty(),
         team = team?.toTeam(leagueIdParam = leagueId, seasonParam = season) ?: Team.EMPTY_TEAM,
         emptyMap()
