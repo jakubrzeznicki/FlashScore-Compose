@@ -6,8 +6,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,6 +47,7 @@ import org.koin.core.parameter.parametersOf
 
 private const val TEAM_INFORMATIONS_KEY = "TEAM_INFORMATIONS_KEY"
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun TeamInformationsScreen(
     team: Team,
@@ -54,14 +58,20 @@ fun TeamInformationsScreen(
     }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = uiState.isLoading,
+        onRefresh = { viewModel.refresh() }
+    )
     LaunchedEffect(key1 = TEAM_INFORMATIONS_KEY) { viewModel.setup() }
-    InformationsScreen(uiState = uiState, onRefreshClick = { viewModel.refresh() })
+    InformationsScreen(uiState = uiState, pullRefreshState = pullRefreshState)
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun InformationsScreen(uiState: TeamInformationsUiState, onRefreshClick: () -> Unit) {
+fun InformationsScreen(uiState: TeamInformationsUiState, pullRefreshState: PullRefreshState) {
     val scrollState = rememberScrollState()
     LoadingContent(
+        pullRefreshState = pullRefreshState,
         empty = when (uiState) {
             is TeamInformationsUiState.HasFullData -> false
             is TeamInformationsUiState.HasDataWithoutCoach -> false
@@ -69,8 +79,7 @@ fun InformationsScreen(uiState: TeamInformationsUiState, onRefreshClick: () -> U
             else -> uiState.isLoading
         },
         emptyContent = { FullScreenLoading() },
-        loading = uiState.isLoading,
-        onRefresh = onRefreshClick
+        loading = uiState.isLoading
     ) {
         Column(
             modifier = Modifier

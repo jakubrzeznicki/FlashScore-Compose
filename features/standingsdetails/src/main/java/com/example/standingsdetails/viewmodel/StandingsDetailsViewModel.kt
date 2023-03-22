@@ -11,6 +11,7 @@ import com.example.ui.snackbar.SnackbarManager
 import com.example.ui.snackbar.SnackbarMessageType
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import com.example.ui.R as uiR
 
 /**
  * Created by jrzeznicki on 19/01/2023.
@@ -143,9 +144,9 @@ class StandingsDetailsViewModel(
 
     private fun getColorId(rank: Int): Int {
         return when (rank) {
-            in 1..3 -> com.example.ui.R.color.darkBlue
-            in 4..5 -> com.example.ui.R.color.darkRed
-            else -> com.example.ui.R.color.black500
+            in 1..3 -> uiR.color.darkBlue
+            in 4..5 -> uiR.color.darkRed
+            else -> uiR.color.black500
         }
     }
 

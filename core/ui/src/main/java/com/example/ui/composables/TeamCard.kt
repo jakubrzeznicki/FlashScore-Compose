@@ -31,7 +31,6 @@ import com.example.ui.R
  * Created by jrzeznicki on 02/02/2023.
  */
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeamCard(
     teamWrapper: TeamWrapper,

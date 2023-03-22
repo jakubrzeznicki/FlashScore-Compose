@@ -9,9 +9,12 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -45,6 +48,7 @@ import org.koin.androidx.compose.getViewModel
 
 private const val SETUP_HOME_KEY = "SETUP_HOME_KEY"
 
+@OptIn(ExperimentalMaterialApi::class)
 @Destination
 @Composable
 fun Home(
@@ -55,10 +59,13 @@ fun Home(
     val context = LocalContext.current
     val fixturesScrollState = rememberLazyListState()
     val countryScrollState = rememberLazyListState()
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = uiState.isLoading,
+        onRefresh = { viewModel.refresh() }
+    )
     LaunchedEffect(key1 = SETUP_HOME_KEY) { viewModel.setup() }
     HomeScreen(
         uiState = uiState,
-        onRefreshClick = { viewModel.refresh() },
         onCountryClick = { country, isSelected ->
             viewModel.updateSelectedCountry(country, isSelected)
         },
@@ -70,16 +77,16 @@ fun Home(
         onNavigationsClick = { navigator.openNotifications() },
         fixturesScrollState = fixturesScrollState,
         countryScrollState = countryScrollState,
+        pullRefreshState = pullRefreshState,
         context = context
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 private fun HomeScreen(
     modifier: Modifier = Modifier,
     uiState: HomeUiState,
-    onRefreshClick: () -> Unit,
     onCountryClick: (Country, Boolean) -> Unit,
     onFixtureClick: (FixtureItemWrapper) -> Unit,
     onFavoriteFixtureClick: (FixtureItemWrapper) -> Unit,
@@ -89,6 +96,7 @@ private fun HomeScreen(
     onNavigationsClick: () -> Unit,
     fixturesScrollState: LazyListState,
     countryScrollState: LazyListState,
+    pullRefreshState: PullRefreshState,
     context: Context
 ) {
     Scaffold(
@@ -101,14 +109,14 @@ private fun HomeScreen(
     ) { paddingValues ->
         LoadingContent(
             modifier = modifier.padding(paddingValues),
+            pullRefreshState = pullRefreshState,
             empty = when (uiState) {
                 is HomeUiState.HasAllData -> false
                 is HomeUiState.HasOnlyCountries -> false
                 is HomeUiState.NoData -> uiState.isLoading
             },
             emptyContent = { FullScreenLoading() },
-            loading = uiState.isLoading,
-            onRefresh = onRefreshClick
+            loading = uiState.isLoading
         ) {
             LazyColumn(
                 Modifier
@@ -202,7 +210,7 @@ private fun TopBar(
     AppTopBar(
         modifier = Modifier
             .height(48.dp)
-            .padding(vertical = 8.dp),
+            .padding(top = 8.dp),
         title = {
             Text(
                 text = stringResource(id = com.example.ui.R.string.live_score),

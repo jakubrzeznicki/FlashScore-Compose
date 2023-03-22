@@ -116,7 +116,7 @@ class AuthenticationRepository(
 
     override suspend fun deleteAccount(): RepositoryResult<Boolean> {
         return try {
-            firebaseAuth.currentUser!!.delete().await()
+            firebaseAuth.currentUser?.delete()?.await()
             RepositoryResult.Success(true)
         } catch (e: Exception) {
             logService.logNonFatalCrash(e)
@@ -131,7 +131,9 @@ class AuthenticationRepository(
 
     override suspend fun signOut(): RepositoryResult<Boolean> {
         return try {
-            if (firebaseAuth.currentUser!!.isAnonymous) firebaseAuth.currentUser!!.delete()
+            if (firebaseAuth.currentUser?.isAnonymous == true) {
+                firebaseAuth.currentUser?.delete()?.await()
+            }
             firebaseAuth.signOut()
             RepositoryResult.Success(true)
         } catch (e: Exception) {
@@ -148,7 +150,7 @@ class AuthenticationRepository(
     override suspend fun updateName(name: String): RepositoryResult<Boolean> {
         return try {
             val request = UserProfileChangeRequest.Builder().setDisplayName(name).build()
-            firebaseAuth.currentUser!!.updateProfile(request).await()
+            firebaseAuth.currentUser?.updateProfile(request)?.await()
             RepositoryResult.Success(true)
         } catch (e: Exception) {
             logService.logNonFatalCrash(e)
@@ -182,7 +184,7 @@ class AuthenticationRepository(
 
     override suspend fun updateEmail(email: String): RepositoryResult<Boolean> {
         return try {
-            firebaseAuth.currentUser!!.updateEmail(email).await()
+            firebaseAuth.currentUser?.updateEmail(email)?.await()
             RepositoryResult.Success(true)
         } catch (e: Exception) {
             logService.logNonFatalCrash(e)
@@ -197,7 +199,7 @@ class AuthenticationRepository(
 
     override suspend fun updatePassword(password: String): RepositoryResult<Boolean> {
         return try {
-            firebaseAuth.currentUser!!.updatePassword(password).await()
+            firebaseAuth.currentUser?.updatePassword(password)?.await()
             RepositoryResult.Success(true)
         } catch (e: Exception) {
             logService.logNonFatalCrash(e)

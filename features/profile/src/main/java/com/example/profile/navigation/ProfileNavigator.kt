@@ -1,7 +1,7 @@
 package com.example.profile.navigation
 
 import com.example.data.navigation.SignInBackStackType
-import com.example.data.navigation.SignUpType
+import com.example.data.navigation.SignUpBackStackType
 import com.example.data.navigation.WelcomeBackStackType
 
 /**
@@ -9,6 +9,6 @@ import com.example.data.navigation.WelcomeBackStackType
  */
 interface ProfileNavigator {
     fun openSignIn(signInBackStackType: SignInBackStackType)
-    fun openSignUp(singUpType: SignUpType)
+    fun openSignUp(singUpBackStackType: SignUpBackStackType)
     fun openWelcome(welcomeBackStackType: WelcomeBackStackType)
 }

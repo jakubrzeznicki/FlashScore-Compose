@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
@@ -31,8 +32,7 @@ fun Tabs(
         selectedTabIndex = pagerState.currentPage,
         modifier = Modifier
             .requiredHeight(60.dp)
-            .clip(RoundedCornerShape(50))
-            .padding(1.dp),
+            .zIndex(1f),
         contentColor = MaterialTheme.colorScheme.onSecondary,
         containerColor = MaterialTheme.colorScheme.background,
         indicator = { Box {} },
@@ -60,8 +60,7 @@ fun ScrollableTabs(
         selectedTabIndex = pagerState.currentPage,
         modifier = Modifier
             .requiredHeight(60.dp)
-            .clip(RoundedCornerShape(50))
-            .padding(1.dp),
+            .zIndex(1f),
         contentColor = MaterialTheme.colorScheme.onSecondary,
         containerColor = MaterialTheme.colorScheme.background,
         edgePadding = 0.dp,

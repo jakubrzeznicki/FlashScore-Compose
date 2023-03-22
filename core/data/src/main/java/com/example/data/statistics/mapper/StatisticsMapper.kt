@@ -38,18 +38,18 @@ fun StatisticsTeamDto.toStatistics(fixtureId: Int): Statistics {
 fun StatisticDto.toStatistic(): Statistic {
     return Statistic(
         type = type.orEmpty(),
-        value = (
-                if (value != null) {
-                    when (value) {
-                        is Float -> (value as Float).toInt()
-                        is Double -> (value as Double).toInt()
-                        is Int -> (value as Int).toInt()
-                        is String -> value.toString()
-                        else -> value
-                    }
-                } else {
-                    0
-                }
-                ).toString()
+        value = value.getValue()
     )
+}
+
+private fun Any?.getValue(): String {
+    if (this == null) return "0"
+    val value = when (this) {
+        is Float -> this.toInt()
+        is Double -> this.toInt()
+        is Int -> this.toInt()
+        is String -> this.toString()
+        else -> this
+    }
+    return value.toString()
 }

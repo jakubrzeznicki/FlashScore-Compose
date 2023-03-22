@@ -14,6 +14,7 @@ import org.koin.java.KoinJavaComponent.inject
 /**
  * Created by jrzeznicki on 21/02/2023.
  */
+@Suppress("DEPRECATION")
 class AlarmReceiver : BroadcastReceiver() {
 
     private val notification by inject<FixtureNotification>(FixtureNotification::class.java)

@@ -23,7 +23,7 @@ class BootReceiver : BroadcastReceiver() {
         if (intent.action == Intent.ACTION_BOOT_COMPLETED ||
             intent.action == AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED
         ) {
-            CoroutineScope(Dispatchers.Main).launch {
+            CoroutineScope(Dispatchers.IO).launch {
                 val currentTimestamp = System.currentTimeMillis()
                 val reminders = notificationsRepository.getActiveReminders(currentTimestamp)
                 reminders.forEach { notificationData ->

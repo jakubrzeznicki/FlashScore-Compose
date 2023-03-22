@@ -23,10 +23,8 @@ class DefaultFixtureNotification(private val applicationContext: Context) : Fixt
         notificationData: NotificationData
     ) {
         notificationManager.createNotificationChannel()
-        notificationManager.createNotification(
-            getPendingIntent(notificationData.id),
-            notificationData
-        )
+        val pendingIntent = getPendingIntent(notificationData.id)
+        notificationManager.createNotification(pendingIntent, notificationData)
     }
 
     private fun getPendingIntent(id: Int): PendingIntent {
@@ -34,7 +32,7 @@ class DefaultFixtureNotification(private val applicationContext: Context) : Fixt
             Intent.ACTION_VIEW,
             "$MY_URI/$FIXTURE_ID_ARGS=$id".toUri(),
             applicationContext,
-            Class.forName("com.kuba.flashscorecompose.main.view.MainActivity")
+            Class.forName(MAIN_ACTIVITY_PATH)
         )
         return TaskStackBuilder.create(applicationContext).run {
             addNextIntentWithParentStack(intent)
@@ -59,16 +57,8 @@ class DefaultFixtureNotification(private val applicationContext: Context) : Fixt
     ) {
         val notificationBuilder =
             NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
-                .setContentTitle(
-                    "${applicationContext.getString(R.string.fixture)} " +
-                        "${notificationData.homeTeam} ${applicationContext.getString(R.string.vs)} " +
-                        notificationData.awayTeam
-                )
-                .setContentText(
-                    "${applicationContext.getString(R.string.round)} " +
-                        "${notificationData.round} \n${applicationContext.getString(R.string.start)} " +
-                        notificationData.formattedDate
-                )
+                .setContentTitle(getContentTitle(notificationData))
+                .setContentText(getContentText(notificationData))
                 .setContentIntent(pendingIntent)
                 .setSmallIcon(R.drawable.ic_explore)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -78,10 +68,23 @@ class DefaultFixtureNotification(private val applicationContext: Context) : Fixt
         notify(notificationData.id, notificationBuilder.build())
     }
 
+    private fun getContentTitle(notificationData: NotificationData): CharSequence {
+        return "${applicationContext.getString(R.string.fixture)} " +
+                "${notificationData.homeTeam} ${applicationContext.getString(R.string.vs)} " +
+                notificationData.awayTeam
+    }
+
+    private fun getContentText(notificationData: NotificationData): CharSequence {
+        return "${applicationContext.getString(R.string.round)} " +
+                "${notificationData.round} \n${applicationContext.getString(R.string.start)} " +
+                notificationData.formattedDate
+    }
+
     companion object {
         private const val NOTIFICATION_CHANNEL_ID = "FIXTURE_NOTIFICATION_CHANNEL_ID"
         private const val NOTIFICATION_CHANNEL_NAME = "FIXTURE_NOTIFICATION_CHANNEL_NAME"
         const val MY_URI = "https://flashscorecompose.com"
         const val FIXTURE_ID_ARGS = "fixtureId"
+        const val MAIN_ACTIVITY_PATH = "com.kuba.flashscorecompose.main.view.MainActivity"
     }
 }

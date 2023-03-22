@@ -38,12 +38,6 @@ class PlayersRepository(
         }
     }
 
-    override suspend fun getFavoritePlayers(ids: List<Int>): List<Player> {
-        return local.getFavoritePlayers(ids).map { playerEntity ->
-            playerEntity.toPlayer()
-        }
-    }
-
     override suspend fun savePlayers(players: List<Player>) {
         local.savePlayers(players.map { it.toPlayerEntity() })
     }
@@ -52,7 +46,7 @@ class PlayersRepository(
         val result = remote.loadPlayers(team.id, season)
         return try {
             val players = result.body()?.response?.map { playerWrapperDto ->
-                playerWrapperDto.player.toPlayer(team, season)
+                playerWrapperDto.player?.toPlayer(team, season) ?: Player.EMPTY_PLAYER
             }.orEmpty()
             withContext(Dispatchers.IO) {
                 savePlayers(players)
@@ -76,7 +70,7 @@ class PlayersRepository(
         val result = remote.loadPlayer(id, season)
         return try {
             val players = result.body()?.response?.map { playerWrapperDto ->
-                playerWrapperDto.player.toPlayer(team, season)
+                playerWrapperDto.player?.toPlayer(team, season) ?: Player.EMPTY_PLAYER
             }.orEmpty()
             withContext(Dispatchers.IO) {
                 savePlayers(players)

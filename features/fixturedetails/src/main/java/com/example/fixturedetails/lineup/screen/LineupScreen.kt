@@ -4,6 +4,9 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,6 +47,7 @@ import org.koin.core.parameter.parametersOf
  */
 private const val LINEUP_KEYS = "LINEUP_KEY"
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun LineupScreen(
     fixtureId: Int,
@@ -53,21 +57,24 @@ fun LineupScreen(
     viewModel: LineupViewModel = getViewModel { parametersOf(fixtureId, leagueId, season) }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = uiState.isLoading,
+        onRefresh = { viewModel.refresh() }
+    )
     LaunchedEffect(key1 = LINEUP_KEYS) { viewModel.setup() }
     LineupList(
         uiState = uiState,
-        onRefreshClick = { viewModel.refresh() },
-        onPlayerClick = {
-            navigator.openPlayerDetails(it.id, it.team, season)
-        },
+        pullRefreshState = pullRefreshState,
+        onPlayerClick = { navigator.openPlayerDetails(it.id, it.team, season) },
         onLineupClick = { viewModel.changeSelectedLineup(it) }
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun LineupList(
     uiState: LineupUiState,
-    onRefreshClick: () -> Unit,
+    pullRefreshState: PullRefreshState,
     onPlayerClick: (Player) -> Unit,
     onLineupClick: (Lineup) -> Unit
 ) {
@@ -77,9 +84,9 @@ private fun LineupList(
             is LineupUiState.HasData -> false
             else -> uiState.isLoading
         },
+        pullRefreshState = pullRefreshState,
         emptyContent = { FullScreenLoading() },
-        loading = uiState.isLoading,
-        onRefresh = onRefreshClick
+        loading = uiState.isLoading
     ) {
         Column(
             modifier = Modifier

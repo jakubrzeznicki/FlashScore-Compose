@@ -1,6 +1,5 @@
 package com.example.signin.singup.screen
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,7 +20,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.data.navigation.SignUpType
+import com.example.data.navigation.SignUpBackStackType
 import com.example.data.navigation.WelcomeBackStackType
 import com.example.signin.R
 import com.example.signin.navigation.SignInNavigator
@@ -40,9 +39,9 @@ import org.koin.core.parameter.parametersOf
 @Destination
 @Composable
 fun SignUpRoute(
-    signUpType: SignUpType,
+    signUpBackStackType: SignUpBackStackType,
     navigator: SignInNavigator,
-    viewModel: SignUpViewModel = getViewModel { parametersOf(signUpType) }
+    viewModel: SignUpViewModel = getViewModel { parametersOf(signUpBackStackType) }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
@@ -61,7 +60,6 @@ fun SignUpRoute(
     )
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SignUpScreen(
@@ -78,13 +76,18 @@ private fun SignUpScreen(
 ) {
     Scaffold(
         topBar = { TopBar(navigator = navigator) }
-    ) {
+    ) { paddingValues ->
         val scrollState = rememberScrollState()
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Box(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
             Column(
                 modifier = modifier
                     .fillMaxSize()
-                    .padding(top = 48.dp, start = 32.dp, end = 32.dp)
+                    .padding(top = 8.dp, start = 16.dp, end = 16.dp)
                     .verticalScroll(scrollState)
             ) {
                 EmailTextField(
@@ -180,15 +183,16 @@ private fun TopBar(navigator: SignInNavigator?) {
     CenterAppTopBar(
         modifier = Modifier
             .height(58.dp)
-            .padding(vertical = 8.dp),
+            .padding(top = 8.dp),
         navigationIcon = {
             IconButton(
                 modifier = Modifier
                     .padding(start = 12.dp)
-                    .size(24.dp),
+                    .size(32.dp),
                 onClick = { navigator?.navigateUp() }
             ) {
                 Icon(
+                    modifier = Modifier.size(32.dp),
                     imageVector = Icons.Filled.ChevronLeft,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSecondary

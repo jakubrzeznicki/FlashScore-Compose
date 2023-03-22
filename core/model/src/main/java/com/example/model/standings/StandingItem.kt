@@ -17,23 +17,4 @@ data class StandingItem(
     val team: Team,
     val update: String,
     val colorId: Int = 0
-) {
-    companion object {
-        val EMPTY_STANDING_ITEM = StandingItem(
-            InformationStanding.EMPTY_INFORMATION_STANDING,
-            InformationStanding.EMPTY_INFORMATION_STANDING,
-            InformationStanding.EMPTY_INFORMATION_STANDING,
-            InformationStanding.EMPTY_INFORMATION_STANDING,
-            "",
-            "",
-            0,
-            "",
-            0,
-            0,
-            "",
-            Team.EMPTY_TEAM,
-            "",
-            0
-        )
-    }
-}
+)

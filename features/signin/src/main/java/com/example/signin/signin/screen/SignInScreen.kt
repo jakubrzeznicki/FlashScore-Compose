@@ -1,6 +1,5 @@
 package com.example.signin.signin.screen
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -62,7 +61,6 @@ fun SignInRoute(
     )
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignInScreen(
@@ -78,13 +76,18 @@ fun SignInScreen(
 ) {
     Scaffold(
         topBar = { TopBar(navigator = navigator) }
-    ) {
+    ) { paddingValues ->
         val scrollState = rememberScrollState()
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Box(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
             Column(
                 modifier = modifier
                     .fillMaxSize()
-                    .padding(top = 48.dp, start = 32.dp, end = 32.dp)
+                    .padding(top = 8.dp, start = 16.dp, end = 16.dp)
                     .verticalScroll(scrollState)
             ) {
                 SignInTextFields(
@@ -191,16 +194,17 @@ private fun SignInButtons(
 private fun TopBar(navigator: SignInNavigator?) {
     CenterAppTopBar(
         modifier = Modifier
-            .height(58.dp)
-            .padding(vertical = 8.dp),
+            .height(48.dp)
+            .padding(top = 8.dp),
         navigationIcon = {
             IconButton(
                 modifier = Modifier
                     .padding(start = 12.dp)
-                    .size(24.dp),
+                    .size(32.dp),
                 onClick = { navigator?.navigateUp() }
             ) {
                 Icon(
+                    modifier = Modifier.size(32.dp),
                     imageVector = Icons.Filled.ChevronLeft,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSecondary

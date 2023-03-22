@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -49,6 +52,7 @@ import org.koin.androidx.compose.getViewModel
  */
 private const val SETUP_ON_BOARDING_KEY = "SETUP_ON_BOARDING_KEY"
 
+@OptIn(ExperimentalMaterialApi::class)
 @Destination
 @Composable
 fun OnBoardingRoute(
@@ -58,10 +62,14 @@ fun OnBoardingRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val teamsScrollState = rememberLazyGridState()
     val playersScrollState = rememberLazyGridState()
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = uiState.isLoading,
+        onRefresh = { viewModel.refresh() }
+    )
     LaunchedEffect(key1 = SETUP_ON_BOARDING_KEY) { viewModel.setup() }
     OnBoardingScreen(
         uiState = uiState,
-        onRefreshClick = { viewModel.refresh() },
+        pullRefreshState = pullRefreshState,
         onTeamClick = { viewModel.teamClicked(it) },
         onPlayerClick = { viewModel.playerClicked(it) },
         onClosePressed = {
@@ -79,11 +87,13 @@ fun OnBoardingRoute(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class,
+    ExperimentalMaterialApi::class
+)
 @Composable
 fun OnBoardingScreen(
     uiState: OnBoardingUiState,
-    onRefreshClick: () -> Unit,
+    pullRefreshState: PullRefreshState,
     onTeamClick: (Team) -> Unit,
     onPlayerClick: (Player) -> Unit,
     onClosePressed: () -> Unit,
@@ -104,13 +114,13 @@ fun OnBoardingScreen(
     ) { paddingValues ->
         LoadingContent(
             modifier = Modifier.padding(paddingValues),
+            pullRefreshState = pullRefreshState,
             empty = when (uiState) {
                 is OnBoardingUiState.HasAllData -> false
                 else -> uiState.isLoading
             },
             emptyContent = { FullScreenLoading() },
-            loading = uiState.isLoading,
-            onRefresh = onRefreshClick
+            loading = uiState.isLoading
         ) {
             Column(
                 modifier = Modifier

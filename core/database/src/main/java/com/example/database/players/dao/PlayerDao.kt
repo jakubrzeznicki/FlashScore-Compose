@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.database.players.model.PlayerEntity
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -13,20 +14,14 @@ import kotlinx.coroutines.flow.Flow
 interface PlayerDao {
 
     @Query("SELECT * FROM player WHERE id = :playerId")
-    fun observePlayer(playerId: Int): Flow<com.example.database.players.model.PlayerEntity?>
+    fun observePlayer(playerId: Int): Flow<PlayerEntity?>
 
     @Query("SELECT * FROM player WHERE team_id = :teamId AND season = :season")
-    fun observePlayers(teamId: Int, season: Int): Flow<List<com.example.database.players.model.PlayerEntity>>
+    fun observePlayers(teamId: Int, season: Int): Flow<List<PlayerEntity>>
 
     @Query("SELECT * FROM player")
-    fun observePlayers(): Flow<List<com.example.database.players.model.PlayerEntity>>
-
-    @Query("SELECT * FROM player WHERE id IN(:ids)")
-    suspend fun getFavoritePlayers(ids: List<Int>): List<com.example.database.players.model.PlayerEntity>
+    fun observePlayers(): Flow<List<PlayerEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun savePlayers(players: List<com.example.database.players.model.PlayerEntity>)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun deletePlayers(players: List<com.example.database.players.model.PlayerEntity>)
+    suspend fun savePlayers(players: List<PlayerEntity>)
 }

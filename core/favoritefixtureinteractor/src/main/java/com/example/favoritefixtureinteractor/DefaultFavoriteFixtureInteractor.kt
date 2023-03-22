@@ -30,18 +30,18 @@ class DefaultFavoriteFixtureInteractor(
     }
 
     private suspend fun setReminder(fixtureItem: FixtureItem) {
-        val notificationData = fixtureItem.getNotificationData()
+        val notificationData = fixtureItem.toNotificationData()
         reminderManager.startReminder(notificationData)
         notificationsRepository.saveReminder(notificationData)
     }
 
     private suspend fun cancelReminder(fixtureItem: FixtureItem) {
-        val notificationData = fixtureItem.getNotificationData()
+        val notificationData = fixtureItem.toNotificationData()
         reminderManager.cancelReminder(notificationData)
         notificationsRepository.deleteReminder(notificationData.id)
     }
 
-    private fun FixtureItem.getNotificationData(): NotificationData {
+    private fun FixtureItem.toNotificationData(): NotificationData {
         return NotificationData(
             id = id,
             round = round,

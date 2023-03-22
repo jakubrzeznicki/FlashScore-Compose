@@ -1,13 +1,15 @@
 package com.example.playerdetails.screen
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -34,6 +36,7 @@ import org.koin.core.parameter.parametersOf
  */
 private const val SETUP_PLAYER_DETAILS_KEY = "SETUP_PLAYER_DETAILS_KEY"
 
+@OptIn(ExperimentalMaterialApi::class)
 @Destination
 @Composable
 fun PlayerDetailsRoute(
@@ -44,23 +47,26 @@ fun PlayerDetailsRoute(
     viewModel: PlayerDetailsViewModel = getViewModel { parametersOf(playerId, team, season) }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = uiState.isLoading,
+        onRefresh = { viewModel.refresh() }
+    )
     LaunchedEffect(key1 = SETUP_PLAYER_DETAILS_KEY) { viewModel.setup() }
     PlayerDetailsScreen(
         uiState = uiState,
         team = team,
         navigator = navigator,
-        onRefreshClick = { viewModel.refresh() }
+        pullRefreshState = pullRefreshState,
     )
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun PlayerDetailsScreen(
     uiState: PlayerDetailsUiState,
     team: Team,
     navigator: PlayerDetailsNavigator,
-    onRefreshClick: () -> Unit
+    pullRefreshState: PullRefreshState,
 ) {
     Scaffold(
         topBar = {
@@ -72,21 +78,22 @@ fun PlayerDetailsScreen(
                 }
             )
         }
-    ) {
+    ) { paddingValues ->
         val scrollState = rememberScrollState()
         LoadingContent(
-            modifier = Modifier.padding(top = 36.dp, start = 16.dp, end = 16.dp),
+            modifier = Modifier.padding(paddingValues),
             empty = when (uiState) {
                 is PlayerDetailsUiState.HasData -> false
                 else -> uiState.isLoading
             },
             emptyContent = { FullScreenLoading() },
             loading = uiState.isLoading,
-            onRefresh = onRefreshClick
+            pullRefreshState = pullRefreshState
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
                     .verticalScroll(scrollState)
             ) {
                 when (uiState) {
@@ -127,16 +134,17 @@ fun PlayerDetailsScreen(
 private fun TopBar(navigator: PlayerDetailsNavigator, title: String) {
     CenterAppTopBar(
         modifier = Modifier
-            .height(42.dp)
-            .padding(vertical = 8.dp),
+            .height(48.dp)
+            .padding(top = 8.dp),
         navigationIcon = {
             IconButton(
                 modifier = Modifier
                     .padding(horizontal = 12.dp)
-                    .size(24.dp),
+                    .size(32.dp),
                 onClick = { navigator.navigateUp() }
             ) {
                 Icon(
+                    modifier = Modifier.size(32.dp),
                     imageVector = Icons.Filled.ChevronLeft,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSecondary

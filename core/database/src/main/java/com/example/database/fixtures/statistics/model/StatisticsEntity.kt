@@ -6,7 +6,6 @@ import com.example.database.teams.model.TeamEntity
 /**
  * Created by jrzeznicki on 04/01/2023.
  */
-@SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
 @Entity(tableName = "statistics", primaryKeys = ["primary_team_id", "fixture_id"])
 data class StatisticsEntity(
     @ColumnInfo(name = "primary_team_id") val teamId: Int,

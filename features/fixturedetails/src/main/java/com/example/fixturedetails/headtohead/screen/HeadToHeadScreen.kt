@@ -7,6 +7,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -43,6 +46,7 @@ import com.example.ui.composables.FullScreenLoading
 import com.example.ui.composables.LoadingContent
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
+import com.example.ui.R as uiR
 
 
 /**
@@ -50,6 +54,7 @@ import org.koin.core.parameter.parametersOf
  */
 private const val HEAD_TO_HEAD = "HEAD_TO_HEAD"
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HeadToHeadScreen(
     homeTeam: Team,
@@ -59,24 +64,29 @@ fun HeadToHeadScreen(
     viewModel: HeadToHeadViewModel = getViewModel { parametersOf(homeTeam.id, awayTeam.id, season) }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = uiState.isLoading,
+        onRefresh = { viewModel.refresh() }
+    )
     LaunchedEffect(key1 = HEAD_TO_HEAD) { viewModel.setup() }
     HeadToHeadList(
         homeTeam,
         awayTeam,
         uiState = uiState,
-        onRefreshClick = { viewModel.refresh() },
+        pullRefreshState = pullRefreshState,
         onFixtureClick = {
             navigator.openFixtureDetails(it.id)
         }
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HeadToHeadList(
     homeTeam: Team,
     awayTeam: Team,
     uiState: HeadToHeadUiState,
-    onRefreshClick: () -> Unit,
+    pullRefreshState: PullRefreshState,
     onFixtureClick: (FixtureItem) -> Unit
 ) {
     val scrollState = rememberLazyListState()
@@ -85,9 +95,9 @@ fun HeadToHeadList(
             is HeadToHeadUiState.HasData -> false
             else -> uiState.isLoading
         },
+        pullRefreshState = pullRefreshState,
         emptyContent = { FullScreenLoading() },
-        loading = uiState.isLoading,
-        onRefresh = onRefreshClick
+        loading = uiState.isLoading
     ) {
         LazyColumn(
             modifier = Modifier
@@ -228,7 +238,7 @@ private fun TeamInfo(teamLogo: String, teamName: String, fontWeight: FontWeight)
                 .size(Size.ORIGINAL)
                 .crossfade(true)
                 .build(),
-            placeholder = painterResource(id = com.example.ui.R.drawable.ic_close),
+            placeholder = painterResource(id = uiR.drawable.ic_close),
             contentDescription = null,
             contentScale = ContentScale.Fit
         )

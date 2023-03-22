@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.data.navigation.SignInBackStackType
-import com.example.data.navigation.SignUpType
+import com.example.data.navigation.SignUpBackStackType
 import com.example.data.navigation.WelcomeBackStackType
 import com.example.profile.R
 import com.example.profile.navigation.ProfileNavigator
@@ -70,7 +70,7 @@ fun ProfileSettingsScreen(
         toggleRepeatPasswordVisibility = { viewModel.toggleRepeatPasswordVisibility() },
         onPasswordClick = { viewModel.onPasswordClick() },
         onSignInClick = { navigator.openSignIn(SignInBackStackType.Profile) },
-        onSignUpClick = { navigator.openSignUp(SignUpType.Anonymous) },
+        onSignUpClick = { navigator.openSignUp(SignUpBackStackType.Anonymous) },
         onDeleteAccountClick = {
             viewModel.onDeleteAccountClick { navigator.openWelcome(WelcomeBackStackType.Profile) }
         },

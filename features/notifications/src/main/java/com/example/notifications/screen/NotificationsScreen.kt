@@ -1,6 +1,5 @@
 package com.example.notifications.screen
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
@@ -54,7 +53,6 @@ fun NotificationsRoute(
     )
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationsScreen(
@@ -67,11 +65,12 @@ fun NotificationsScreen(
     val scrollState = rememberLazyListState()
     Scaffold(
         topBar = { TopBar(navigator = navigator) }
-    ) {
+    ) { paddingValues ->
         LazyColumn(
             modifier = modifier
+                .padding(paddingValues)
                 .fillMaxSize()
-                .padding(start = 16.dp, end = 16.dp, top = 48.dp),
+                .padding(start = 16.dp, end = 16.dp, top = 8.dp),
             state = scrollState
         ) {
             when (uiState) {
@@ -119,17 +118,18 @@ private fun TopBar(navigator: NotificationsNavigator) {
     CenterAppTopBar(
         modifier = Modifier
             .height(48.dp)
-            .padding(vertical = 8.dp),
+            .padding(top = 8.dp),
         navigationIcon = {
             IconButton(
                 modifier = Modifier
                     .padding(start = 12.dp)
-                    .size(24.dp),
+                    .size(32.dp),
                 onClick = { navigator.navigateUp() }
             ) {
                 Icon(
+                    modifier = Modifier.size(32.dp),
                     imageVector = Icons.Filled.ChevronLeft,
-                    contentDescription = "",
+                    contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSecondary
                 )
             }

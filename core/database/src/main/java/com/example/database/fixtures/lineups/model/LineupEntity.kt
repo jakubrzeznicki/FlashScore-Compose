@@ -1,6 +1,8 @@
 package com.example.database.fixtures.lineups.model
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Embedded
+import androidx.room.Entity
 import com.example.database.players.model.PlayerEntity
 import com.example.database.teams.model.CoachEntity
 import com.example.database.teams.model.TeamEntity
@@ -8,7 +10,6 @@ import com.example.database.teams.model.TeamEntity
 /**
  * Created by jrzeznicki on 04/01/2023.
  */
-@SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
 @Entity(tableName = "lineup", primaryKeys = ["primary_team_id", "fixture_id"])
 data class LineupEntity(
     @ColumnInfo(name = "primary_team_id") val teamId: Int,

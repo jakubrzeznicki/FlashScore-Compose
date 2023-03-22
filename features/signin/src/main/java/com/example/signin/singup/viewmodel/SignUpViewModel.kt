@@ -7,7 +7,7 @@ import com.example.common.utils.RepositoryResult
 import com.example.common.utils.isValidEmail
 import com.example.common.utils.isValidPassword
 import com.example.common.utils.passwordMatches
-import com.example.data.navigation.SignUpType
+import com.example.data.navigation.SignUpBackStackType
 import com.example.signin.R
 import com.example.signin.singup.model.SignUpError
 import com.example.ui.snackbar.SnackbarManager
@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
  * Created by jrzeznicki on 05/02/2023.
  */
 class SignUpViewModel(
-    private val signUpType: SignUpType,
+    private val signUpBackStackType: SignUpBackStackType,
     private val authenticationRepository: AuthenticationDataSource,
     private val snackbarManager: SnackbarManager
 ) : ViewModel() {
@@ -100,10 +100,10 @@ class SignUpViewModel(
                 return@launch
             }
             viewModelState.update {
-                val result = when (signUpType) {
-                    SignUpType.New ->
+                val result = when (signUpBackStackType) {
+                    SignUpBackStackType.New ->
                         authenticationRepository.signUpWithEmailAndPassword(email, password)
-                    SignUpType.Anonymous ->
+                    SignUpBackStackType.Anonymous ->
                         authenticationRepository.linkAccount(email, password)
                 }
                 when (result) {

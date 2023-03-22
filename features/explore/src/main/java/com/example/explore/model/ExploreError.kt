@@ -7,6 +7,5 @@ import com.example.common.utils.ResponseStatus
  */
 sealed class ExploreError {
     object NoError : ExploreError()
-    object EmptyTeam : ExploreError()
     data class RemoteError(val responseStatus: ResponseStatus) : ExploreError()
 }

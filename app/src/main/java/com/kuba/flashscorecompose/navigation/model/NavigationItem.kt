@@ -12,6 +12,7 @@ import com.example.home.screen.destinations.HomeDestination
 import com.example.profile.container.screen.destinations.ProfileRouteDestination
 import com.example.standings.screen.destinations.StandingsRouteDestination
 import com.ramcosta.composedestinations.spec.DirectionDestinationSpec
+import com.example.ui.R as uiR
 
 /**
  * Created by jrzeznicki on 23/12/2022.
@@ -22,23 +23,14 @@ sealed class NavigationItem(
     @StringRes val label: Int
 ) {
     object Home :
-        NavigationItem(HomeDestination, Icons.Filled.Home, com.example.ui.R.string.home)
+        NavigationItem(HomeDestination, Icons.Filled.Home, uiR.string.home)
 
-    object Explore : NavigationItem(
-            ExploreRouteDestination,
-            Icons.Filled.TravelExplore,
-            com.example.ui.R.string.explore
-        )
+    object Explore :
+        NavigationItem(ExploreRouteDestination, Icons.Filled.TravelExplore, uiR.string.explore)
 
-    object Standings : NavigationItem(
-        StandingsRouteDestination,
-        Icons.Filled.Leaderboard,
-        com.example.ui.R.string.standings
-    )
+    object Standings :
+        NavigationItem(StandingsRouteDestination, Icons.Filled.Leaderboard, uiR.string.standings)
 
-    object Profile : NavigationItem(
-        ProfileRouteDestination,
-        Icons.Filled.Person,
-        com.example.ui.R.string.profile
-    )
+    object Profile :
+        NavigationItem(ProfileRouteDestination, Icons.Filled.Person, uiR.string.profile)
 }

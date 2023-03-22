@@ -16,6 +16,8 @@ import java.time.LocalDateTime
 /**
  * Created by jrzeznicki on 03/01/2023.
  */
+private const val EMPTY = ""
+
 fun PeriodsDto.toPeriods(): Periods {
     return Periods(first = first ?: 0, second = second ?: 0)
 }
@@ -38,20 +40,15 @@ fun GoalsDto.toGoals(): Goals {
 }
 
 fun FixtureInfoDto.toFixtureInfo(teamId: Int?): FixtureInfo {
-    val dateTime = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        timestamp?.formatTimestampToLocalDateTime() ?: LocalDateTime.now()
+    val (dateTime, formattedDate, shortDate) = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val tempDateTime = timestamp?.formatTimestampToLocalDateTime() ?: LocalDateTime.now()
+        Triple(
+            tempDateTime,
+            tempDateTime.format(FixtureInfo.FORMATTED_DATE_PATTERN),
+            tempDateTime.format(FixtureInfo.SHORT_DATE_PATTERN)
+        )
     } else {
-        LocalDateTime.now()
-    }
-    val formattedDate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        dateTime.format(FixtureInfo.FORMATTED_DATE_PATTERN)
-    } else {
-        ""
-    }
-    val shortDate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        dateTime.format(FixtureInfo.SHORT_DATE_PATTERN)
-    } else {
-        ""
+        Triple(LocalDateTime.now(), EMPTY, EMPTY)
     }
     return FixtureInfo(
         id = id ?: 0,
@@ -65,7 +62,8 @@ fun FixtureInfoDto.toFixtureInfo(teamId: Int?): FixtureInfo {
         timezone = timezone.orEmpty(),
         venue = venue?.toVenue(teamId) ?: Venue.EMPTY_VENUE,
         periods = periods?.toPeriods() ?: Periods.EMPTY_PERIODS,
-        isLive = isLive(periods?.toPeriods() ?: Periods.EMPTY_PERIODS) && !isNotStarted(status?.short.orEmpty()),
+        isLive = isLive(periods?.toPeriods() ?: Periods.EMPTY_PERIODS) &&
+                !isNotStarted(status?.short.orEmpty()),
         isStarted = !isNotStarted(status?.short.orEmpty())
     )
 }
@@ -99,7 +97,7 @@ fun FixtureDto.toFixtureItem(
 
 private fun isNotStarted(shortStatus: String): Boolean {
     return shortStatus == FixtureStatus.NS.status || shortStatus == FixtureStatus.PST.status ||
-        shortStatus == FixtureStatus.SUSP.status || shortStatus == FixtureStatus.TBD.status
+            shortStatus == FixtureStatus.SUSP.status || shortStatus == FixtureStatus.TBD.status
 }
 
 private fun isLive(periods: Periods): Boolean {

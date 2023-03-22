@@ -57,9 +57,8 @@ object NavGraphs {
         override val startRoute = HomeDestination
     }
     val onBoarding = object : NavGraphSpec {
-        override val destinationsByRoute = listOf<DestinationSpec<*>>(
-            OnBoardingRouteDestination
-        ).associateBy { it.route }
+        override val destinationsByRoute =
+            listOf<DestinationSpec<*>>(OnBoardingRouteDestination).associateBy { it.route }
         override val route: String = ON_BOARDING
         override val startRoute = OnBoardingRouteDestination
     }
@@ -94,9 +93,8 @@ object NavGraphs {
         override val startRoute = WelcomeRouteDestination
     }
     val root = object : NavGraphSpec {
-        override val destinationsByRoute = listOf<DestinationSpec<*>>(
-            SplashScreenDestination
-        ).associateBy { it.route }
+        override val destinationsByRoute =
+            listOf<DestinationSpec<*>>(SplashScreenDestination).associateBy { it.route }
         override val route: String = ROOT
         override val startRoute = SplashScreenDestination
         override val nestedNavGraphs = listOf(

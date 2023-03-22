@@ -121,18 +121,15 @@ class TeamRepository(
         val result = remote.loadTeamsByCountry(countryName)
         return try {
             val teamResponseData = result.body()?.response
-            val teamWIthVenues = teamResponseData?.map {
+            val teamWithVenues = teamResponseData?.map {
                 TeamWithVenue(
-                    team = it.team.toTeam(),
-                    venue = it.venue.toVenue(it.team.id)
+                    team = it.team?.toTeam() ?: Team.EMPTY_TEAM,
+                    venue = it.venue?.toVenue(it.team?.id) ?: Venue.EMPTY_VENUE
                 )
             }
-            teamWIthVenues?.map {
-                it.team.country
-            }
-            saveTeams(teamWIthVenues?.map { it.team }.orEmpty())
-            saveVenues(teamWIthVenues?.map { it.venue }.orEmpty())
-            RepositoryResult.Success(teamWIthVenues)
+            saveTeams(teamWithVenues?.map { it.team }.orEmpty())
+            saveVenues(teamWithVenues?.map { it.venue }.orEmpty())
+            RepositoryResult.Success(teamWithVenues)
         } catch (e: HttpException) {
             RepositoryResult.Error(
                 ResponseStatus().apply {

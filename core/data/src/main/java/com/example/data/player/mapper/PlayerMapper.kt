@@ -64,28 +64,6 @@ fun PlayerDto.toPlayer(team: Team, season: Int): Player {
     )
 }
 
-fun PlayerDto.toPlayer(): Player {
-    return Player(
-        grid = grid.orEmpty(),
-        team = Team.EMPTY_TEAM,
-        season = 2022,
-        id = id ?: 0,
-        name = name.orEmpty(),
-        number = number ?: 0,
-        pos = pos.orEmpty(),
-        firstname = firstname.orEmpty(),
-        lastname = lastname.orEmpty(),
-        age = age ?: 0,
-        position = position.orEmpty(),
-        birth = birth?.toBirth() ?: Birth.EMPTY_BIRTH,
-        nationality = nationality.orEmpty(),
-        height = height.orEmpty(),
-        weight = weight.orEmpty(),
-        injured = injured ?: false,
-        photo = photo.orEmpty()
-    )
-}
-
 fun BirthDto.toBirth(): Birth {
     return Birth(date = date.orEmpty(), place = place.orEmpty(), country = country.orEmpty())
 }

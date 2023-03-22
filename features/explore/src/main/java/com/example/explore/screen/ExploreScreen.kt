@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -43,6 +46,7 @@ import org.koin.androidx.compose.getViewModel
 
 private const val SETUP_EXPLORE_KEY = "SETUP_EXPLORE_KEY"
 
+@OptIn(ExperimentalMaterialApi::class)
 @Destination
 @Composable
 fun ExploreRoute(
@@ -51,14 +55,16 @@ fun ExploreRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = uiState.isLoading,
+        onRefresh = { viewModel.refresh() }
+    )
     LaunchedEffect(key1 = SETUP_EXPLORE_KEY) { viewModel.setup() }
     ExploreScreen(
         uiState = uiState,
         context = context,
-        onRefreshClick = { viewModel.refresh() },
-        onFixtureClick = {
-            navigator.openFixtureDetails(it.fixtureItem.id)
-        },
+        pullRefreshState = pullRefreshState,
+        onFixtureClick = { navigator.openFixtureDetails(it.fixtureItem.id) },
         onFixtureFavoriteClick = { viewModel.addFixtureToFavorite(it) },
         onTeamClick = {
             navigator.openTeamDetails(it.team, it.team.leagueId, it.team.season)
@@ -68,21 +74,19 @@ fun ExploreRoute(
             navigator.openPlayerDetails(it.player.id, it.player.team, it.player.season)
         },
         onPlayerFavoriteClick = { viewModel.addPlayerToFavorite(it) },
-        onLeagueClick = {
-            navigator.openLeagueDetails(it)
-        },
+        onLeagueClick = { navigator.openLeagueDetails(it) },
         onExploreQueryChanged = { viewModel.updateExploreQuery(it) },
         onExploreChipClick = { viewModel.changeExploreView(it as FilterChip.Explore) }
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun ExploreScreen(
     modifier: Modifier = Modifier,
     uiState: ExploreUiState,
     context: Context,
-    onRefreshClick: () -> Unit,
+    pullRefreshState: PullRefreshState,
     onFixtureClick: (FixtureItemWrapper) -> Unit,
     onFixtureFavoriteClick: (FixtureItemWrapper) -> Unit,
     onTeamClick: (TeamWrapper) -> Unit,
@@ -96,6 +100,7 @@ fun ExploreScreen(
     Scaffold(topBar = { TopBar() }) { paddingValues ->
         LoadingContent(
             modifier = modifier.padding(paddingValues),
+            pullRefreshState = pullRefreshState,
             empty = when (uiState) {
                 is ExploreUiState.Fixtures.NoData -> uiState.isLoading
                 is ExploreUiState.Teams.NoData -> uiState.isLoading
@@ -106,8 +111,7 @@ fun ExploreScreen(
                 else -> false
             },
             emptyContent = { FullScreenLoading() },
-            loading = uiState.isLoading,
-            onRefresh = onRefreshClick
+            loading = uiState.isLoading
         ) {
             val scrollEmptyStateState = rememberScrollState()
             val fixturesLazyListState = rememberLazyListState()
@@ -378,7 +382,7 @@ private fun TopBar() {
     AppTopBar(
         modifier = Modifier
             .height(48.dp)
-            .padding(vertical = 8.dp),
+            .padding(top = 8.dp),
         title = {
             Text(
                 text = stringResource(id = com.example.ui.R.string.explore),

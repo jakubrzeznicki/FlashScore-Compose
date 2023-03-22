@@ -32,12 +32,7 @@ class UserPreferencesLocal(
         val updateUserPreferencesEntity = userPreferencesEntity?.copy(
             favoriteTeamIds = teamIds
         )
-        roomStorage.getDatabase().userPreferencesDao()
-            .getUserPreferences(userPreferencesEntity?.userId.orEmpty())
-        updateUserPreferencesEntity?.let {
-            roomStorage.getDatabase().userPreferencesDao()
-                .saveUserPreferences(it)
-        }
+        updateUserPreferencesEntity?.saveData()
     }
 
     override suspend fun saveFavoritePlayerIds(playerIds: List<Int>) {
@@ -45,10 +40,7 @@ class UserPreferencesLocal(
         val updateUserPreferencesEntity = userPreferencesEntity?.copy(
             favoritePlayerIds = playerIds
         )
-        updateUserPreferencesEntity?.let {
-            roomStorage.getDatabase().userPreferencesDao()
-                .saveUserPreferences(it)
-        }
+        updateUserPreferencesEntity?.saveData()
     }
 
     override suspend fun saveFavoriteFixtureIds(fixtureIds: List<Int>) {
@@ -56,7 +48,11 @@ class UserPreferencesLocal(
         val updateUserPreferencesEntity = userPreferencesEntity?.copy(
             favoriteFixtureIds = fixtureIds
         )
-        updateUserPreferencesEntity?.let {
+        updateUserPreferencesEntity?.saveData()
+    }
+
+    private suspend fun UserPreferencesEntity?.saveData() {
+        this?.let {
             roomStorage.getDatabase().userPreferencesDao()
                 .saveUserPreferences(it)
         }

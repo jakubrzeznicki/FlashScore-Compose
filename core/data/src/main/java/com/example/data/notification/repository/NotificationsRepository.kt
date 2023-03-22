@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.map
  */
 class NotificationsRepository(private val local: NotificationsLocalDataSource) :
     NotificationsDataSource {
+
     override suspend fun saveReminder(notificationData: NotificationData) {
         local.saveReminder(notificationData.toNotificationDataEntity())
     }
@@ -25,7 +26,8 @@ class NotificationsRepository(private val local: NotificationsLocalDataSource) :
     }
 
     override fun observeActiveReminders(timestamp: Long): Flow<List<NotificationData>> {
-        return local.observeActiveReminders(timestamp)
-            .map { it.map { notificationDataEntity -> notificationDataEntity.toNotificationData() } }
+        return local.observeActiveReminders(timestamp).map {
+            it.map { notificationDataEntity -> notificationDataEntity.toNotificationData() }
+        }
     }
 }

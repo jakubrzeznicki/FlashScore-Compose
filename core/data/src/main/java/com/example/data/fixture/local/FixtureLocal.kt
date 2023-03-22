@@ -59,7 +59,7 @@ class FixtureLocal(private val roomStorage: RoomStorage) : FixtureLocalDataSourc
     }
 
     override suspend fun saveVenues(venues: List<VenueEntity>) {
-        roomStorage.getDatabase().venueDao().saveVenue(venues)
+        roomStorage.getDatabase().venueDao().saveVenues(venues)
     }
 
     override suspend fun saveLeagues(leagues: List<LeagueEntity>) {
