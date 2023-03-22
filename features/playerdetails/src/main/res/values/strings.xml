@@ -1,0 +1,5 @@
+<resources>
+    <string name="no_player_details">There are no player details</string>
+    <string name="details">Details</string>
+    <string name="injured">Injured?</string>
+</resources>

@@ -1,0 +1,29 @@
+plugins {
+    id "com.android.library"
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+}
+
+android {
+    namespace = "com.example.database"
+}
+
+apply {
+    from("$rootDir/base_module.gradle")
+}
+
+dependencies {
+    implementation project(":core:model")
+
+    //Room
+    api libs.room
+    kapt libs.room.compiler
+    implementation libs.room.ktx
+
+    // Koin
+    implementation libs.koin.core
+    implementation libs.koin.android
+
+    //Gson
+    implementation libs.retrofit.converter.gson
+}

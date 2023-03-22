@@ -1,0 +1,69 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.devtools.ksp' version '1.8.0-1.0.9'
+}
+
+android {
+    namespace = "com.example.standings"
+}
+
+apply {
+    from("$rootDir/compose_module.gradle")
+}
+
+ksp {
+    arg("compose-destinations.mode", "destinations")
+    arg("compose-destinations.moduleName", "standings")
+}
+
+dependencies {
+    implementation project(":core:model")
+    implementation project(":core:common")
+    implementation project(":core:data")
+    implementation project(":core:ui")
+
+    // Koin
+    implementation libs.koin.core
+    implementation libs.koin.android
+    implementation libs.koin.compose
+
+    // Coil
+    implementation libs.coil.compose
+    implementation libs.coil.svg
+
+    // Lifecycle
+    implementation libs.lifecycle.runtime.compose
+    implementation libs.lifecycle.extensions
+    implementation libs.lifecycle.livedata
+    implementation libs.lifecycle.viewmodel
+    implementation libs.lifecycle.common.java8
+
+    // Navigation Compose
+    implementation libs.navigation.animations
+    ksp libs.navigation.ksp
+
+    // Compose
+    implementation libs.compose.material3
+    implementation libs.compose.material3.window.size
+    implementation libs.compose.tooling.preview
+    implementation libs.compose.ui
+    implementation libs.compose.ui.tooling
+    implementation libs.compose.foundation
+    implementation libs.compose.animation
+    implementation libs.compose.activity
+    implementation libs.compose.viewmodel
+    implementation libs.compose.material.icons
+    implementation libs.compose.runtime
+
+    // Accompanist
+    implementation libs.accompanist.swipe.refresh
+    implementation libs.accompanist.permissions
+    implementation libs.accompanist.pager
+    implementation libs.accompanist.pager.indicators
+    implementation libs.accompanist.system.ui.controller
+    implementation libs.accompanist.flow.layout
+    implementation libs.accompanist.insets
+    implementation libs.accompanist.navigation.animation
+    implementation libs.accompanist.navigation.material
+}

@@ -4,22 +4,8 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
-    id 'com.google.devtools.ksp' version '1.8.0-1.0.9'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
-//    id 'org.jlleitschuh.gradle.ktlint' version '11.3.1'
-//    id "io.gitlab.arturbosch.detekt" version "1.22.0"
-}
-
-kotlin {
-    sourceSets {
-        debug {
-            kotlin.srcDir("build/generated/ksp/debug/kotlin")
-        }
-        release {
-            kotlin.srcDir("build/generated/ksp/release/kotlin")
-        }
-    }
 }
 
 android {
@@ -36,10 +22,6 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
-
-        Properties properties = new Properties()
-        properties.load(project.rootProject.file("local.properties").newDataInputStream())
-        buildConfigField "String", "API_KEY", "\"${properties.getProperty("API_KEY")}\""
     }
     buildTypes {
         debug {
@@ -61,13 +43,13 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = libs.versions.jvn.target.get()
     }
     buildFeatures {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.4.1'
+        kotlinCompilerExtensionVersion libs.versions.compose.compiler.get()
     }
     packagingOptions {
         resources {
@@ -81,104 +63,126 @@ android {
             }
         }
     }
+    defaultConfig {
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file("local.properties").newDataInputStream())
+        buildConfigField "String", "APP_CENTER_KEY", "\"${properties.getProperty("APP_CENTER_KEY")}\""
+    }
     namespace 'com.kuba.flashscorecompose'
 }
 
 dependencies {
-    //DataStore
-    implementation 'androidx.datastore:datastore-preferences:1.0.0'
+    implementation project(":core:model")
+    implementation project(":core:common")
+    implementation project(":core:data")
+    implementation project(":core:database")
+    implementation project(":core:datastore")
+    implementation project(":core:ui")
+    implementation project(":core:network")
+    implementation project(":core:notificationservice")
+    implementation project(":core:authentication")
+    implementation project(":core:favoritefixtureinteractor")
+    implementation project(":features:onboarding")
+    implementation project(":features:home")
+    implementation project(":features:standings")
+    implementation project(":features:standingsdetails")
+    implementation project(":features:explore")
+    implementation project(":features:signin")
+    implementation project(":features:welcome")
+    implementation project(":features:profile")
+    implementation project(":features:fixturedetails")
+    implementation project(":features:teamdetails")
+    implementation project(":features:playerdetails")
+    implementation project(":features:leaguedetails")
+    implementation project(":features:notifications")
 
-    // Kotlin Coroutines
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1'
+    // AndroidX
+    implementation libs.android.core.ktx
+    implementation libs.android.app.compat
+    implementation libs.material
+    implementation libs.datastore
+    coreLibraryDesugaring libs.desugar
 
-    // Kotlin extensions
-    implementation 'androidx.core:core-ktx:1.9.0'
+    // Coroutines
+    implementation libs.kotlin.coroutines.core
+    implementation libs.kotlin.coroutines
 
-    // AppCompat
-    implementation 'androidx.appcompat:appcompat:1.6.0'
+    // Coil
+    implementation libs.coil.compose
+    implementation libs.coil.svg
 
-    //Coil
-    implementation "io.coil-kt:coil-compose:2.2.2"
-    implementation "io.coil-kt:coil-svg:2.2.2"
+    // Lifecycle
+    implementation libs.lifecycle.runtime.compose
+    implementation libs.lifecycle.extensions
+    implementation libs.lifecycle.livedata
+    implementation libs.lifecycle.viewmodel
+    implementation libs.lifecycle.common.java8
 
-    // ViewModel and LiveData
-    def lifecycleVersion = '2.5.0'
-    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
+    // Navigation Compose
+    implementation libs.navigation.animations
 
-    //noinspection GradleDependency
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
-    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
-    implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.0-alpha05"
-
-    //Navigation Compose
-    implementation 'io.github.raamcosta.compose-destinations:core:1.5.22-beta'
-    implementation 'io.github.raamcosta.compose-destinations:animations-core:1.5.22-beta'
-    ksp 'io.github.raamcosta.compose-destinations:ksp:1.5.22-beta'
-
-    //Compose
-    //material3
-    implementation "androidx.compose.material3:material3:1.1.0-alpha05"
-    implementation "androidx.compose.material3:material3-window-size-class:1.0.1"
-    implementation 'androidx.compose.ui:ui-tooling-preview:1.3.3'
-    implementation 'androidx.compose.ui:ui-tooling:1.3.3'
-    implementation 'androidx.activity:activity-compose:1.6.1'
-    implementation "androidx.compose.animation:animation:1.3.3"
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1'
-    implementation "androidx.compose.material:material-icons-extended:1.3.1"
-    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.3.3'
+    // Compose
+    implementation libs.compose.material3
+    implementation libs.compose.material3.window.size
+    implementation libs.compose.tooling.preview
+    implementation libs.compose.ui
+    implementation libs.compose.ui.tooling
+    implementation libs.compose.foundation
+    implementation libs.compose.animation
+    implementation libs.compose.activity
+    implementation libs.compose.viewmodel
+    implementation libs.compose.material.icons
+    implementation libs.compose.runtime
 
     // Koin
-    def koinVersion = '3.2.0'
-    implementation "io.insert-koin:koin-core:$koinVersion"
-    testImplementation "io.insert-koin:koin-test:$koinVersion"
-    implementation "io.insert-koin:koin-android:$koinVersion"
-    implementation "io.insert-koin:koin-androidx-compose:$koinVersion"
+    implementation libs.koin.core
+    implementation libs.koin.android
+    implementation libs.koin.compose
 
-    def appCenterSdkVersion = '4.4.5'
-    implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
-    implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
+    // App Center
+    implementation libs.app.center.analytics
+    implementation libs.app.center.crashes
 
     // Room
-    implementation 'androidx.room:room-runtime:2.5.0'
-    implementation 'androidx.room:room-ktx:2.5.0'
-    kapt 'androidx.room:room-compiler:2.5.0'
+    api libs.room
+    kapt libs.room.compiler
+    implementation libs.room.ktx
 
     // Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
-    implementation 'com.squareup.retrofit2:converter-scalars:2.4.0'
-    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.3'
-    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.3'
+    api libs.retrofit
+    implementation libs.retrofit.converter.gson
+    implementation libs.retrofit.converter.scalars
+    implementation libs.okhttp
+    implementation libs.okhttp.logging.interceptor
 
     // Accompanist
-    def accompanistVersion = '0.24.13-rc'
-    implementation "com.google.accompanist:accompanist-swiperefresh:$accompanistVersion"
-    implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion"
-    implementation "com.google.accompanist:accompanist-pager:0.25.0"
-    implementation "com.google.accompanist:accompanist-pager-indicators:0.25.0"
-    implementation "com.google.accompanist:accompanist-flowlayout:0.28.0"
-    implementation "com.google.accompanist:accompanist-insets:$accompanistVersion"
-    implementation "com.google.accompanist:accompanist-navigation-animation:0.28.0"
-    implementation "com.google.accompanist:accompanist-navigation-material:0.28.0"
-    implementation "com.google.accompanist:accompanist-permissions:0.29.0-alpha"
+    implementation libs.accompanist.swipe.refresh
+    implementation libs.accompanist.permissions
+    implementation libs.accompanist.pager
+    implementation libs.accompanist.pager.indicators
+    implementation libs.accompanist.system.ui.controller
+    implementation libs.accompanist.flow.layout
+    implementation libs.accompanist.insets
+    implementation libs.accompanist.navigation.animation
+    implementation libs.accompanist.navigation.material
 
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
+    // Calendar Dialog
+    implementation libs.calendar.dialog.core
+    implementation libs.calendar.dialog.calendar
 
-    //Calendar Dialog
-    implementation 'com.maxkeppeler.sheets-compose-dialogs:core:1.0.3' // necessary
-    implementation 'com.maxkeppeler.sheets-compose-dialogs:calendar:1.0.3'
+    // Firebase
+    implementation libs.firebase.crashlytics
+    implementation libs.firebase.analytics
+    implementation libs.firebase.auth
+    implementation libs.firebase.perf
+    implementation libs.firebase.storage
 
-    //Firebase
-    implementation platform('com.google.firebase:firebase-bom:31.2.0')
-    implementation 'com.google.firebase:firebase-crashlytics-ktx'
-    implementation 'com.google.firebase:firebase-analytics-ktx'
-    implementation 'com.google.firebase:firebase-auth-ktx'
-    implementation 'com.google.firebase:firebase-perf-ktx'
-    implementation 'com.google.firebase:firebase-storage-ktx'
-
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    androidTestImplementation 'com.microsoft.appcenter:espresso-test-extension:1.4'
+    // Testing
+    testImplementation libs.test.junit
+    testImplementation libs.test.ext.junit
+    testImplementation libs.test.espresso.core
+    testImplementation libs.test.app.center.espresso
+    testImplementation libs.test.kotlin.coroutines
+    testImplementation libs.test.android.compose
+    testImplementation libs.test.koin
 }

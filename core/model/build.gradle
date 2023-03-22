@@ -1,0 +1,13 @@
+plugins {
+    id "com.android.library"
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-parcelize'
+}
+
+android {
+    namespace = "com.example.model"
+}
+
+apply {
+    from("$rootDir/base_module.gradle")
+}

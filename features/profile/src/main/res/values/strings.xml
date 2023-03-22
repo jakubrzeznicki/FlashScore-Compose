@@ -1,0 +1,27 @@
+<resources>
+    //Profile Container Screen
+    <string name="successfully_updated_photo">Successfully updated photo</string>
+
+    //Profile Details Screen
+    <string name="successfully_updated_name">Successfully updated name</string>
+    <string name="successfully_updated_email">Successfully updated email</string>
+    <string name="successfully_updated_password">Successfully updated password</string>
+    <string name="successfully_updated_address">Successfully updated address</string>
+    <string name="successfully_updated_phone">Successfully updated phone</string>
+    <string name="phone">Phone</string>
+
+    //Profile Settings
+    <string name="delete_account">Delete account</string>
+    <string name="account_deleted">Account was deleted</string>
+    <string name="sign_out">Sign out</string>
+    <string name="successfully_signed_out">You are signed out. Try to sign in again.</string>
+    <string name="cancel">Cancel</string>
+    <string name="sign_out_title">Sign out?</string>
+    <string name="sign_out_description">You will have to sign in again to use the app.</string>
+    <string name="delete_account_title">Delete account?</string>
+    <string name="delete_account_description">You will lose all your data and your account will be deleted. This action is irreversible.</string>
+    <string name="change_password">Change password</string>
+    <string name="repeat_new_password">Repeat new password</string>
+    <string name="save">Save</string>
+    <string name="new_password">New password</string>
+</resources>

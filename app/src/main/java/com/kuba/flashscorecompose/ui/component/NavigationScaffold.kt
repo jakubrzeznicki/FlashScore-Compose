@@ -13,10 +13,9 @@ import androidx.navigation.plusAssign
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
-import com.kuba.flashscorecompose.appCurrentDestinationAsState
-import com.kuba.flashscorecompose.destinations.Destination
-import com.kuba.flashscorecompose.startAppDestination
+import com.ramcosta.composedestinations.spec.DestinationSpec
 import com.ramcosta.composedestinations.spec.Route
+import com.ramcosta.composedestinations.utils.startDestination
 
 @OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalMaterial3Api::class)
 @SuppressLint("RestrictedApi")
@@ -25,11 +24,10 @@ fun NavigationScaffold(
     startRoute: Route,
     snackbarHost: @Composable () -> Unit,
     navController: NavHostController,
-    bottomBar: @Composable (Destination) -> Unit,
+    bottomBar: @Composable (DestinationSpec<*>) -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
-    val destination = navController.appCurrentDestinationAsState().value
-        ?: startRoute.startAppDestination
+    val startDestination = startRoute.startDestination
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     navController.navigatorProvider += bottomSheetNavigator
     ModalBottomSheetLayout(
@@ -38,7 +36,7 @@ fun NavigationScaffold(
     ) {
         Scaffold(
             snackbarHost = snackbarHost,
-            bottomBar = { bottomBar(destination) },
+            bottomBar = { bottomBar(startDestination) },
             containerColor = MaterialTheme.colorScheme.background,
             contentColor = MaterialTheme.colorScheme.onSecondary,
             content = content

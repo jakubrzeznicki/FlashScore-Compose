@@ -1,0 +1,98 @@
+<resources>
+    <string name="app_name">Ui</string>
+
+    //Fixture Card
+    <string name="match_not_started">Match was not started</string>
+    <string name="live_minute">Live minute</string>
+
+    //Snackbar
+    <string name="generic_error">Something wrong happened. Please try again.</string>
+    <string name="email_error">Please insert a valid email.</string>
+    <string name="empty_password_error">Password cannot be empty.</string>
+    <string name="successfully_signed_in">Successfully signed in</string>
+    <string name="recovery_email_sent">Check your inbox for the recovery email.</string>
+    <string name="password_error">Your password should have at least six digits and include one digit, one lower case letter and one upper case letter.</string>
+    <string name="password_match_error">Passwords do not match.</string>
+
+    //Custom Text Field
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="hide_password">Hide password</string>
+    <string name="show_password">Show password</string>
+
+    //Tabs
+    <string name="statistics">Statistic</string>
+    <string name="lineups">Lineups</string>
+    <string name="head_to_head">H2H</string>
+    <string name="informations">Informations</string>
+    <string name="injuries">Injuries</string>
+    <string name="transfers">Transfers</string>
+    <string name="fixtures">Fixtures</string>
+    <string name="my_profile">My Profile</string>
+    <string name="activity">Activity</string>
+    <string name="settings">Settings</string>
+
+    //Chips
+    <string name="all">All</string>
+    <string name="home">Home</string>
+    <string name="away">Away</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="played">Played</string>
+    <string name="live">Live</string>
+    <string name="live_score">Live Score</string>
+    <string name="players">Players</string>
+    <string name="venues">Venues</string>
+    <string name="teams">Teams</string>
+    <string name="coaches">Coaches</string>
+
+    //Teams
+    <string name="no_teams">There are no teams</string>
+    <string name="team">Team</string>
+
+    //Players
+    <string name="no_players">There are no players</string>
+
+    //Notifications
+    <string name="notifications">Notifications</string>
+
+    //Standings
+    <string name="standings">Standings</string>
+
+    //Leagues
+    <string name="leagues">Leagues</string>
+
+    //Explore
+    <string name="explore">Explore</string>
+
+    //Welcome
+    <string name="sign_in">Sign In</string>
+
+    //Sign Up
+    <string name="create_account">Create account</string>
+
+    //Team Information
+    <string name="info">Info</string>
+    <string name="country">Country</string>
+    <string name="name">Name</string>
+    <string name="address">Address</string>
+
+    //Player
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="age">Age</string>
+    <string name="height">Height</string>
+    <string name="weight">Weight</string>
+
+    //Standings
+    <string name="wins">W</string>
+    <string name="loses">L</string>
+    <string name="draws">D</string>
+    <string name="goals_diff">Gd</string>
+    <string name="points">Pts</string>
+
+    //Profile
+    <string name="profile">Profile</string>
+    <string name="permission_granted">Permission Granted</string>
+    <string name="permission_denied">Permission Denied</string>
+
+</resources>

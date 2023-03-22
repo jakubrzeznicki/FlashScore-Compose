@@ -11,8 +11,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.kuba.flashscorecompose.NavGraphs
-import com.kuba.flashscorecompose.main.model.NavigationItem
+import com.kuba.flashscorecompose.navigation.NavGraphs
+import com.kuba.flashscorecompose.navigation.model.NavigationItem
 import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.navigation.popBackStack
 import com.ramcosta.composedestinations.navigation.popUpTo
