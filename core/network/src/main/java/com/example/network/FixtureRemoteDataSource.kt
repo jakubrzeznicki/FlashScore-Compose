@@ -1,0 +1,28 @@
+package com.example.network
+
+import com.example.network.model.fixture.FixtureDataDto
+import retrofit2.Response
+
+/**
+ * Created by jrzeznicki on 03/01/2023.
+ */
+interface FixtureRemoteDataSource {
+    suspend fun loadFixturesFilteredByRound(
+        leagueId: Int,
+        season: Int,
+        round: String
+    ): Response<FixtureDataDto>
+
+    suspend fun loadFixturesHeadToHead(h2h: String, count: Int): Response<FixtureDataDto>
+    suspend fun loadFixturesByDate(date: String): Response<FixtureDataDto>
+    suspend fun loadFixturesByDate(
+        date: String,
+        leagueId: Int,
+        season: Int
+    ): Response<FixtureDataDto>
+
+    suspend fun loadFixturesByTeam(teamId: Int, season: Int, count: Int): Response<FixtureDataDto>
+    suspend fun loadFixturesByTeam(teamId: Int, season: Int): Response<FixtureDataDto>
+    suspend fun loadFixturesLive(): Response<FixtureDataDto>
+    suspend fun loadFixtureById(id: Int): Response<FixtureDataDto>
+}

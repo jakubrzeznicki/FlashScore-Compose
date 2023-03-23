@@ -1,0 +1,23 @@
+plugins {
+    id "com.android.library"
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace = "com.example.datastore"
+}
+
+apply {
+    from("$rootDir/base_module.gradle")
+}
+
+dependencies {
+    implementation project(":core:model")
+
+    // Koin
+    implementation libs.koin.core
+    implementation libs.koin.android
+
+    // DataStore
+    implementation libs.datastore
+}

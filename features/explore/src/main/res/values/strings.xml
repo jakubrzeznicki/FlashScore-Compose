@@ -1,0 +1,11 @@
+<resources>
+    //Explore Screen
+    <string name="search_all">Search all data...</string>
+    <string name="favorites">Favorites</string>
+    <string name="coaches">Coaches</string>
+    <string name="venues">Venues</string>
+    <string name="no_fixtures_live">There are no live fixtures.</string>
+    <string name="no_coaches">There are no coaches</string>
+    <string name="no_venues">There are no venues</string>
+    <string name="no_leagues">There are no leagues</string>
+</resources>

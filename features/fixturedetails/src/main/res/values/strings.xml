@@ -1,0 +1,20 @@
+<resources>
+    //Container
+    <string name="no_fixture_details">There are no fixture details</string>
+
+    //Head to Head Screen
+    <string name="last_matches">Last Matches</string>
+    <string name="between">Between</string>
+    <string name="other_matches">Other Matches</string>
+    <string name="no_last_fixtures">There are no last fixtures of both teams or H2H fixtures</string>
+
+    //LineUp Screen
+    <string name="no_lineups">The match was not started or we don\'t have lineups. Try it again</string>
+    <string name="formation">Formation</string>
+
+    //Statistics Screen
+    <string name="no_statistics">The match was not started or we don\'t have statistics from this event</string>
+    <string name="no_loaded_statistics">There was a problem to load statistics. Try it again</string>
+    <string name="see_all">See All</string>
+
+</resources>

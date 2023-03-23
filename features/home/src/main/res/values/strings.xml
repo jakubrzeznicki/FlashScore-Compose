@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Home</string>
+
+    //Home Screen
+    <string name="no_fixtures_home">There are no fixtures</string>
+    <string name="no_fixtures_and_countries">You don\'t have any fixtures and countries</string>
+    <string name="search">Search</string>
+    <string name="search_home">Search...</string>
+    <string name="football">Football</string>
+    <string name="text_banner">Liverpool UEFA Champion League Celebration</string>
+    <string name="text_second_banner">Yesterday, 06.30 PM</string>
+</resources>

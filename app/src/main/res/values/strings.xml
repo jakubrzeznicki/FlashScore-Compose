@@ -1,3 +1,4 @@
 <resources>
+    <string name="flashscorecompose_app_name_release">FlashScore Compose App</string>
     <string name="app_name">FlashScoreCompose</string>
 </resources>

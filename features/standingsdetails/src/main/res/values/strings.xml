@@ -1,0 +1,4 @@
+<resources>
+    //Standings Details
+    <string name="no_standing_details">There are no standing details</string>
+</resources>

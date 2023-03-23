@@ -1,0 +1,15 @@
+<resources>
+    //Fixtures Team Screen
+    <string name="no_fixtures_team">There are no fixtures for this team. </string>
+
+    //Team Informations
+    <string name="venue">Venue</string>
+    <string name="coach">Coach</string>
+    <string name="no_team_informations">There are no team informations</string>
+    <string name="founded">Founded</string>
+    <string name="is_national">Is National?</string>
+    <string name="city">City</string>
+    <string name="capacity">Capacity</string>
+    <string name="surface">Surface</string>
+    <string name="nationality">Nationality</string>
+</resources>
