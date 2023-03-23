@@ -121,7 +121,6 @@ Modules Design:
 * [Fastlane](https://fastlane.tools/) - The easiest way to automate building and release iOS and Android apps
 * [Firebase App Distribution](https://firebase.google.com/docs/app-distribution) - Distributing apps to trusted testers
 
-
 ##  TODO
 
 * [ ] Unit test
