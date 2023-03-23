@@ -78,7 +78,7 @@ Modules Design:
     * <b> profile </b> - Displays information about user, such name, email, phone or address. Give possibility to change password, log out or even delete accout.
     * <b> signin </b> - Form to log in and create accout.
     * <b> standings </b> - Displays list of actual standings for specific leagues.
-    * <b> standings </b> </b>details - Displays actual standing for selected league.
+    * <b> standings </b> - Displays actual standing for selected league.
     * <b> teamdetails </b> - Displays details about team such informations, players, fixtuers.
     * <b> welcome </b> - Welcoming screen, give possibility to sign in, create accout or sign in as guest.
 
