@@ -35,18 +35,18 @@ class HeadToHeadViewModel(
         )
 
     fun setup() {
-//        loadHeadToHead()
-//        loadFixturesByTeam(homeTeamId)
-//        loadFixturesByTeam(awayTeamId)
+//        refreshHeadToHead()
+//        refreshFixturesByTeam(homeTeamId)
+//        refreshFixturesByTeam(awayTeamId)
         observeFixturesHeadToHead()
         observeHomeTeam()
         observeAwayTeam()
     }
 
     fun refresh() {
-        loadHeadToHead()
-        loadFixturesByTeam(homeTeamId)
-        loadFixturesByTeam(awayTeamId)
+        refreshHeadToHead()
+        refreshFixturesByTeam(homeTeamId)
+        refreshFixturesByTeam(awayTeamId)
     }
 
     private fun observeFixturesHeadToHead() {
@@ -83,7 +83,7 @@ class HeadToHeadViewModel(
         }
     }
 
-    private fun loadHeadToHead() {
+    private fun refreshHeadToHead() {
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             val result = fixturesRepository.loadFixturesHeadToHead(
@@ -108,7 +108,7 @@ class HeadToHeadViewModel(
         }
     }
 
-    private fun loadFixturesByTeam(teamId: Int) {
+    private fun refreshFixturesByTeam(teamId: Int) {
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             val result = fixturesRepository.loadFixturesByTeam(teamId, season, COUNT)

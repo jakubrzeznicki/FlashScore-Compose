@@ -37,6 +37,8 @@ class TeamInformationsViewModel(
         observeTeam()
         observeCoach()
         observeVenue()
+        //refreshCoach()
+        //refreshTeamInformation()
     }
 
     fun refresh() {

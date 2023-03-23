@@ -56,6 +56,7 @@ class ExploreViewModel(
         observePlayers()
         observeCoaches()
         observeVenues()
+        //refreshFixtures()
     }
 
     fun refresh() {

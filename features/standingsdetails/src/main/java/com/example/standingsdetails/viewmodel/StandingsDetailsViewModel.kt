@@ -34,6 +34,7 @@ class StandingsDetailsViewModel(
 
     fun setup() {
         observeStandings()
+        //refreshStanding()
     }
 
     fun refresh() {

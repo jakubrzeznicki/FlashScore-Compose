@@ -36,6 +36,7 @@ class LeagueDetailsViewModel(
 
     fun setup() {
         observeFixtures()
+        //refreshFixtures()
     }
 
     fun refresh() {
@@ -75,7 +76,7 @@ class LeagueDetailsViewModel(
                 filteredFixtureItemWrappers = filterFixtureItems(date = newDate)
             )
         }
-        // refreshFixtures()
+        refreshFixtures()
     }
 
     private fun filterFixtureItems(
