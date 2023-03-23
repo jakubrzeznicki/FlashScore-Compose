@@ -32,12 +32,12 @@ class LineupViewModel(
         )
 
     fun setup() {
-        // loadLineups()
+        //refreshLineups()
         observeLineups()
     }
 
     fun refresh() {
-        loadLineups()
+        refreshLineups()
     }
 
     private fun observeLineups() {
@@ -92,7 +92,7 @@ class LineupViewModel(
         }
     }
 
-    private fun loadLineups() {
+    private fun refreshLineups() {
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             val result = lineupsRepository.loadLineups(fixtureId, leagueId, season)

@@ -19,7 +19,6 @@ import com.example.ui.snackbar.SnackbarMessageType
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 /**
  * Created by jrzeznicki on 05/01/2023.
@@ -44,7 +43,7 @@ class HomeViewModel(
 
     fun setup() {
 //        refreshCountries()
-//        refreshFixtures()//
+//        refreshFixtures()
         observeCountries()
         observeFixtures()
     }
@@ -89,7 +88,7 @@ class HomeViewModel(
     private fun observeFixtures() {
         viewModelScope.launch {
             val formattedDate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                localDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT))
+                "2023-01-22"
             } else {
                 TESTING_DATE
             }
@@ -179,7 +178,7 @@ class HomeViewModel(
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             val formattedDate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                localDate.format(DateTimeFormatter.ofPattern(DATE_FORMAT))
+                "2023-01-22"
             } else {
                 TESTING_DATE
             }

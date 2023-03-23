@@ -121,7 +121,7 @@ private fun HomeScreen(
             LazyColumn(
                 Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp),
+                    .padding(start = 16.dp, end = 16.dp, bottom = 64.dp),
                 state = fixturesScrollState
             ) {
                 item {

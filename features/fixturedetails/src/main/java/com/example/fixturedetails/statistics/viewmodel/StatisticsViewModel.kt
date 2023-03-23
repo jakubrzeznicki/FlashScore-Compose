@@ -40,8 +40,8 @@ class StatisticsViewModel(
         )
 
     fun setup() {
-        // loadStatistics()
-        // loadFixtures()
+        //loadStatistics()
+        //loadFixtures()
         observeStatistics()
         observeFixtures()
     }

@@ -85,6 +85,6 @@ class DefaultFixtureNotification(private val applicationContext: Context) : Fixt
         private const val NOTIFICATION_CHANNEL_NAME = "FIXTURE_NOTIFICATION_CHANNEL_NAME"
         const val MY_URI = "https://flashscorecompose.com"
         const val FIXTURE_ID_ARGS = "fixtureId"
-        const val MAIN_ACTIVITY_PATH = "com.kuba.flashscorecompose.main.view.MainActivity"
+        const val MAIN_ACTIVITY_PATH = "com.kuba.flashscorecompose.main.MainActivity"
     }
 }

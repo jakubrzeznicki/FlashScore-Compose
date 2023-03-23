@@ -37,6 +37,7 @@ class FixturesTeamViewModel(
 
     fun setup() {
         observeFixtures()
+        //refreshFixtures()
     }
 
     fun refresh() {

@@ -38,8 +38,8 @@ class StandingsViewModel(
     fun setup() {
         observeCountries()
         observeStandings()
-        // refreshCountries()
-        // refreshStandings()
+//        refreshCountries()
+//        refreshStandings()
     }
 
     fun refresh() {
@@ -163,7 +163,7 @@ class StandingsViewModel(
         return standings
             .filter {
                 (it.league.name.containsQuery(query) || it.league.countryName.containsQuery(query)) &&
-                    (it.league.countryName == countryName || it.league.countryCode == countryCode)
+                        (it.league.countryName == countryName || it.league.countryCode == countryCode)
             }
     }
 

@@ -30,6 +30,7 @@ class FixtureDetailsViewModel(
 
     fun setup() {
         observeFixtureItem()
+        //refreshFixtureItem()
     }
 
     private fun observeFixtureItem() {

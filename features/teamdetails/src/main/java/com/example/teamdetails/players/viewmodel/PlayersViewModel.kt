@@ -38,6 +38,7 @@ class PlayersViewModel(
 
     fun setup() {
         observePlayers()
+        //refreshPlayers()
     }
 
     fun refresh() {

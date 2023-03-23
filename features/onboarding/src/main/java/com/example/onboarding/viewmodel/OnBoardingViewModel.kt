@@ -39,6 +39,7 @@ class OnBoardingViewModel(
         viewModelState.value.teams.forEach {
             observePlayers(it.id, SEASON)
         }
+        //refreshTeams()
     }
 
     fun refresh() {

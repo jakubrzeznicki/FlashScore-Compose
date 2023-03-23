@@ -94,8 +94,8 @@ private fun ProfileScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 8.dp)
-            ) {
+                    .padding(top = 8.dp, bottom = 64.dp),
+                ) {
                 ProfileHeader(
                     context,
                     uiState.user.name,
