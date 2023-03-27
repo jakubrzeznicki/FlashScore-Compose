@@ -49,7 +49,7 @@ FlashScore Compose is a football live score app (made in Jetpack Compose).
 ## 🏛️ Architecture
 
 FlashScore Compose is Multi-modular application with a meaningful separation for layers and features with the necessary grouping.
-Modern architecture (Clean Architecture, Multi-Module setup, Model-View-ViewModel)
+Modern architecture (Clean Architecture, Multi-Module setup, Model-View-Intent)
 
 Modules Design:
 
