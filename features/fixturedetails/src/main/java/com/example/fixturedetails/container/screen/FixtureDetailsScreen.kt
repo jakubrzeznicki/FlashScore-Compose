@@ -49,6 +49,7 @@ import com.ramcosta.composedestinations.annotation.DeepLink
 import com.ramcosta.composedestinations.annotation.Destination
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
+import com.example.ui.R as uiR
 
 /**
  * Created by jrzeznicki on 23/12/2022.
@@ -236,7 +237,7 @@ private fun TeamInfo(
                     .size(Size.ORIGINAL)
                     .crossfade(true)
                     .build(),
-                placeholder = painterResource(id = com.example.ui.R.drawable.ic_close),
+                placeholder = painterResource(id = uiR.drawable.ic_close),
                 contentDescription = null,
                 contentScale = ContentScale.Fit
             )

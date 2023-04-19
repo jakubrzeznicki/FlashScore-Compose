@@ -33,6 +33,7 @@ import com.example.ui.composables.EmptyState
 import com.example.ui.theme.FlashScoreTypography
 import com.ramcosta.composedestinations.annotation.Destination
 import org.koin.androidx.compose.getViewModel
+import com.example.ui.R as uiR
 
 private const val SETUP_NOTIFICATIONS_KEY = "SETUP_NOTIFICATIONS_KEY"
 
@@ -100,7 +101,7 @@ fun NotificationsScreen(
                                 modifier = Modifier
                                     .size(128.dp)
                                     .padding(8.dp),
-                                painter = painterResource(id = com.example.ui.R.drawable.ic_close),
+                                painter = painterResource(id = uiR.drawable.ic_close),
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.inverseOnSurface
                             )
@@ -136,7 +137,7 @@ private fun TopBar(navigator: NotificationsNavigator) {
         },
         title = {
             Text(
-                text = stringResource(id = com.example.ui.R.string.notifications),
+                text = stringResource(id = uiR.string.notifications),
                 color = MaterialTheme.colorScheme.onSecondary,
                 style = FlashScoreTypography.headlineSmall
             )

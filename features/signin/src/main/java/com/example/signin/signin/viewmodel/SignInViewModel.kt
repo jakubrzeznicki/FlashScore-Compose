@@ -15,6 +15,7 @@ import com.example.ui.snackbar.SnackbarManager
 import com.example.ui.snackbar.SnackbarMessageType
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import  com.example.ui.R as uiR
 
 /**
  * Created by jrzeznicki on 05/02/2023.
@@ -101,7 +102,7 @@ class SignInViewModel(
                             isAnonymous = currentUser?.isAnonymous ?: false
                         )
                         snackbarManager.showMessage(
-                            com.example.ui.R.string.successfully_signed_in,
+                            uiR.string.successfully_signed_in,
                             SnackbarMessageType.Success
                         )
                         userRepository.saveUser(user)

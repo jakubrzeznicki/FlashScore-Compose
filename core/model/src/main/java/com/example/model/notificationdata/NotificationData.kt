@@ -13,5 +13,6 @@ data class NotificationData(
     val formattedDate: String,
     val homeTeam: String,
     val awayTeam: String,
-    val timestamp: Long
+    val timestamp: Long,
+    val userId: String
 ) : Parcelable

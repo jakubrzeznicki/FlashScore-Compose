@@ -30,6 +30,7 @@ import com.example.ui.theme.FlashScoreTypography
 import com.ramcosta.composedestinations.annotation.Destination
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
+import com.example.ui.R as uiR
 
 /**
  * Created by jrzeznicki on 01/02/2023.
@@ -101,7 +102,7 @@ fun PlayerDetailsScreen(
                         HeaderDetails(uiState.player.photo)
                         Text(
                             modifier = Modifier.padding(bottom = 8.dp),
-                            text = stringResource(id = com.example.ui.R.string.info),
+                            text = stringResource(id = uiR.string.info),
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.onSecondary
@@ -184,7 +185,7 @@ fun TeamInfoCard(player: Player, countryLogo: String, team: Team) {
             ) {
                 SimpleInfoRowWithImage(
                     modifier = Modifier.weight(10f),
-                    labelId = com.example.ui.R.string.country,
+                    labelId = uiR.string.country,
                     title = player.nationality,
                     image = countryLogo
                 )
@@ -197,7 +198,7 @@ fun TeamInfoCard(player: Player, countryLogo: String, team: Team) {
                 )
                 SimpleInfoRowWithImage(
                     modifier = Modifier.weight(10f),
-                    labelId = com.example.ui.R.string.team,
+                    labelId = uiR.string.team,
                     title = team.name,
                     image = team.logo
                 )
@@ -210,7 +211,7 @@ fun TeamInfoCard(player: Player, countryLogo: String, team: Team) {
             ) {
                 InfoRowWithIcon(
                     modifier = Modifier.weight(8f),
-                    labelId = com.example.ui.R.string.first_name,
+                    labelId = uiR.string.first_name,
                     title = player.firstname,
                     Icons.Default.Badge
                 )
@@ -223,7 +224,7 @@ fun TeamInfoCard(player: Player, countryLogo: String, team: Team) {
                 )
                 InfoRowWithIcon(
                     modifier = Modifier.weight(8f),
-                    labelId = com.example.ui.R.string.last_name,
+                    labelId = uiR.string.last_name,
                     title = player.lastname,
                     Icons.Default.Badge
                 )
@@ -253,7 +254,7 @@ fun PlayerDetailsInfoCard(player: Player) {
             ) {
                 InfoRowWithIcon(
                     modifier = Modifier.weight(8f),
-                    labelId = com.example.ui.R.string.age,
+                    labelId = uiR.string.age,
                     title = player.age.toString(),
                     Icons.Default.TextIncrease
                 )
@@ -279,7 +280,7 @@ fun PlayerDetailsInfoCard(player: Player) {
             ) {
                 InfoRowWithIcon(
                     modifier = Modifier.weight(8f),
-                    labelId = com.example.ui.R.string.height,
+                    labelId = uiR.string.height,
                     title = player.height,
                     Icons.Default.Height
                 )
@@ -292,7 +293,7 @@ fun PlayerDetailsInfoCard(player: Player) {
                 )
                 InfoRowWithIcon(
                     modifier = Modifier.weight(8f),
-                    labelId = com.example.ui.R.string.weight,
+                    labelId = uiR.string.weight,
                     title = player.weight,
                     Icons.Default.MonitorWeight
                 )

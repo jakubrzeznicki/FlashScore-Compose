@@ -108,25 +108,13 @@ private fun TeamDetailsTabs(
 ) {
     val tabs = listOf(
         TabItem.TeamDetails.Information {
-            TeamInformationsScreen(
-                team,
-                leagueId,
-                season
-            )
+            TeamInformationsScreen(team, leagueId, season)
         },
         TabItem.TeamDetails.Players {
-            PlayersScreen(
-                team,
-                season = season,
-                navigator = navigator
-            )
+            PlayersScreen(team, season, navigator)
         },
         TabItem.TeamDetails.Fixtures {
-            FixturesTeamScreen(
-                teamId = team.id,
-                season = season,
-                navigator = navigator
-            )
+            FixturesTeamScreen(team, season, navigator)
         },
         TabItem.TeamDetails.Injuries {},
         TabItem.TeamDetails.Transfers {}

@@ -15,12 +15,15 @@ interface NotificationsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveReminder(notificationData: NotificationDataEntity)
 
-    @Query("DELETE FROM notification_data WHERE id = :id")
-    suspend fun deleteReminder(id: Int)
+    @Query("DELETE FROM notification_data WHERE id = :id AND user_id = :currentUserId")
+    suspend fun deleteReminder(id: Int, currentUserId: String)
 
     @Query("SELECT * FROM notification_data WHERE timestamp >= :currentTimestamp")
     suspend fun getReminders(currentTimestamp: Long): List<NotificationDataEntity>
 
-    @Query("SELECT * FROM notification_data WHERE timestamp >= :currentTimestamp")
-    fun observeReminders(currentTimestamp: Long): Flow<List<NotificationDataEntity>>
+    @Query("SELECT * FROM notification_data WHERE timestamp >= :currentTimestamp AND user_id = :currentUserId")
+    fun observeReminders(
+        currentTimestamp: Long,
+        currentUserId: String
+    ): Flow<List<NotificationDataEntity>>
 }

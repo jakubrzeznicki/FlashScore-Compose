@@ -1,7 +1,10 @@
 package com.kuba.flashscorecompose.navigation
 
 import androidx.navigation.NavController
-import com.example.data.navigation.*
+import com.example.data.navigation.HomeBackStackType
+import com.example.data.navigation.OnBoardingBackStackType
+import com.example.data.navigation.SignUpBackStackType
+import com.example.data.navigation.WelcomeBackStackType
 import com.example.explore.navigation.ExploreNavigator
 import com.example.fixturedetails.container.screen.destinations.FixtureDetailsRouteDestination
 import com.example.fixturedetails.navigation.FixtureDetailsNavigator
@@ -103,15 +106,8 @@ class CommonNavGraphNavigator(private val navController: NavController) : Explor
         }
     }
 
-    override fun openSignIn(signInBackStackType: SignInBackStackType) {
-        when (signInBackStackType) {
-            SignInBackStackType.Profile ->
-                navController.navigate(SignInRouteDestination) {
-                    popUpTo(ProfileRouteDestination.route) { inclusive = true }
-                }
-            SignInBackStackType.Welcome ->
-                navController.navigate(SignInRouteDestination)
-        }
+    override fun openSignIn() {
+        navController.navigate(SignInRouteDestination)
     }
 
     override fun openWelcome(welcomeBackStackType: WelcomeBackStackType) {
@@ -128,14 +124,7 @@ class CommonNavGraphNavigator(private val navController: NavController) : Explor
     }
 
     override fun openSignUp(signUpBackStackType: SignUpBackStackType) {
-        when (signUpBackStackType) {
-            SignUpBackStackType.Anonymous ->
-                navController.navigate(SignUpRouteDestination(signUpBackStackType)) {
-                    popUpTo(ProfileRouteDestination.route) { inclusive = true }
-                }
-            SignUpBackStackType.New ->
-                navController.navigate(SignUpRouteDestination(signUpBackStackType))
-        }
+        navController.navigate(SignUpRouteDestination(signUpBackStackType))
     }
 
     override fun openOnBoarding() {

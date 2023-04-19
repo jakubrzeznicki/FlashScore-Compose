@@ -41,6 +41,7 @@ import com.example.ui.composables.*
 import com.example.ui.theme.FlashScoreTypography
 import com.ramcosta.composedestinations.annotation.Destination
 import org.koin.androidx.compose.getViewModel
+import com.example.ui.R as uiR
 
 /**
  * Created by jrzeznicki on 21/12/2022.
@@ -173,7 +174,16 @@ private fun HomeScreen(
                             EmptyState(
                                 modifier = Modifier.fillMaxWidth(),
                                 textId = R.string.no_fixtures_home
-                            )
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .size(128.dp)
+                                        .padding(8.dp),
+                                    painter = painterResource(id = uiR.drawable.ic_close),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.inverseOnSurface
+                                )
+                            }
                         }
                     }
                     is HomeUiState.NoData -> {
@@ -188,7 +198,7 @@ private fun HomeScreen(
                                     modifier = Modifier
                                         .size(128.dp)
                                         .padding(8.dp),
-                                    painter = painterResource(id = com.example.ui.R.drawable.ic_close),
+                                    painter = painterResource(id = uiR.drawable.ic_close),
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.inverseOnSurface
                                 )
@@ -213,7 +223,7 @@ private fun TopBar(
             .padding(top = 8.dp),
         title = {
             Text(
-                text = stringResource(id = com.example.ui.R.string.live_score),
+                text = stringResource(id = uiR.string.live_score),
                 color = MaterialTheme.colorScheme.onSecondary,
                 style = FlashScoreTypography.headlineSmall
             )
@@ -239,7 +249,7 @@ private fun TopBar(
             ) {
                 Icon(
                     imageVector = Icons.Filled.Notifications,
-                    contentDescription = stringResource(id = com.example.ui.R.string.notifications),
+                    contentDescription = stringResource(id = uiR.string.notifications),
                     tint = MaterialTheme.colorScheme.onSecondary
                 )
             }

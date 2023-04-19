@@ -47,7 +47,7 @@ import com.example.database.userpreferences.model.UserPreferencesEntity
         StatisticsEntity::class, LineupEntity::class, FixtureEntity::class, StandingsEntity::class,
         UserEntity::class, UserPreferencesEntity::class, NotificationDataEntity::class
     ],
-    version = 1
+    version = 2
 )
 @TypeConverters(
     StatisticsDataConverter::class,

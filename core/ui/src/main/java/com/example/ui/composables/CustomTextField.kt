@@ -94,7 +94,6 @@ fun PasswordTextField(
         hideText = hideText,
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions
-
     )
 }
 

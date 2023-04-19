@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.data.navigation.HomeBackStackType
-import com.example.data.navigation.SignInBackStackType
 import com.example.data.navigation.SignUpBackStackType
 import com.example.ui.composables.CircularProgressBar
 import com.example.welcome.R
@@ -41,7 +40,7 @@ fun WelcomeRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     WelcomeScreen(
         uiState = uiState,
-        onSignInClick = { navigator.openSignIn(SignInBackStackType.Welcome) },
+        onSignInClick = { navigator.openSignIn() },
         onSignUpClick = { navigator.openSignUp(SignUpBackStackType.New) },
         onSignInAsGuest = {
             viewModel.createAnonymousAccount(

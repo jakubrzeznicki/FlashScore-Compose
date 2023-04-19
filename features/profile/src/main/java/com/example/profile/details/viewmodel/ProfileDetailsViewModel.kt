@@ -9,6 +9,7 @@ import com.example.data.user.repository.UserDataSource
 import com.example.data.userpreferences.repository.UserPreferencesDataSource
 import com.example.model.player.ProfileItem
 import com.example.profile.R
+import com.example.profile.container.model.ProfileError
 import com.example.ui.snackbar.SnackbarManager
 import com.example.ui.snackbar.SnackbarMessageType
 import kotlinx.coroutines.flow.*
@@ -60,10 +61,10 @@ class ProfileDetailsViewModel(
     fun onValueChange(profileItem: ProfileItem) {
         viewModelState.update {
             when (profileItem) {
-                is ProfileItem.Name -> it.copy(user = it.user.copy(name = profileItem.value))
-                is ProfileItem.Email -> it.copy(user = it.user.copy(email = profileItem.value))
-                is ProfileItem.Phone -> it.copy(user = it.user.copy(phone = profileItem.value))
-                is ProfileItem.Address -> it.copy(user = it.user.copy(address = profileItem.value))
+                is ProfileItem.Name -> it.copy(user = it.user?.copy(name = profileItem.value))
+                is ProfileItem.Email -> it.copy(user = it.user?.copy(email = profileItem.value))
+                is ProfileItem.Phone -> it.copy(user = it.user?.copy(phone = profileItem.value))
+                is ProfileItem.Address -> it.copy(user = it.user?.copy(address = profileItem.value))
             }
         }
     }
@@ -78,7 +79,7 @@ class ProfileDetailsViewModel(
                             R.string.successfully_updated_name,
                             SnackbarMessageType.Success
                         )
-                        userRepository.saveUser(viewModelState.value.user)
+                        viewModelState.value.user?.let { user -> userRepository.saveUser(user) }
                         it.copy(isLoading = false)
                     }
                     is RepositoryResult.Error -> {
@@ -113,7 +114,7 @@ class ProfileDetailsViewModel(
                             R.string.successfully_updated_email,
                             SnackbarMessageType.Success
                         )
-                        userRepository.saveUser(viewModelState.value.user)
+                        viewModelState.value.user?.let { user -> userRepository.saveUser(user) }
                         it.copy(isLoading = false)
                     }
                     is RepositoryResult.Error -> {
@@ -134,7 +135,7 @@ class ProfileDetailsViewModel(
                 R.string.successfully_updated_address,
                 SnackbarMessageType.Success
             )
-            userRepository.saveUser(viewModelState.value.user)
+            viewModelState.value.user?.let { user -> userRepository.saveUser(user) }
         }
     }
 
@@ -144,7 +145,7 @@ class ProfileDetailsViewModel(
                 R.string.successfully_updated_phone,
                 SnackbarMessageType.Success
             )
-            userRepository.saveUser(viewModelState.value.user)
+            viewModelState.value.user?.let { user -> userRepository.saveUser(user) }
         }
     }
 
@@ -152,6 +153,10 @@ class ProfileDetailsViewModel(
         viewModelScope.launch {
             val currentUserId = userPreferencesRepository.getCurrentUserId()
             userRepository.observeUser(currentUserId).collect { user ->
+                if (user == null) {
+                    viewModelState.update { it.copy(error = ProfileError.EmptyProfile) }
+                    return@collect
+                }
                 viewModelState.update { it.copy(user = user) }
             }
         }

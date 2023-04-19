@@ -8,5 +8,5 @@ import org.koin.dsl.module
  * Created by jrzeznicki on 15/03/2023.
  */
 val notificationsViewModelModule = module {
-    viewModel { NotificationsViewModel(get(), get()) }
+    viewModel { NotificationsViewModel(get(), get(), get()) }
 }

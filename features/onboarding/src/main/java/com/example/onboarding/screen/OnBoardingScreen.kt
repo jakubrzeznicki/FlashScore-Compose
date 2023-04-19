@@ -46,6 +46,7 @@ import com.example.ui.composables.FullScreenLoading
 import com.example.ui.composables.LoadingContent
 import com.ramcosta.composedestinations.annotation.Destination
 import org.koin.androidx.compose.getViewModel
+import com.example.ui.R as uiR
 
 /**
  * Created by jrzeznicki on 07/02/2023.
@@ -154,15 +155,15 @@ fun OnBoardingScreen(
                         EmptyState(
                             modifier = Modifier.fillMaxWidth(),
                             textId = when (uiState.onBoardingQuestionsData.onBoardingQuestion) {
-                                is OnBoardingQuestion.Teams -> com.example.ui.R.string.no_teams
-                                else -> com.example.ui.R.string.no_players
+                                is OnBoardingQuestion.Teams -> uiR.string.no_teams
+                                else -> uiR.string.no_players
                             }
                         ) {
                             Icon(
                                 modifier = Modifier
                                     .size(128.dp)
                                     .padding(8.dp),
-                                painter = painterResource(id = com.example.ui.R.drawable.ic_close),
+                                painter = painterResource(id = uiR.drawable.ic_close),
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.inverseOnSurface
                             )
@@ -355,7 +356,7 @@ private fun TeamCard(
                     .data(team.logo)
                     .crossfade(true)
                     .build(),
-                placeholder = painterResource(id = com.example.ui.R.drawable.ic_close),
+                placeholder = painterResource(id = uiR.drawable.ic_close),
                 contentDescription = null,
                 contentScale = ContentScale.Fit
             )
@@ -411,7 +412,7 @@ private fun PlayerCard(
                     .data(player.photo)
                     .crossfade(true)
                     .build(),
-                placeholder = painterResource(id = com.example.ui.R.drawable.ic_close),
+                placeholder = painterResource(id = uiR.drawable.ic_close),
                 contentDescription = null,
                 contentScale = ContentScale.FillBounds
             )

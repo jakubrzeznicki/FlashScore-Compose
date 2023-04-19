@@ -83,7 +83,7 @@ class ProfileSettingsViewModel(
                 )
                 viewModelState.update {
                     it.copy(
-                        error = ProfileSettingsError.InvalidPassword(com.example.ui.R.string.password_error),
+                        error = ProfileSettingsError.InvalidPassword,
                         isLoading = false
                     )
                 }
@@ -96,7 +96,7 @@ class ProfileSettingsViewModel(
                 )
                 viewModelState.update {
                     it.copy(
-                        error = ProfileSettingsError.NotMatchesPassword(com.example.ui.R.string.password_match_error),
+                        error = ProfileSettingsError.NotMatchesPassword,
                         isLoading = false
                     )
                 }
@@ -109,9 +109,9 @@ class ProfileSettingsViewModel(
                             R.string.successfully_updated_password,
                             SnackbarMessageType.Success
                         )
-                        userRepository.saveUser(
-                            viewModelState.value.user.copy(password = password.md5())
-                        )
+                        viewModelState.value.user?.copy(password = password.md5())?.let { user ->
+                            userRepository.saveUser(user)
+                        }
                         it.copy(isLoading = false)
                     }
                     is RepositoryResult.Error -> {
@@ -163,11 +163,11 @@ class ProfileSettingsViewModel(
             viewModelState.update {
                 when (val result = authenticationRepository.deleteAccount()) {
                     is RepositoryResult.Success -> {
+                        userRepository.deleteUser(userId)
                         snackbarManager.showMessage(
                             R.string.account_deleted,
                             SnackbarMessageType.Success
                         )
-                        userRepository.deleteUser(userId)
                         restartApp()
                         it.copy(isLoading = false)
                     }
@@ -190,6 +190,10 @@ class ProfileSettingsViewModel(
         viewModelScope.launch {
             val currentUserId = userPreferencesRepository.getCurrentUserId()
             userRepository.observeUser(currentUserId).collect { user ->
+                if (user == null) {
+                    viewModelState.update { it.copy(error = ProfileSettingsError.EmptyProfile) }
+                    return@collect
+                }
                 viewModelState.update { it.copy(user = user) }
             }
         }

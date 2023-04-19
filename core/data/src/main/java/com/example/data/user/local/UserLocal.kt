@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
  */
 class UserLocal(private val roomStorage: RoomStorage) : UserLocalDataSource {
 
-    override fun observeUser(id: String): Flow<UserEntity> {
+    override fun observeUser(id: String): Flow<UserEntity?> {
         return roomStorage.getDatabase().userDao().observeUser(id)
     }
 

@@ -40,6 +40,7 @@ import com.example.teamdetails.informations.viewmodel.TeamInformationsViewModel
 import com.example.ui.composables.*
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
+import com.example.ui.R as uiR
 
 /**
  * Created by jrzeznicki on 27/01/2023.
@@ -119,7 +120,7 @@ fun InformationsScreen(uiState: TeamInformationsUiState, pullRefreshState: PullR
                 is TeamInformationsUiState.HasDataWithoutCoach -> {
                     Text(
                         modifier = Modifier.padding(bottom = 8.dp),
-                        text = stringResource(id = com.example.ui.R.string.info),
+                        text = stringResource(id = uiR.string.info),
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSecondary
@@ -138,7 +139,7 @@ fun InformationsScreen(uiState: TeamInformationsUiState, pullRefreshState: PullR
                 is TeamInformationsUiState.HasDataWithoutVenueAndCoach -> {
                     Text(
                         modifier = Modifier.padding(bottom = 8.dp),
-                        text = stringResource(id = com.example.ui.R.string.info),
+                        text = stringResource(id = uiR.string.info),
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSecondary

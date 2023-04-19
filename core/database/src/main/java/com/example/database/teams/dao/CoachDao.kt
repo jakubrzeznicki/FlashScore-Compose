@@ -13,7 +13,7 @@ interface CoachDao {
     @Query("SELECT * FROM coach WHERE id = :coachId")
     fun observeCoach(coachId: Int): Flow<CoachEntity?>
 
-    @Query("SELECT * FROM coach")
+    @Query("SELECT * FROM coach WHERE id != 0")
     fun observeCoaches(): Flow<List<CoachEntity>>
 
     @Query("SELECT * FROM coach WHERE team_id = :teamId")

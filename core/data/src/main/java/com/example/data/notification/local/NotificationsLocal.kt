@@ -12,15 +12,19 @@ class NotificationsLocal(private val roomStorage: RoomStorage) : NotificationsLo
         roomStorage.getDatabase().notificationsDao().saveReminder(notificationData)
     }
 
-    override suspend fun deleteReminder(id: Int) {
-        roomStorage.getDatabase().notificationsDao().deleteReminder(id)
+    override suspend fun deleteReminder(id: Int, currentUserId: String) {
+        roomStorage.getDatabase().notificationsDao().deleteReminder(id, currentUserId)
     }
 
     override suspend fun getActiveReminders(timestamp: Long): List<NotificationDataEntity> {
         return roomStorage.getDatabase().notificationsDao().getReminders(timestamp)
     }
 
-    override fun observeActiveReminders(timestamp: Long): Flow<List<NotificationDataEntity>> {
-        return roomStorage.getDatabase().notificationsDao().observeReminders(timestamp)
+    override fun observeActiveReminders(
+        timestamp: Long,
+        currentUserId: String
+    ): Flow<List<NotificationDataEntity>> {
+        return roomStorage.getDatabase().notificationsDao()
+            .observeReminders(timestamp, currentUserId)
     }
 }

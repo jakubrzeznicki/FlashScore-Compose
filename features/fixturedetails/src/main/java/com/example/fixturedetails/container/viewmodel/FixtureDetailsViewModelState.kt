@@ -13,7 +13,7 @@ data class FixtureDetailsViewModelState(
     val error: FixtureDetailsError = FixtureDetailsError.NoError,
     val fixtureItem: FixtureItem? = EMPTY_FIXTURE_ITEM
 ) {
-    fun toUiState(): FixtureDetailsUiState = if (fixtureItem != null) {
+    fun toUiState(): FixtureDetailsUiState = if (fixtureItem!= null && fixtureItem.id != 0) {
         FixtureDetailsUiState.HasData(isLoading, error, fixtureItem)
     } else {
         FixtureDetailsUiState.NoData(isLoading, error)

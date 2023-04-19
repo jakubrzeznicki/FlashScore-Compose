@@ -31,7 +31,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.data.navigation.SignInBackStackType
 import com.example.data.navigation.SignUpBackStackType
 import com.example.data.navigation.WelcomeBackStackType
 import com.example.profile.R
@@ -39,12 +38,10 @@ import com.example.profile.navigation.ProfileNavigator
 import com.example.profile.settings.model.ProfileSettingsError
 import com.example.profile.settings.model.ProfileSettingsUiState
 import com.example.profile.settings.viewmodel.ProfileSettingsViewModel
-import com.example.ui.composables.CircularProgressBar
-import com.example.ui.composables.PasswordTextField
-import com.example.ui.composables.TextFieldError
-import com.example.ui.composables.ToggleTextVisibilityTrailingButton
+import com.example.ui.composables.*
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
+import com.example.ui.R as uiR
 
 /**
  * Created by jrzeznicki on 09/02/2023.
@@ -69,7 +66,7 @@ fun ProfileSettingsScreen(
         togglePasswordVisibility = { viewModel.togglePasswordVisibility() },
         toggleRepeatPasswordVisibility = { viewModel.toggleRepeatPasswordVisibility() },
         onPasswordClick = { viewModel.onPasswordClick() },
-        onSignInClick = { navigator.openSignIn(SignInBackStackType.Profile) },
+        onSignInClick = { navigator.openSignIn() },
         onSignUpClick = { navigator.openSignUp(SignUpBackStackType.Anonymous) },
         onDeleteAccountClick = {
             viewModel.onDeleteAccountClick { navigator.openWelcome(WelcomeBackStackType.Profile) }
@@ -120,29 +117,39 @@ private fun SettingsScreen(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    if (uiState.user.isAnonymous) {
-                        AnonymousSettings(onSignInClick, onSignUpClick)
-                    } else {
-                        PasswordCard(
-                            uiState = uiState,
-                            focusManager = focusManager,
-                            onPasswordChange = onPasswordChange,
-                            onRepeatPasswordChange = onRepeatPasswordChange,
-                            togglePasswordVisibility = togglePasswordVisibility,
-                            toggleRepeatPasswordVisibility = toggleRepeatPasswordVisibility,
-                            onPasswordClick = onPasswordClick,
-                            onSaveClick = onSavePasswordClick
-                        )
-                        SignInButton(
-                            uiState.shouldShowConfirmSignOutDialog,
-                            showSignOutDialog,
-                            onSignOutClick
-                        )
-                        DeleteAccountButton(
-                            uiState.shouldShowConfirmDeleteAccountDialog,
-                            showDeleteAccountDialog,
-                            onDeleteAccountClick
-                        )
+                    when (uiState) {
+                        is ProfileSettingsUiState.HasData -> {
+                            if (uiState.user.isAnonymous) {
+                                AnonymousSettings(onSignInClick, onSignUpClick)
+                            } else {
+                                PasswordCard(
+                                    uiState = uiState,
+                                    focusManager = focusManager,
+                                    onPasswordChange = onPasswordChange,
+                                    onRepeatPasswordChange = onRepeatPasswordChange,
+                                    togglePasswordVisibility = togglePasswordVisibility,
+                                    toggleRepeatPasswordVisibility = toggleRepeatPasswordVisibility,
+                                    onPasswordClick = onPasswordClick,
+                                    onSaveClick = onSavePasswordClick
+                                )
+                                SignInButton(
+                                    uiState.shouldShowConfirmSignOutDialog,
+                                    showSignOutDialog,
+                                    onSignOutClick
+                                )
+                                DeleteAccountButton(
+                                    uiState.shouldShowConfirmDeleteAccountDialog,
+                                    showDeleteAccountDialog,
+                                    onDeleteAccountClick
+                                )
+                            }
+                        }
+                        is ProfileSettingsUiState.NoData -> {
+                            EmptyState(
+                                modifier = Modifier.fillMaxWidth(),
+                                textId = R.string.no_profile_settings
+                            )
+                        }
                     }
                 }
             }
@@ -298,6 +305,13 @@ fun PasswordCard(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val errorMessage = when (uiState.error) {
+                is ProfileSettingsError.InvalidPassword -> stringResource(uiR.string.password_error)
+                is ProfileSettingsError.NotMatchesPassword ->
+                    stringResource(uiR.string.password_match_error)
+                is ProfileSettingsError.EmptyProfile -> stringResource(R.string.no_profile_settings)
+                else -> null
+            }
             PasswordTextField(
                 labelId = R.string.new_password,
                 value = uiState.password,
@@ -308,13 +322,7 @@ fun PasswordCard(
                         isVisible = uiState.isPasswordVisible
                     )
                 },
-                errorMessage = when (uiState.error) {
-                    is ProfileSettingsError.InvalidPassword ->
-                        stringResource(id = uiState.error.messageId)
-                    is ProfileSettingsError.NotMatchesPassword ->
-                        stringResource(id = uiState.error.messageId)
-                    else -> null
-                },
+                errorMessage = errorMessage,
                 hideText = !uiState.isPasswordVisible,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
@@ -335,13 +343,7 @@ fun PasswordCard(
                         isVisible = uiState.isRepeatPasswordVisible
                     )
                 },
-                errorMessage = when (uiState.error) {
-                    is ProfileSettingsError.InvalidPassword ->
-                        stringResource(id = uiState.error.messageId)
-                    is ProfileSettingsError.NotMatchesPassword ->
-                        stringResource(id = uiState.error.messageId)
-                    else -> null
-                },
+                errorMessage = errorMessage,
                 hideText = !uiState.isRepeatPasswordVisible,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
@@ -370,7 +372,10 @@ fun PasswordCard(
                 )
             }
             if (uiState.error is ProfileSettingsError.AuthenticationError) {
-                TextFieldError(uiState.error.responseStatus.statusMessage.orEmpty())
+                val authenticationError =
+                    (uiState.error as ProfileSettingsError.AuthenticationError)
+                        .responseStatus.statusMessage.orEmpty()
+                TextFieldError((authenticationError))
             }
         }
     }

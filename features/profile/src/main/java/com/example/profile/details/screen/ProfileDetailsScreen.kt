@@ -34,6 +34,7 @@ import com.example.profile.R
 import com.example.profile.details.model.ProfileDetailsUiState
 import com.example.profile.details.viewmodel.ProfileDetailsViewModel
 import com.example.ui.composables.CircularProgressBar
+import com.example.ui.composables.EmptyState
 import com.example.ui.composables.ProfileTextField
 import org.koin.androidx.compose.getViewModel
 
@@ -73,50 +74,60 @@ private fun DetailsScreen(
                 .verticalScroll(scrollState)
                 .padding(vertical = 16.dp)
         ) {
-            ProfileItemWithDivider(
-                isExpanded = uiState.isNameExpanded,
-                icon = Icons.Filled.Person,
-                label = com.example.ui.R.string.name,
-                profileItem = ProfileItem.Name(value = uiState.user.name),
-                keyboardType = KeyboardType.Text,
-                onValueChange = onValueChange,
-                onItemClick = onItemClick,
-                onDoneClick = onDoneClick,
-                clearFocus = clearFocus
-            )
-            ProfileItemWithDivider(
-                isExpanded = uiState.isEmailExpanded,
-                icon = Icons.Filled.Mail,
-                label = com.example.ui.R.string.email,
-                profileItem = ProfileItem.Email(value = uiState.user.email),
-                keyboardType = KeyboardType.Email,
-                onValueChange = onValueChange,
-                onItemClick = onItemClick,
-                onDoneClick = onDoneClick,
-                clearFocus = clearFocus
-            )
-            ProfileItemWithDivider(
-                isExpanded = uiState.isPhoneExpanded,
-                icon = Icons.Filled.Call,
-                label = R.string.phone,
-                profileItem = ProfileItem.Phone(value = uiState.user.phone),
-                keyboardType = KeyboardType.Phone,
-                onValueChange = onValueChange,
-                onItemClick = onItemClick,
-                onDoneClick = onDoneClick,
-                clearFocus = clearFocus
-            )
-            ProfileItemWithDivider(
-                isExpanded = uiState.isAddressExpanded,
-                icon = Icons.Filled.LocationOn,
-                label = com.example.ui.R.string.address,
-                profileItem = ProfileItem.Address(value = uiState.user.address),
-                keyboardType = KeyboardType.Text,
-                onValueChange = onValueChange,
-                onItemClick = onItemClick,
-                onDoneClick = onDoneClick,
-                clearFocus = clearFocus
-            )
+            when (uiState) {
+                is ProfileDetailsUiState.HasData -> {
+                    ProfileItemWithDivider(
+                        isExpanded = uiState.isNameExpanded,
+                        icon = Icons.Filled.Person,
+                        label = com.example.ui.R.string.name,
+                        profileItem = ProfileItem.Name(value = uiState.user.name),
+                        keyboardType = KeyboardType.Text,
+                        onValueChange = onValueChange,
+                        onItemClick = onItemClick,
+                        onDoneClick = onDoneClick,
+                        clearFocus = clearFocus
+                    )
+                    ProfileItemWithDivider(
+                        isExpanded = uiState.isEmailExpanded,
+                        icon = Icons.Filled.Mail,
+                        label = com.example.ui.R.string.email,
+                        profileItem = ProfileItem.Email(value = uiState.user.email),
+                        keyboardType = KeyboardType.Email,
+                        onValueChange = onValueChange,
+                        onItemClick = onItemClick,
+                        onDoneClick = onDoneClick,
+                        clearFocus = clearFocus
+                    )
+                    ProfileItemWithDivider(
+                        isExpanded = uiState.isPhoneExpanded,
+                        icon = Icons.Filled.Call,
+                        label = R.string.phone,
+                        profileItem = ProfileItem.Phone(value = uiState.user.phone),
+                        keyboardType = KeyboardType.Phone,
+                        onValueChange = onValueChange,
+                        onItemClick = onItemClick,
+                        onDoneClick = onDoneClick,
+                        clearFocus = clearFocus
+                    )
+                    ProfileItemWithDivider(
+                        isExpanded = uiState.isAddressExpanded,
+                        icon = Icons.Filled.LocationOn,
+                        label = com.example.ui.R.string.address,
+                        profileItem = ProfileItem.Address(value = uiState.user.address),
+                        keyboardType = KeyboardType.Text,
+                        onValueChange = onValueChange,
+                        onItemClick = onItemClick,
+                        onDoneClick = onDoneClick,
+                        clearFocus = clearFocus
+                    )
+                }
+                is ProfileDetailsUiState.NoData -> {
+                    EmptyState(
+                        modifier = Modifier.fillMaxWidth(),
+                        textId = R.string.no_profile_details
+                    )
+                }
+            }
         }
         CircularProgressBar(uiState.isLoading)
     }

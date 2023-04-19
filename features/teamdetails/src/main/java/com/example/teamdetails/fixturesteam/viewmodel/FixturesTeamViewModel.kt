@@ -7,6 +7,7 @@ import com.example.data.fixture.repository.FixturesDataSource
 import com.example.data.userpreferences.repository.UserPreferencesDataSource
 import com.example.favoritefixtureinteractor.FavoriteFixtureInteractor
 import com.example.model.fixture.FixtureItemWrapper
+import com.example.model.team.Team
 import com.example.teamdetails.fixturesteam.model.FixturesTeamError
 import com.example.ui.composables.chips.FilterChip
 import com.example.ui.snackbar.SnackbarManager
@@ -18,7 +19,7 @@ import kotlinx.coroutines.launch
  * Created by jrzeznicki on 30/01/2023.
  */
 class FixturesTeamViewModel(
-    private val teamId: Int,
+    private val team: Team,
     private val season: Int,
     private val fixturesRepository: FixturesDataSource,
     private val userPreferencesRepository: UserPreferencesDataSource,
@@ -41,7 +42,16 @@ class FixturesTeamViewModel(
     }
 
     fun refresh() {
-        refreshFixtures()
+        if (team.isNational) {
+            refreshFixturesForNationalTeam()
+        } else {
+            refreshFixtures(season)
+        }
+    }
+
+    private fun refreshFixturesForNationalTeam() {
+        refreshFixtures(season)
+        refreshFixtures(season + ONE_YEAR)
     }
 
     private fun observeFixtures() {
@@ -49,7 +59,7 @@ class FixturesTeamViewModel(
             val currentUserId = userPreferencesRepository.getCurrentUserId()
             val userPreferencesFlow =
                 userPreferencesRepository.observeUserPreferences(currentUserId)
-            val fixturesFlow = fixturesRepository.observeFixturesByTeam(teamId, season)
+            val fixturesFlow = fixturesRepository.observeFixturesByTeam(team.id, season)
             combine(flow = fixturesFlow, flow2 = userPreferencesFlow) { fixtures, userPreferences ->
                 val favoriteFixtureIds = userPreferences.favoriteFixtureIds
                 val fixtureItemWrappers = fixtures.map {
@@ -95,10 +105,10 @@ class FixturesTeamViewModel(
         }
     }
 
-    private fun refreshFixtures() {
+    private fun refreshFixtures(season: Int) {
         viewModelState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            val result = fixturesRepository.loadFixturesByTeam(teamId = teamId, season = season)
+            val result = fixturesRepository.loadFixturesByTeam(teamId = team.id, season = season)
             viewModelState.update {
                 when (result) {
                     is RepositoryResult.Success -> it.copy(isLoading = false)
@@ -121,5 +131,9 @@ class FixturesTeamViewModel(
         viewModelScope.launch {
             favoriteFixtureInteractor.addFixtureToFavorite(fixtureItemWrapper)
         }
+    }
+
+    private companion object {
+        const val ONE_YEAR = 1
     }
 }

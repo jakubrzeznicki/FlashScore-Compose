@@ -12,8 +12,8 @@ import kotlinx.coroutines.flow.map
  */
 class UserRepository(private val local: UserLocalDataSource) : UserDataSource {
 
-    override fun observeUser(id: String): Flow<User> {
-        return local.observeUser(id).map { it.toUser() }
+    override fun observeUser(id: String): Flow<User?> {
+        return local.observeUser(id).map { it?.toUser() }
     }
 
     override suspend fun getUserById(id: String): User? {

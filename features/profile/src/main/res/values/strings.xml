@@ -1,6 +1,7 @@
 <resources>
     //Profile Container Screen
     <string name="successfully_updated_photo">Successfully updated photo</string>
+    <string name="no_profile">There is no information about profile</string>
 
     //Profile Details Screen
     <string name="successfully_updated_name">Successfully updated name</string>
@@ -9,6 +10,7 @@
     <string name="successfully_updated_address">Successfully updated address</string>
     <string name="successfully_updated_phone">Successfully updated phone</string>
     <string name="phone">Phone</string>
+    <string name="no_profile_details">There is profile details</string>
 
     //Profile Settings
     <string name="delete_account">Delete account</string>
@@ -24,4 +26,5 @@
     <string name="repeat_new_password">Repeat new password</string>
     <string name="save">Save</string>
     <string name="new_password">New password</string>
+    <string name="no_profile_settings">There is no profile settings</string>
 </resources>

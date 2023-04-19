@@ -15,7 +15,7 @@ interface VenueDao {
     @Query("SELECT * FROM venue WHERE team_id = :teamId")
     fun observeVenueByTeam(teamId: Int): Flow<VenueEntity?>
 
-    @Query("SELECT * FROM venue")
+    @Query("SELECT * FROM venue WHERE id != 0")
     fun observeVenues(): Flow<List<VenueEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

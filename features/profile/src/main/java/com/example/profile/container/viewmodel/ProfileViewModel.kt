@@ -8,6 +8,7 @@ import com.example.common.utils.RepositoryResult
 import com.example.data.user.repository.UserDataSource
 import com.example.data.userpreferences.repository.UserPreferencesDataSource
 import com.example.profile.R
+import com.example.profile.container.model.ProfileError
 import com.example.ui.snackbar.SnackbarManager
 import com.example.ui.snackbar.SnackbarMessageType
 import kotlinx.coroutines.flow.*
@@ -38,8 +39,15 @@ class ProfileViewModel(
     private fun observeUser() {
         viewModelScope.launch {
             val currentUserId = userPreferencesRepository.getCurrentUserId()
-            if (currentUserId.isEmpty()) authenticationRepository.signOut()
+            if (currentUserId.isEmpty()) {
+                authenticationRepository.signOut()
+                return@launch
+            }
             userRepository.observeUser(currentUserId).collect { user ->
+                if (user == null) {
+                    viewModelState.update { it.copy(error = ProfileError.EmptyProfile) }
+                    return@collect
+                }
                 viewModelState.update { it.copy(user = user) }
             }
         }
@@ -55,9 +63,10 @@ class ProfileViewModel(
                             R.string.successfully_updated_photo,
                             SnackbarMessageType.Success
                         )
-                        userRepository.saveUser(
-                            viewModelState.value.user.copy(photoUri = result.data ?: Uri.EMPTY)
-                        )
+                        viewModelState.value.user?.copy(photoUri = result.data ?: Uri.EMPTY)
+                            ?.let { user ->
+                                userRepository.saveUser(user)
+                            }
                         it.copy(isLoading = false)
                     }
                     is RepositoryResult.Error -> {

@@ -9,7 +9,7 @@ import com.example.profile.settings.model.ProfileSettingsUiState
  */
 data class ProfileSettingsViewModelState(
     val isLoading: Boolean = false,
-    val user: User = User(),
+    val user: User? = User(),
     val error: ProfileSettingsError = ProfileSettingsError.NoError,
     val password: String = "",
     val repeatPassword: String = "",
@@ -19,10 +19,22 @@ data class ProfileSettingsViewModelState(
     val shouldShowConfirmDeleteAccountDialog: Boolean = false,
     val shouldShowConfirmSignOutDialog: Boolean = false
 ) {
-    fun toUiState(): ProfileSettingsUiState {
-        return ProfileSettingsUiState(
+    fun toUiState(): ProfileSettingsUiState = if (user != null) {
+        ProfileSettingsUiState.HasData(
             isLoading = isLoading,
-            user = user,
+            error = error,
+            password = password,
+            repeatPassword = repeatPassword,
+            isPasswordCardExpanded = isPasswordCardExpanded,
+            isPasswordVisible = isPasswordVisible,
+            isRepeatPasswordVisible = isRepeatPasswordVisible,
+            shouldShowConfirmDeleteAccountDialog = shouldShowConfirmDeleteAccountDialog,
+            shouldShowConfirmSignOutDialog = shouldShowConfirmSignOutDialog,
+            user = user
+        )
+    } else {
+        ProfileSettingsUiState.NoData(
+            isLoading = isLoading,
             error = error,
             password = password,
             repeatPassword = repeatPassword,
