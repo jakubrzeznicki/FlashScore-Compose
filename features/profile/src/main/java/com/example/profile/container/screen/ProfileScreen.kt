@@ -34,6 +34,7 @@ import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import com.example.common.utils.toast
 import com.example.model.user.User
+import com.example.profile.R
 import com.example.profile.container.model.ProfileUiState
 import com.example.profile.container.viewmodel.ProfileViewModel
 import com.example.profile.details.screen.ProfileDetailsScreen
@@ -41,6 +42,7 @@ import com.example.profile.navigation.ProfileNavigator
 import com.example.profile.settings.screen.ProfileSettingsScreen
 import com.example.ui.composables.AppTopBar
 import com.example.ui.composables.CircularProgressBar
+import com.example.ui.composables.EmptyState
 import com.example.ui.composables.tabs.ScrollableTabs
 import com.example.ui.composables.tabs.TabItem
 import com.example.ui.composables.tabs.TabsContent
@@ -50,6 +52,7 @@ import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.permissions.*
 import com.ramcosta.composedestinations.annotation.Destination
 import org.koin.androidx.compose.getViewModel
+import com.example.ui.R as uiR
 
 /**
  * Created by jrzeznicki on 08/02/2023.
@@ -95,14 +98,24 @@ private fun ProfileScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(top = 8.dp, bottom = 64.dp),
-                ) {
-                ProfileHeader(
-                    context,
-                    uiState.user.name,
-                    uiState.user.photoUri,
-                    onPhotoUriPicked
-                )
-                ProfileTabs(user = uiState.user, navigator = navigator)
+            ) {
+                when (uiState) {
+                    is ProfileUiState.HasData -> {
+                        ProfileHeader(
+                            context,
+                            uiState.user.name,
+                            uiState.user.photoUri,
+                            onPhotoUriPicked
+                        )
+                        ProfileTabs(user = uiState.user, navigator = navigator)
+                    }
+                    is ProfileUiState.NoData -> {
+                        EmptyState(
+                            modifier = Modifier.fillMaxWidth(),
+                            textId = R.string.no_profile
+                        )
+                    }
+                }
             }
             CircularProgressBar(uiState.isLoading)
         }
@@ -118,7 +131,7 @@ private fun TopBar() {
             .padding(top = 8.dp),
         title = {
             Text(
-                text = stringResource(id = com.example.ui.R.string.profile),
+                text = stringResource(id = uiR.string.profile),
                 color = MaterialTheme.colorScheme.onSecondary,
                 style = FlashScoreTypography.headlineSmall
             )
@@ -178,10 +191,10 @@ private fun ProfileImage(context: Context, userPhotoUri: Uri, onPhotoUriPicked: 
     val permissionLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { wasGranted ->
             if (wasGranted) {
-                context.toast(com.example.ui.R.string.permission_granted)
+                context.toast(uiR.string.permission_granted)
                 photoLauncher.launch(arrayOf(IMAGE_PATH))
             } else {
-                context.toast(com.example.ui.R.string.permission_denied)
+                context.toast(uiR.string.permission_denied)
             }
         }
     Box(
@@ -199,7 +212,7 @@ private fun ProfileImage(context: Context, userPhotoUri: Uri, onPhotoUriPicked: 
                 .data(userPhotoUri)
                 .crossfade(true)
                 .build(),
-            placeholder = painterResource(id = com.example.ui.R.drawable.ic_profile),
+            placeholder = painterResource(id = uiR.drawable.ic_profile),
             contentDescription = null,
             contentScale = ContentScale.FillHeight
         )

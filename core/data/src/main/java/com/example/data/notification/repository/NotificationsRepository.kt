@@ -17,16 +17,19 @@ class NotificationsRepository(private val local: NotificationsLocalDataSource) :
         local.saveReminder(notificationData.toNotificationDataEntity())
     }
 
-    override suspend fun deleteReminder(id: Int) {
-        local.deleteReminder(id)
+    override suspend fun deleteReminder(id: Int, currentUserId: String) {
+        local.deleteReminder(id, currentUserId)
     }
 
     override suspend fun getActiveReminders(timestamp: Long): List<NotificationData> {
         return local.getActiveReminders(timestamp).map { it.toNotificationData() }
     }
 
-    override fun observeActiveReminders(timestamp: Long): Flow<List<NotificationData>> {
-        return local.observeActiveReminders(timestamp).map {
+    override fun observeActiveReminders(
+        timestamp: Long,
+        currentUserId: String
+    ): Flow<List<NotificationData>> {
+        return local.observeActiveReminders(timestamp, currentUserId).map {
             it.map { notificationDataEntity -> notificationDataEntity.toNotificationData() }
         }
     }

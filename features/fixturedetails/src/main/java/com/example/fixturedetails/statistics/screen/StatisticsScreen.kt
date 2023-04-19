@@ -35,6 +35,7 @@ import com.example.ui.composables.FullScreenLoading
 import com.example.ui.composables.LoadingContent
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
+import com.example.ui.R as uiR
 
 /**
  * Created by jrzeznicki on 23/12/2022.
@@ -158,7 +159,7 @@ private fun StatisticsList(
                                 modifier = Modifier
                                     .size(128.dp)
                                     .padding(8.dp),
-                                painter = painterResource(id = com.example.ui.R.drawable.ic_close),
+                                painter = painterResource(id = uiR.drawable.ic_close),
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.inverseOnSurface
                             )

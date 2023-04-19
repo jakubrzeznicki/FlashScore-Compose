@@ -13,6 +13,7 @@ fun NotificationDataEntity.toNotificationData(): NotificationData {
         formattedDate = formattedDate,
         homeTeam = homeTeam,
         awayTeam = awayTeam,
-        timestamp = timestamp
+        timestamp = timestamp,
+        userId = userId
     )
 }

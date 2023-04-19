@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.model.fixture.FixtureItemWrapper
+import com.example.model.team.Team
 import com.example.teamdetails.R
 import com.example.teamdetails.fixturesteam.model.FixturesTeamUiState
 import com.example.teamdetails.fixturesteam.viewmodel.FixturesTeamViewModel
@@ -41,10 +42,10 @@ private const val SETUP_FIXTURES_TEAM_KEY = "SETUP_FIXTURES_TEAM_KEY"
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FixturesTeamScreen(
-    teamId: Int,
+    team: Team,
     season: Int,
     navigator: TeamDetailsNavigator,
-    viewModel: FixturesTeamViewModel = getViewModel { parametersOf(teamId, season) }
+    viewModel: FixturesTeamViewModel = getViewModel { parametersOf(team, season) }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current

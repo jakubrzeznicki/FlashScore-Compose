@@ -38,17 +38,19 @@ class DefaultFavoriteFixtureInteractor(
     private suspend fun cancelReminder(fixtureItem: FixtureItem) {
         val notificationData = fixtureItem.toNotificationData()
         reminderManager.cancelReminder(notificationData)
-        notificationsRepository.deleteReminder(notificationData.id)
+        notificationsRepository.deleteReminder(notificationData.id, notificationData.userId)
     }
 
-    private fun FixtureItem.toNotificationData(): NotificationData {
+    private suspend fun FixtureItem.toNotificationData(): NotificationData {
+        val currentUserId = userPreferencesRepository.getCurrentUserId()
         return NotificationData(
             id = id,
             round = round,
             formattedDate = fixture.formattedDate,
             homeTeam = homeTeam.name,
             awayTeam = awayTeam.name,
-            timestamp = fixture.timestamp * 1000L
+            timestamp = fixture.timestamp * 1000L,
+            userId = currentUserId
         )
     }
 }

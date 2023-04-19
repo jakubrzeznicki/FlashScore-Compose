@@ -169,6 +169,7 @@ firebase-storage                    = { module = "com.google.firebase:firebase-s
 test-kotlin                         = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 test-kotlin-coroutines              = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlin-coroutines" }
 test-junit                          = { module = "junit:junit", version.ref = "test-junit" }
+test-mockk                          = { module = "io.mockk:mockk", version.ref = "test-mockk" }
 test-ext-junit                      = { module = "androidx.test.ext:junit", version.ref = "test-ext-junit" }
 test-espresso-core                  = { module = "androidx.test.espresso:espresso-core", version.ref = "test-expresso-core" }
 test-app-center-espresso            = { module = "com.microsoft.appcenter:espresso-test-extension", version.ref = "test-app-center-esspresso" }

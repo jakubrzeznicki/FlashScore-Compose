@@ -26,8 +26,8 @@ class PlayersRepository(
         return local.observePlayer(playerId).map { it?.toPlayer() }
     }
 
-    override fun observePlayers(teamId: Int, season: Int): Flow<List<Player>> {
-        return local.observePlayers(teamId, season).map { playerEntities ->
+    override fun observePlayers(teamIds: List<Int>, season: Int): Flow<List<Player>> {
+        return local.observePlayers(teamIds, season).map { playerEntities ->
             playerEntities.map { it.toPlayer() }
         }
     }

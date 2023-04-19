@@ -12,8 +12,8 @@ class PlayersLocal(private val roomStorage: RoomStorage) : PlayersLocalDataSourc
         return roomStorage.getDatabase().playerDao().observePlayer(playerId)
     }
 
-    override fun observePlayers(teamId: Int, season: Int): Flow<List<PlayerEntity>> {
-        return roomStorage.getDatabase().playerDao().observePlayers(teamId, season)
+    override fun observePlayers(teamIds: List<Int>, season: Int): Flow<List<PlayerEntity>> {
+        return roomStorage.getDatabase().playerDao().observePlayers(teamIds, season)
     }
 
     override fun observePlayers(): Flow<List<PlayerEntity>> {

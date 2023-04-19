@@ -12,7 +12,6 @@ data class TeamEntity(
     @ColumnInfo(name = "logo") val logo: String,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "winner") val isWinner: Boolean,
-    @ColumnInfo(name = "is_home") val isHome: Boolean,
     @ColumnInfo(name = "code") val code: String,
     @ColumnInfo(name = "founded") val founded: Int,
     @ColumnInfo(name = "country") val country: String,

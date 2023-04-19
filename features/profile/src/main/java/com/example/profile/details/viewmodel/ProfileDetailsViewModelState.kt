@@ -1,6 +1,7 @@
 package com.example.profile.details.viewmodel
 
 import com.example.model.user.User
+import com.example.profile.container.model.ProfileError
 import com.example.profile.details.model.ProfileDetailsUiState
 
 /**
@@ -8,18 +9,31 @@ import com.example.profile.details.model.ProfileDetailsUiState
  */
 data class ProfileDetailsViewModelState(
     val isLoading: Boolean = false,
-    val user: User = User(),
+    val error: ProfileError = ProfileError.NoError,
+    val user: User? = User(),
     val isNameExpanded: Boolean = false,
     val isEmailExpanded: Boolean = false,
     val isPhoneExpanded: Boolean = false,
     val isAddressExpanded: Boolean = false
 ) {
-    fun toUiState(): ProfileDetailsUiState = ProfileDetailsUiState(
-        isLoading,
-        user,
-        isNameExpanded,
-        isEmailExpanded,
-        isPhoneExpanded,
-        isAddressExpanded
-    )
+    fun toUiState(): ProfileDetailsUiState = if (user != null) {
+        ProfileDetailsUiState.HasData(
+            isLoading,
+            error,
+            isNameExpanded,
+            isEmailExpanded,
+            isPhoneExpanded,
+            isAddressExpanded,
+            user
+        )
+    } else {
+        ProfileDetailsUiState.NoData(
+            isLoading,
+            error,
+            isNameExpanded,
+            isEmailExpanded,
+            isPhoneExpanded,
+            isAddressExpanded
+        )
+    }
 }

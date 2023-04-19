@@ -25,10 +25,10 @@ val teamDetailsViewModelModule = module {
             get()
         )
     }
-    viewModel { (teamId: Int, season: Int) ->
+    viewModel { (team: Team, season: Int) ->
         val favoriteFixtureInteractor = DefaultFavoriteFixtureInteractor(get(), get(), get())
         FixturesTeamViewModel(
-            teamId,
+            team,
             season,
             get(),
             get(),

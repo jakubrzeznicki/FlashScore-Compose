@@ -34,5 +34,6 @@ dependencies {
     testImplementation libs.test.junit
     testImplementation libs.test.ext.junit
     testImplementation libs.test.espresso.core
+    testImplementation libs.test.mockk
     testImplementation libs.test.app.center.espresso
 }

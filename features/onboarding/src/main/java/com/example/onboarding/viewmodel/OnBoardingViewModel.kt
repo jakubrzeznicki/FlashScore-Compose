@@ -36,10 +36,8 @@ class OnBoardingViewModel(
 
     fun setup() {
         observeTeams()
-        viewModelState.value.teams.forEach {
-            observePlayers(it.id, SEASON)
-        }
-        //refreshTeams()
+        //viewModelState.value.teams.forEach { refreshTeams() }
+        observePlayers(viewModelState.value.teams.map { it.id }, SEASON)
     }
 
     fun refresh() {
@@ -78,8 +76,8 @@ class OnBoardingViewModel(
         changeQuestion(viewModelState.value.onBoardingQuestionsData.questionIndex + 1)
         viewModelState.value.selectedTeams.forEach {
             refreshPlayers(team = it, season = SEASON)
-            observePlayers(teamId = it.id, season = SEASON)
         }
+        observePlayers(viewModelState.value.teams.map { it.id }, SEASON)
     }
 
     private fun changeQuestion(newQuestionIndex: Int = viewModelState.value.onBoardingQuestionsData.questionIndex) {
@@ -106,9 +104,9 @@ class OnBoardingViewModel(
         else -> true
     }
 
-    private fun observePlayers(teamId: Int, season: Int) {
+    private fun observePlayers(teamIds: List<Int>, season: Int) {
         viewModelScope.launch {
-            playersRepository.observePlayers(teamId, season).collect { players ->
+            playersRepository.observePlayers(teamIds, season).collect { players ->
                 viewModelState.update {
                     it.copy(players = players)
                 }

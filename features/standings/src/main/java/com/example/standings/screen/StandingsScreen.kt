@@ -30,7 +30,6 @@ import com.example.model.country.Country
 import com.example.model.league.League
 import com.example.model.standings.Standing
 import com.example.model.standings.StandingItem
-import com.example.standings.R
 import com.example.standings.model.StandingsUiState
 import com.example.standings.navigation.StandingsNavigator
 import com.example.standings.viewmodel.StandingsViewModel
@@ -38,6 +37,7 @@ import com.example.ui.composables.*
 import com.example.ui.theme.FlashScoreTypography
 import com.ramcosta.composedestinations.annotation.Destination
 import org.koin.androidx.compose.getViewModel
+import com.example.ui.R as uiR
 
 /**
  * Created by jrzeznicki on 23/12/2022.
@@ -120,7 +120,7 @@ fun StandingsScreen(
                                 color = MaterialTheme.colorScheme.inverseSurface
                             )
                         ),
-                    label = stringResource(id = R.string.search_standings),
+                    label = stringResource(id = com.example.standings.R.string.search_standings),
                     query = uiState.standingsQuery,
                     onQueryChange = onStandingsQueryChanged,
                     leadingIcon = {
@@ -173,8 +173,17 @@ fun StandingsScreen(
                             Spacer(modifier = Modifier.size(24.dp))
                             EmptyState(
                                 modifier = Modifier.fillMaxWidth(),
-                                textId = R.string.no_standings
-                            )
+                                textId = com.example.standings.R.string.no_standings
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .size(128.dp)
+                                        .padding(8.dp),
+                                    painter = painterResource(id = uiR.drawable.ic_close),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.inverseOnSurface
+                                )
+                            }
                         }
                     }
                     is StandingsUiState.NoData -> {
@@ -187,13 +196,13 @@ fun StandingsScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .fillMaxHeight(),
-                                textId = R.string.no_standings
+                                textId = com.example.standings.R.string.no_standings
                             ) {
                                 Icon(
                                     modifier = Modifier
                                         .size(128.dp)
                                         .padding(8.dp),
-                                    painter = painterResource(id = com.example.ui.R.drawable.ic_close),
+                                    painter = painterResource(id = uiR.drawable.ic_close),
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.inverseOnSurface
                                 )
@@ -292,7 +301,7 @@ private fun StandingHeaderRow() {
         )
         Text(
             modifier = Modifier.weight(1f),
-            text = stringResource(id = R.string.played_short),
+            text = stringResource(id = com.example.standings.R.string.played_short),
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSecondary
         )
@@ -348,7 +357,7 @@ private fun StandingElementRow(standingItem: StandingItem) {
                 .size(Size.ORIGINAL)
                 .crossfade(true)
                 .build(),
-            placeholder = painterResource(id = com.example.ui.R.drawable.ic_close),
+            placeholder = painterResource(id = uiR.drawable.ic_close),
             contentDescription = null,
             contentScale = ContentScale.Fit
         )

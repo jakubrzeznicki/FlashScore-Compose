@@ -39,6 +39,7 @@ import com.google.accompanist.flowlayout.FlowMainAxisAlignment
 import com.google.accompanist.flowlayout.FlowRow
 import com.ramcosta.composedestinations.annotation.Destination
 import org.koin.androidx.compose.getViewModel
+import com.example.ui.R as uiR
 
 /**
  * Created by jrzeznicki on 23/12/2022.
@@ -124,7 +125,7 @@ fun ExploreScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(start = 16.dp, end = 16.dp, bottom = 64.dp)
-                ) {
+            ) {
                 SimpleSearchBar(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -162,7 +163,7 @@ fun ExploreScreen(
                             state = fixturesLazyListState,
                             color = MaterialTheme.colorScheme.error,
                             favoriteColor = MaterialTheme.colorScheme.primary,
-                            textId = com.example.ui.R.string.live_score,
+                            textId = uiR.string.live_score,
                             context = context,
                             favoriteTextId = R.string.favorites,
                             onFixtureClick = onFixtureClick,
@@ -174,7 +175,7 @@ fun ExploreScreen(
                             fixtures = uiState.liveFixtures,
                             state = fixturesLazyListState,
                             color = MaterialTheme.colorScheme.error,
-                            textId = com.example.ui.R.string.live_score,
+                            textId = uiR.string.live_score,
                             context = context,
                             onFixtureClick = onFixtureClick,
                             onFavoriteClick = onFixtureFavoriteClick
@@ -207,7 +208,7 @@ fun ExploreScreen(
                                     modifier = Modifier
                                         .size(128.dp)
                                         .padding(8.dp),
-                                    painter = painterResource(id = com.example.ui.R.drawable.ic_close),
+                                    painter = painterResource(id = uiR.drawable.ic_close),
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.inverseOnSurface
                                 )
@@ -221,7 +222,7 @@ fun ExploreScreen(
                             state = teamsLazyListState,
                             color = MaterialTheme.colorScheme.onSecondary,
                             favoriteColor = MaterialTheme.colorScheme.primary,
-                            textId = com.example.ui.R.string.teams,
+                            textId = uiR.string.teams,
                             favoriteTextId = R.string.favorites,
                             onTeamClick = onTeamClick,
                             onTeamFavoriteClick = onTeamFavoriteClick
@@ -232,26 +233,32 @@ fun ExploreScreen(
                             teams = uiState.teams,
                             state = teamsLazyListState,
                             color = MaterialTheme.colorScheme.onSecondary,
-                            textId = com.example.ui.R.string.teams,
+                            textId = uiR.string.teams,
                             onTeamClick = onTeamClick,
                             onTeamFavoriteClick = onTeamFavoriteClick
                         )
                     }
                     is ExploreUiState.Teams.NoData -> {
-                        EmptyState(
+                        Column(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight(),
-                            textId = com.example.ui.R.string.no_teams
+                                .fillMaxSize()
+                                .verticalScroll(scrollEmptyStateState)
                         ) {
-                            Icon(
+                            EmptyState(
                                 modifier = Modifier
-                                    .size(128.dp)
-                                    .padding(8.dp),
-                                painter = painterResource(id = com.example.ui.R.drawable.ic_close),
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.inverseOnSurface
-                            )
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(),
+                                textId = uiR.string.no_teams
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .size(128.dp)
+                                        .padding(8.dp),
+                                    painter = painterResource(id = uiR.drawable.ic_close),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.inverseOnSurface
+                                )
+                            }
                         }
                     }
                     is ExploreUiState.Players.HasFullData -> {
@@ -261,7 +268,7 @@ fun ExploreScreen(
                             state = playersLazyListState,
                             color = MaterialTheme.colorScheme.onSecondary,
                             favoriteColor = MaterialTheme.colorScheme.primary,
-                            textId = com.example.ui.R.string.players,
+                            textId = uiR.string.players,
                             favoriteTextId = R.string.favorites,
                             onPlayerClick = onPlayerClick,
                             onPlayerFavoriteClick = onPlayerFavoriteClick
@@ -272,26 +279,32 @@ fun ExploreScreen(
                             players = uiState.players,
                             color = MaterialTheme.colorScheme.onSecondary,
                             state = playersLazyListState,
-                            textId = com.example.ui.R.string.players,
+                            textId = uiR.string.players,
                             onPlayerClick = onPlayerClick,
                             onPlayerFavoriteClick = onPlayerFavoriteClick
                         )
                     }
                     is ExploreUiState.Players.NoData -> {
-                        EmptyState(
+                        Column(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight(),
-                            textId = com.example.ui.R.string.no_players
+                                .fillMaxSize()
+                                .verticalScroll(scrollEmptyStateState)
                         ) {
-                            Icon(
+                            EmptyState(
                                 modifier = Modifier
-                                    .size(128.dp)
-                                    .padding(8.dp),
-                                painter = painterResource(id = com.example.ui.R.drawable.ic_close),
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.inverseOnSurface
-                            )
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(),
+                                textId = uiR.string.no_players
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .size(128.dp)
+                                        .padding(8.dp),
+                                    painter = painterResource(id = uiR.drawable.ic_close),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.inverseOnSurface
+                                )
+                            }
                         }
                     }
                     is ExploreUiState.Coaches.HasFullData -> {
@@ -304,20 +317,26 @@ fun ExploreScreen(
                         )
                     }
                     is ExploreUiState.Coaches.NoData -> {
-                        EmptyState(
+                        Column(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight(),
-                            textId = R.string.no_coaches
+                                .fillMaxSize()
+                                .verticalScroll(scrollEmptyStateState)
                         ) {
-                            Icon(
+                            EmptyState(
                                 modifier = Modifier
-                                    .size(128.dp)
-                                    .padding(8.dp),
-                                painter = painterResource(id = com.example.ui.R.drawable.ic_close),
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.inverseOnSurface
-                            )
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(),
+                                textId = R.string.no_coaches
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .size(128.dp)
+                                        .padding(8.dp),
+                                    painter = painterResource(id = uiR.drawable.ic_close),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.inverseOnSurface
+                                )
+                            }
                         }
                     }
                     is ExploreUiState.Venues.HasFullData -> {
@@ -328,20 +347,26 @@ fun ExploreScreen(
                         )
                     }
                     is ExploreUiState.Venues.NoData -> {
-                        EmptyState(
+                        Column(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight(),
-                            textId = R.string.no_venues
+                                .fillMaxSize()
+                                .verticalScroll(scrollEmptyStateState)
                         ) {
-                            Icon(
+                            EmptyState(
                                 modifier = Modifier
-                                    .size(128.dp)
-                                    .padding(8.dp),
-                                painter = painterResource(id = com.example.ui.R.drawable.ic_close),
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.inverseOnSurface
-                            )
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(),
+                                textId = R.string.no_venues
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .size(128.dp)
+                                        .padding(8.dp),
+                                    painter = painterResource(id = uiR.drawable.ic_close),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.inverseOnSurface
+                                )
+                            }
                         }
                     }
                     is ExploreUiState.Leagues.HasFullData -> {
@@ -349,25 +374,31 @@ fun ExploreScreen(
                             leagues = uiState.leagues,
                             state = leaguesLazyListState,
                             color = MaterialTheme.colorScheme.onSecondary,
-                            textId = com.example.ui.R.string.leagues,
+                            textId = uiR.string.leagues,
                             onLeagueClick = onLeagueClick
                         )
                     }
                     is ExploreUiState.Leagues.NoData -> {
-                        EmptyState(
+                        Column(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight(),
-                            textId = R.string.no_leagues
+                                .fillMaxSize()
+                                .verticalScroll(scrollEmptyStateState)
                         ) {
-                            Icon(
+                            EmptyState(
                                 modifier = Modifier
-                                    .size(128.dp)
-                                    .padding(8.dp),
-                                painter = painterResource(id = com.example.ui.R.drawable.ic_close),
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.inverseOnSurface
-                            )
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(),
+                                textId = R.string.no_leagues
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .size(128.dp)
+                                        .padding(8.dp),
+                                    painter = painterResource(id = uiR.drawable.ic_close),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.inverseOnSurface
+                                )
+                            }
                         }
                     }
                 }
@@ -385,7 +416,7 @@ private fun TopBar() {
             .padding(top = 8.dp),
         title = {
             Text(
-                text = stringResource(id = com.example.ui.R.string.explore),
+                text = stringResource(id = uiR.string.explore),
                 color = MaterialTheme.colorScheme.onSecondary,
                 style = FlashScoreTypography.headlineSmall
             )

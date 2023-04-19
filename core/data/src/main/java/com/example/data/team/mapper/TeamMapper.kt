@@ -26,11 +26,10 @@ fun Team.toTeamEntity(
         logo = logo,
         name = name,
         isWinner = isWinner,
-        isHome = false,
         code = code,
         founded = founded,
         country = countryName ?: country,
-        isNational = false,
+        isNational = isNational,
         leagueId = leagueIdParam ?: leagueId,
         season = seasonParam ?: season
     )

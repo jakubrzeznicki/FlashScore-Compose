@@ -3,6 +3,7 @@ package com.example.notifications.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.notification.repository.NotificationsDataSource
+import com.example.data.userpreferences.repository.UserPreferencesDataSource
 import com.example.model.notificationdata.NotificationData
 import com.example.notificationservice.manager.ReminderManager
 import kotlinx.coroutines.flow.*
@@ -13,9 +14,9 @@ import kotlinx.coroutines.launch
  */
 class NotificationsViewModel(
     private val notificationsRepository: NotificationsDataSource,
-    private val reminderManagr: ReminderManager
-) :
-    ViewModel() {
+    private val reminderManagr: ReminderManager,
+    private val userPreferencesRepository: UserPreferencesDataSource
+) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(NotificationsViewModelState())
     val uiState = viewModelState
@@ -32,7 +33,7 @@ class NotificationsViewModel(
 
     fun cancelNotification(notificationData: NotificationData) {
         viewModelScope.launch {
-            notificationsRepository.deleteReminder(notificationData.id)
+            notificationsRepository.deleteReminder(notificationData.id, notificationData.userId)
             reminderManagr.cancelReminder(notificationData)
         }
     }
@@ -40,9 +41,11 @@ class NotificationsViewModel(
     private fun observeNotifications() {
         viewModelScope.launch {
             val timestamp = System.currentTimeMillis()
-            notificationsRepository.observeActiveReminders(timestamp).collect { notifications ->
-                viewModelState.update { it.copy(notifications = notifications) }
-            }
+            val currentUserId = userPreferencesRepository.getCurrentUserId()
+            notificationsRepository.observeActiveReminders(timestamp, currentUserId)
+                .collect { notifications ->
+                    viewModelState.update { it.copy(notifications = notifications) }
+                }
         }
     }
 }

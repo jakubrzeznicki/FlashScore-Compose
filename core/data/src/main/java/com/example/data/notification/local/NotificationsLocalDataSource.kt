@@ -8,7 +8,10 @@ import kotlinx.coroutines.flow.Flow
  */
 interface NotificationsLocalDataSource {
     suspend fun saveReminder(notificationData: NotificationDataEntity)
-    suspend fun deleteReminder(id: Int)
+    suspend fun deleteReminder(id: Int, currentUserId: String)
     suspend fun getActiveReminders(timestamp: Long): List<NotificationDataEntity>
-    fun observeActiveReminders(timestamp: Long): Flow<List<NotificationDataEntity>>
+    fun observeActiveReminders(
+        timestamp: Long,
+        currentUserId: String
+    ): Flow<List<NotificationDataEntity>>
 }

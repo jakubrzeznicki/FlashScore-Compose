@@ -41,6 +41,7 @@ import com.example.ui.theme.GreenDark
 import com.example.ui.theme.GreenLight
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
+import com.example.ui.R as uiR
 
 /**
  * Created by jrzeznicki on 23/12/2022.
@@ -200,7 +201,7 @@ private fun LineupChip(
                     .size(Size.ORIGINAL)
                     .crossfade(true)
                     .build(),
-                placeholder = painterResource(id = com.example.ui.R.drawable.ic_close),
+                placeholder = painterResource(id = uiR.drawable.ic_close),
                 contentDescription = null,
                 contentScale = ContentScale.Crop
             )

@@ -1,6 +1,5 @@
 package com.example.profile.settings.model
 
-import androidx.annotation.StringRes
 import com.example.common.utils.ResponseStatus
 
 /**
@@ -8,7 +7,8 @@ import com.example.common.utils.ResponseStatus
  */
 sealed class ProfileSettingsError {
     object NoError : ProfileSettingsError()
-    data class InvalidPassword(@StringRes val messageId: Int) : ProfileSettingsError()
-    data class NotMatchesPassword(@StringRes val messageId: Int) : ProfileSettingsError()
+    object EmptyProfile : ProfileSettingsError()
+    object InvalidPassword : ProfileSettingsError()
+    object NotMatchesPassword : ProfileSettingsError()
     data class AuthenticationError(val responseStatus: ResponseStatus) : ProfileSettingsError()
 }
